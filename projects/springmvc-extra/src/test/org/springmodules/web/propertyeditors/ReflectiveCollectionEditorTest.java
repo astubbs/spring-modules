@@ -17,9 +17,7 @@ package org.springmodules.web.propertyeditors;
 
 import java.util.LinkedList;
 import java.util.List;
-import junit.framework.*;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-import org.springmodules.web.test.domain.IEmployee;
 import org.springmodules.web.test.domain.MemoryRepository;
 
 /**
@@ -29,62 +27,61 @@ import org.springmodules.web.test.domain.MemoryRepository;
 public class ReflectiveCollectionEditorTest extends AbstractDependencyInjectionSpringContextTests {
     
     private MemoryRepository repository;
-    private ReflectiveCollectionEditor editor;
     
     public ReflectiveCollectionEditorTest(String testName) {
         super(testName);
     }
 
-    protected void onSetUp() throws Exception {
-        this.repository = (MemoryRepository) this.applicationContext.getBean("store");
-        this.editor = (ReflectiveCollectionEditor) this.applicationContext.getBean("employeesCollectionEditor");
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ReflectiveCollectionEditorTest.class);
-        
-        return suite;
-    }
-
-    /**
-     * 
-     */
     public void testConversionToObject() {
-        List strings = new LinkedList();
+        ReflectiveCollectionEditor editor = (ReflectiveCollectionEditor) this.applicationContext.getBean("employeesCollectionEditor");
         
+        List strings = new LinkedList();
         strings.add("1");
         strings.add("2");
         
-        this.editor.setValue(strings);
-        
-        assertTrue(this.editor.getValue() instanceof List);
-        
-        List emps = (List) this.editor.getValue();
-        
+        editor.setValue(strings);
+        assertTrue(editor.getValue() instanceof List);
+        List emps = (List) editor.getValue();
         assertEquals(emps.get(0), this.repository.getEmployee("1"));
         assertEquals(emps.get(1), this.repository.getEmployee("2"));
     }
     
-    /**
-     * 
-     */
-    public void testConversionToString() {
-        List emps = new LinkedList();
+    public void testConversionToObjectWithStringConvertor() {
+        ReflectiveCollectionEditor editor = (ReflectiveCollectionEditor) this.applicationContext.getBean("employeesByOfficeCollectionEditor");
         
+        List strings = new LinkedList();
+        strings.add("1");
+        strings.add("2");
+        
+        editor.setValue(strings);
+        assertTrue(editor.getValue() instanceof List);
+        List allEmps = (List) editor.getValue();
+        assertEquals(2, allEmps.size());
+        List emps1 = (List) allEmps.get(0);
+        List emps2 = (List) allEmps.get(1);
+        assertEquals(2, emps1.size());
+        assertEquals(2, emps2.size());
+    }
+    
+    public void testConversionToString() {
+        ReflectiveCollectionEditor editor = (ReflectiveCollectionEditor) this.applicationContext.getBean("employeesCollectionEditor");
+        
+        List emps = new LinkedList();
         emps.add(this.repository.getEmployee("1"));
         emps.add(this.repository.getEmployee("2"));
         
-        this.editor.setValue(emps);
-        
-        assertTrue(this.editor.getValue() instanceof List);
-        
-        List strings = (List) this.editor.getValue();
-        
+        editor.setValue(emps);
+        assertTrue(editor.getValue() instanceof List);
+        List strings = (List) editor.getValue();
         assertEquals(strings.get(0), this.repository.getEmployee("1").getMatriculationCode());
         assertEquals(strings.get(1), this.repository.getEmployee("2").getMatriculationCode());
     }
     
     protected String[] getConfigLocations() {
         return new String[]{"testApplicationContext.xml"};
+    }
+
+    public void setRepository(MemoryRepository repository) {
+        this.repository = repository;
     }
 }

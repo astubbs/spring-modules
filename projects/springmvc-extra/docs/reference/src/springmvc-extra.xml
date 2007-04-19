@@ -46,6 +46,13 @@
           converting the string value to be passed to the
           dataAccessMethod.</para>
         </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">stringConvertorOutput</emphasis>, the
+          <emphasis>Class</emphasis> of the object converted by the string
+          convertor; if not specified, the property editor will try to guess
+          it by directly inspecting the converted object.</para>
+        </listitem>
       </itemizedlist>
     </sect2>
 
@@ -82,6 +89,13 @@
           <para><emphasis role="bold">stringConvertor</emphasis>, for
           converting the string value to be passed to the
           dataAccessMethod.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">stringConvertorOutput</emphasis>, the
+          <emphasis>Class</emphasis> of the object converted by the string
+          convertor; if not specified, the property editor will try to guess
+          it by directly inspecting the converted object.</para>
         </listitem>
       </itemizedlist>
 

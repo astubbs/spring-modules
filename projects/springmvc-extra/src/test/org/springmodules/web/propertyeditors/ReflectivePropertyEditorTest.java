@@ -15,9 +15,10 @@
  */
 package org.springmodules.web.propertyeditors;
 
-import junit.framework.*;
+import java.util.List;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springmodules.web.test.domain.IEmployee;
+import org.springmodules.web.test.domain.IOffice;
 import org.springmodules.web.test.domain.MemoryRepository;
 
 /**
@@ -26,36 +27,39 @@ import org.springmodules.web.test.domain.MemoryRepository;
  */
 public class ReflectivePropertyEditorTest extends AbstractDependencyInjectionSpringContextTests {
     
-    private ReflectivePropertyEditor editor;
-    private IEmployee employee;
+    private MemoryRepository repository;
     
     public ReflectivePropertyEditorTest(String testName) {
         super(testName);
     }
 
-    protected void onSetUp() throws Exception {
-        MemoryRepository repository = (MemoryRepository) this.applicationContext.getBean("store");
-        this.editor = (ReflectivePropertyEditor) this.applicationContext.getBean("employeeEditor");
-        this.employee = repository.getEmployee("1");
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ReflectivePropertyEditorTest.class);
-        
-        return suite;
-    }
-
     public void testGetAsText() {
-        this.editor.setValue(this.employee);
-        assertEquals(this.employee.getMatriculationCode(), this.editor.getAsText());
+        ReflectivePropertyEditor editor = (ReflectivePropertyEditor) this.applicationContext.getBean("employeeEditor");
+        IEmployee employee = this.repository.getEmployee("1");
+        editor.setValue(employee);
+        assertEquals(employee.getMatriculationCode(), editor.getAsText());
     }
 
     public void testSetAsText() {
-        this.editor.setAsText("1");
-        assertEquals(this.employee, this.editor.getValue());
+        ReflectivePropertyEditor editor = (ReflectivePropertyEditor) this.applicationContext.getBean("employeeEditor");
+        IEmployee employee = this.repository.getEmployee("1");
+        editor.setAsText("1");
+        assertEquals(employee, editor.getValue());
+    }
+    
+    public void testSetAsTextWithStringConvertor() {
+        ReflectivePropertyEditor editor = (ReflectivePropertyEditor) this.applicationContext.getBean("employeesByOfficeEditor");
+        IEmployee employee = this.repository.getEmployee("1");
+        editor.setAsText("1");
+        assertNotNull(editor.getValue());
+        assertEquals(2, ((List) editor.getValue()).size());
     }
     
     protected String[] getConfigLocations() {
         return new String[]{"testApplicationContext.xml"};
+    }
+
+    public void setRepository(MemoryRepository repository) {
+        this.repository = repository;
     }
 }

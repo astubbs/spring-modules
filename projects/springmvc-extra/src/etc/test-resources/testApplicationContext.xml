@@ -32,11 +32,28 @@
         <property name="propertyName"><value>matriculationCode</value></property>
     </bean>
     
+    <bean id="employeesByOfficeEditor" class="org.springmodules.web.propertyeditors.ReflectivePropertyEditor" singleton="false">
+        <property name="dataAccessObject"><ref bean="store"/></property>
+        <property name="dataAccessMethod"><value>getEmployeesByOffice</value></property>
+        <property name="propertyName"><value>matriculationCode</value></property>
+        <property name="stringConvertor"><ref bean="officeEditor"/></property>
+        <property name="stringConvertorOutput"><value>org.springmodules.web.test.domain.IOffice</value></property>
+    </bean>
+    
     <bean id="employeesCollectionEditor" class="org.springmodules.web.propertyeditors.ReflectiveCollectionEditor" singleton="false">
         <constructor-arg index="0"><value>java.util.List</value></constructor-arg>
         <property name="dataAccessObject"><ref bean="store"/></property>
         <property name="dataAccessMethod"><value>getEmployee</value></property>
         <property name="propertyName"><value>matriculationCode</value></property>
+    </bean>
+    
+    <bean id="employeesByOfficeCollectionEditor" class="org.springmodules.web.propertyeditors.ReflectiveCollectionEditor" singleton="false">
+        <constructor-arg index="0"><value>java.util.List</value></constructor-arg>
+        <property name="dataAccessObject"><ref bean="store"/></property>
+        <property name="dataAccessMethod"><value>getEmployeesByOffice</value></property>
+        <property name="propertyName"><value>matriculationCode</value></property>
+        <property name="stringConvertor"><ref bean="officeEditor"/></property>
+        <property name="stringConvertorOutput"><value>org.springmodules.web.test.domain.IOffice</value></property>
     </bean>
     
     <!-- Controllers -->

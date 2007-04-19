@@ -29,6 +29,8 @@ import org.springframework.beans.BeanWrapperImpl;
  * <li><code>dataAccessMethod</code>, the method of the dataAccessObject object to call for converting from text to object.</li>
  * <li><code>propertyName</code>, the name of the property which will represent the object text value.</li>
  * <li><code>stringConvertor</code>, for converting the string value to be passed to the <code>dataAccessMethod</code>.</li>
+ * <li><code>stringConvertorOutput</code>, the <code>Class</code> of the object converted by the stringConvertor; if not specified,
+ * the ReflectivePropertyEditor will try to guess it by directly inspecting the converted object.</li>
  * </ul>
  * 
  * @author Sergio Bossa
@@ -39,6 +41,7 @@ public class ReflectivePropertyEditor extends PropertyEditorSupport {
     private String dataAccessMethod;
     private String propertyName;
     private PropertyEditor stringConvertor;
+    private Class stringConvertorOutput;
     
     public String getAsText() {
         if (this.getValue() == null) {
@@ -66,7 +69,14 @@ public class ReflectivePropertyEditor extends PropertyEditorSupport {
             else {
                 this.stringConvertor.setAsText(textValue);
                 Object value = this.stringConvertor.getValue();
-                Method method = this.dataAccessObject.getClass().getMethod(this.dataAccessMethod, new Class[]{value.getClass()});
+                Method method = null;
+                if (value == null && this.stringConvertorOutput == null) {
+                    throw new ReflectivePropertyEditorException("Cannot convert: " + textValue + ". Unable to determine output class.");
+                } else if (this.stringConvertorOutput != null) {
+                    method = this.dataAccessObject.getClass().getMethod(this.dataAccessMethod, new Class[]{this.stringConvertorOutput});
+                } else {
+                    method = this.dataAccessObject.getClass().getMethod(this.dataAccessMethod, new Class[]{value.getClass()});
+                }
                 this.setValue(method.invoke(this.dataAccessObject, new Object[]{value}));
             }
         }
@@ -105,5 +115,13 @@ public class ReflectivePropertyEditor extends PropertyEditorSupport {
 
     public void setStringConvertor(PropertyEditor stringConvertor) {
         this.stringConvertor = stringConvertor;
+    }
+
+    public Class getStringConvertorOutput() {
+        return this.stringConvertorOutput;
+    }
+
+    public void setStringConvertorOutput(Class stringConvertorOutput) {
+        this.stringConvertorOutput = stringConvertorOutput;
     }
 }
