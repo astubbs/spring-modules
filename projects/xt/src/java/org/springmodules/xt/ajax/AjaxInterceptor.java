@@ -149,9 +149,9 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                     } else {
                         if (ajaxResponse != null && ! ajaxResponse.isEmpty()) {
                             logger.info("Sending Ajax response after Ajax action.");
-                            InternalAjaxResponseSender.sendResponse(response, ajaxResponse.getResponse());
+                            InternalAjaxResponseSender.sendResponse(response, ajaxResponse);
                         } else {
-                            InternalAjaxResponseSender.sendResponse(response, new AjaxResponseImpl().getResponse());
+                            InternalAjaxResponseSender.sendResponse(response, new AjaxResponseImpl());
                         }
                         return false;
                     }
@@ -240,7 +240,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                         if (ajaxResponse != null && ! ajaxResponse.isEmpty()) {
                             // Need to clear the ModelAndView because we are handling the response by ourselves:
                             modelAndView.clear();
-                            InternalAjaxResponseSender.sendResponse(response, ajaxResponse.getResponse());
+                            InternalAjaxResponseSender.sendResponse(response, ajaxResponse);
                         } else {
                             // No response, so try an Ajax redirect:
                             String view = modelAndView.getViewName();
@@ -430,11 +430,11 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     
     private void redirectToView(String view, HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) throws IOException {
         // Creating Ajax redirect action:
-        AjaxResponse ajaxRedirect = new AjaxResponseImpl();
+        AjaxResponse ajaxResponse = new AjaxResponseImpl();
         AjaxAction ajaxAction = new RedirectAction(new StringBuilder(request.getContextPath()).append(view).toString(), modelAndView);
-        ajaxRedirect.addAction(ajaxAction);
+        ajaxResponse.addAction(ajaxAction);
         // Need to clear the ModelAndView because we are handling the response by ourselves:
         modelAndView.clear();
-        InternalAjaxResponseSender.sendResponse(response, ajaxRedirect.getResponse());
+        InternalAjaxResponseSender.sendResponse(response, ajaxResponse);
     }
 }

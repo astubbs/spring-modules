@@ -72,7 +72,7 @@ public class AjaxExceptionHandlerResolver implements ApplicationContextAware, Ha
                     logger.info(new StringBuilder("Resolving exception of type : ").append(ex.getClass()));
                     AjaxResponse ajaxResponse = exceptionHandler.handle(request, ex);
                     if (ajaxResponse != null) {
-                        InternalAjaxResponseSender.sendResponse(response, ajaxResponse.getResponse());
+                        InternalAjaxResponseSender.sendResponse(response, ajaxResponse);
                         ModelAndView mv = new ModelAndView();
                         mv.clear();
                         return mv;

@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.springmodules.xt.ajax.AjaxResponse;
 
 /**
  * Utility class for sending Ajax responses.
@@ -30,12 +31,14 @@ public class InternalAjaxResponseSender {
     
     private static final Logger logger = Logger.getLogger(InternalAjaxResponseSender.class);
     
-    public static void sendResponse(HttpServletResponse httpResponse, String response)
+    public static void sendResponse(HttpServletResponse httpResponse, AjaxResponse ajaxResponse)
     throws IOException {
-        ServletOutputStream out = httpResponse.getOutputStream();
+        String response = ajaxResponse.getResponse();
         logger.debug(new StringBuilder("Sending ajax response: ").append(response));
         httpResponse.setContentType("text/xml");
+        httpResponse.setCharacterEncoding(ajaxResponse.getEncoding());
         httpResponse.setHeader("Cache-Control", "no-cache");
+        ServletOutputStream out = httpResponse.getOutputStream();
         out.print(response);
         out.close();
     }

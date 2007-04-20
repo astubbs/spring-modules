@@ -32,10 +32,31 @@ public class AjaxResponseImpl implements AjaxResponse {
     private static final String OPEN_RESPONSE = new String("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> ");
     private static final String CLOSE_RESPONSE = new String(" </taconite-root>");
     
+    public static final String DEFAULT_ENCODING = "ISO-8859-1";
+    
     private List<AjaxAction> actions = new LinkedList<AjaxAction>();
+    private String encoding;
+    
+    /**
+     * Construct an AjaxResponse with a default response encoding of ISO-8859-1.
+     */
+    public AjaxResponseImpl() {
+        this.encoding = DEFAULT_ENCODING;
+    }
+    
+    /**
+     * Construct an AjaxResponse with a given response encoding.
+     */
+    public AjaxResponseImpl(String encoding) {
+        this.encoding = encoding;
+    }
     
     public void addAction(AjaxAction action) {
         this.actions.add(action);
+    }
+
+    public String getEncoding() {
+        return this.encoding;
     }
 
     public String getResponse() {

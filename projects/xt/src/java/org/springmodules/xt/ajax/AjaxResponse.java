@@ -42,6 +42,15 @@ public interface AjaxResponse extends Serializable {
     public String getResponse();
     
     /**
+     * Get the charset name of the encoding of the response.
+     * It must be a String specifying only charsets defined by IANA Character Sets (http://www.iana.org/assignments/character-sets).<br>
+     * See also: {@link javax.servlet.ServletResponse#setCharacterEncoding(String charset)}.
+     *
+     * @return The response encoding.
+     */
+    public String getEncoding();
+    
+    /**
      * Check if this response is empty, that is, has no actions.
      *
      * @return True if empty, false otherwise.
