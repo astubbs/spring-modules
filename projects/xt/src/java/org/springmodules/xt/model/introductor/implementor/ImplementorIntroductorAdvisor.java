@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.model.introductor.bean;
+package org.springmodules.xt.model.introductor.implementor;
 
 import org.springmodules.xt.model.introductor.SimpleIntroductionInfo;
 import org.springframework.aop.support.DefaultIntroductionAdvisor;
 
 /**
- * Spring AOP Advisor for dynamically introducing JavaBeans style interfaces using the 
- * {@link BeanIntroductorInterceptor}.
+ * Spring AOP Advisor for dynamically introducing and implementing interfaces by using the 
+ * {@link ImplementorIntroductorInterceptor}.
  * 
  * @author Sergio Bossa
  */
-public class BeanIntroductorAdvisor extends DefaultIntroductionAdvisor {
+public class ImplementorIntroductorAdvisor extends DefaultIntroductionAdvisor {
     
     /**
      * Constructor.
-     * @param introducedInterfaces The interfaces to introduce.
+     * @param introducedInterfaces The interfaces to introduce, carrying the new behaviour.
+     * @param implementor The implementor object, specifying the implementation of the introduced interfaces.
+     * Please note that it must implement the given interfaces.
      */
-    public BeanIntroductorAdvisor(Class[] introducedInterfaces) {
-        super(new BeanIntroductorInterceptor(introducedInterfaces), new SimpleIntroductionInfo(introducedInterfaces));
+    public ImplementorIntroductorAdvisor(Class[] introducedInterfaces, Object implementor) {
+        super(new ImplementorIntroductorInterceptor(introducedInterfaces, implementor), new SimpleIntroductionInfo(introducedInterfaces));
     }
 }

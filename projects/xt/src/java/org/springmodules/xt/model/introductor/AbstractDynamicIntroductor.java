@@ -43,6 +43,20 @@ public abstract class AbstractDynamicIntroductor implements DynamicIntroductor {
         return this.internalGetTarget(proxy);
     }
     
+    protected Class[] merge(Class[] a1, Class[] a2) {
+        Class[] result = new Class[a1.length + a2.length];
+        int i = 0;
+        
+        for (i = 0; i < a1.length; i++) {
+            result[i] = a1[i];
+        }
+        for (i = 0; i < a2.length; i++) {
+            result[i + a1.length] = a2[i];
+        }
+        
+        return result;
+    }
+    
     private Object internalGetTarget(Object proxy) {
         Object target = null;
         

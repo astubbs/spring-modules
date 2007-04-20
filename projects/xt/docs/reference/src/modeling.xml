@@ -92,7 +92,7 @@ public interface DynamicIntroductor {
         <para>For example, take this Employee object:</para>
 
         <programlisting>
-public class Employee {
+public class Employee implements IEmployee {
 
     private String matriculationCode;
     private String firstname;
@@ -135,28 +135,32 @@ public interface EmployeeView {
 
     void setSelected(Boolean selected);
 
-    Boolean getSelected();
+    Boolean isSelected();
 }
 </programlisting>
 
-        <para>By simply doing this:</para>
+        <para>By simply doing:</para>
 
         <programlisting>
+IEmployee employee = new Employee();
+
 DynamicBeanIntroductor introductor =  new DynamicBeanIntroductor();
 
-Object introducedEmployee = introductor.introduceInterfaces(new Employee(), 
-                                                            new Class[]{EmployeeView.class});
+Object newEmployee = introductor.introduceInterfaces(employee, 
+                                                     new Class[]{EmployeeView.class});
 </programlisting>
 
-        <para>You can now use your brand new introduced object:</para>
+        <para>You can now use your brand new object:</para>
 
         <programlisting>
-((Employee) introducedEmployee).getMatriculationCode();
+IEmployee employee = (IEmployee) newEmployee;
+EmployeeView view = (EmployeeView) newEmployee;
 
-((EmployeeView) introducedEmployee).getSelected();
-</programlisting>
+employee.setMatriculationCode(...);
+view.setSelected(...);</programlisting>
 
-        <para>When calling an introduced object, the following happens:</para>
+        <para>When calling methods on an object created through the
+        DynamicBeanIntroductor, the following happens:</para>
 
         <itemizedlist>
           <listitem>
@@ -177,10 +181,140 @@ Object introducedEmployee = introductor.introduceInterfaces(new Employee(),
           </listitem>
         </itemizedlist>
 
-        <para>However, the DynamicBeanIntroductor behaviour can be customized:
-        see <link
-        linkend="DynamicBeanIntroductor-Annotations">DynamicBeanIntroductor
+        <para>Moreover, the DynamicBeanIntroductor behaviour can be
+        customized: see <link
+        linkend="DynamicIntroductor-Annotations">DynamicIntroductor
         annotations</link>.</para>
+      </sect4>
+
+      <sect4 id="dynamicbeanintroductor">
+        <title
+        id="dynamicbeanintroductor-title">DynamicImplementorIntroductor</title>
+
+        <para>The <emphasis
+        role="bold">DynamicImplementorIntroductor</emphasis> (see
+        <emphasis>org.springmodules.xt.model.introductor.implementor.DynamicImplementorIntroductor</emphasis>
+        javadoc) is a concrete implementation for introducing additional
+        interfaces into already existent <emphasis
+        role="bold">target</emphasis> objects and delegate the implementation
+        of those interfaces to an external Java object called <emphasis
+        role="bold">implementor</emphasis>.</para>
+
+        <para>For example, take this Manager object:</para>
+
+        <programlisting>
+public class Manager implements IManager {
+    
+    private List&lt;IEmployee&gt; managedEmployees;
+    private String matriculationCode;
+    
+    public void setManagedEmployees(List&lt;IEmployee&gt; employees) {
+        this.managedEmployees = employees;
+    }
+    
+    public List&lt;IEmployee&gt; getManagedEmployees() {
+        return this.managedEmployees;
+    }
+}</programlisting>
+
+        <para>You can introduce the following interface:</para>
+
+        <programlisting>
+public interface IEmployee {
+    
+    String getMatriculationCode();
+    
+    String getFirstname();
+
+    String getSurname();
+    
+    void setMatriculationCode(String matriculationCode);
+
+    void setFirstname(String firstname);
+
+    void setSurname(String surname);
+}</programlisting>
+
+        <para>With the following implementation:</para>
+
+        <programlisting>
+public class Employee implements IEmployee {
+
+    private String matriculationCode;
+    private String firstname;
+    private String surname;
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getMatriculationCode() {
+        return matriculationCode;
+    }
+
+    public void setMatriculationCode(String matriculationCode) {
+        this.matriculationCode = matriculationCode;
+    }
+}
+</programlisting>
+
+        <para>By simply doing:</para>
+
+        <programlisting>
+IManager manager = new Manager();
+IEmployee employee = new Employee();
+DynamicImplementorIntroductor introductor  = new DynamicImplementorIntroductor(employee); <emphasis
+            role="bold">// (1)</emphasis>
+
+Object newManager = introductor.introduceInterfaces(manager, 
+                                                    new Class[]{IEmployee.class}); // <emphasis
+            role="bold">(2)</emphasis></programlisting>
+
+        <para>You have to simply construct the
+        <emphasis>DynamicImplementorIntroductor</emphasis> object (1) by
+        passing it the <emphasis>implementor</emphasis> object, that is, the
+        object that will implement the interfaces to introduce. Then, you have
+        to actually introduce the interfaces into the
+        <emphasis>target</emphasis> object (2).</para>
+
+        <para>You can now use your brand new object:</para>
+
+        <programlisting>
+IManager manager = (IManager) newManager;
+IEmployee employee = (IEmployee) newManager;
+
+manager.setManagedEmployees(...);
+employee.setMatriculationCode(...);</programlisting>
+
+        <para>When calling methods on an object created through the
+        DynamicImplementorIntroductor, the following happens:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>Every call to a method declared into an introduced interface
+            will be delegated to the <emphasis
+            role="bold">implementor</emphasis> object if it implements the
+            introduced interface; otherwise, an exception occurs.</para>
+          </listitem>
+
+          <listitem>
+            <para>Every call to a method not declared into the introduced
+            interface is as always executed by the <emphasis
+            role="bold">target</emphasis> object.</para>
+          </listitem>
+        </itemizedlist>
       </sect4>
 
       <sect4 id="introductor-collections">
@@ -623,13 +757,13 @@ compositeSpecification.compose(idSpecification).withMessage(wrongIdMessage, fals
     <sect3 id="modeling-annotations">
       <title id="modeling-annotations-title">Other annotations</title>
 
-      <sect4 id="DynamicBeanIntroductor-Annotations">
-        <title
-        id="DynamicBeanIntroductor-Annotations-title">DynamicBeanIntroductor
+      <sect4 id="DynamicIntroductor-Annotations">
+        <title id="DynamicIntroductor-Annotations-title">DynamicIntroductor
         Annotations</title>
 
-        <para>You can change the DynamicBeanIntroductor behaviour by applying
-        the following annotations on introduced interfaces:</para>
+        <para>DynamicIntroductor concrete implementations let you modify the
+        standard introductor behaviour by applying the following annotations
+        on introduced interfaces:</para>
 
         <itemizedlist>
           <listitem>
@@ -650,6 +784,9 @@ compositeSpecification.compose(idSpecification).withMessage(wrongIdMessage, fals
             methods must have equal signature.</para>
           </listitem>
         </itemizedlist>
+
+        <para>Please read the javadoc of DynamicIntroductor implementations to
+        verify supported annotations.</para>
       </sect4>
     </sect3>
 

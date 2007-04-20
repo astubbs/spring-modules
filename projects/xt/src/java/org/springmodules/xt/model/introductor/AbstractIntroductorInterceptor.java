@@ -52,8 +52,12 @@ public abstract class AbstractIntroductorInterceptor implements IntroductionInte
         Collections.addAll(this.introducedInterfaces, introducedInterfaces);
     }
     
+    public boolean implementsInterface(Class aClass) {
+        return this.isIntroduced(aClass);
+    }
+    
     /**
-     * Get the method from the target object corresponding to the given{@link org.aopalliance.intercept.MethodInvocation}.
+     * Get the method from the target object corresponding to the given {@link org.aopalliance.intercept.MethodInvocation}.
      *
      * @return The target method, or null if no method is found.
      */

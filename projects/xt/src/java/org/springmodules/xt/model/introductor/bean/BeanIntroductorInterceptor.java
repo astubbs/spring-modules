@@ -38,6 +38,7 @@ public class BeanIntroductorInterceptor extends AbstractIntroductorInterceptor {
     private Map<String, Object> fields = new ConcurrentHashMap();
 
     /**
+     * Constructor.
      * @param introducedInterfaces The interfaces to introduce.
      */
     public BeanIntroductorInterceptor(Class[] introducedInterfaces) {
@@ -48,18 +49,18 @@ public class BeanIntroductorInterceptor extends AbstractIntroductorInterceptor {
         Object result = null;
         Method invokedMethod = methodInvocation.getMethod();
         if (this.shouldOverrideTarget(invokedMethod)) {
-            result = executeLocally(methodInvocation, invokedMethod);
+            result = this.executeOnProxy(methodInvocation, invokedMethod);
         }
         else if (this.shouldMapToTargetField(invokedMethod)) {
-            result = executeOnTargetField(methodInvocation, invokedMethod);
+            result = this.executeOnTargetField(methodInvocation, invokedMethod);
         }
         else {
             Method targetMethod = this.getTargetMethod(methodInvocation);
             if (this.isIntroduced(invokedMethod) && targetMethod != null) {
-                result = executeOnTargetMethod(methodInvocation, targetMethod);
+                result = this.executeOnTargetMethod(methodInvocation, targetMethod);
             }
             else if (this.isIntroduced(invokedMethod)) {
-                result = executeLocally(methodInvocation, invokedMethod);
+                result = this.executeOnProxy(methodInvocation, invokedMethod);
             }
             else {
                 result =  methodInvocation.proceed();
@@ -68,17 +69,13 @@ public class BeanIntroductorInterceptor extends AbstractIntroductorInterceptor {
         
         return result;
     }
-
-    public boolean implementsInterface(Class aClass) {
-        return this.isIntroduced(aClass);
-    }
     
-    private Object executeOnTargetMethod(MethodInvocation methodInvocation, Method method) throws Exception {
+    protected Object executeOnTargetMethod(MethodInvocation methodInvocation, Method method) throws Exception {
         logger.debug("Executing on target; method: " + method.getName());
         return method.invoke(methodInvocation.getThis(), methodInvocation.getArguments());
     }
     
-    private Object executeOnTargetField(MethodInvocation methodInvocation, Method method) throws Exception {
+    protected Object executeOnTargetField(MethodInvocation methodInvocation, Method method) throws Exception {
         logger.debug("Mapping to target field; method: " + method.getName());
         Object result = null;
         try {
@@ -118,7 +115,7 @@ public class BeanIntroductorInterceptor extends AbstractIntroductorInterceptor {
         return result;
     }
     
-    private Object executeLocally(MethodInvocation methodInvocation, Method method) throws Exception {
+    protected Object executeOnProxy(MethodInvocation methodInvocation, Method method) throws Exception {
         logger.debug("Introducing method: " + method.getName());
         Object result = null;
         try {

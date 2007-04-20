@@ -50,12 +50,6 @@
     layers without violating DDD principles. At the moment it provides:
     <itemizedlist>
         <listitem>
-          <para><emphasis role="bold">Dynamic Introductor</emphasis> : Generic
-          interface for introducing additional interfaces into plain old Java
-          objects.</para>
-        </listitem>
-
-        <listitem>
           <para><emphasis role="bold">Bean Introductor</emphasis> : Built on
           top of Spring AOP, it introduces JavaBeans style interfaces with
           getter/setter methods into domain objects, for adapting/decorating
@@ -63,9 +57,18 @@
         </listitem>
 
         <listitem>
+          <para><emphasis role="bold">Implementor Introductor</emphasis> :
+          Built on top of Spring AOP, it introduces additional interfaces to
+          already existent object, and automatically delegates the
+          implementation of those interfaces to an external, independent,
+          object.</para>
+        </listitem>
+
+        <listitem>
           <para><emphasis role="bold">Introductor Collections</emphasis> :
           Standard Java collections decorators for introducing interfaces into
-          objects stored in collections.</para>
+          objects stored in collections, by using the introductor
+          implementations above.</para>
         </listitem>
 
         <listitem>

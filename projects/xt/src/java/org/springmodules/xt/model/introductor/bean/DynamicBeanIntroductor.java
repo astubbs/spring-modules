@@ -57,7 +57,6 @@ public class DynamicBeanIntroductor extends AbstractDynamicIntroductor {
      * @see AbstractDynamicIntroductor#introduceInterfaces(Object , Class[] )
      */
     public Object introduceInterfaces(Object target, Class[] introducedInterfaces) {
-        // FIXME: Do not create a new instance every time ... ?
         ProxyFactory proxyFactory = new ProxyFactory();
         
         proxyFactory.setProxyTargetClass(true);
@@ -71,7 +70,6 @@ public class DynamicBeanIntroductor extends AbstractDynamicIntroductor {
      * @see AbstractDynamicIntroductor#introduceInterfaces(Object , Class[] , Class[] )
      */
     public Object introduceInterfaces(Object target, Class[] introducedInterfaces, Class[] targetInterfaces) {
-        // FIXME: Do not create a new instance every time ... ?
         ProxyFactory proxyFactory = new ProxyFactory();
         
         proxyFactory.addAdvisor(new BeanIntroductorAdvisor(introducedInterfaces));
@@ -79,19 +77,5 @@ public class DynamicBeanIntroductor extends AbstractDynamicIntroductor {
         proxyFactory.setInterfaces(this.merge(introducedInterfaces, targetInterfaces));
         
         return proxyFactory.getProxy();
-    }
-    
-    private Class[] merge(Class[] a1, Class[] a2) {
-        Class[] result = new Class[a1.length + a2.length];
-        int i = 0;
-        
-        for (i = 0; i < a1.length; i++) {
-            result[i] = a1[i];
-        }
-        for (i = 0; i < a2.length; i++) {
-            result[i + a1.length] = a2[i];
-        }
-        
-        return result;
     }
 }
