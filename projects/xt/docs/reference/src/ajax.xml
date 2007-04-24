@@ -329,7 +329,7 @@ public interface AjaxHandler {
 public AjaxResponse eventId(AjaxEvent )
 </programlisting>
 
-      <para>Given an ajax event with id <emphasis>countrySelection</emphasis>,
+      <para>Given an Ajax event with id <emphasis>countrySelection</emphasis>,
       the handling method will be:</para>
 
       <programlisting>
@@ -369,7 +369,7 @@ public AjaxResponse eventId(AjaxSubmitEvent )
       to <emphasis role="bold">associate</emphasis> them.</para>
 
       <para>For <emphasis role="bold">security reasons</emphasis>, web page
-      events and ajax handlers are not automatically associated, nor can be
+      events and Ajax handlers are not automatically associated, nor can be
       globally associated. If it were so, malicious users could hack your
       JavaScript and execute unwanted events.</para>
 
@@ -568,8 +568,8 @@ public interface Component {
       concrete action implementation, and then rendered through the action
       <emphasis>execute()</emphasis> method.</para>
 
-      <para>Now that you have your ajax actions and components, the only thing
-      left to do is filling your <link linkend="ajax-response">ajax
+      <para>Now that you have your Ajax actions and components, the only thing
+      left to do is filling your <link linkend="ajax-response">Ajax
       response</link>.</para>
     </sect3>
 
@@ -588,6 +588,8 @@ public interface AjaxResponse {
 
     public String getResponse(); 
 
+    public String getEncoding();
+
     public boolean isEmpty();
 } 
 </programlisting>
@@ -605,13 +607,26 @@ public interface AjaxResponse {
         </listitem>
 
         <listitem>
+          <para><emphasis>public String getEncoding()</emphasis> : This method
+          returns the charset name of the encoding to use for the
+          response.</para>
+        </listitem>
+
+        <listitem>
           <para><emphasis>public boolean isEmpty()</emphasis> : This method
           tells if the response has no actions to return.</para>
         </listitem>
       </itemizedlist>
 
       <note>
-        <para>In the context of an ajax response, actions are executed
+        <para>The default encoding of the Ajax response is ISO-8859-1. Just
+        use a proper
+        <emphasis>org.springmodules.xt.ajax.AjaxResponseImpl</emphasis>
+        constructor for changing it.</para>
+      </note>
+
+      <note>
+        <para>In the context of an Ajax response, actions are executed
         <emphasis role="bold">following their order of
         adding</emphasis>.</para>
       </note>
@@ -631,7 +646,7 @@ public interface AjaxResponse {
 
       <orderedlist>
         <listitem>
-          <para>The web page fires an ajax action event.</para>
+          <para>The web page fires an Ajax action event.</para>
         </listitem>
 
         <listitem>
@@ -655,16 +670,16 @@ public interface AjaxResponse {
       </orderedlist>
 
       <important>
-        <para>Since version 0.9, the AjaxInterceptor stops the execution chain
+        <para>Since 0.9 version, the AjaxInterceptor stops the execution chain
         <emphasis role="bold">even after</emphasis> an empty or null
-        AjaxResponse. </para>
+        AjaxResponse.</para>
       </important>
 
       <para><emphasis role="bold">On Ajax Submit Events :</emphasis></para>
 
       <orderedlist>
         <listitem>
-          <para>The web page fires an ajax submit event, causing a form
+          <para>The web page fires an Ajax submit event, causing a form
           submit.</para>
         </listitem>
 
@@ -678,7 +693,7 @@ public interface AjaxResponse {
           calling Validators and making other actions. At the end, it must
           return a ModelAndView with the model contained into the
           BindException object; otherwise, the model and command objects into
-          the ajax event object will be null. You can use the <emphasis
+          the Ajax event object will be null. You can use the <emphasis
           role="bold">XTModelAndView</emphasis> object here (see
           <emphasis>org.springmodules.web.servlet.XTModelAndView</emphasis>
           javadoc).</para>
@@ -765,7 +780,7 @@ public interface AjaxExceptionHandler {
 </programlisting>
 
       <warning>
-        <para>Starting from 0.9 version, the old
+        <para>Since 0.9 version, the old
         org.springmodules.xt.ajax.AjaxExceptionHandler is now called
         org.springmodules.xt.ajax.AjaxExceptionHandlerResolver, while the old
         org.springmodules.xt.ajax.AjaxExceptionResolver and
@@ -773,6 +788,93 @@ public interface AjaxExceptionHandler {
         respectively called org.springmodules.xt.ajax.AjaxExceptionHandler and
         org.springmodules.xt.ajax.support.RedirectExceptionHandler.</para>
       </warning>
+    </sect3>
+
+    <sect3>
+      <title>Showing feedback to users : loading sign management</title>
+
+      <para>Ajax requests are asynchronous, and while they're processed users
+      are free to continue interacting with the web page.</para>
+
+      <para>It's often important to give users a feedback about the Ajax
+      request loading time: XT Ajax let you easily configure a
+      <emphasis>loading sign</emphasis>, that is, <emphasis role="bold">an
+      image that will be automatically shown during Ajax request
+      processing</emphasis>.</para>
+
+      <para>The loading sign is configured by simply choosing the identifier
+      of the element where the loading sign will be shown, and the URL of the
+      image to show. You have two different configuration option:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Per Page configuration</term>
+
+          <listitem>
+            <para>By using the per page configuration, every Ajax request will
+            show the same image in the same element into the page.</para>
+
+            <para>The identifier of the element where to show the loading sign
+            must be assigned to the following Javascript variable:</para>
+
+            <programlisting>XT.defaultLoadingElementId</programlisting>
+
+            <para>While the image URL must be assigned to the following
+            Javascript variable:</para>
+
+            <programlisting>XT.defaultLoadingImage</programlisting>
+
+            <para>So, just load a Javascript file with the following
+            assignments:</para>
+
+            <programlisting>XT.defaultLoadingElementId = "..."
+XT.defaultLoadingImage = "..."</programlisting>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Per Request Configuration</term>
+
+          <listitem>
+            <para>By using the per request configuration, every Ajax request
+            will be able to show a different image in a different element into
+            the page.</para>
+
+            <para>That's because every Ajax request specifies its own loading
+            element and image:</para>
+
+            <programlisting>XT.doAjaxAction(id, element, jsonParams, {'loadingElementId' : '...', 'loadingImage' : '...'});
+XT.doAjaxSubmit(id, element, jsonParams, {'loadingElementId' : '...', 'loadingImage' : '...'}); </programlisting>
+
+            <para>As you can see, you can specify the following
+            options:</para>
+
+            <itemizedlist>
+              <listitem>
+                <para><emphasis>loadingElementId</emphasis> : The id of the
+                element where the image will be shown during the processing of
+                the Ajax request related to <emphasis>this</emphasis>
+                event.</para>
+              </listitem>
+
+              <listitem>
+                <para><emphasis>loadingImage</emphasis> : The URL of the image
+                to show during the processing of the Ajax request related to
+                <emphasis>this</emphasis> event.</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>You can use both per page and per request configuration options:
+      the latter will prevail on the former.</para>
+
+      <tip>
+        <para>For awesome effects, we strongly suggest to use gif images; you
+        can find great loading gif images <ulink
+        url="http://www.ajaxload.info/"><citetitle>here.</citetitle></ulink></para>
+      </tip>
     </sect3>
   </sect2>
 
