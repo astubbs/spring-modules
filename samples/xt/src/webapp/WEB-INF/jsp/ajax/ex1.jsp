@@ -60,7 +60,7 @@
                 </tr>
                 
                 <tr>
-                    <td>Press to remove the text below, sorrouned by a <i>span</i> element :</td>
+                    <td>Press to remove the text below, surrounded by a <i>span</i> element :</td>
                     <td><input type="button" value="Press" onclick="XT.doAjaxAction('removeElement', this, null, {'loadingElementId' : 'loading5', 'loadingImage' : '../images/loading.gif'});"></td>
                     <td><div id="loading5"></div></td>
                 </tr>
@@ -182,6 +182,21 @@
                         <div style="border-style: solid">
                             Here
                         </div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Change the color of the list elements below, by using CSS Selectors :</td>
+                    <td><input type="button" value="Change" onclick="XT.doAjaxAction('changeColor', this, null, {'loadingElementId' : 'loading15', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading15"></div></td>
+                </tr>
+                <tr>
+                    <td id="changeColorDataRow">
+                        <ul>
+                            <li>Item 1</li>
+                            <li>Item 2</li>
+                            <li>Item 3</li>
+                        </ul>
                     </td>
                 </tr>
                 

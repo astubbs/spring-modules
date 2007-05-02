@@ -1,5 +1,6 @@
 package org.springmodules.xt.examples.ajax;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -17,6 +18,7 @@ import org.springmodules.xt.ajax.action.RemoveElementAction;
 import org.springmodules.xt.ajax.action.ReplaceContentAction;
 import org.springmodules.xt.ajax.action.ReplaceElementAction;
 import org.springmodules.xt.ajax.action.SetAttributeAction;
+import org.springmodules.xt.ajax.action.matcher.SelectorMatcher;
 import org.springmodules.xt.ajax.action.prototype.HideElementAction;
 import org.springmodules.xt.ajax.action.prototype.ShowElementAction;
 import org.springmodules.xt.ajax.action.prototype.scriptaculous.AddDroppable;
@@ -276,6 +278,20 @@ public class TestActionsHandler extends AbstractAjaxHandler {
         // Add the actions:
         response.addAction(action1);
         response.addAction(action2);
+        
+        return response;
+    }
+    
+    public AjaxResponse changeColor(AjaxActionEvent event) {
+        // CSS Selector matcher for selecting list item elements descending by the element with changeColorDataRow id:
+        SelectorMatcher matcher = new SelectorMatcher(Arrays.asList("#changeColorDataRow li"));
+        // Action for changing the style attribute to matching elements:
+        SetAttributeAction action = new SetAttributeAction(matcher, "style", "color : red");
+        
+        // Create a concrete ajax response:
+        AjaxResponse response = new AjaxResponseImpl();
+        // Add the actions:
+        response.addAction(action);
         
         return response;
     }
