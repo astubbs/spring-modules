@@ -17,6 +17,7 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.List;
+import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
@@ -29,7 +30,7 @@ public class InsertContentBeforeAction extends AbstractRenderingAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-insert-before contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
+    private static final String OPEN = "<taconite-insert-before>";
     private static final String CLOSE = "</taconite-insert-before>";
     
     /**
@@ -48,6 +49,24 @@ public class InsertContentBeforeAction extends AbstractRenderingAction {
      */
     public InsertContentBeforeAction(String elementId, Component component) {
         super(elementId, component);
+    }
+    
+    /**
+     * Construct the action.
+     * @param matcher The matcher that identifies html elements which the content will be inserted before.
+     * @param component The content to insert : a component (html element).
+     */
+    public InsertContentBeforeAction(ElementMatcher matcher, Component component) {
+        super(matcher, component);
+    }
+    
+    /**
+     * Construct the action.
+     * @param matcher The matcher that identifies html elements which the content will be inserted before.
+     * @param components The content to insert : a list of components (html elements).
+     */
+    public InsertContentBeforeAction(ElementMatcher matcher, List<Component> components) {
+        super(matcher, components);
     }
     
     protected String getOpeningTag() {

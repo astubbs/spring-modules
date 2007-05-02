@@ -32,7 +32,7 @@ public class RedirectAction implements AjaxAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-redirect targetUrl=\"$1\" parseInBrowser=\"true\">";
+    private static final String OPEN = "<taconite-redirect targetUrl=\"$url\">";
     private static final String CLOSE = "</taconite-redirect>";
     
     private StringBuilder redirectUrl;
@@ -77,7 +77,7 @@ public class RedirectAction implements AjaxAction {
             // FIXME : Unexpected ....
             throw new RuntimeException("Unexpected", ex);
         }
-        StringBuilder response = new StringBuilder(OPEN.replaceFirst("\\$1", this.redirectUrl.toString()));
+        StringBuilder response = new StringBuilder(OPEN.replaceFirst("\\$url", this.redirectUrl.toString()));
         response.append(CLOSE);
         return response.toString();
     }

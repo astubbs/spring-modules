@@ -17,6 +17,7 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.ArrayList;
+import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
 
 /**
  * Taconite based ajax action for setting an attribute value.
@@ -27,7 +28,7 @@ public class SetAttributeAction extends AbstractRenderingAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-set-attributes contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\" $3=\"$4\">";
+    private static final String OPEN = "<taconite-set-attributes $key=\"$value\">";
     private static final String CLOSE = "</taconite-set-attributes>";
     
     private String attribute;
@@ -45,8 +46,20 @@ public class SetAttributeAction extends AbstractRenderingAction {
         this.value = value;
     }
     
+    /** 
+     * Construct the action.
+     * @param matcher The matcher that identifies html elements whose attribute will be set.
+     * @param attribute The attribute name.
+     * @param value The value to set. 
+     */
+    public SetAttributeAction(ElementMatcher matcher, String attribute, String value) {
+        super(matcher, new ArrayList(0));
+        this.attribute = attribute;
+        this.value = value;
+    }
+    
     protected String getOpeningTag() {
-        return OPEN.replaceFirst("\\$3", this.attribute).replaceFirst("\\$4", this.value);
+        return OPEN.replaceFirst("\\$key", this.attribute).replaceFirst("\\$value", this.value);
     }
 
     protected  String getClosingTag() {

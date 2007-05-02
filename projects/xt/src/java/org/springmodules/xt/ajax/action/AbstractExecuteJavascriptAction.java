@@ -25,7 +25,7 @@ import org.springmodules.xt.ajax.AjaxAction;
  */
 public abstract class AbstractExecuteJavascriptAction implements AjaxAction {
     
-    private static final String OPEN = "<taconite-execute-javascript  parseInBrowser=\"true\">";
+    private static final String OPEN = "<taconite-execute-javascript>";
     private static final String CLOSE = "</taconite-execute-javascript>";
     
     public String execute() {

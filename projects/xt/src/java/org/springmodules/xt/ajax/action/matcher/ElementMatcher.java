@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.springmodules.xt.ajax;
+package org.springmodules.xt.ajax.action.matcher;
 
 import java.io.Serializable;
 
 /**
- * Interface representing an ajax action to be executed in the context of an ajax response.
+ * Strategy interface used by {@link org.springmodules.xt.ajax.action.AbstractRenderingAction} 
+ * implementations for matching html elements to modify.
  *
  * @author Sergio Bossa
  */
-public interface AjaxAction extends Serializable {
-   
+public interface ElementMatcher extends Serializable {
+    
     /**
-     * Execute this action.
-     * @return A string containing the result of this action.
+     * Render the matching strategy.
      */
-    public String execute();
+    public String render();
 }

@@ -17,6 +17,7 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.List;
+import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
@@ -28,7 +29,7 @@ public class ReplaceContentAction extends AbstractRenderingAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-replace-children contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
+    private static final String OPEN = "<taconite-replace-children>";
     private static final String CLOSE = "</taconite-replace-children>";
     
     /**
@@ -47,6 +48,24 @@ public class ReplaceContentAction extends AbstractRenderingAction {
      */
     public ReplaceContentAction(String elementId, Component component) {
         super(elementId, component);
+    }
+    
+    /**
+     * Construct the action.
+     * @param matcher The matcher that identifies html elements whose content must be replaced.
+     * @param components A list of components (html elements) that will replace the content of matching elements.
+     */
+    public ReplaceContentAction(ElementMatcher matcher, List<Component> components) {
+        super(matcher, components);
+    }
+    
+    /**
+     * Construct the action.
+     * @param matcher The matcher that identifies html elements whose content must be replaced.
+     * @param components The component (html element) that will replace the content of matching elements.
+     */
+    public ReplaceContentAction(ElementMatcher matcher, Component component) {
+        super(matcher, component);
     }
     
     protected String getOpeningTag() {

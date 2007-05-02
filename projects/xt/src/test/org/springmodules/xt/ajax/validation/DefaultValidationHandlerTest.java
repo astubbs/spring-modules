@@ -49,7 +49,7 @@ public class DefaultValidationHandlerTest extends XMLEnhancedTestCase {
         System.out.println(rendering);
         
         assertXpathEvaluatesTo("Default Message 1", "//taconite-append-as-children/div", rendering);
-        assertXpathEvaluatesTo("true", "//taconite-append-as-children/@multipleMatch", rendering);
+        assertXpathEvaluatesTo("wildcard", "//taconite-append-as-children/@matchMode", rendering);
         assertXpathEvaluatesTo("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});", "//taconite-execute-javascript/script", rendering);
     }
     
@@ -69,7 +69,7 @@ public class DefaultValidationHandlerTest extends XMLEnhancedTestCase {
         System.out.println(rendering);
         
         assertXpathEvaluatesTo("Default Message 1 for event : submitEvent", "//taconite-append-as-children/span", rendering);
-        assertXpathEvaluatesTo("true", "//taconite-append-as-children/@multipleMatch", rendering);
+        assertXpathEvaluatesTo("wildcard", "//taconite-append-as-children/@matchMode", rendering);
         assertXpathEvaluatesTo("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});", "//taconite-execute-javascript/script", rendering);
     }
 }

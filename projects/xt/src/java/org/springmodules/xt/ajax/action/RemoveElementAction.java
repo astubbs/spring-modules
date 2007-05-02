@@ -17,6 +17,7 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.ArrayList;
+import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
 
 /**
  * Taconite based ajax action for removing a given element, identified by its id.
@@ -27,7 +28,7 @@ public class RemoveElementAction extends AbstractRenderingAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-delete contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
+    private static final String OPEN = "<taconite-delete>";
     private static final String CLOSE = "</taconite-delete>";
     
     private String elementId;
@@ -38,6 +39,14 @@ public class RemoveElementAction extends AbstractRenderingAction {
      */
     public RemoveElementAction(String elementId) {
         super(elementId, new ArrayList(0));
+    }
+    
+    /** 
+     * Construct the action.
+     * @param matcher The matcher that identifies html elements to remove.
+     */
+    public RemoveElementAction(ElementMatcher matcher) {
+        super(matcher, new ArrayList(0));
     }
     
     protected String getOpeningTag() {

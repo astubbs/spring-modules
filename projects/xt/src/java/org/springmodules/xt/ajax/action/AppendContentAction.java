@@ -17,6 +17,7 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.List;
+import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
@@ -28,7 +29,7 @@ public class AppendContentAction extends AbstractRenderingAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-append-as-children contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
+    private static final String OPEN = "<taconite-append-as-children>";
     private static final String CLOSE = "</taconite-append-as-children>";
     
     /**
@@ -47,6 +48,24 @@ public class AppendContentAction extends AbstractRenderingAction {
      */
     public AppendContentAction(String elementId, Component component) {
         super(elementId, component);
+    }
+    
+    /**
+     * Construct the action.
+     * @param matcher The matcher that identifies html elements to append content to.
+     * @param components A list of components (html elements) that will be appended.
+     */
+    public AppendContentAction(ElementMatcher matcher, List<Component> components) {
+        super(matcher, components);
+    }
+    
+    /**
+     * Construct the action.
+     * @param matcher The matcher that identifies html elements to append content to.
+     * @param components The component (html element) that will be appended.
+     */
+    public AppendContentAction(ElementMatcher matcher, Component component) {
+        super(matcher, component);
     }
     
     protected String getOpeningTag() {

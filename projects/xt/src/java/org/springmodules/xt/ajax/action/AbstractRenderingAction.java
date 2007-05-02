@@ -19,70 +19,73 @@ package org.springmodules.xt.ajax.action;
 import java.util.LinkedList;
 import java.util.List;
 import org.springmodules.xt.ajax.AjaxAction;
+import org.springmodules.xt.ajax.action.matcher.DefaultMatcher;
+import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
- * Taconite based action which matches html elements by their identifiers (id), 
- * and renders components acting on these elements.<br>
- * The action is constructed by passing a target identifier, that is the one of the target HTML element to match, and
- * a list of components to render.<br>
- * By default, the action matches the element whose identifier is equal to the target one.<br>
- * If the multiple matching capability is enabled (see {@link #setMultipleMatch(boolean)}),
- * the action will match elements whose identifier is exactly equal to the target one, or 
- * starts with the same substring and ends with the "_" wildcard character.<br><br>
+ * Abstract Taconite based action for modifying web pages content by rendering data into html elements.<br>
+ * Html elements to modify are identified:
+ * <ul>
+ * <li>By html element identifier.</li>
+ * <li>By {@link org.springmodules.xt.ajax.action.matcher.ElementMatcher}.</li>
+ * </ul>
  * The concrete action (element replacing, content replacing etc.) is defined by subclasses via template methods.
  *
  * @author Sergio Bossa
  */
 public abstract class AbstractRenderingAction implements AjaxAction {
     
-    private String elementId;
-    private boolean multipleMatch;
+    private ElementMatcher matcher;
     private List<Component> components = new LinkedList();
     
     /**
      * Construct the action.
-     * @param elementId The id of the element this action refers to.
+     * @param elementId The id of the element matching this action.
      * @param components A list of components that will be rendered.
      */
     public AbstractRenderingAction(String elementId, List<Component> components) {
-        this.elementId = elementId;
+        this.matcher = new DefaultMatcher(elementId);
         this.components = components;
     }
     
     /**
      * Construct the action.
-     * @param elementId The id of the element this action refers to.
+     * @param elementId The id of the element matching this action.
      * @param component The component that will be rendered.
      */
     public AbstractRenderingAction(String elementId, Component component) {
-        this.elementId = elementId;
+        this.matcher = new DefaultMatcher(elementId);
         this.components.add(component);
     }
     
     /**
-     * Make this action matching multiple elements whose identifier is exactly equal to the
-     * identifier passed to this action, or starts with the same substring and ends with 
-     * the "_" wildcard.
-    */
-    public void setMultipleMatch(boolean multipleMatch) {
-        this.multipleMatch = multipleMatch;
+     * Construct the action.
+     * @param elementMatcher The {@link org.springmodules.xt.ajax.action.matcher.ElementMatcher} 
+     * to use for selecting the elements matching this action.
+     * @param components A list of components that will be rendered.
+     */
+    public AbstractRenderingAction(ElementMatcher elementMatcher, List<Component> components) {
+        this.matcher = elementMatcher;
+        this.components = components;
     }
     
     /**
-     * True if multiple matching is enabled, false otherwise.
+     * Construct the action.
+     * @param elementMatcher The {@link org.springmodules.xt.ajax.action.matcher.ElementMatcher} 
+     * to use for selecting the elements matching this action.
+     * @param component The component that will be rendered.
      */
-    public boolean isMultipleMatch() {
-        return this.multipleMatch;
+    public AbstractRenderingAction(ElementMatcher elementMatcher, Component component) {
+        this.matcher = elementMatcher;
+        this.components.add(component);
     }
     
-    /**
-     * Execute the action, directly rendering into the web page.
-     */
     public String execute() {
-        StringBuilder response = new StringBuilder(this.getOpeningTag()
-        .replaceFirst("\\$1", this.elementId)
-        .replaceFirst("\\$2", Boolean.toString(this.multipleMatch)));
+        String startTag = this.getOpeningTag().substring(0, this.getOpeningTag().length() - 1);
+        StringBuilder response = new StringBuilder(startTag);
+        response.append(" ").append(this.matcher.render());
+        response.append(">");
         for (Component c : this.components) {
             response.append(c.render());
         }
@@ -91,12 +94,7 @@ public abstract class AbstractRenderingAction implements AjaxAction {
     }
     
     /**
-     * Get the action opening tag.<br>
-     * It must contain the following placeholders:
-     * <ul>
-     * <li>The "$1" placeholder, for putting the element id to match.</li>
-     * <li>The "$2" placeholder, for enabling the multiple matching capability.</li>
-     * </ul>
+     * Get the action opening tag.
      */
     protected abstract String getOpeningTag();
     

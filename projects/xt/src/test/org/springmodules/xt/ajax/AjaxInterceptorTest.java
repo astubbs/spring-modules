@@ -134,7 +134,7 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         
         ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
         
-        assertEquals("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> <taconite-redirect targetUrl=\"/ajax/success.page\" parseInBrowser=\"true\"></taconite-redirect> </taconite-root>", 
+        assertEquals("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> <taconite-redirect targetUrl=\"/ajax/success.page\"></taconite-redirect> </taconite-root>", 
                 httpResponse.getContentAsString());
     }
     
@@ -161,7 +161,7 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         
         ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
         
-        assertEquals("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> <taconite-redirect targetUrl=\"/ajax/success.page\" parseInBrowser=\"true\"></taconite-redirect> </taconite-root>", 
+        assertEquals("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> <taconite-redirect targetUrl=\"/ajax/success.page\"></taconite-redirect> </taconite-root>", 
                 httpResponse.getContentAsString());
     }
     

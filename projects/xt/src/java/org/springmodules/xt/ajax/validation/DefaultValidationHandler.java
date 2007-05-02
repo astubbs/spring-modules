@@ -1,12 +1,12 @@
 /*
  * Copyright 2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,8 @@ import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxSubmitEvent;
 import org.springmodules.xt.ajax.action.AppendContentAction;
+import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.action.matcher.WildcardMatcher;
 import org.springmodules.xt.ajax.component.Component;
 import org.springmodules.xt.ajax.action.RemoveContentAction;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
@@ -49,7 +51,7 @@ import org.springmodules.xt.ajax.validation.support.DefaultSuccessRenderingCallb
  * {@link org.springmodules.xt.ajax.validation.support.DefaultErrorRenderingCallback}.
  * </p>
  * <p>
- * If the validation succeeds, that is, the fired {@link org.springmodules.xt.ajax.AjaxSubmitEvent} has no validation errors, 
+ * If the validation succeeds, that is, the fired {@link org.springmodules.xt.ajax.AjaxSubmitEvent} has no validation errors,
  * this handler renders the actions returned by the configurable {@link SuccessRenderingCallback}: by default it uses the
  * {@link org.springmodules.xt.ajax.validation.support.DefaultSuccessRenderingCallback}, which returns no action.<br>
  * If no actions are found, the handler returns a <code>null</code> response.
@@ -74,8 +76,7 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
             response = new AjaxResponseImpl();
             this.removeOldErrors(event, response);
             this.putNewErrors(event, response);
-        } 
-        else {
+        } else {
             AjaxAction[] successActions = this.successRenderingCallback.getSuccessActions(event);
             if (successActions != null && successActions.length > 0) {
                 response = new AjaxResponseImpl();
@@ -87,7 +88,7 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
         
         return response;
     }
-
+    
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
@@ -95,11 +96,11 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
     public void setErrorRenderingCallback(ErrorRenderingCallback errorRenderingCallback) {
         this.errorRenderingCallback = errorRenderingCallback;
     }
-
+    
     public void setSuccessRenderingCallback(SuccessRenderingCallback successRenderingCallback) {
         this.successRenderingCallback = successRenderingCallback;
     }
-
+    
     private void removeOldErrors(AjaxSubmitEvent event, AjaxResponseImpl response) {
         HttpServletRequest request = event.getHttpRequest();
         Errors errors = (Errors) request.getSession(true).getAttribute(this.getErrorsAttributeName(request));
@@ -111,13 +112,13 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
             // Remove old errors from HTML:
             for (Object o : errors.getAllErrors()) {
                 ObjectError error = (ObjectError) o;
-                RemoveContentAction removeAction = new RemoveContentAction(error.getCode());
-                removeAction.setMultipleMatch(true);
+                ElementMatcher matcher = new WildcardMatcher(error.getCode());
+                RemoveContentAction removeAction = new RemoveContentAction(matcher);
                 response.addAction(removeAction);
             }
         }
     }
-
+    
     private void putNewErrors(AjaxSubmitEvent event, AjaxResponseImpl response) {
         Errors errors = event.getValidationErrors();
         HttpServletRequest request = event.getHttpRequest();
@@ -128,10 +129,9 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
         // Put new errors into HTML:
         for (Object o : errors.getAllErrors()) {
             ObjectError error = (ObjectError) o;
-            // Get the component to render:
+            ElementMatcher matcher = new WildcardMatcher(error.getCode());
             Component renderingComponent = this.errorRenderingCallback.getErrorComponent(event, error, this.messageSource, locale);
-            AppendContentAction appendAction = new AppendContentAction(error.getCode(), renderingComponent);
-            appendAction.setMultipleMatch(true);
+            AppendContentAction appendAction = new AppendContentAction(matcher, renderingComponent);
             response.addAction(appendAction);
             // Get the actions to execute *after* rendering the component:
             AjaxAction[] renderingActions = this.errorRenderingCallback.getErrorActions(event, error);

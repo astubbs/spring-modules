@@ -3,7 +3,7 @@
  This JavaScript file describes the XT object with actions for sending ajax requests using the XT Ajax Framework and Taconite.
  **/
 
-var springxt_taconite_version=20070411;
+var springxt_taconite_version=20070426;
 
 var XT = {
     
@@ -75,7 +75,7 @@ var XT = {
     doAjaxAction : function(eventId, sourceElement, jsonObject, loadingInfo) {
         var ajaxRequest = new AjaxRequest(document.URL);
         
-        ajaxRequest.addFormElementsByFormEl(document.forms[0]);
+        ajaxRequest.addFormElements(document.forms[0]);
         ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
         + "&" + this.ajaxParameter + "=ajax-action" 
         + "&" + this.eventParameter + "=" + eventId 
@@ -90,7 +90,7 @@ var XT = {
     doAjaxSubmit : function(eventId, sourceElement, jsonObject, loadingInfo) {
         var ajaxRequest = new AjaxRequest(document.URL);
         
-        ajaxRequest.addFormElementsByFormEl(document.forms[0]);
+        ajaxRequest.addFormElements(document.forms[0]);
         ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
         + "&" + this.ajaxParameter + "=ajax-submit" 
         + "&" + this.eventParameter + "=" + eventId 

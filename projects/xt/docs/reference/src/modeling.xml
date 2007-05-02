@@ -187,9 +187,9 @@ view.setSelected(...);</programlisting>
         annotations</link>.</para>
       </sect4>
 
-      <sect4 id="dynamicbeanintroductor">
+      <sect4 id="dynamicimplementorintroductor">
         <title
-        id="dynamicbeanintroductor-title">DynamicImplementorIntroductor</title>
+        id="dynamicimplementorintroductor-title">DynamicImplementorIntroductor</title>
 
         <para>The <emphasis
         role="bold">DynamicImplementorIntroductor</emphasis> (see

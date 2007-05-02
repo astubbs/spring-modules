@@ -465,14 +465,13 @@ public interface AjaxAction {
     </sect3>
 
     <sect3 id="identifying-page-parts">
-      <title id="identifying-page-parts-title">Identifying page parts: exact
-      and wildcard matching</title>
+      <title id="identifying-page-parts-title">Identifying page parts</title>
 
-      <para>Ajax actions identify page parts by the HTML <emphasis
-      role="bold"><emphasis role="bold">id</emphasis>
-      attribute</emphasis>.</para>
+      <para>By default, Ajax actions that need to identify page parts use the
+      HTML <emphasis role="bold"><emphasis role="bold">id</emphasis>
+      </emphasis>attribute.</para>
 
-      <para>You have to assign an id to every HTML element you want to
+      <para>You have to assign an identifier to every HTML element you want to
       interact with through Ajax actions:</para>
 
       <programlisting>
@@ -480,46 +479,72 @@ public interface AjaxAction {
 &lt;/select&gt;
 </programlisting>
 
-      <para>All actions that want to modify page contents, have to be created
-      with an HTML element id that represent the web page parts that must be
-      modified: then, each action can modify one or more elements, depending
-      on how many elements the action matches.</para>
-
-      <para>The action can match elements by doing an:</para>
+      <para>All actions that want to modify page contents must use
+      either:</para>
 
       <itemizedlist>
         <listitem>
-          <para><emphasis role="bold">Exact match</emphasis> : the action
-          exactly matches the id attribute; an action constructed with a
-          "toFill" id to match, exactly matches an element with a "toFill" id
-          attribute.</para>
+          <para>The element identifier.</para>
         </listitem>
 
         <listitem>
-          <para><emphasis role="bold">Wildcard match</emphasis> : the action
-          matches id attributes ending with the <emphasis role="bold">_
-          (underscore)</emphasis> wildcard; an action constructed with a
-          "toFill" id to match, matches also an element with a "to_" id
-          attribute. Please note that the <emphasis>underscore</emphasis>
-          wildcard must be placed in the HTML element id.</para>
+          <para>An
+          <emphasis>org.springmodules.xt.ajax.action.matcher.ElementMatcher</emphasis>.</para>
         </listitem>
       </itemizedlist>
 
-      <para>Wildcard matching is useful for updating more page parts with the
-      same action.</para>
+      <para>ElementMatchers are a flexible way of identifying page parts by
+      matching elements with different strategies. There are several
+      ElementMatchers:</para>
 
-      <programlisting>
-&lt;select id="toFill"&gt;
-&lt;/select&gt;
-</programlisting>
+      <variablelist>
+        <varlistentry>
+          <term>org.springmodules.xt.ajax.action.matcher.DefaultMatcher</term>
 
-      <programlisting>
-&lt;select id="to_"&gt;
-&lt;/select&gt;
-</programlisting>
+          <listitem>
+            <para>The DefaultMatcher matches a single element by its
+            identifier. It is the default matcher used by actions that
+            directly use element identifiers.</para>
+          </listitem>
+        </varlistentry>
 
-      <para>An action constructed with a "toFill" id to match, will actually
-      match both elements above.</para>
+        <varlistentry>
+          <term>org.springmodules.xt.ajax.action.matcher.ListMatcher</term>
+
+          <listitem>
+            <para>The ListMatcher matches multiple elements against a list of
+            identifiers.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>org.springmodules.xt.ajax.action.matcher.WildcardMatcher</term>
+
+          <listitem>
+            <para>The WildcardMatcher matches multiple elements whose
+            identifier starts with a substring of a given source identifier
+            and ends with the "_"<emphasis role="bold">
+            (underscore)</emphasis> wildcard; for instance, a WildcardMatcher
+            with the "foo.bar" id to match, will match an element with a
+            "foo.bar" id, and an element with the "foo_" id too.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>org.springmodules.xt.ajax.action.matcher.SelectorMatcher</term>
+
+          <listitem>
+            <para>The SelectorMatcher matches multiple elements identified by
+            a list of <ulink
+            url="http://www.w3.org/TR/REC-CSS2/selector.html">CSS2</ulink>/<ulink
+            url="http://www.w3.org/TR/css3-selectors/">CSS3</ulink> Selectors
+            (see the org.springmodules.xt.ajax.action.matcher.SelectorMatcher
+            javadoc for supported selectors).</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>See ElementMatchers javadocs for additional details.</para>
     </sect3>
 
     <sect3 id="components">
@@ -781,12 +806,17 @@ public interface AjaxExceptionHandler {
 
       <warning>
         <para>Since 0.9 version, the old
-        org.springmodules.xt.ajax.AjaxExceptionHandler is now called
-        org.springmodules.xt.ajax.AjaxExceptionHandlerResolver, while the old
-        org.springmodules.xt.ajax.AjaxExceptionResolver and
-        org.springmodules.xt.ajax.support.RedirectExceptionResolver are
-        respectively called org.springmodules.xt.ajax.AjaxExceptionHandler and
-        org.springmodules.xt.ajax.support.RedirectExceptionHandler.</para>
+        <emphasis>org.springmodules.xt.ajax.AjaxExceptionHandler</emphasis> is
+        now called
+        <emphasis>org.springmodules.xt.ajax.AjaxExceptionHandlerResolver</emphasis>,
+        while the old
+        <emphasis>org.springmodules.xt.ajax.AjaxExceptionResolver
+        </emphasis>and
+        <emphasis>org.springmodules.xt.ajax.support.RedirectExceptionResolver</emphasis>
+        are respectively called
+        <emphasis>org.springmodules.xt.ajax.AjaxExceptionHandler</emphasis>
+        and
+        <emphasis>org.springmodules.xt.ajax.support.RedirectExceptionHandler</emphasis>.</para>
       </warning>
     </sect3>
 
@@ -840,8 +870,8 @@ XT.defaultLoadingImage = "..."</programlisting>
             will be able to show a different image in a different element into
             the page.</para>
 
-            <para>That's because every Ajax request specifies its own loading
-            element and image:</para>
+            <para>Every Ajax request must specify its own loading element and
+            image:</para>
 
             <programlisting>XT.doAjaxAction(id, element, jsonParams, {'loadingElementId' : '...', 'loadingImage' : '...'});
 XT.doAjaxSubmit(id, element, jsonParams, {'loadingElementId' : '...', 'loadingImage' : '...'}); </programlisting>
@@ -951,7 +981,7 @@ XT.doAjaxSubmit(id, element, jsonParams, {'loadingElementId' : '...', 'loadingIm
 
     <sect3 id="ajax-tutorial-1">
       <title id="ajax-tutorial-1-title">Working with Ajax action
-      events.</title>
+      events</title>
 
       <para>Ajax action events are used for updating pages without submitting
       data to (eventually configured) Spring MVC controllers: so, <emphasis
@@ -977,7 +1007,7 @@ XT.doAjaxSubmit(id, element, jsonParams, {'loadingElementId' : '...', 'loadingIm
       </itemizedlist>
 
       <sect4 id="ajax-tutorial-1-step-1">
-        <title>Step 1 : Writing the web page.</title>
+        <title>Step 1 : Writing the web page</title>
 
         <para>Writing a web page that fires an Ajax action event is not
         different than writing a normal JSP based web page as you'd usually
@@ -1014,7 +1044,7 @@ XT.doAjaxSubmit(id, element, jsonParams, {'loadingElementId' : '...', 'loadingIm
       </sect4>
 
       <sect4 id="ajax-tutorial-1-step-2">
-        <title>Step 2 : Writing the Ajax handler.</title>
+        <title>Step 2 : Writing the Ajax handler</title>
 
         <para>Our Ajax handler will extend the
         <emphasis>org.springmodules.xt.ajax.AbstractAjaxHandler</emphasis>, so
@@ -1084,7 +1114,7 @@ return response;
       </sect4>
 
       <sect4 id="ajax-tutorial-1-step-3">
-        <title>Step 3 : Mapping the Ajax handler to the web page URL.</title>
+        <title>Step 3 : Mapping the Ajax handler to the web page URL</title>
 
         <para>Say the web page URL is:
         <emphasis>www.example.org/xt/ajax/tutorial1.page</emphasis>. Mapping
@@ -1113,7 +1143,7 @@ return response;
 
     <sect3 id="ajax-tutorial-2">
       <title id="ajax-tutorial-2-title">Working with Ajax submit
-      events.</title>
+      events</title>
 
       <para>Ajax submit events are used for updating pages <emphasis
       role="bold">after</emphasis> submitting data to your Spring MVC
@@ -1143,7 +1173,7 @@ return response;
       </itemizedlist>
 
       <sect4 id="ajax-tutorial-2-step-1">
-        <title>Step 1 : Writing the web page.</title>
+        <title>Step 1 : Writing the web page</title>
 
         <para>Writing a web page that fires a submit event is not different
         than writing a normal JSP based web page as you'd usually do.</para>
@@ -1191,7 +1221,7 @@ return response;
       </sect4>
 
       <sect4 id="ajax-tutorial-2-step-2">
-        <title>Step 2 : Writing the Spring MVC controller.</title>
+        <title>Step 2 : Writing the Spring MVC controller</title>
 
         <para>XT Ajax Framework requires only little changes to the way you
         write Spring MVC controllers.</para>
@@ -1233,7 +1263,7 @@ throws Exception {
       </sect4>
 
       <sect4 id="ajax-tutorial-2-step-3">
-        <title>Step 3 : Writing the Ajax handler.</title>
+        <title>Step 3 : Writing the Ajax handler</title>
 
         <para>Our Ajax handler will extend the
         <emphasis>org.springmodules.xt.ajax.AbstractAjaxHandler</emphasis>, so
@@ -1299,7 +1329,7 @@ return response;
       </sect4>
 
       <sect4 id="ajax-tutorial-2-step-4">
-        <title>Step 4 : Mapping the Ajax handler to the web page URL.</title>
+        <title>Step 4 : Mapping the Ajax handler to the web page URL</title>
 
         <para>Say the web page URL is:
         <emphasis>www.example.org/xt/ajax/tutorial2.page</emphasis>. Mapping
@@ -1327,7 +1357,7 @@ return response;
     </sect3>
 
     <sect3 id="ajax-tutorial-3">
-      <title id="ajax-tutorial-3-title">Working with Ajax validation.</title>
+      <title id="ajax-tutorial-3-title">Working with Ajax validation</title>
 
       <para>Ajax validation is a common use case, so the XT Ajax Framework
       provides the <emphasis
@@ -1335,12 +1365,12 @@ return response;
       for doing Ajax based validation in a very simple way.</para>
 
       <para>In this tutorial we'll implement a simple Ajax validation use
-      case, <emphasis role="bold">validating an employee matriculation
+      case: <emphasis role="bold">validating an employee matriculation
       code</emphasis>. We'll see how to:</para>
 
       <itemizedlist>
         <listitem>
-          <para>Use the DefaultValidationHandler.</para>
+          <para>Configure the DefaultValidationHandler.</para>
         </listitem>
 
         <listitem>
@@ -1353,7 +1383,7 @@ return response;
       </itemizedlist>
 
       <sect4 id="ajax-tutorial-3-step-1">
-        <title>Step 1 : Using the DefaultValidationHandler.</title>
+        <title>Step 1 : Configuring the DefaultValidationHandler</title>
 
         <para>If you want to use the DefaultValidationHandler without any
         customization, you must simply configure and map it into the Spring
@@ -1372,23 +1402,18 @@ return response;
 
         <para>By default, the DefaultValidationHandler displays and highlights
         error messages in the submitted web page, and redirects to the success
-        page on successfull.</para>
-
-        <note>
-          <para>You can <emphasis role="bold">customize how error messages are
-          rendered</emphasis>, by providing a custom implementation of the
-          <emphasis
-          role="bold">org.springmodules.xt.ajax.validation.ErrorRenderingCallback</emphasis>
-          class, and <emphasis role="bold">how successfull validation is
-          handled</emphasis>, by providing a custom implementation of the
-          <emphasis
-          role="bold">org.springmodules.xt.ajax.validation.SuccessRenderingCallback</emphasis>
-          class.</para>
-        </note>
+        page on successfull. However, you can <emphasis role="bold">customize
+        how error messages are rendered</emphasis>, by providing a custom
+        implementation of the
+        <emphasis>org.springmodules.xt.ajax.validation.ErrorRenderingCallback</emphasis>
+        class, and <emphasis role="bold">how successfull validation is
+        handled</emphasis>, by providing a custom implementation of the
+        <emphasis>org.springmodules.xt.ajax.validation.SuccessRenderingCallback</emphasis>
+        class.</para>
       </sect4>
 
       <sect4 id="ajax-tutorial-3-step-2">
-        <title>Step 2 : Writing the Spring MVC validator.</title>
+        <title>Step 2 : Writing the Spring MVC validator</title>
 
         <para>XT Ajax Framework doesn't require to change the validator code:
         it is completely independent.</para>
@@ -1413,12 +1438,14 @@ public class EmployeeValidator implements Validator {
     }
 }</programlisting>
 
-        <para>The <emphasis>employee.null.code</emphasis> is the error code
-        whose message will be rendered in the web page.</para>
+        <para>Please note the <emphasis>employee.null.code</emphasis> error
+        code: as we are going to see in the next section, it is the message
+        that will be rendered in the web page by the
+        DefaultValidationHandler.</para>
       </sect4>
 
       <sect4 id="ajax-tutorial-3-step-3">
-        <title>Step 3 : Writing the web page.</title>
+        <title>Step 3 : Writing the web page</title>
 
         <para>First, import the core XT Ajax javascript library, plus the
         Prototype and Script.aculo.us libraries:</para>
@@ -1436,20 +1463,16 @@ public class EmployeeValidator implements Validator {
 
         <para>In our sample, we have an
         <emphasis>employee.null.code</emphasis> error code, and we want to
-        have a <emphasis>div</emphasis> element containing all employee
-        related errors, and another one containing just the
+        have a <emphasis>div</emphasis> element containing just the
         <emphasis>employee.null.code</emphasis> error; here is what we have to
         write:</para>
 
         <programlisting>
-&lt;div id="<emphasis role="bold">employee._</emphasis>"/&gt;
-......
 &lt;div id="<emphasis role="bold">employee.null.code</emphasis>"/&gt;
 </programlisting>
 
-        <para>The DefaultValidationHandler will use <emphasis
-        role="bold">exact and wildcard matching</emphasis> for filling the
-        elements above with proper error messages.</para>
+        <para>The DefaultValidationHandler will fill the element above with
+        the proper error message.</para>
 
         <note>
           <para>Error messages filled by the DefaultValidationHandler are
@@ -1467,6 +1490,65 @@ public class EmployeeValidator implements Validator {
           <para><emphasis>validate</emphasis> is the mandatory event name
           associated with the DefaultValidationHandler.</para>
         </note>
+      </sect4>
+
+      <sect4 id="ajax-tutorial-3-step-4">
+        <title>Step 4 : Organizing error messages</title>
+
+        <para>The DefaultValidationHandler puts your error messages in HTML
+        elements whose identifier is equal to the validator error code.</para>
+
+        <para>In the previous section, the handler used the following
+        element:</para>
+
+        <programlisting>
+&lt;div id="<emphasis role="bold">employee.null.code</emphasis>"/&gt;
+</programlisting>
+
+        <para>to render the <emphasis>employee.null.code</emphasis>
+        error.</para>
+
+        <para>What if you want to group error messages, i.e. all errors with
+        the error code starting with the "employee" substring?</para>
+
+        <para>The DefaultValidationHandler automatically uses wildcard
+        matching; by doing so, it let you organize your error messages in HTML
+        elements whose identifier either:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>Is exactly equal to the error code whose message has to be
+            displayed.</para>
+          </listitem>
+
+          <listitem>
+            <para>Starts with a substring of the error code whose message has
+            to be displayed, and ends with the "_" wildcard.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Error messages will be displayed into all elements with matching
+        identifier.</para>
+
+        <para>An example will help clarifying.</para>
+
+        <para>Say you have two error codes (with related messages):
+        <emphasis>employee.null.code</emphasis> and
+        <emphasis>employee.null.username</emphasis>. If you want to display a
+        different HTML element for each error message, plus an HTML element
+        containing all error messages whose code starts with "employee", just
+        put the following elements in your web page:</para>
+
+        <programlisting>
+&lt;div id="<emphasis role="bold">employee_</emphasis>"/&gt;
+......
+&lt;div id="<emphasis role="bold">employee.null.code</emphasis>"/&gt;
+&lt;div id="<emphasis role="bold">employee.null.username</emphasis>"/&gt;
+</programlisting>
+
+        <para>The first div element will display all error messages starting
+        with the "employee" substring, while the other two will display each
+        one the proper message.</para>
       </sect4>
     </sect3>
   </sect2>
