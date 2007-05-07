@@ -50,7 +50,7 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
 
     final static String ELEMENT_NAME = "xml-based-validator";
 
-    private final static String ERROR_CODE_CONVERTER_ATTR = "errorConverter";
+    private final static String ERROR_CODE_CONVERTER_ATTR = "errorCodeConverter";
 
     private final static String CLASS_ATTR = "class";
 

@@ -116,6 +116,8 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
 
     private static final String METHOD_TAG = "method";
 
+    private static final String VALIDATOR_BEAN_TAG = "validator-bean";
+
     private static final String VALIDATOR_TAG = "validator";
 
     private static final String PACKAGE_ATTR = "package";
@@ -176,6 +178,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      *
      * @param handlerRegistry The validation rule element handler registry that will be used by this loader.
      * @param conditionExpressionParser The condition parser this loader should use to parse the cascade validation conditions.
+     * @param functionExpressionParser The function parser this loader should use to parse the error arguments.
      */
     public DefaultXmlBeanValidationConfigurationLoader(
         ValidationRuleElementHandlerRegistry handlerRegistry,
@@ -285,6 +288,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * element.
      *
      * @param element The &lt;class&gt; element.
+     * @param clazz The class for which the validation configuration is being loaded.
      * @return The created bean validation configuration.
      */
     public BeanValidationConfiguration handleClassDefinition(Class clazz, Element element) {
@@ -295,6 +299,12 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         for (int i = 0; i < nodes.getLength(); i++) {
             Element validatorDefinition = (Element) nodes.item(i);
             handleValidatorDefinition(validatorDefinition, clazz, configuration);
+        }
+
+        nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, VALIDATOR_BEAN_TAG);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element validatorBeanDefinition = (Element) nodes.item(i);
+            handleValidatorBeanDefinition(validatorBeanDefinition, clazz, configuration);
         }
 
         nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, GLOBAL_TAG);
@@ -321,6 +331,16 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
     protected void handleValidatorDefinition(Element validatorDefinition, Class clazz, MutableBeanValidationConfiguration configuration) {
         String className = validatorDefinition.getAttribute(CLASS_ATTR);
         configuration.addCustomValidator(constructValidator(className));
+    }
+
+    protected void handleValidatorBeanDefinition(Element definition, Class clazz, MutableBeanValidationConfiguration configuration) {
+        if (applicationContext == null) {
+            throw new UnsupportedOperationException(VALIDATOR_BEAN_TAG + " configuration cannot be applied for " +
+                "this configuration loader was not deployed in an application context");
+        }
+        String beanName = definition.getAttribute(NAME_ATTR);
+        Validator validator = (Validator)applicationContext.getBean(beanName, Validator.class);
+        configuration.addCustomValidator(validator);
     }
 
     /**

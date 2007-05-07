@@ -21,6 +21,8 @@ import java.util.Calendar;
 
 import junit.framework.TestCase;
 import org.springframework.validation.BindException;
+import org.springframework.validation.Validator;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springmodules.validation.bean.BeanValidator;
 import org.springmodules.validation.bean.context.ValidationContextHolder;
 import org.springmodules.validation.bean.context.DefaultValidationContext;
@@ -146,6 +148,39 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
 
         clearContext();
 
+    }
+
+    public void testSpringValidator_WhenDeployedInApplicationContext() throws Exception {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("appCtxt.xml", getClass());
+        Validator validator = (Validator)context.getBean("validator");
+
+        TestBean bean = new TestBean();
+        BindException errors = new BindException(bean, "bean");
+        validator.validate(bean, errors);
+        assertTrue(errors.hasErrors());
+        assertTrue(errors.hasFieldErrors("name"));
+
+        bean = new TestBean("test");
+        errors = new BindException(bean, "bean");
+        validator.validate(bean, errors);
+        assertFalse(errors.hasErrors());
+
+    }
+
+    public void testSpringValidator_WhenNotDeployedInApplicationContext() throws Exception {
+
+        BeanValidator validator = new BeanValidator();
+        validator.setConfigurationLoader(new AnnotationBeanValidationConfigurationLoader());
+
+        TestBean bean = new TestBean();
+        BindException errors = new BindException(bean, "bean");
+
+        try {
+            validator.validate(bean, errors);
+            fail("Expecting an UnsupportedOperationException for the validator was not deployed within an application context");
+        } catch (UnsupportedOperationException uso) {
+            // expected
+        }
     }
 
 

@@ -5,6 +5,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
                            http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator-2.0.xsd">
 
+    <bean id="errorCodeConverter" class="org.springmodules.validation.bean.conf.namespace.TestErrorCodeConverter"/>
+
     <bean id="conditionExpressionParser" class="org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser">
         <property name="customFunctions">
             <map>
@@ -13,7 +15,7 @@
         </property>
     </bean>
 
-    <vld:annotation-based-validator id="validator">
+    <vld:annotation-based-validator id="validator" errorCodeConverter="errorCodeConverter">
         <vld:annotation-handlers>
             <vld:handler class="org.springmodules.validation.bean.conf.namespace.IsFirstLetterCapitalizedPropertyAnnotationHandler"/>
         </vld:annotation-handlers>
@@ -23,6 +25,7 @@
     <!-- The same validator as above in the plain spring bean syntax -->
 
     <bean id="validator2" class="org.springmodules.validation.bean.BeanValidator">
+        <property name="errorCodeConverter" ref="errorCodeConverter"/>
         <property name="configurationLoader">
             <bean class="org.springmodules.validation.bean.conf.loader.annotation.AnnotationBeanValidationConfigurationLoader">
                 <property name="handlerRegistry">

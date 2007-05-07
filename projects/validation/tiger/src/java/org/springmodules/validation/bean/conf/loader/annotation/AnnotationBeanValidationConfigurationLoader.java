@@ -182,7 +182,7 @@ public class AnnotationBeanValidationConfigurationLoader implements BeanValidati
             }
             ClassValidationAnnotationHandler handler = handlerRegistry.findClassHanlder(annotation, clazz);
             if (handler == null) {
-                logger.warn("No hanlder is defined for annotation '" + annotation.annotationType().getName() +
+                logger.warn("No handler is defined for annotation '" + annotation.annotationType().getName() +
                     "'... Annotation will be ignored...");
             } else {
                 handler.handleAnnotation(annotation, clazz, configuration);
@@ -200,7 +200,7 @@ public class AnnotationBeanValidationConfigurationLoader implements BeanValidati
                 }
                 MethodValidationAnnotationHandler handler = handlerRegistry.findMethodHandler(annotation, clazz, method);
                 if (handler == null) {
-                    logger.warn("No hanlder is defined for annotation '" + annotation.annotationType().getName() +
+                    logger.warn("No handler is defined for annotation '" + annotation.annotationType().getName() +
                         "'... Annotation will be ignored...");
                 } else {
                     handler.handleAnnotation(annotation, clazz, method, configuration);

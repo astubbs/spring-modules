@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.validation.BindException;
 import org.springmodules.validation.bean.BeanValidator;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  * Tests for {@link org.springmodules.validation.bean.conf.loader.xml.DefaultXmlBeanValidationConfigurationLoader}.
@@ -33,6 +34,11 @@ public class NamespaceConfigurationIntegrationTests extends TestCase {
         validator.validate(person, errors);
 
         assertEquals(1, errors.getGlobalErrorCount());
+
+        // testing the custom error code converter
+        String[] codes = errors.getGlobalError().getCodes();
+        assertTrue(ArrayUtils.contains(codes, "test.passwords.do.not.match"));
+
         assertEquals(3, errors.getFieldErrorCount());
 
     }
@@ -51,6 +57,11 @@ public class NamespaceConfigurationIntegrationTests extends TestCase {
         validator.validate(person, errors);
 
         assertEquals(1, errors.getGlobalErrorCount());
+
+        // testing the custom error code converter
+        String[] codes = errors.getGlobalError().getCodes();
+        assertTrue(ArrayUtils.contains(codes, "test.passwords.do.not.match"));
+
         assertEquals(4, errors.getFieldErrorCount());
 
     }

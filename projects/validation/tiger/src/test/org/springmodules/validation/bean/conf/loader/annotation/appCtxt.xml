@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:vld="http://www.springmodules.org/validation/bean/validator"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator-2.0.xsd">
+
+    <bean id="validator" class="org.springmodules.validation.bean.BeanValidator">
+        <property name="configurationLoader">
+            <bean class="org.springmodules.validation.bean.conf.loader.annotation.AnnotationBeanValidationConfigurationLoader"/>
+        </property>
+    </bean>
+
+    <bean id="testBeanValidator" class="org.springmodules.validation.bean.conf.loader.annotation.TestBeanValidator"/>
+
+</beans>

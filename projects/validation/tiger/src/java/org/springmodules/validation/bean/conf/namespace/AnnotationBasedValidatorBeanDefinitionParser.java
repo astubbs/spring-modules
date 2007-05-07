@@ -42,7 +42,7 @@ public class AnnotationBasedValidatorBeanDefinitionParser extends AbstractBeanDe
 
     final static String ELEMENT_NAME = "annotation-based-validator";
 
-    private final static String ERROR_CODE_CONVERTER_ATTR = "errorConverter";
+    private final static String ERROR_CODE_CONVERTER_ATTR = "errorCodeConverter";
 
     private final static String CLASS_ATTR = "class";
 

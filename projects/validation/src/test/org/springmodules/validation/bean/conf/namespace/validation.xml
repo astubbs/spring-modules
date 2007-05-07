@@ -5,7 +5,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
                         http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator-2.0.xsd">
 
-    <vld:xml-based-validator id="validator">
+    <bean id="errorCodeConverter" class="org.springmodules.validation.bean.conf.namespace.TestErrorCodeConverter"/>
+
+    <vld:xml-based-validator id="validator" errorCodeConverter="errorCodeConverter">
         <vld:element-handlers>
             <vld:handler
                 class="org.springmodules.validation.bean.conf.namespace.IsFirstLetterCapitalizedPropertyElementHandler"/>

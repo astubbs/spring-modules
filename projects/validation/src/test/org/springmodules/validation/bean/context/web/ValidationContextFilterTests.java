@@ -44,7 +44,6 @@ public class ValidationContextFilterTests extends TestCase {
     }
 
     public void testConfigurationWithApplicationContext() throws Exception {
-        System.out.println(String[].class.getName());
         ClassPathXmlApplicationContext appCxt = new ClassPathXmlApplicationContext("testApplicationContext.xml", getClass());
         ValidationContextFilter filter = (ValidationContextFilter)appCxt.getBean("filter");
 

@@ -34,5 +34,4 @@ public @interface Validators {
      * The list of the validator annotations.
      */
     Validator[] value();
-
 }

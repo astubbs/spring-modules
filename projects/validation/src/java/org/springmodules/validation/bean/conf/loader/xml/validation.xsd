@@ -19,6 +19,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="vld:validator" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="vld:validator-bean" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element ref="vld:global" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="vld:property" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element ref="vld:method" minOccurs="0" maxOccurs="unbounded"/>
@@ -225,6 +226,18 @@
         </xs:annotation>
         <xs:complexType>
             <xs:attribute name="class" use="required" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="validator-bean">
+        <xs:annotation>
+            <xs:documentation>
+                Specifies the name of the org.springframework.validation.Validator bean by which it's deployed in
+                the spring application context
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:attribute name="name" use="required" type="xs:string"/>
         </xs:complexType>
     </xs:element>
 

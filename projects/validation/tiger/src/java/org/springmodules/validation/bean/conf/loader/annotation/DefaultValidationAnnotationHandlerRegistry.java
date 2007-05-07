@@ -69,6 +69,7 @@ public class DefaultValidationAnnotationHandlerRegistry extends SimpleValidation
         registerClassHandler(new ExpressionsClassValidationAnnotationHandler());
         registerClassHandler(new ValidatorClassValidationAnnotationHandler());
         registerClassHandler(new ValidatorsClassValidationAnnotationHandler());
+        registerClassHandler(new SpringValidatorClassValidationAnnotationHandler());
 
         // method annotation handlers
         registerMethodHandler(new ValidationMethodAnnotationHandler());

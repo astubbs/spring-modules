@@ -3,9 +3,12 @@ package org.springmodules.validation.bean.conf.loader.xml;
 import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.validation.BindException;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ApplicationContext;
 import org.springmodules.validation.bean.BeanValidator;
 import org.springmodules.validation.bean.context.ValidationContextUtils;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.ResourceConfigurationLoadingException;
 import org.springmodules.validation.util.cel.ognl.OgnlConditionExpressionParser;
 import org.springmodules.validation.util.fel.parser.OgnlFunctionExpressionParser;
 
@@ -87,11 +90,44 @@ public class DefaultXmlBeanValidationConfigurationLoaderIntegrationTests extends
         assertNotNull(conf);
     }
 
+    public void testValidationBean_WhenDeployedInApplicationContext() throws Exception {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("appCtxt.xml", getClass());
+        DefaultXmlBeanValidationConfigurationLoader loader = createLoader("TestBean.vld.xml", context);
+
+        BeanValidator validator = new BeanValidator(loader);
+        
+        TestBean bean = new TestBean();
+        BindException errors = new BindException(bean, "bean");
+        validator.validate(bean, errors);
+        assertTrue(errors.hasErrors());
+        assertTrue(errors.hasFieldErrors("name"));
+
+        bean = new TestBean("name");
+        errors = new BindException(bean, "bean");
+        validator.validate(bean, errors);
+        assertFalse(errors.hasErrors());
+    }
+
+    public void testValidationBean_WhenNotDeployedInApplicationContext() throws Exception {
+        try {
+            DefaultXmlBeanValidationConfigurationLoader loader = createLoader("TestBean.vld.xml");
+            fail("Expecting an UnsupportedOperationException for the configuration loader is not deployed in " +
+                "an application context");
+        } catch (ResourceConfigurationLoadingException rcle) {
+            // expected
+        }
+    }
+
     protected DefaultXmlBeanValidationConfigurationLoader createLoader(String resource) throws Exception {
+        return createLoader(resource, null);
+    }
+
+    protected DefaultXmlBeanValidationConfigurationLoader createLoader(String resource, ApplicationContext context) throws Exception {
         DefaultXmlBeanValidationConfigurationLoader loader = new DefaultXmlBeanValidationConfigurationLoader();
         loader.setResource(new ClassPathResource(resource, getClass()));
         loader.setConditionExpressionParser(new OgnlConditionExpressionParser());
         loader.setFunctionExpressionParser(new OgnlFunctionExpressionParser());
+        loader.setApplicationContext(context);
         loader.afterPropertiesSet();
         return loader;
     }
