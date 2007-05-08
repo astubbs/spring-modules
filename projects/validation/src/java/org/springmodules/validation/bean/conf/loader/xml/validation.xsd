@@ -79,6 +79,7 @@
             <xs:element ref="vld:regexp" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="vld:size" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="vld:expression" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="vld:spring-condition" minOccurs="0" maxOccurs="unbounded"/>
             <xs:any processContents="skip" namespace="##local" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
@@ -218,6 +219,13 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="condition-ref">
+        <xs:complexType>
+            <xs:attributeGroup ref="vld:common-rule-attributes"/>
+            <xs:attribute name="name" use="required" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
     <xs:element name="validator">
         <xs:annotation>
             <xs:documentation>
@@ -229,7 +237,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="validator-bean">
+    <xs:element name="validator-ref">
         <xs:annotation>
             <xs:documentation>
                 Specifies the name of the org.springframework.validation.Validator bean by which it's deployed in

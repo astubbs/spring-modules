@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.bean.conf.loader.annotation;
+package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-import org.springmodules.validation.validator.AbstractTypeSpecificValidator;
-import org.springframework.validation.Errors;
+import java.lang.annotation.*;
 
 /**
+ * A class level annotation that defines a validator deployed in a spring application context.
+ *
  * @author Uri Boness
  */
-public class TestBeanValidator extends AbstractTypeSpecificValidator {
+@Documented
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@ValidationRule
+public @interface ValidatorRef {
 
-    public TestBeanValidator() {
-            super(TestBean1.class);
-        }
-
-        public void validate(Object object, Errors errors) {
-            if(((TestBean1)object).getName() == null) {
-                errors.rejectValue("name", "errorCode");
-            }
-        }
+    /**
+     * The name of the validator as defined in the spring application context.
+     */
+    String value();
 
 }

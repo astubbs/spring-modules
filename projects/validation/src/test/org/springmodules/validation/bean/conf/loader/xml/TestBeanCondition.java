@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.bean.conf.loader.annotation;
+package org.springmodules.validation.bean.conf.loader.xml;
 
 import org.springmodules.validation.validator.AbstractTypeSpecificValidator;
+import org.springmodules.validation.util.condition.AbstractCondition;
 import org.springframework.validation.Errors;
 
 /**
  * @author Uri Boness
  */
-public class TestBeanValidator extends AbstractTypeSpecificValidator {
+public class TestBeanCondition extends AbstractCondition {
 
-    public TestBeanValidator() {
-            super(TestBean1.class);
-        }
-
-        public void validate(Object object, Errors errors) {
-            if(((TestBean1)object).getName() == null) {
-                errors.rejectValue("name", "errorCode");
-            }
-        }
-
+    public boolean doCheck(Object object) {
+        return object != null;
+    }
 }

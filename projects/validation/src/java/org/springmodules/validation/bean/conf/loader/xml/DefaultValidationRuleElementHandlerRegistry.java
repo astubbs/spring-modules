@@ -67,6 +67,7 @@ public class DefaultValidationRuleElementHandlerRegistry extends SimpleValidatio
         registerPropertyHandler(new ExpressionPropertyValidationElementHandler(namepsaceUri));
         registerPropertyHandler(new DateInPastRuleElementHandler(namepsaceUri));
         registerPropertyHandler(new DateInFutureRuleElementHandler(namepsaceUri));
+        registerPropertyHandler(new ConditionReferenceRuleElementHandler(namepsaceUri));
         if (LibraryUtils.JODA_TIME_IN_CLASSPATH) {
             registerPropertyHandler(new InstantInPastRuleElementHandler(namepsaceUri));
             registerPropertyHandler(new InstantInFutureRuleElementHandler(namepsaceUri));

@@ -69,7 +69,7 @@ public class DefaultValidationAnnotationHandlerRegistry extends SimpleValidation
         registerClassHandler(new ExpressionsClassValidationAnnotationHandler());
         registerClassHandler(new ValidatorClassValidationAnnotationHandler());
         registerClassHandler(new ValidatorsClassValidationAnnotationHandler());
-        registerClassHandler(new SpringValidatorClassValidationAnnotationHandler());
+        registerClassHandler(new ValidatorReferenceClassValidationAnnotationHandler());
 
         // method annotation handlers
         registerMethodHandler(new ValidationMethodAnnotationHandler());
@@ -88,6 +88,7 @@ public class DefaultValidationAnnotationHandlerRegistry extends SimpleValidation
         registerPropertyHandler(new SizeValidationAnnotationHandler());
         registerPropertyHandler(new ExpressionPropertyValidationAnnotationHandler());
         registerPropertyHandler(new ExpressionsPropertyValidationAnnotationHandler());
+        registerPropertyHandler(new ConditionReferenceValidationAnnotationHandler());
 
         if (LibraryUtils.JODA_TIME_IN_CLASSPATH) {
             registerPropertyHandler(new InstantInTheFutureValidationAnnotationHandler());

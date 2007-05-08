@@ -38,7 +38,7 @@ public class ExpressionValidationRule extends AbstractValidationRule {
      * @param expression The condition expression.
      */
     public ExpressionValidationRule(ConditionExpressionParser parser, String expression) {
-        super(ExpressionValidationRule.DEFAULT_ERROR_CODE);
+        super(DEFAULT_ERROR_CODE);
         condition = parser.parse(expression);
     }
 
@@ -51,4 +51,12 @@ public class ExpressionValidationRule extends AbstractValidationRule {
         return condition;
     }
 
+    /**
+     * This rule supports null values as the expression may operate on null values.
+     *
+     * @return true.
+     */
+    protected boolean supportsNullValues() {
+        return true;
+    }
 }

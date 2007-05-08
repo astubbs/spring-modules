@@ -13,4 +13,6 @@
 
     <bean id="testBeanValidator" class="org.springmodules.validation.bean.conf.loader.annotation.TestBeanValidator"/>
 
+    <bean id="testBeanCondition" class="org.springmodules.validation.bean.conf.loader.annotation.TestBeanCondition"/>
+
 </beans>

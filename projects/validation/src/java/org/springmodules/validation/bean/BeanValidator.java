@@ -55,6 +55,8 @@ public class BeanValidator extends RuleBasedValidator {
 
     private ErrorCodeConverter errorCodeConverter;
 
+    private boolean shortCircuitFieldValidation = true;
+
     /**
      * Constructs a new BeanValidator. By default the
      * {@link org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader} is
@@ -120,6 +122,17 @@ public class BeanValidator extends RuleBasedValidator {
      */
     public void setConfigurationLoader(BeanValidationConfigurationLoader configurationLoader) {
         this.configurationLoader = configurationLoader;
+    }
+
+    /**
+     * Determines whether field validation will be short-ciruite, that is, if multiple validation rules are defined
+     * on a field, the first rule to fail will stop the validation process for that field. By default the field
+     * validation <b>will</b> be short-circuited.
+     *
+     * @param shortCircuitFieldValidation
+     */
+    public void setShortCircuitFieldValidation(boolean shortCircuitFieldValidation) {
+        this.shortCircuitFieldValidation = shortCircuitFieldValidation;
     }
 
     //=============================================== Helper Methods ===================================================
@@ -416,7 +429,9 @@ public class BeanValidator extends RuleBasedValidator {
             if (rule.isApplicable(obj) && !rule.getCondition().check(obj)) {
                 String errorCode = errorCodeConverter.convertPropertyErrorCode(rule.getErrorCode(), obj.getClass(), propertyName);
                 errors.rejectValue(propertyName, errorCode, rule.getErrorArguments(obj), rule.getDefaultErrorMessage());
-                return;
+                if (shortCircuitFieldValidation) {
+                    return;
+                }
             }
         }
     }

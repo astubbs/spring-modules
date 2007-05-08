@@ -5,7 +5,9 @@
 
     <class name="org.springmodules.validation.bean.conf.loader.xml.TestBean">
 
-        <validator-bean name="testBeanValidator"/>
+        <property name="name">
+            <condition-ref name="testBeanCondition" code="test.bean.condition"/>
+        </property>
 
     </class>
 

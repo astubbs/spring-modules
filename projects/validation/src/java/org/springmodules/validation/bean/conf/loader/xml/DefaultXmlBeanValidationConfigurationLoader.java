@@ -116,7 +116,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
 
     private static final String METHOD_TAG = "method";
 
-    private static final String VALIDATOR_BEAN_TAG = "validator-bean";
+    private static final String VALIDATOR_BEAN_TAG = "validator-ref";
 
     private static final String VALIDATOR_TAG = "validator";
 

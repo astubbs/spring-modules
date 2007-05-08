@@ -37,7 +37,7 @@ public class MaxValidationRule extends AbstractValidationRule {
      * @param max The upper bound.
      */
     public MaxValidationRule(Comparable max) {
-        super(MaxValidationRule.DEFAULT_ERROR_CODE, MaxValidationRule.createErrorArgumentsResolver(max));
+        super(DEFAULT_ERROR_CODE, createErrorArgumentsResolver(max));
         this.max = max;
     }
 

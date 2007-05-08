@@ -150,29 +150,29 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
 
     }
 
-    public void testSpringValidator_WhenDeployedInApplicationContext() throws Exception {
+    public void testValidatorRef_WhenDeployedInApplicationContext() throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("appCtxt.xml", getClass());
         Validator validator = (Validator)context.getBean("validator");
 
-        TestBean bean = new TestBean();
+        TestBean1 bean = new TestBean1();
         BindException errors = new BindException(bean, "bean");
         validator.validate(bean, errors);
         assertTrue(errors.hasErrors());
         assertTrue(errors.hasFieldErrors("name"));
 
-        bean = new TestBean("test");
+        bean = new TestBean1("test");
         errors = new BindException(bean, "bean");
         validator.validate(bean, errors);
         assertFalse(errors.hasErrors());
 
     }
 
-    public void testSpringValidator_WhenNotDeployedInApplicationContext() throws Exception {
+    public void testValidatorRef_WhenNotDeployedInApplicationContext() throws Exception {
 
         BeanValidator validator = new BeanValidator();
         validator.setConfigurationLoader(new AnnotationBeanValidationConfigurationLoader());
 
-        TestBean bean = new TestBean();
+        TestBean1 bean = new TestBean1();
         BindException errors = new BindException(bean, "bean");
 
         try {
@@ -183,7 +183,39 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
         }
     }
 
+    public void testConditionRef_WhenDeployedInApplicationContext() throws Exception {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("appCtxt.xml", getClass());
+        Validator validator = (Validator)context.getBean("validator");
 
+        TestBean2 bean = new TestBean2();
+        BindException errors = new BindException(bean, "bean");
+        validator.validate(bean, errors);
+        assertTrue(errors.hasErrors());
+        assertTrue(errors.hasFieldErrors("name"));
+
+        bean = new TestBean2("test");
+        errors = new BindException(bean, "bean");
+        validator.validate(bean, errors);
+        assertFalse(errors.hasErrors());
+
+    }
+
+    public void testConditionRef_WhenNotDeployedInApplicationContext() throws Exception {
+
+        BeanValidator validator = new BeanValidator();
+        validator.setConfigurationLoader(new AnnotationBeanValidationConfigurationLoader());
+
+        TestBean2 bean = new TestBean2();
+        BindException errors = new BindException(bean, "bean");
+
+        try {
+            validator.validate(bean, errors);
+            fail("Expecting an UnsupportedOperationException for the validator was not deployed within an application context");
+        } catch (UnsupportedOperationException uso) {
+            // expected
+        }
+    }
+    
     protected void setContext(String context) {
         ValidationContextHolder.setValidationContext(new DefaultValidationContext(context));
     }
