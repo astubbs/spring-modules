@@ -5,6 +5,16 @@ http://springmodules.dev.java.net
 Changes in version 0.9 (in progress)
 ------------------------------------
 
+Package org.springmodules.validation
+* Added validation context support documentation
+* Added ValidationRef annotation and xml element support for referencing Validator beans in app context
+* Added ConditionRef annotation and xml element support for referencing Condition beans in app context
+* Added BeanValidator#setShortCircuitFieldValidation(boolean) to enable/disable short-circuite validation process
+* Updated documentation to reflect the new features
+* Resolved issues: MOD-346, MOD-345
+
+
+
 Changes in version 0.8 (2007.03.11)
 -----------------------------------
 
@@ -67,6 +77,9 @@ Package org.springmodules.xt.ajax
 
 Package org.springmodules.xt.model.generator
 * implemented DynamicGenerator and DynamicFactoryGenerator [MOD-262]
+
+Package org.springmodules.validation
+* Added validation context support
 
 Changes in version 0.7 (2006.12.09)
 -----------------------------------
