@@ -149,7 +149,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderIntegrationTests extends
         validator.validate(bean, errors);
         assertTrue(errors.hasErrors());
         assertTrue(errors.hasFieldErrors("name"));
-        assertEquals("TestBean1.name[test.bean.condition]", errors.getFieldError("name").getCode());
+        assertEquals("TestBean.name[test.bean.condition]", errors.getFieldError("name").getCode());
 
         bean = new TestBean("name");
         errors = new BindException(bean, "bean");
