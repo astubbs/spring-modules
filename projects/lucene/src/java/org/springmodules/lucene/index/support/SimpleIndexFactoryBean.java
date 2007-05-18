@@ -17,6 +17,7 @@
 package org.springmodules.lucene.index.support;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.store.Directory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -122,6 +123,9 @@ public class SimpleIndexFactoryBean implements FactoryBean,InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		if (getDirectory() == null) {
 			throw new IllegalArgumentException("directory is required");
+		}
+		if (getAnalyzer() == null) {
+			setAnalyzer(new SimpleAnalyzer());
 		}
 		this.factory = new SimpleIndexFactory(getDirectory(), getAnalyzer());
 		this.factory.setResolveLock(resolveLock);

@@ -1,42 +1,51 @@
 /*
- * Copyright (c) 2005 Your Corporation. All Rights Reserved.
+ * Copyright 2002-2007 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.springmodules.lucene.index.support;
+
+import java.io.IOException;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
- * This Spring factory bean configures a Lucene ram
+ * This Spring factory bean configures a Lucene RAM
  * directory.
 
  * @author Brian McCallister
  * @author Thierry Templier
  * @see org.apache.lucene.store.RAMDirectory
  */
-public class RAMDirectoryFactoryBean implements FactoryBean, InitializingBean {
+public class RAMDirectoryFactoryBean extends AbstractDirectoryFactoryBean {
 
-    private Directory directory;
-
-    public Object getObject() throws Exception {
-        return directory;
-    }
-
+    /**
+     * Return that the type of the directory is RAMDirectory
+     */
     public Class getObjectType() {
-        return Directory.class;
+        return RAMDirectory.class;
     }
 
-    public boolean isSingleton() {
-        return true;
+    public void checkFactoryBeanConfiguration() {
     }
 
-	/**
-	 * This method constructs a ram Lucene directory.
+    /**
+	 * This method constructs a RAM Lucene directory.
 	 */
-    public void afterPropertiesSet() throws Exception {
-        directory = new RAMDirectory();
+	protected Directory initializeDirectory() throws IOException {
+        return new RAMDirectory();
     }
 
 }
