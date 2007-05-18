@@ -1,11 +1,9 @@
 <%@ page session="false"%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
 
-<c:set var="ctx" value="${rc.contextPath}"/>
-
-<b>Welcome to Spring Lucene indexing page.</b><br/><br/>
+<br/><br/>
 
 <b>Index informations</b><br/><br>
 number of indexed documents: <c:out value="${infos.numDocs}"/>
@@ -14,7 +12,7 @@ number of indexed documents: <c:out value="${infos.numDocs}"/>
 -------------------------------------------------
 <br/><br/>
 <b>Index a text</b><br/><br/>
-<form action="<c:out value="${ctx}"/>/addDocument.html" method="POST">
+<form action="<c:url value="/addDocument.html"/>" method="POST">
 <table cellpadding="0" cellspacing="0" border="0">
   <tr><td>title: </td><td><input type="text" name="title"/></td></tr>
   <tr><td>text: </td><td><textarea name="text"></textarea></td></tr>
@@ -31,7 +29,7 @@ number of indexed documents: <c:out value="${infos.numDocs}"/>
 -------------------------------------------------
 <br/><br/>
 <b>Index an uploaded file</b><br/><br/>
-<form action="<c:out value="${ctx}"/>/addUploadedDocument.html" method="POST" enctype="multipart/form-data">
+<form action="<c:url value="/addUploadedDocument.html"/>" method="POST" enctype="multipart/form-data">
 <table cellpadding="0" cellspacing="0" border="0">
   <tr><td>name: </td><td><input type="text" name="filename"/></td></tr>
   <tr><td>file: </td><td><input type="file" name="file" onChange="filename.value=file.value"/></td></tr>

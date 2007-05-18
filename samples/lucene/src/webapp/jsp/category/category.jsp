@@ -1,11 +1,7 @@
 <%@ page session="false"%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
-
-<c:set var="ctx" value="${rc.contextPath}"/>
-
-<b>Welcome to Spring Lucene category page.</b><br/><br/>
+<%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
 
 <br/><br/>
 <b>Category <c:out value="${category.name}"/></b>:<br/><br/>
