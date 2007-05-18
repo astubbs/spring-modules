@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<xsd:schema xmlns="http://www.springmodules.org/schema/lucene"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	targetNamespace="http://www.springmodules.org/schema/lucene"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"/>
+
+	<xsd:element name="index">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="analyzer" type="analyzerType" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:ID"/>
+			<xsd:attribute name="location" type="xsd:string"/>
+			<xsd:attribute name="create" type="xsd:boolean"/>
+			<xsd:attribute name="analyzer-ref" type="xsd:string"/>
+			<xsd:attribute name="concurrent" default="">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value=""/>
+						<xsd:enumeration value="lock"/>
+						<xsd:enumeration value="channel"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="document-handler">
+		<xsd:complexType>
+			<xsd:attribute name="id" type="xsd:ID"/>
+			<xsd:attribute name="type">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="identity"/>
+						<xsd:enumeration value="extension"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="resource-advice">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="attributes" type="attributesType" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:ID"/>
+			<xsd:attribute name="resource-manager" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="analyzerType">
+		<xsd:choice minOccurs="0" maxOccurs="1">
+			<xsd:element ref="beans:bean"/>
+		</xsd:choice>
+	</xsd:complexType>
+	
+	<xsd:complexType name="attributesType">
+		<xsd:sequence>
+			<xsd:element name="method" type="methodType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="methodType">
+		<xsd:attribute name="name" type="xsd:string"/>
+		<xsd:attribute name="writer-open" type="xsd:string"/>
+		<xsd:attribute name="writer-writing-enabled" type="xsd:boolean"/>
+		<xsd:attribute name="reader-open" type="xsd:boolean"/>
+		<xsd:attribute name="reader-writing-enabled" type="xsd:boolean"/>
+	</xsd:complexType>
+</xsd:schema>
