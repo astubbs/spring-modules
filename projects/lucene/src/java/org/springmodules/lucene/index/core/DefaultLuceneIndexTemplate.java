@@ -155,7 +155,9 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	public void deleteDocuments(Term term) {
+		System.out.println("> indexFactory = "+indexFactory);
 		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		System.out.println("> reader = "+reader);
 		try {
 			reader.deleteDocuments(term);
 		} catch(IOException ex) {
@@ -344,17 +346,18 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	public void updateDocument(Term identifierTerm, DocumentModifier documentModifier, Analyzer analyzer) {
 		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		//TODO: à revoir
-		LuceneSearcher searcher = reader.createSearcher();
+		LuceneSearcher searcher = null;
 		Document document = null;
 		Document updatedDocument = null;
 		try {
+			searcher = reader.createSearcher();
 			LuceneHits hits = searcher.search(new TermQuery(identifierTerm));
 			checkHitsForUpdate(hits);
 			updatedDocument = documentModifier.updateDocument(hits.doc(0));
 		} catch(Exception ex) {
 			throw new LuceneIndexAccessException("Error during updating a document.", ex);
 		} finally {
-			SearcherFactoryUtils.releaseSearcher(searcher);
+			SearcherFactoryUtils.closeSearcher(searcher);
 			IndexReaderFactoryUtils.releaseIndexReader(indexFactory, reader);
 		}
 
@@ -376,7 +379,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 		} catch(Exception ex) {
 			throw new LuceneIndexAccessException("Error during updating a document.", ex);
 		} finally {
-			SearcherFactoryUtils.releaseSearcher(searcher);
+			SearcherFactoryUtils.closeSearcher(searcher);
 			IndexReaderFactoryUtils.releaseIndexReader(indexFactory, reader);
 		}
 
@@ -418,7 +421,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory, writer);
 		}
 	}
-
+	
 	//-------------------------------------------------------------------------
 	// Methods dealing with index reader and writer directly
 	//-------------------------------------------------------------------------

@@ -62,9 +62,9 @@ public class ExtensionDocumentHandlerManager extends DefaultDocumentHandlerManag
 	 * @see org.springmodules.lucene.index.object.file.DocumentHandlerManager#registerDefautHandlers()
 	 */
 	public void registerDefaultHandlers() {
-		Properties properties=loadDocumentHandlerProperties();
-		Set extensions=properties.keySet();
-		for(Iterator i=extensions.iterator();i.hasNext();) {
+		Properties properties = loadDocumentHandlerProperties();
+		Set extensions = properties.keySet();
+		for(Iterator i=extensions.iterator(); i.hasNext(); ) {
 			String extension=(String)i.next();
 			String documentHandlerClassName=(String)properties.get(extension);
 			doRegisterDocumentHandler(extension, documentHandlerClassName);
@@ -73,7 +73,7 @@ public class ExtensionDocumentHandlerManager extends DefaultDocumentHandlerManag
 
 	private void doRegisterDocumentHandler(String extension, String documentHandlerClassName) {
 		try {
-			Class documentHandlerClass=Class.forName(documentHandlerClassName);
+			Class documentHandlerClass = Class.forName(documentHandlerClassName);
 			registerDocumentHandler(new ExtensionDocumentMatching(extension),
 						(DocumentHandler)documentHandlerClass.newInstance());
 		} catch (ClassNotFoundException e) {
