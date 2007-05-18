@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:lucene="http://www.springmodules.org/schema/lucene"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+				       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+				       http://www.springmodules.org/schema/lucene http://www.springmodules.org/schema/lucene/lucene-index.xsd">
+
+	<bean id="analyzer" class="org.apache.lucene.analysis.SimpleAnalyzer"/>
+
+	<lucene:index id="targetIndexFactory" create="true" analyzer-ref="analyzer"/>
+	
+	<bean id="indexFactory" class="org.springmodules.lucene.index.resource.MockIndexFactory">
+		<property name="targetIndexFactory" ref="targetIndexFactory"/>
+	</bean>
+
+	<bean id="test" class="org.springmodules.lucene.index.resource.IndexDaoImpl">
+		<property name="indexFactory" ref="indexFactory"/>
+	</bean>
+
+	<aop:config>
+		<aop:advisor pointcut="execution(* *..*IndexDao*.*(..))"
+			advice-ref="resourceAdvice" />
+	</aop:config>
+	
+	<bean id="resourceManager" class="org.springmodules.lucene.index.resource.DefaultResourceManager">
+		<property name="indexFactory" ref="indexFactory"/>
+	</bean>
+	
+	<lucene:resource-advice id="resourceAdvice" resource-manager="resourceManager">
+		<lucene:attributes>
+			<!-- lucene:method name="get*" writer-open="true"/ -->
+			<!-- lucene:method name="get*" writer-open="true" reader-open="true"
+								writer-writing-enabled="true" reader-writing-enabled="true"/ -->
+			<lucene:method name="myMethod1" writer-open="true" writer-writing-enabled="true"/>
+			<lucene:method name="myMethod2" writer-open="true" writer-writing-enabled="true"/>
+			<lucene:method name="myMethod3" reader-open="true" reader-writing-enabled="true"/>
+			<lucene:method name="myMethod4" reader-open="true" reader-writing-enabled="true"/>
+<!--
+			<prop key="myMethod1">INDEX_WRITER_OPEN, WRITE_INDEX_WRITER_AUTHORIZED</prop>
+			<prop key="myMethod2">INDEX_WRITER_OPEN, WRITE_INDEX_WRITER_AUTHORIZED</prop>
+			<prop key="myMethod3">INDEX_READER_OPEN, WRITE_INDEX_READER_AUTHORIZED</prop>
+			<prop key="myMethod4">INDEX_READER_OPEN, WRITE_INDEX_READER_AUTHORIZED</prop>
+-->
+		</lucene:attributes>
+	</lucene:resource-advice>
+
+</beans>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:lucene="http://www.springmodules.org/schema/lucene"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+				       http://www.springmodules.org/schema/lucene http://www.springmodules.org/schema/lucene/lucene-index.xsd">
+
+	<bean id="analyzer" class="org.apache.lucene.analysis.SimpleAnalyzer"/>
+
+	<!-- lucene:index id="fsDirectory1" concurrent="channel"
+			location="/org/springmodules/lucene/index/support"
+			analyzer-ref="analyzer"/ -->
+
+	<lucene:index id="fsDirectory2" concurrent="lock"
+			location="/org/springmodules/lucene/index/support"
+			analyzer-ref="analyzer"/>
+
+	<!-- lucene:index id="fsDirectory3" concurrent="channel"
+			location="/org/springmodules/lucene/index/support">
+		<lucene:analyzer>
+			<bean class="org.apache.lucene.analysis.SimpleAnalyzer"/>
+		</lucene:analyzer>
+	</lucene:index -->
+
+	<lucene:index id="fsDirectory4" concurrent="lock"
+			location="/org/springmodules/lucene/index/support">
+		<lucene:analyzer>
+			<bean class="org.apache.lucene.analysis.SimpleAnalyzer"/>
+		</lucene:analyzer>
+	</lucene:index>
+
+</beans>
