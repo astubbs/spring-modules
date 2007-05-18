@@ -13,7 +13,15 @@ Package org.springmodules.validation
 * Updated documentation to reflect the new features
 * Resolved issues: MOD-346, MOD-345
 
-
+Package org.springmodules.lucene
+* Added new support of resource management to remain opened resources during
+  the manipulation of the index
+* Added support of PdfBox to index pdf files
+* Added support of transaction to index documents
+* Resolved issues: MOD-161, MOD-355
+* Added custom namespace to configure Lucene resources of the support
+* Added concurrency support using lock
+* Updated index template to support resource management and transaction support
 
 Changes in version 0.8 (2007.03.11)
 -----------------------------------
