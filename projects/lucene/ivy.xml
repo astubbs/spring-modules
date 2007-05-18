@@ -46,7 +46,8 @@
 
         <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.0"/>
 
-        <!-- dependency org="pdfbox" name="pdfbox" rev="0.7.2"/ -->
+        <dependency org="pdfbox" name="pdfbox" rev="0.7.3"/>
+        <dependency org="pdfbox" name="fontbox" rev="0.1.0-dev"/>
 
 		<dependency org="apache" name="poi" rev="2.5.1-final-20040804">
 			<artifact name="poi" type="jar" />            
