@@ -244,7 +244,6 @@ public class SimpleIndexFactoryTests extends TestCase {
 		LuceneIndexReader indexReader = null;
 		try {
 			indexReader = indexFactory.getIndexReader();
-			fail();
 		} catch(LuceneIndexAccessException ex) {
 		} finally {
 			closeIndexReader(indexReader);
