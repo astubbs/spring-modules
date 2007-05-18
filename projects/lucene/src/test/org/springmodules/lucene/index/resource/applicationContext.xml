@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+	<bean id="directory" class="org.springmodules.lucene.index.support.RAMDirectoryFactoryBean"/>
+	
+	<bean id="targetIndexFactory" class="org.springmodules.lucene.index.factory.SimpleIndexFactory">
+		<property name="directory" ref="directory"/>
+		<property name="create" value="true"/>
+	</bean>
+
+	<bean id="indexFactory" class="org.springmodules.lucene.index.resource.MockIndexFactory">
+		<property name="targetIndexFactory" ref="targetIndexFactory"/>
+	</bean>
+
+	<bean id="test" class="org.springmodules.lucene.index.resource.IndexDaoImpl">
+		<property name="indexFactory" ref="indexFactory"/>
+	</bean>
+
+	<aop:config>
+		<aop:advisor pointcut="execution(* *..*IndexDao*.*(..))"
+			advice-ref="resourceAdvice" />
+	</aop:config>
+	
+	<bean id="resourceManager" class="org.springmodules.lucene.index.resource.DefaultResourceManager">
+		<property name="indexFactory" ref="indexFactory"/>
+	</bean>
+	
+	<bean id="resourceAdvice" class="org.springmodules.lucene.index.resource.ResourceInterceptor">
+		<property name="resourceAttributes">
+			<props>
+				<prop key="myMethod1">INDEX_WRITER_OPEN, WRITE_INDEX_WRITER_AUTHORIZED</prop>
+				<prop key="myMethod2">INDEX_WRITER_OPEN, WRITE_INDEX_WRITER_AUTHORIZED</prop>
+				<prop key="myMethod3">INDEX_READER_OPEN, WRITE_INDEX_READER_AUTHORIZED</prop>
+				<prop key="myMethod4">INDEX_READER_OPEN, WRITE_INDEX_READER_AUTHORIZED</prop>
+			</props>
+		</property>
+		<property name="resourceManager" ref="resourceManager"/>
+	</bean>
+	
+</beans>
