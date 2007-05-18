@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
 import org.springmodules.lucene.index.factory.LuceneIndexReader;
 import org.springmodules.lucene.search.LuceneSearchException;
-import org.springmodules.lucene.search.core.SmartSearcherFactory;
 
 /**
  * This is the factory to use a single instance of a searcher to
@@ -36,7 +35,7 @@ import org.springmodules.lucene.search.core.SmartSearcherFactory;
  * @author Thierry Templier
  * @see org.springmodules.lucene.search.factory.SearcherFactory
  */
-public class SingleSearcherFactory extends AbstractSingleSearcherFactory implements InitializingBean, DisposableBean, SmartSearcherFactory {
+public class SingleSearcherFactory extends AbstractSingleSearcherFactory implements InitializingBean, DisposableBean {
 
 	private LuceneSearcher indexSearcher;
 
@@ -92,7 +91,7 @@ public class SingleSearcherFactory extends AbstractSingleSearcherFactory impleme
 	 * @see org.springframework.beans.factory.DisposableBean#destroy()
 	 */
 	public void destroy() throws Exception {
-		SearcherFactoryUtils.releaseSearcher(this.indexSearcher);
+		SearcherFactoryUtils.closeSearcher(this.indexSearcher);
 	}
 
 	/**
@@ -104,14 +103,6 @@ public class SingleSearcherFactory extends AbstractSingleSearcherFactory impleme
 	 */
 	public LuceneSearcher getSearcher() throws IOException {
 		return indexSearcher;
-	}
-
-	/**
-	 * As there is a single instance of the searcher, this one must
-	 * be closed only when the context is closed.
-	 */
-	public boolean shouldClose(LuceneSearcher searcher) {
-		return false;
 	}
 
 }

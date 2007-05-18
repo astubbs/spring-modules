@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +23,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.search.Searcher;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.search.LuceneSearchException;
-import org.springmodules.lucene.search.core.SmartSearcherFactory;
-import org.springmodules.resource.support.ResourceBindingManager;
 
 /**
  * Helper class that provides static methods to obtain Lucene Searcher from
  * an SearcherFactory, and to close this searcher if necessary. Has special support
  * for Spring-managed resources, e.g. for use with LuceneSearcherResourceManager.
  *
- * <p>Used internally by LuceneSearchTemplate and the LuceneIndexResourceManager.
+ * <p>Used internally by LuceneSearchTemplate.
  * Can also be used directly in application code.
  *
  * @author Brian McCallister
@@ -71,17 +69,7 @@ public abstract class SearcherFactoryUtils {
 	 * @throws IOException if thrown by Lucene API methods
 	 */
 	public static LuceneSearcher doGetSearcher(SearcherFactory searcherFactory) throws IOException {
-		SearcherHolder searcherHolder = (SearcherHolder) ResourceBindingManager.getResource(searcherFactory);
-		if (searcherHolder != null && searcherHolder.getSearcher()!=null ) {
-			return searcherHolder.getSearcher();
-		}
-
 		LuceneSearcher searcher = searcherFactory.getSearcher();
-		if( searcherHolder!=null ) {
-			//Lazily open the search if there is an IndexHolder
-			searcherHolder.setSearcher(searcher);
-		}
-
 		return searcher;
      }
 
@@ -109,32 +97,41 @@ public abstract class SearcherFactoryUtils {
 	 * @throws IOException if thrown by Lucene methods
 	 */
 	public static void doReleaseSearcher(SearcherFactory searcherFactory, LuceneSearcher searcher) throws IOException {
-		if (searcher == null || ResourceBindingManager.hasResource(searcherFactory)) {
-			return;
-		}
-
-		if (!(searcherFactory instanceof SmartSearcherFactory)
-				|| ((SmartSearcherFactory) searcherFactory).shouldClose(searcher)) {
+		if( logger.isDebugEnabled() ) {
 			logger.debug("Closing Lucene Searcher");
-			releaseSearcher(searcher);
+		}
+		closeSearcher(searcher);
+	}
+
+	/**
+	 * Close the given Searcher.
+	 * 
+	 * @param searcher Searcher to close if necessary
+	 * (if this is null, the call will be ignored)
+	 */
+	public static void closeSearcher(Searcher searcher) {
+		try {
+			if( searcher!=null ) {
+				searcher.close();
+			}
+		} catch(Exception ex) {
+			throw new LuceneIndexAccessException("Unable to close index searcher", ex);
 		}
 	}
 
 	/**
 	 * Close the given Searcher.
+	 * 
 	 * @param searcher Searcher to close if necessary
 	 * (if this is null, the call will be ignored)
 	 */
-	public static void releaseSearcher(LuceneSearcher searcher) {
+	public static void closeSearcher(LuceneSearcher searcher) {
 		try {
-			if( searcher==null ) {
-				return;
+			if( searcher!=null ) {
+				searcher.close();
 			}
-
-			searcher.close();
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Unable to close index searcher",ex);
+		} catch(Exception ex) {
+			throw new LuceneIndexAccessException("Unable to close index searcher", ex);
 		}
 	}
-
 }
