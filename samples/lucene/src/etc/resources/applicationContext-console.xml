@@ -1,21 +1,21 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
 	<!--
 	     INDEXING
 	-->
 
     <bean id="indexingDirectory" class="org.springmodules.samples.lucene.console.indexing.SimpleDirectoryIndexingImpl">
-    	<property name="indexFactory"><ref bean="indexFactory"/></property>
-    	<property name="documentHandlerManager"><ref bean="documentHandlerManager"/></property>
+    	<property name="indexFactory" ref="indexFactory"/>
+    	<property name="documentHandlerManager" ref="documentHandlerManager"/>
     </bean>
 
     <bean id="indexingDatabase" class="org.springmodules.samples.lucene.console.indexing.SimpleDatabaseIndexingImpl">
-    	<property name="indexFactory"><ref bean="indexFactory"/></property>
-    	<property name="dataSource"><ref bean="dataSource"/></property>
+    	<property name="indexFactory" ref="indexFactory"/>
+    	<property name="dataSource" ref="dataSource"/>
     </bean>
 
 	<!--bean id="urlMatcher" class="org.springmodules.lucene.index.object.url.OnlySiteUrlMatcher">
@@ -23,9 +23,9 @@
 	</bean-->
 
     <bean id="indexingUrl" class="org.springmodules.samples.lucene.console.indexing.SimpleUrlIndexingImpl">
-    	<property name="indexFactory"><ref bean="indexFactory"/></property>
-    	<property name="documentHandlerManager"><ref bean="documentHandlerManager"/></property>
-    	<property name="urlMatcher"><ref bean="urlMatcher"/></property>
+    	<property name="indexFactory" ref="indexFactory"/>
+    	<property name="documentHandlerManager" ref="documentHandlerManager"/>
+    	<property name="urlMatcher" ref="urlMatcher"/>
     </bean>
 
 	<!--
@@ -33,7 +33,7 @@
 	-->
 
     <bean id="searcher" class="org.springmodules.samples.lucene.console.search.SimpleSearcherImpl">
-        <property name="searchService"><ref bean="searchService" /></property>
+        <property name="searchService" ref="searchService"/>
     </bean>
 
 </beans>
