@@ -16,7 +16,10 @@
 
 package org.springmodules.lucene.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 import org.springframework.core.io.Resource;
@@ -53,5 +56,16 @@ public abstract class IOUtils {
 			IOUtils.closeInputStream(inputStream);
 		}
 		return properties;
+	}
+	
+	public static String getContents(InputStream inputStream) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		StringBuffer contents = new StringBuffer();
+		String line = null;
+		while( (line = reader.readLine())!=null ) {
+			contents.append(line);
+			contents.append("\n");
+		}
+		return contents.toString();
 	}
 }
