@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+	<Resource auth="Container" description="Lucene pool"
+		driverClassName="org.hsqldb.jdbcDriver" maxActive="100" maxIdle="30"
+		maxWait="10000" name="jdbc/lucene" password=""
+		type="javax.sql.DataSource"
+		url="jdbc:hsqldb:hsql://localhost:9001" username="sa" />
+</Context>
