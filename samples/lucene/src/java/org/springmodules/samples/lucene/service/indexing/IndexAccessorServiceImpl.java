@@ -36,15 +36,15 @@ public class IndexAccessorServiceImpl implements IndexAccessorService {
 	public void addDocument(String title,
 							String text,String category) {
 		long documentId = documentIdDao.getNextDocumentId();
-		indexAccessorDao.addDocument(String.valueOf(documentId), title, text, category);
 		documentIdDao.incrementDocumentId();
+		indexAccessorDao.addDocument(String.valueOf(documentId), title, text, category);
 	}
 
 	public void addDocument(FileDocumentHolder holder) {
 		long documentId = documentIdDao.getNextDocumentId();
+		documentIdDao.incrementDocumentId();
 		holder.setId(String.valueOf(documentId));
 		indexAccessorDao.addDocument(holder);
-		documentIdDao.incrementDocumentId();
 	}
 
 	public void purgeIndex() {

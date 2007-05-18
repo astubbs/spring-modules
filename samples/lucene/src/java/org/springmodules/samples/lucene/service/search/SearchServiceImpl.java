@@ -18,6 +18,7 @@ package org.springmodules.samples.lucene.service.search;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -55,6 +56,10 @@ public class SearchServiceImpl extends LuceneSearchSupport implements SearchServ
 				}
 			}
 		});
+		for(Iterator i = results.iterator(); i.hasNext(); ) {
+			SearchResult result = (SearchResult)i.next();
+			System.out.println(result.getId()+": "+result.getSource());
+		}
 		return results;
 	}
 
@@ -66,7 +71,7 @@ public class SearchServiceImpl extends LuceneSearchSupport implements SearchServ
 		},new HitExtractor() {
 			public Object mapHit(int id, Document document, float score) {
 				List fields = new ArrayList();
-				for(Enumeration e=document.fields(); e.hasMoreElements();) {
+				for(Enumeration e = document.fields(); e.hasMoreElements();) {
 					Field field = (Field)e.nextElement();
 					DocumentField documentField = new DocumentField(field.name(), field.stringValue(),
 														field.isIndexed(), field.isStored());
@@ -76,7 +81,7 @@ public class SearchServiceImpl extends LuceneSearchSupport implements SearchServ
 			}
 		});
 
-		if( fieldsDocuments.size()==1 ) {
+		if( fieldsDocuments.size()>=1 ) {
 			List fields = (List)fieldsDocuments.get(0);
 			return fields;
 		}
