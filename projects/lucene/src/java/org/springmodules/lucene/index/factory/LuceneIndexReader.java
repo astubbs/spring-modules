@@ -44,176 +44,173 @@ import org.springmodules.lucene.search.factory.LuceneSearcher;
 public interface LuceneIndexReader {
 	
 	/**
-	 * @see IndexReader#close()
+	 * @see org.apache.lucene.index.IndexReader#close()
 	 * @throws IOException
 	 */
 	void close() throws IOException;
 
 	/**
-	 * @see IndexReader#deleteDocument(int)
+	 * @see org.apache.lucene.index.IndexReader#deleteDocument(int)
 	 * @throws IOException
 	 */
 	void deleteDocument(int docNum) throws IOException;
 
 	/**
-	 * @see IndexReader#deleteDocuments(Term)
+	 * @see org.apache.lucene.index.IndexReader#deleteDocuments(Term)
 	 * @throws IOException
 	 */
 	int deleteDocuments(Term term) throws IOException;
 
 	/**
-	 * @see IndexReader#directory()
-	 * @throws IOException
+	 * @see org.apache.lucene.index.IndexReader#directory()
 	 */
 	Directory directory();
 
 	/**
-	 * @see IndexReader#docFreq(Term)
+	 * @see org.apache.lucene.index.IndexReader#docFreq(Term)
 	 * @throws IOException
 	 */
 	int docFreq(Term t) throws IOException;
 
 	/**
-	 * @see IndexReader#document(int)
+	 * @see org.apache.lucene.index.IndexReader#document(int)
 	 * @throws IOException
 	 */
 	Document document(int n) throws IOException;
 
 	/**
-	 * @see IndexReader#getFieldNames(org.apache.lucene.index.IndexReader.FieldOption)
-	 * @throws IOException
+	 * @see org.apache.lucene.index.IndexReader#getFieldNames(org.apache.lucene.index.org.apache.lucene.index.IndexReader.FieldOption)
 	 */
 	Collection getFieldNames(IndexReader.FieldOption fldOption);
 
 	/**
-	 * @see IndexReader#getTermFreqVector(int, String)
+	 * @see org.apache.lucene.index.IndexReader#getTermFreqVector(int, String)
 	 * @throws IOException
 	 */
 	TermFreqVector getTermFreqVector(int docNumber, String field) throws IOException;
 
 	/**
-	 * @see IndexReader#getTermFreqVector(int)
+	 * @see org.apache.lucene.index.IndexReader#getTermFreqVector(int)
 	 * @throws IOException
 	 */
 	TermFreqVector[] getTermFreqVectors(int docNumber) throws IOException;
 
 	/**
-	 * @see IndexReader#getVersion()
-	 * @throws IOException
+	 * @see org.apache.lucene.index.IndexReader#getVersion()
 	 */
 	long getVersion();
 
 	/**
-	 * @see IndexReader#hasDeletions()
-	 * @throws IOException
+	 * @see org.apache.lucene.index.IndexReader#hasDeletions()
 	 */
 	boolean hasDeletions();
 
 	/**
-	 * @see IndexReader#hasNorms(String)
+	 * @see org.apache.lucene.index.IndexReader#hasNorms(String)
 	 * @throws IOException
 	 */
 	boolean hasNorms(String field) throws IOException;
 
 	/**
-	 * @see IndexReader#isCurrent()
+	 * @see org.apache.lucene.index.IndexReader#isCurrent()
 	 * @throws IOException
 	 */
 	boolean isCurrent() throws IOException;
 
 	/**
-	 * @see IndexReader#isDeleted(int)
-	 * @throws IOException
+	 * @see org.apache.lucene.index.IndexReader#isDeleted(int)
 	 */
 	boolean isDeleted(int n);
 
 	/**
-	 * @see IndexReader#maxDoc()
-	 * @throws IOException
+	 * @see org.apache.lucene.index.IndexReader#maxDoc()
 	 */
 	int maxDoc();
 
 	/**
-	 * @see IndexReader#norms(String)
+	 * @see org.apache.lucene.index.IndexReader#norms(String)
 	 * @throws IOException
 	 */
 	byte[] norms(String field) throws IOException;
 
 	/**
-	 * @see IndexReader#norms(String, byte[], int)
+	 * @see org.apache.lucene.index.IndexReader#norms(String, byte[], int)
 	 * @throws IOException
 	 */
 	void norms(String field, byte[] bytes, int offset) throws IOException;
 
 	/**
-	 * @see IndexReader#numDocs()
-	 * @throws IOException
+	 * @see org.apache.lucene.index.IndexReader#numDocs()
 	 */
 	int numDocs();
 
 	/**
-	 * @see IndexReader#setNorm(int, String, byte)
+	 * @see org.apache.lucene.index.IndexReader#setNorm(int, String, byte)
 	 * @throws IOException
 	 */
 	void setNorm(int doc, String field, byte value) throws IOException;
 
 	/**
-	 * @see IndexReader#setNorm(int, String, float)
+	 * @see org.apache.lucene.index.IndexReader#setNorm(int, String, float)
 	 * @throws IOException
 	 */
 	void setNorm(int doc, String field, float value) throws IOException;
 
 	/**
-	 * @see IndexReader#termDocs()
+	 * @see org.apache.lucene.index.IndexReader#termDocs()
 	 * @throws IOException
 	 */
 	TermDocs termDocs() throws IOException;
 
 	/**
-	 * @see IndexReader#termDocs(Term)
+	 * @see org.apache.lucene.index.IndexReader#termDocs(Term)
 	 * @throws IOException
 	 */
 	TermDocs termDocs(Term term) throws IOException;
 
 	/**
-	 * @see IndexReader#termPositions()
+	 * @see org.apache.lucene.index.IndexReader#termPositions()
 	 * @throws IOException
 	 */
 	TermPositions termPositions() throws IOException;
 
 	/**
-	 * @see IndexReader#termPositions(Term)
+	 * @see org.apache.lucene.index.IndexReader#termPositions(Term)
 	 * @throws IOException
 	 */
 	TermPositions termPositions(Term term) throws IOException;
 
 	/**
-	 * @see IndexReader#terms()
+	 * @see org.apache.lucene.index.IndexReader#terms()
 	 * @throws IOException
 	 */
 	TermEnum terms() throws IOException;
 
 	/**
-	 * @see IndexReader#terms(Term)
+	 * @see org.apache.lucene.index.IndexReader#terms(Term)
 	 * @throws IOException
 	 */
 	TermEnum terms(Term t) throws IOException;
 
 	/**
-	 * @see IndexReader#undeleteAll()
+	 * @see org.apache.lucene.index.IndexReader#undeleteAll()
 	 * @throws IOException
 	 */
 	void undeleteAll() throws IOException;
 
 	/**
-	 * 
-	 * @return
+	 * Creates an instance of LuceneSearcher basing on the internal
+	 * resources of the implementation of this interface.
+	 *  
+	 * @return the created LuceneSearcher
 	 */
 	LuceneSearcher createSearcher();
 
 	/**
+	 * Creates an instance of Searcher basing on the internal
+	 * resources of the implementation of this interface.
 	 * 
-	 * @return
+	 * @return the created Searcher
 	 */
 	Searcher createNativeSearcher();
 }

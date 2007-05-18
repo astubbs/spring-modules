@@ -61,7 +61,7 @@ public abstract class AbstractIndexFactory {
 	}
 
 	/**
-	 * Return the Lucene Directory used by index factories.
+	 * Return the Lucene Directory used by IndexFactory.
 	 */
 	public Directory getDirectory() {
 		return directory;
@@ -82,8 +82,14 @@ public abstract class AbstractIndexFactory {
 	}
 
 	/**
+	 * Sets all the values of parameters specified on the IndexWriter
+	 * specified. This method must be called by all concrete IndexFactory
+	 * before to return instance of the LuceneIndexWriter using the
+	 * {@link IndexFactory#getIndexWriter()} method.  
 	 * 
-	 * @param writer
+	 * @param writer the IndexWriter to configure
+	 * @see IndexFactory#getIndexWriter()
+	 * @see SimpleIndexFactory#getIndexWriter()
 	 */
 	protected void setIndexWriterParameters(IndexWriter writer) {
 		writer.setUseCompoundFile(useCompoundFile);
@@ -96,98 +102,98 @@ public abstract class AbstractIndexFactory {
 	}
 
 	/**
-	 * @return
+	 * Return the value of maxBufferedDocs parameter by the IndexWriter.
 	 */
 	public int getMaxBufferedDocs() {
 		return maxBufferedDocs;
 	}
 
 	/**
-	 * @return
+	 * Return the value of maxFieldLength parameter by the IndexWriter.
 	 */
 	public int getMaxFieldLength() {
 		return maxFieldLength;
 	}
 
 	/**
-	 * @return
+	 * Return the value of maxMergeDocs parameter by the IndexWriter.
 	 */
 	public int getMaxMergeDocs() {
 		return maxMergeDocs;
 	}
 
 	/**
-	 * @return
+	 * Return the value of mergeFactor parameter by the IndexWriter.
 	 */
 	public int getMergeFactor() {
 		return mergeFactor;
 	}
 
 	/**
-	 * @return
+	 * Return the value of termIndexInterval parameter by the IndexWriter.
 	 */
 	public int getTermIndexInterval() {
 		return termIndexInterval;
 	}
 
 	/**
-	 * @return
+	 * Return the value of writeLockTimeout parameter by the IndexWriter.
 	 */
 	public int getWriteLockTimeout() {
 		return writeLockTimeout;
 	}
 
 	/**
-	 * @return
+	 * Return the value of maxBufferedDocs parameter by the IndexWriter.
 	 */
 	public boolean isUseCompoundFile() {
 		return useCompoundFile;
 	}
 
 	/**
-	 * @param i
+	 * Set the value of maxBufferedDocs parameter to use with the IndexWriter.
 	 */
 	public void setMaxBufferedDocs(int i) {
 		maxBufferedDocs = i;
 	}
 	
 	/**
-	 * @param i
+	 * Set the value of maxFieldLength parameter to use with the IndexWriter.
 	 */
 	public void setMaxFieldLength(int i) {
 		maxFieldLength = i;
 	}
 
 	/**
-	 * @param i
+	 * Set the value of maxMergeDocs parameter to use with the IndexWriter.
 	 */
 	public void setMaxMergeDocs(int i) {
 		maxMergeDocs = i;
 	}
 
 	/**
-	 * @param i
+	 * Set the value of mergeFactor parameter to use with the IndexWriter.
 	 */
 	public void setMergeFactor(int i) {
 		mergeFactor = i;
 	}
 
 	/**
-	 * @param i
+	 * Set the value of termIndexInterval parameter to use with the IndexWriter.
 	 */
 	public void setTermIndexInterval(int i) {
 		termIndexInterval = i;
 	}
 
 	/**
-	 * @param i
+	 * Set the value of writeLockTimeout parameter to use with the IndexWriter.
 	 */
 	public void setWriteLockTimeout(int i) {
 		writeLockTimeout = i;
 	}
 
 	/**
-	 * @param b
+	 * Set the value of useCompoundFile parameter to use with the IndexWriter.
 	 */
 	public void setUseCompoundFile(boolean b) {
 		useCompoundFile = b;

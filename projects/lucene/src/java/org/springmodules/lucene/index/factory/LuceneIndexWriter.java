@@ -136,6 +136,7 @@ public interface LuceneIndexWriter {
 	
 	/**
 	 * @see IndexWriter#optimize()
+	 * @see IOException
 	 */
 	void optimize() throws IOException;
 	

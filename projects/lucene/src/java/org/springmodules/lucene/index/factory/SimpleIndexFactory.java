@@ -41,8 +41,8 @@ import org.springmodules.lucene.index.LuceneIndexAccessException;
  * @see org.springmodules.lucene.index.factory.IndexFactory
  * @see org.springmodules.lucene.index.factory.AbstractIndexFactory
  * @see org.springmodules.lucene.index.factory.AbstractIndexFactory#setIndexWriterParameters(IndexWriter)
- * @see org.apache.lucene.index.IndexReader
- * @see org.apache.lucene.index.IndexWriter
+ * @see org.springmodules.lucene.index.factory.LuceneIndexReader
+ * @see org.springmodules.lucene.index.factory.IndexWriter
  */
 public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFactory {
 
@@ -52,6 +52,7 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	/**
 	 * Construct a new SimpleIndexFactory for bean usage.
 	 * Note: The Directory and the Analyzer have to be set before using the instance.
+	 * 
 	 * @see #setDirectory
 	 * @see #setAnalyzer
 	 */
@@ -61,10 +62,11 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	/**
 	 * Construct a new SimpleIndexFactory, given a Directory and an Analyzer to
 	 * obtain both IndexReader and IndexWriter.
+	 * 
 	 * @param directory Lucene directoy which represents an index
 	 * @param analyzer Lucene analyzer to construct an IndexWriter
 	 */
-	public SimpleIndexFactory(Directory directory,Analyzer analyzer) {
+	public SimpleIndexFactory(Directory directory, Analyzer analyzer) {
 		setDirectory(directory);
 		setAnalyzer(analyzer);
 	}
@@ -109,7 +111,8 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 
 	/**
 	 * Check the index must be unlock if the resolveLock property is
-	 * set to true 
+	 * set to true.
+	 * 
 	 * @throws IOException if thrown by Lucene methods
 	 */
 	private void checkIndexLocking() throws IOException {
@@ -124,9 +127,30 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	}
 
 	/**
+	 * Create a new index if it does not exist using an IndexWriter.
+	 */
+	private void createIndex() {
+		IndexWriter indexWriter = null;
+		try {
+			indexWriter = new IndexWriter(getDirectory(), getAnalyzer(), true);
+		} catch(Exception ex) {
+			throw new LuceneIndexAccessException("Error during creating a non existent index", ex);
+		} finally {
+			try {
+				if( indexWriter!=null ) {
+					indexWriter.close();
+				}
+			} catch (IOException ex) {
+				throw new LuceneIndexAccessException("Error during closing the writer", ex);
+			}
+		}
+	}
+
+	/**
 	 * Contruct a new IndexReader instance based on the directory property. This
 	 * instance will be used by the IndexTemplate to get informations about the
-	 * index and make delete operations on the index. 
+	 * index and make delete operations on the index.
+	 * 
 	 * @return a new reader instance on the index
 	 * @see org.springmodules.lucene.index.factory.IndexFactory#getIndexReader()
 	 */
@@ -138,11 +162,14 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 			boolean exist = IndexReader.indexExists(getDirectory());
 			if( exist ) {
 				return new SimpleLuceneIndexReader(IndexReader.open(getDirectory()));
+			} else if( !exist && create ) {
+				createIndex();
+				return new SimpleLuceneIndexReader(IndexReader.open(getDirectory()));
 			} else {
 				throw new LuceneIndexAccessException("The index doesn't exist for the specified directory");
 			}
 		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during opening the reader",ex);
+			throw new LuceneIndexAccessException("Error during opening the reader", ex);
 		}
 	}
 
@@ -153,6 +180,7 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	 * <p>Before creating an IndexWriter, this implementation checks if the
  	 * index already exists. If not, it sets a flag to notify the IndexWriter
 	 * to create it.
+	 * 
 	 * @return a new writer instance on the index
 	 * @see org.springmodules.lucene.index.factory.IndexFactory#getIndexWriter()
 	 * @see org.springmodules.lucene.index.factory.AbstractIndexFactory#setIndexWriterParameters(IndexWriter)
