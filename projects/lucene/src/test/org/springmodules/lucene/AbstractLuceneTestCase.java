@@ -16,6 +16,8 @@
 
 package org.springmodules.lucene;
 
+import java.util.Enumeration;
+
 import junit.framework.TestCase;
 
 import org.apache.lucene.analysis.SimpleAnalyzer;
@@ -23,6 +25,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.RAMDirectory;
+import org.springmodules.lucene.index.factory.SimpleIndexFactory;
 
 /**
  * @author Thierry Templier
@@ -30,6 +33,7 @@ import org.apache.lucene.store.RAMDirectory;
 public abstract class AbstractLuceneTestCase extends TestCase {
 
 	protected RAMDirectory directory;
+	protected SimpleIndexFactory indexFactory;
 
 	/**
 	 * @see junit.framework.TestCase#setUp()
@@ -37,7 +41,7 @@ public abstract class AbstractLuceneTestCase extends TestCase {
 	protected void setUp() throws Exception {
 		//Initialization of the index
 		this.directory = new RAMDirectory();
-		IndexWriter writer = new IndexWriter(directory,new SimpleAnalyzer(),true);
+		IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
 
 		//Adding a document
 		Document document1 = new Document();
@@ -65,12 +69,45 @@ public abstract class AbstractLuceneTestCase extends TestCase {
 
 		writer.optimize();
 		writer.close();
+		
+		//Initialization of the index factory
+		this.indexFactory = new SimpleIndexFactory();
+		this.indexFactory.setDirectory(this.directory);
 	}
 
 	/**
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		this.directory=null;
+		this.directory = null;
+	}
+
+	/**
+	 * Compare the contents of two documents.
+	 */
+	protected boolean isDocumentsEquals(Document doc1, Document doc2) {
+		boolean ret = compareDocuments(doc1, doc2);
+		if( !ret ) {
+			return false;
+		}
+
+		return compareDocuments(doc2, doc1);
+	}
+
+	private boolean compareDocuments(Document doc1, Document doc2) {
+		for(Enumeration e = doc1.fields(); e.hasMoreElements(); ) {
+			Field field1 = (Field)e.nextElement();
+			Field field2 = doc2.getField(field1.name());
+			if( field2!=null ) {
+				String value1 = field1.stringValue();
+				String value2 = field2.stringValue();
+				if( !value1.equals(value2) ) {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 }
