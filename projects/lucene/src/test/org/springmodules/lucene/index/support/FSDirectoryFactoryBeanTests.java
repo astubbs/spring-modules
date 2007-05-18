@@ -29,8 +29,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springmodules.lucene.index.factory.LuceneIndexReader;
-import org.springmodules.lucene.index.factory.LuceneIndexWriter;
 
 public class FSDirectoryFactoryBeanTests extends TestCase {
 
@@ -38,33 +36,14 @@ public class FSDirectoryFactoryBeanTests extends TestCase {
 	}
 
 	protected void tearDown() throws Exception {
+		//Index deleting
 		Resource resource = new ClassPathResource("/org/springmodules/lucene/index/support/segments");
 		try {
-			File indexFile = resource.getFile();
-			if( indexFile.exists() ) {
+			if( resource.exists() ) {
+				File indexFile = resource.getFile();
 				indexFile.delete();
 			}
-		} catch(FileNotFoundException ex) {}
-	}
-
-	private void closeIndexReader(LuceneIndexReader indexReader) {
-		if( indexReader!=null ) {
-			try {
-				indexReader.close();
-			} catch (IOException ex) {
-				fail();
-			}
-		}
-	}
-
-	private void closeIndexWriter(LuceneIndexWriter indexWriter) {
-		if( indexWriter!=null ) {
-			try {
-				indexWriter.close();
-			} catch (IOException ex) {
-				fail();
-			}
-		}
+		} catch(FileNotFoundException ex) { ex.printStackTrace(); }
 	}
 
 	private void closeIndexReader(IndexReader indexReader) {
@@ -86,87 +65,117 @@ public class FSDirectoryFactoryBeanTests extends TestCase {
 			}
 		}
 	}
+	
+	private void unlockIndexIfNecessary(Directory directory) throws Exception {
+		boolean locked = IndexReader.isLocked(directory);
+		if( locked ) {
+			IndexReader.unlock(directory);
+		}
+	}
 
 	public void testGetObject() throws Exception {
 		FSDirectoryFactoryBean fsDirectoryFactoryBean = new FSDirectoryFactoryBean();
 		fsDirectoryFactoryBean.setLocation(new ClassPathResource("/org/springmodules/lucene/index/support"));
-		fsDirectoryFactoryBean.afterPropertiesSet();
-		Directory fsDirectory = (Directory)fsDirectoryFactoryBean.getObject();
-		assertNotNull(fsDirectory);
-		assertEquals(fsDirectory.getClass(), FSDirectory.class);
+		try {
+			fsDirectoryFactoryBean.afterPropertiesSet();
+			
+			unlockIndexIfNecessary((Directory)fsDirectoryFactoryBean.getObject());
+			
+			Directory fsDirectory = (Directory)fsDirectoryFactoryBean.getObject();
+			assertNotNull(fsDirectory);
+			assertEquals(fsDirectory.getClass(), FSDirectory.class);
+		} finally {
+			fsDirectoryFactoryBean.destroy();
+		}
 	}
 
 	public void testGetObjectWithoutCreationWriter() throws Exception {
 		FSDirectoryFactoryBean fsDirectoryFactoryBean = new FSDirectoryFactoryBean();
 		fsDirectoryFactoryBean.setLocation(new ClassPathResource("/org/springmodules/lucene/index/support/"));
 		fsDirectoryFactoryBean.setCreate(false);
-		fsDirectoryFactoryBean.afterPropertiesSet();
-		Directory fsDirectory = (Directory)fsDirectoryFactoryBean.getObject();
-		assertNotNull(fsDirectory);
-		assertEquals(fsDirectory.getClass(), FSDirectory.class);
-		
+
 		IndexWriter writer = null; 
 		try {
+			fsDirectoryFactoryBean.afterPropertiesSet();
+			Directory fsDirectory = (Directory)fsDirectoryFactoryBean.getObject();
+			assertNotNull(fsDirectory);
+			assertEquals(fsDirectory.getClass(), FSDirectory.class);
+
+			unlockIndexIfNecessary(fsDirectory);
+			
 			writer = new IndexWriter(fsDirectory, new SimpleAnalyzer(), false);
 			fail();
 		} catch(Exception ex) {
 		} finally {
 			closeIndexWriter(writer);
+			fsDirectoryFactoryBean.destroy();
 		}
 	}
 
-	/*public void testGetObjectWithCreationWriter() throws Exception {
+	public void testGetObjectWithCreationWriter() throws Exception {
 		FSDirectoryFactoryBean fsDirectoryFactoryBean = new FSDirectoryFactoryBean();
 		fsDirectoryFactoryBean.setLocation(new ClassPathResource("/org/springmodules/lucene/index/support/"));
 		fsDirectoryFactoryBean.setCreate(true);
-		fsDirectoryFactoryBean.afterPropertiesSet();
-		Directory fsDirectory = (Directory)fsDirectoryFactoryBean.getObject();
-		assertNotNull(fsDirectory);
-		assertEquals(fsDirectory.getClass(), FSDirectory.class);
 
 		IndexWriter writer = null;
 		try {
+			fsDirectoryFactoryBean.afterPropertiesSet();
+			Directory fsDirectory = (Directory)fsDirectoryFactoryBean.getObject();
+			assertNotNull(fsDirectory);
+			assertEquals(fsDirectory.getClass(), FSDirectory.class);
+
+			unlockIndexIfNecessary(fsDirectory);
+			
 			writer = new IndexWriter(fsDirectory, new SimpleAnalyzer(), true);
 		} finally {
 			closeIndexWriter(writer);
+			fsDirectoryFactoryBean.destroy();
 		}
-	}*/
+	}
 
 	public void testGetObjectWithoutCreationReader() throws Exception {
 		FSDirectoryFactoryBean fsDirectoryFactoryBean = new FSDirectoryFactoryBean();
 		fsDirectoryFactoryBean.setLocation(new ClassPathResource("/org/springmodules/lucene/index/support/"));
 		fsDirectoryFactoryBean.setCreate(false);
-		fsDirectoryFactoryBean.afterPropertiesSet();
-		Directory fsDirectory = (Directory)fsDirectoryFactoryBean.getObject();
-		assertNotNull(fsDirectory);
-		assertEquals(fsDirectory.getClass(), FSDirectory.class);
 		
 		IndexReader reader = null;
 		try {
+			fsDirectoryFactoryBean.afterPropertiesSet();
+			Directory fsDirectory = (Directory)fsDirectoryFactoryBean.getObject();
+			assertNotNull(fsDirectory);
+			assertEquals(fsDirectory.getClass(), FSDirectory.class);
+
+			unlockIndexIfNecessary(fsDirectory);
+			
 			reader = IndexReader.open(fsDirectory);
 			fail();
 		} catch(Exception ex) {
 		} finally {
 			closeIndexReader(reader);
+			fsDirectoryFactoryBean.destroy();
 		}
 	}
 
-	/*public void testGetObjectWithCreationReader() throws Exception {
+	public void testGetObjectWithCreationReader() throws Exception {
 		FSDirectoryFactoryBean fsDirectoryFactoryBean = new FSDirectoryFactoryBean();
 		fsDirectoryFactoryBean.setLocation(new ClassPathResource("/org/springmodules/lucene/index/support/"));
 		fsDirectoryFactoryBean.setCreate(true);
-		fsDirectoryFactoryBean.afterPropertiesSet();
-		Directory fsDirectory = (Directory)fsDirectoryFactoryBean.getObject();
-		assertNotNull(fsDirectory);
-		assertEquals(fsDirectory.getClass(), FSDirectory.class);
 
 		IndexReader reader = null;
 		try {
+			fsDirectoryFactoryBean.afterPropertiesSet();
+			Directory fsDirectory = (Directory)fsDirectoryFactoryBean.getObject();
+			assertNotNull(fsDirectory);
+			assertEquals(fsDirectory.getClass(), FSDirectory.class);
+
+			unlockIndexIfNecessary(fsDirectory);
+			
 			reader = IndexReader.open(fsDirectory);
 			fail();
 		} catch(Exception ex) {
 		} finally {
 			closeIndexReader(reader);
+			fsDirectoryFactoryBean.destroy();
 		}
-	}*/
+	}
 }

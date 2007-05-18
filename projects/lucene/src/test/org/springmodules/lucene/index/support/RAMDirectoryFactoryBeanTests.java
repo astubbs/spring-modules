@@ -25,8 +25,13 @@ public class RAMDirectoryFactoryBeanTests extends TestCase {
 
 	public void testGetObject() throws Exception {
 		RAMDirectoryFactoryBean ramDirectoryFactoryBean = new RAMDirectoryFactoryBean();
-		ramDirectoryFactoryBean.afterPropertiesSet();
-		Directory ramDirectory = (Directory)ramDirectoryFactoryBean.getObject();
-		assertEquals(ramDirectory.getClass(), RAMDirectory.class);
+		
+		try {
+			ramDirectoryFactoryBean.afterPropertiesSet();
+			Directory ramDirectory = (Directory)ramDirectoryFactoryBean.getObject();
+			assertEquals(ramDirectory.getClass(), RAMDirectory.class);
+		} finally {
+			ramDirectoryFactoryBean.destroy();
+		}
 	}
 }
