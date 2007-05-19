@@ -19,8 +19,8 @@ import org.springmodules.xt.ajax.action.ReplaceContentAction;
 import org.springmodules.xt.ajax.action.ReplaceElementAction;
 import org.springmodules.xt.ajax.action.SetAttributeAction;
 import org.springmodules.xt.ajax.action.matcher.SelectorMatcher;
-import org.springmodules.xt.ajax.action.prototype.HideElementAction;
-import org.springmodules.xt.ajax.action.prototype.ShowElementAction;
+import org.springmodules.xt.ajax.action.prototype.HideElement;
+import org.springmodules.xt.ajax.action.prototype.ShowElement;
 import org.springmodules.xt.ajax.action.prototype.scriptaculous.AddDroppable;
 import org.springmodules.xt.ajax.action.prototype.scriptaculous.Draggable;
 import org.springmodules.xt.ajax.action.prototype.scriptaculous.Effect;
@@ -182,7 +182,7 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     
     public AjaxResponse showElement(AjaxActionEvent event) {
         // Create an ajax action for showing an element: 
-        ShowElementAction action = new ShowElementAction("toShow");
+        ShowElement action = new ShowElement("toShow");
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();
@@ -194,7 +194,7 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     
     public AjaxResponse hideElement(AjaxActionEvent event) {
         // Create an ajax action for hiding an element: 
-        HideElementAction action = new HideElementAction("toHide");
+        HideElement action = new HideElement("toHide");
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();
