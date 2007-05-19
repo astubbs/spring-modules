@@ -23,6 +23,14 @@ public interface EmployeeFactory {
     @Property()
     void setSurname(String surname);
     
+    String getNickname();
+    
+    String getMatriculationCode();
+    
+    String getFirstname();
+
+    String getSurname();
+    
     @FactoryMethod()
     IEmployee make();
     

@@ -29,7 +29,7 @@ public class H3Test extends XMLEnhancedTestCase {
     }
 
     public void testRender() throws Exception {
-        H3 h = new H3(new SimpleText("Heading"));
+        H3 h = new H3("Heading");
         
         System.out.println(h.render());
         

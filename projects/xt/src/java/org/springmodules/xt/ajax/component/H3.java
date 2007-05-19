@@ -31,7 +31,7 @@ public class H3 extends AbstractHeading {
     /**
      * Construct an heading with a given content.
      */
-    public H3(Component content) {
+    public H3(String content) {
         super(content);
     }
     

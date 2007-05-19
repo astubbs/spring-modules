@@ -136,9 +136,8 @@
 
       <warning>
         <para>The old way of executing an Ajax action, through the <emphasis
-        role="bold">doAjaxAction</emphasis> JavaScript function, is, starting
-        from version 0.8, <emphasis role="bold">no more
-        supported</emphasis>.</para>
+        role="bold">doAjaxAction</emphasis> JavaScript function, is since
+        version 0.8 <emphasis role="bold">no more supported</emphasis>.</para>
       </warning>
 
       <para>Once you receive the event in your server side handler, you can
@@ -218,9 +217,8 @@ public interface AjaxActionEvent extends AjaxEvent {
 
       <warning>
         <para>The old way of executing an Ajax submit, through the <emphasis
-        role="bold">doAjaxSubmit</emphasis> JavaScript function, is, starting
-        from version 0.8, <emphasis role="bold">no more
-        supported</emphasis>.</para>
+        role="bold">doAjaxSubmit</emphasis> JavaScript function, is since
+        version 0.8 <emphasis role="bold">no more supported</emphasis>.</para>
       </warning>
 
       <para>Once you receive the event in your server side handler, you can
@@ -460,31 +458,33 @@ public interface AjaxAction {
       producing the action result.</para>
 
       <para>Most of the actions will act on web pages by rendering components
-      and so modifying page parts. But ... how can actions identify page parts
-      to modify?</para>
+      and so modifying page parts. But ... <emphasis role="bold">how can
+      actions identify page parts to modify</emphasis>?</para>
     </sect3>
 
     <sect3 id="identifying-page-parts">
       <title id="identifying-page-parts-title">Identifying page parts</title>
 
-      <para>By default, Ajax actions that need to identify page parts use the
-      HTML <emphasis role="bold"><emphasis role="bold">id</emphasis>
-      </emphasis>attribute.</para>
+      <para>By default, Ajax actions that need to identify page parts to
+      modify use the HTML <emphasis role="bold"><emphasis
+      role="bold">id</emphasis> </emphasis>attribute.</para>
 
-      <para>You have to assign an identifier to every HTML element you want to
-      interact with through Ajax actions:</para>
+      <para>So, assigning an identifier to your HTML elements is a way to make
+      Ajax actions identify them:</para>
 
       <programlisting>
 &lt;select id="toFill"&gt;
 &lt;/select&gt;
 </programlisting>
 
-      <para>All actions that want to modify page contents must use
-      either:</para>
+      <para>However, Ajax actions are not limited to HTML identifiers.</para>
+
+      <para>More specifically, <emphasis role="bold">all actions that want to
+      modify page contents must use either</emphasis>:</para>
 
       <itemizedlist>
         <listitem>
-          <para>The element identifier.</para>
+          <para>The element identifier (as previously stated).</para>
         </listitem>
 
         <listitem>
@@ -504,7 +504,7 @@ public interface AjaxAction {
           <listitem>
             <para>The DefaultMatcher matches a single element by its
             identifier. It is the default matcher used by actions that
-            directly use element identifiers.</para>
+            directly use element identifiers (as stated above).</para>
           </listitem>
         </varlistentry>
 
@@ -544,7 +544,7 @@ public interface AjaxAction {
         </varlistentry>
       </variablelist>
 
-      <para>See ElementMatchers javadocs for additional details.</para>
+      <para>See javadocs of the classes above for additional details.</para>
     </sect3>
 
     <sect3 id="components">
@@ -962,6 +962,14 @@ XT.doAjaxSubmit(id, element, jsonParams, {'loadingElementId' : '...', 'loadingIm
           url="http://script.aculo.us/"><citetitle>Script.aculo.us</citetitle></ulink>
           (version 1.6.4 or higher) : see javadocs for the
           <emphasis>org.springmodules.xt.ajax.action.prototype.scriptaculous</emphasis>
+          classes.</para>
+        </listitem>
+
+        <listitem>
+          <para><ulink
+          url="http://www.bennolan.com/behaviour/"><emphasis>Behaviour</emphasis></ulink>
+          : see javadocs for the
+          <emphasis>org.springmodules.xt.ajax.action.behaviour</emphasis>
           classes.</para>
         </listitem>
       </itemizedlist>

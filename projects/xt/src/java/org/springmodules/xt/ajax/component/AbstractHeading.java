@@ -17,6 +17,7 @@ package org.springmodules.xt.ajax.component;
 
 /**
  * Component representing an abstract HTML heading.
+ *
  * @author Peter Bona
  * @author Sergio Bossa
  */
@@ -31,8 +32,8 @@ public abstract class AbstractHeading extends SimpleHTMLComponent {
     /**
      * Construct an heading with a given content.
      */
-    public AbstractHeading(Component content) {
-        super(content);
+    public AbstractHeading(String content) {
+        super(new SimpleText(content));
     }
 
 	protected String getTagName() {

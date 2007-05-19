@@ -37,12 +37,6 @@ public class RedirectActionTest extends XMLEnhancedTestCase {
 
     protected void tearDown() throws Exception {
     }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(RedirectActionTest.class);
-        
-        return suite;
-    }
     
     public void testExecute() throws Exception {
         Map model = new HashMap();

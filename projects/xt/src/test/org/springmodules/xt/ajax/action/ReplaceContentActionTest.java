@@ -41,12 +41,6 @@ public class ReplaceContentActionTest extends XMLEnhancedTestCase {
 
     protected void tearDown() throws Exception {
     }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ReplaceContentActionTest.class);
-        
-        return suite;
-    }
     
     public void testExecute() throws Exception {
         AjaxAction action = new ReplaceContentAction("testId", new SimpleText("Test Component"));
@@ -82,7 +76,7 @@ public class ReplaceContentActionTest extends XMLEnhancedTestCase {
         
         assertXpathEvaluatesTo("Test Component", "/taconite-replace-children", result);
         assertXpathEvaluatesTo("plain", "/taconite-replace-children/@matchMode", result);
-        assertXpathEvaluatesTo("testId1, testId2", "/taconite-replace-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/taconite-replace-children/@contextNodeID", result);
     }
     
     public void testExecuteWithSelectorMatcher() throws Exception {
@@ -95,6 +89,6 @@ public class ReplaceContentActionTest extends XMLEnhancedTestCase {
         
         assertXpathEvaluatesTo("Test Component", "/taconite-replace-children", result);
         assertXpathEvaluatesTo("selector", "/taconite-replace-children/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1, #testId2", "/taconite-replace-children/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-replace-children/@contextNodeSelector", result);
     }
 }

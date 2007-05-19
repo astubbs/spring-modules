@@ -32,7 +32,7 @@ public class H1 extends AbstractHeading {
     /**
      * Construct an heading with a given content.
      */
-    public H1(Component content) {
+    public H1(String content) {
         super(content);
     }
     

@@ -51,7 +51,7 @@ public class ListMatcher implements ElementMatcher {
             String element = it.next();
             response.append(element);
             if (it.hasNext()) {
-                response.append(", ");
+                response.append(",");
             }
         }
         response.append('"');

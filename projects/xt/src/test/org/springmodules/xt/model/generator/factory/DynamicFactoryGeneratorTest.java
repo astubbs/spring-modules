@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 the original author or authors.
+ * Copyright 2006 - 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,21 @@ public class DynamicFactoryGeneratorTest extends TestCase {
     
     public DynamicFactoryGeneratorTest(String testName) {
         super(testName);
+    }
+    
+    public void testSettersAndGetters() {
+        DynamicFactoryGenerator<EmployeeFactory, Employee> generator = new DynamicFactoryGenerator(EmployeeFactory.class, Employee.class);
+        EmployeeFactory factory = generator.generate();
+        
+        factory.setNickname("SB");
+        factory.setMatriculationCode("111");
+        factory.setFirstname("Sergio");
+        factory.setSurname("Bossa");
+        
+        assertEquals("SB", factory.getNickname());
+        assertEquals("111", factory.getMatriculationCode());
+        assertEquals("Sergio", factory.getFirstname());
+        assertEquals("Bossa", factory.getSurname());
     }
 
     public void testGenerate() {

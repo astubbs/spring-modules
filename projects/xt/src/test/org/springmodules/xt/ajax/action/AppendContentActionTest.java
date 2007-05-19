@@ -41,12 +41,6 @@ public class AppendContentActionTest extends XMLEnhancedTestCase {
 
     protected void tearDown() throws Exception {
     }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AppendContentActionTest.class);
-        
-        return suite;
-    }
     
     public void testExecute() throws Exception {
         AjaxAction action = new AppendContentAction("testId", new SimpleText("Test Component"));
@@ -82,7 +76,7 @@ public class AppendContentActionTest extends XMLEnhancedTestCase {
         
         assertXpathEvaluatesTo("Test Component", "/taconite-append-as-children", result);
         assertXpathEvaluatesTo("plain", "/taconite-append-as-children/@matchMode", result);
-        assertXpathEvaluatesTo("testId1, testId2", "/taconite-append-as-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/taconite-append-as-children/@contextNodeID", result);
     }
     
     public void testExecuteWithSelectorMatcher() throws Exception {
@@ -95,6 +89,6 @@ public class AppendContentActionTest extends XMLEnhancedTestCase {
         
         assertXpathEvaluatesTo("Test Component", "/taconite-append-as-children", result);
         assertXpathEvaluatesTo("selector", "/taconite-append-as-children/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1, #testId2", "/taconite-append-as-children/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-append-as-children/@contextNodeSelector", result);
     }
 }

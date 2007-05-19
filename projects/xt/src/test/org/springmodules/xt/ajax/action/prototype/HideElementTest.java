@@ -26,9 +26,9 @@ import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
  *
  * @author Sergio Bossa
  */
-public class HideElementActionTest extends XMLEnhancedTestCase {
+public class HideElementTest extends XMLEnhancedTestCase {
     
-    public HideElementActionTest(String testName) {
+    public HideElementTest(String testName) {
         super(testName);
     }
 
@@ -38,19 +38,11 @@ public class HideElementActionTest extends XMLEnhancedTestCase {
     protected void tearDown() throws Exception {
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SetAttributeActionTest.class);
-        
-        return suite;
-    }
-
     public void testExecute() throws Exception {
-        AjaxAction action = new HideElementAction("testId");
+        AjaxAction action = new HideElement("testId");
         
         String result = action.execute();
         
         System.out.println(result);
-        
-        assertXpathEvaluatesTo("Element.hide('testId');", "/taconite-execute-javascript/script[@type=\"text/javascript\"]", result);
     }
 }

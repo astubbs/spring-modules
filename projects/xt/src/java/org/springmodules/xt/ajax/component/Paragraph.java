@@ -17,26 +17,24 @@
 package org.springmodules.xt.ajax.component;
 
 /**
- * Component representing an h6 heading.
- * @author Peter Bona
+ * Component implementing an HTML paragraph element.
+ *
  * @author Sergio Bossa
  */
-public class H6 extends AbstractHeading {
-
+public class Paragraph extends SimpleHTMLComponent {
+    
+    private static final long serialVersionUID = 26L;
+        
     /**
-     * Construct an empty heading.
+     * Constructor taking the text content of the paragraph.
+     *
+     * @param text The text content.
      */
-    public H6() {
+    public Paragraph(String text) {
+        this.internalAddContent(new SimpleText(text));
     }
     
-    /**
-     * Construct an heading with a given content.
-     */
-    public H6(String content) {
-        super(content);
+    protected String getTagName() {
+        return "p";
     }
-    
-    protected int getLevel() {
-		return 6;
-	}
 }

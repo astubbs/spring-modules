@@ -46,12 +46,6 @@ public class DynamicBeanIntroductorTest extends MockObjectTestCase {
         this.introductor  = new DynamicBeanIntroductor();
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite(DynamicBeanIntroductorTest.class);
-        
-        return suite;
-    }
-    
     public void testIntroduceInterfacesPart1() {
         Employee target = new Employee();
         target.setFirstname("Sergio");

@@ -16,8 +16,6 @@
 package org.springmodules.xt.ajax;
 
 import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -40,12 +38,6 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
     
     public AjaxInterceptorTest(String testName) {
         super(testName);
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AjaxInterceptorTest.class);
-        
-        return suite;
     }
 
     public void testPreHandleSucceeds() throws Exception {

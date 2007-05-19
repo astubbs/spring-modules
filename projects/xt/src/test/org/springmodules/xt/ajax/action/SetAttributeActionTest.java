@@ -41,12 +41,6 @@ public class SetAttributeActionTest extends XMLEnhancedTestCase {
     protected void tearDown() throws Exception {
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SetAttributeActionTest.class);
-        
-        return suite;
-    }
-    
     public void testExecute() throws Exception {
         AjaxAction action = new SetAttributeAction("testId", "class", "testClass");
         
@@ -80,7 +74,7 @@ public class SetAttributeActionTest extends XMLEnhancedTestCase {
         System.out.println(result);
         
         assertXpathEvaluatesTo("plain", "/taconite-set-attributes/@matchMode", result);
-        assertXpathEvaluatesTo("testId1, testId2", "/taconite-set-attributes/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/taconite-set-attributes/@contextNodeID", result);
         assertXpathEvaluatesTo("testClass", "/taconite-set-attributes/@class", result);
     }
     
@@ -93,7 +87,7 @@ public class SetAttributeActionTest extends XMLEnhancedTestCase {
         System.out.println(result);
         
         assertXpathEvaluatesTo("selector", "/taconite-set-attributes/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1, #testId2", "/taconite-set-attributes/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-set-attributes/@contextNodeSelector", result);
         assertXpathEvaluatesTo("testClass", "/taconite-set-attributes/@class", result);
     }
 }

@@ -6,7 +6,7 @@
  form elements to be sent to the server as par of an Ajax request.
  */
 
-var taconite_client_xt_version=20070502;
+var taconite_client_xt_version=20070513;
 
 /**
  Constructor for the AjaxRequest class. 
@@ -379,23 +379,8 @@ function AjaxRequest(url) {
                 if(nodes[i].nodeType != 1 || !isTaconiteTag(nodes[i])) {
                     continue;
                 }
-
-                parseInBrowser = nodes[i].getAttribute("parseInBrowser");
-                if(parseInBrowser == null || parseInBrowser == "true") {
-                    parser.parseXhtml(nodes[i]);
-                    var js = parser.getJavaScript();
-                    if(debug) {
-                        echoParsedJavaScript(js);
-                    }
-                }
-                else {
-                    eval(nodes[i].firstChild.nodeValue);
-                }
-            }
-            
-            if(ajaxRequest.getPostRequest()) {
-                var f = ajaxRequest.getPostRequest();
-                f(ajaxRequest);
+                
+                parser.parseXhtml(nodes[i]);
             }
         }
         catch(exception) {
@@ -404,6 +389,19 @@ function AjaxRequest(url) {
             }
             else {
                 throw exception;
+            }
+        }
+        finally {
+            try {
+                if(ajaxRequest.getPostRequest()) {
+                    var f = ajaxRequest.getPostRequest();
+                    f(ajaxRequest);
+                }
+            }
+            catch(exception) {
+                if(errorHandler) {
+                    errorHandler(self, exception);
+                }
             }
         }
     }

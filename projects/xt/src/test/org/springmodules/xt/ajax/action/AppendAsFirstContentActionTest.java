@@ -42,12 +42,6 @@ public class AppendAsFirstContentActionTest extends XMLEnhancedTestCase {
 
     protected void tearDown() throws Exception {
     }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AppendAsFirstContentActionTest.class);
-        
-        return suite;
-    }
     
     public void testExecute() throws Exception {
         AjaxAction action = new AppendAsFirstContentAction("testId", Arrays.asList(new Component[]{new TaggedText("Test Component 1", TaggedText.Tag.DIV), new TaggedText("Test Component 2", TaggedText.Tag.DIV)}));
@@ -72,7 +66,7 @@ public class AppendAsFirstContentActionTest extends XMLEnhancedTestCase {
         assertXpathEvaluatesTo("Test Component 1", "/taconite-append-as-first-child/div[position()=1]", result);
         assertXpathEvaluatesTo("Test Component 2", "/taconite-append-as-first-child/div[position()=2]", result);
         assertXpathEvaluatesTo("plain", "/taconite-append-as-first-child/@matchMode", result);
-        assertXpathEvaluatesTo("testId1, testId2", "/taconite-append-as-first-child/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/taconite-append-as-first-child/@contextNodeID", result);
     }
     
     public void testExecuteWithWildcardMatcher() throws Exception {
@@ -100,6 +94,6 @@ public class AppendAsFirstContentActionTest extends XMLEnhancedTestCase {
         assertXpathEvaluatesTo("Test Component 1", "/taconite-append-as-first-child/div[position()=1]", result);
         assertXpathEvaluatesTo("Test Component 2", "/taconite-append-as-first-child/div[position()=2]", result);
         assertXpathEvaluatesTo("selector", "/taconite-append-as-first-child/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1, #testId2", "/taconite-append-as-first-child/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-append-as-first-child/@contextNodeSelector", result);
     }
 }

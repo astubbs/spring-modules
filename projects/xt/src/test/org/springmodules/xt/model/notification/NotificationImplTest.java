@@ -40,12 +40,6 @@ public class NotificationImplTest extends TestCase {
     protected void tearDown() throws Exception {
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(NotificationImplTest.class);
-        
-        return suite;
-    }
-
     /**
      * Test of addMessage method, of class org.springmodules.xt.model.notification.NotificationImpl.
      */

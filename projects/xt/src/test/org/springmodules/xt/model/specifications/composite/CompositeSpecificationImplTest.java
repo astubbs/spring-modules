@@ -50,12 +50,6 @@ public class CompositeSpecificationImplTest extends TestCase {
     protected void tearDown() throws Exception {
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(CompositeSpecificationImplTest.class);
-        
-        return suite;
-    }
-
     /**
      * Test of single specification composition.
      */

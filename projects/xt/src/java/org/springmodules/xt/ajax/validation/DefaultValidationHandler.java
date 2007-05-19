@@ -70,16 +70,15 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
     private SuccessRenderingCallback successRenderingCallback = new DefaultSuccessRenderingCallback();
     
     public AjaxResponse validate(AjaxSubmitEvent event) {
-        AjaxResponseImpl response = null;
+        AjaxResponseImpl response = new AjaxResponseImpl();
         
         if (event.getValidationErrors() != null && event.getValidationErrors().hasErrors() == true) {
-            response = new AjaxResponseImpl();
             this.removeOldErrors(event, response);
             this.putNewErrors(event, response);
         } else {
             AjaxAction[] successActions = this.successRenderingCallback.getSuccessActions(event);
             if (successActions != null && successActions.length > 0) {
-                response = new AjaxResponseImpl();
+                this.removeOldErrors(event, response);
                 for (AjaxAction action : successActions) {
                     response.addAction(action);
                 }

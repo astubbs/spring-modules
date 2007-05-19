@@ -19,12 +19,12 @@ package org.springmodules.xt.ajax.action.prototype;
 import org.springmodules.xt.ajax.action.AbstractExecuteJavascriptAction;
 
 /**
- * Ajax action for showing an HTML element by its id.<br>
+ * Ajax action for hiding an HTML element by its id.<br>
  * This action uses the Prototype Javascript library, so you need to include it in your web pages.
  *
  * @author Sergio Bossa
  */
-public class ShowElementAction extends AbstractExecuteJavascriptAction {
+public class HideElement extends AbstractExecuteJavascriptAction {
     
     private static final long serialVersionUID = 26L;
     
@@ -32,13 +32,13 @@ public class ShowElementAction extends AbstractExecuteJavascriptAction {
     
     /**
      * Action constructor.
-     * @param elementId The id of the element to show in the HTML page.
+     * @param elementId The id of the element to hide in the HTML page.
      */
-    public ShowElementAction(String elementId) {
+    public HideElement(String elementId) {
         this.elementId = elementId;
     }
     
     protected String getJavascript() {
-        return new StringBuilder("Element.show('").append(elementId).append("');").toString();
+        return new StringBuilder("Element.hide(\"").append(elementId).append("\");").toString();
     }
 }

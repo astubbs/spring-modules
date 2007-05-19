@@ -1,3 +1,19 @@
+/*
+ * Copyright 2006 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springmodules.xt.ajax.support;
 
 import java.util.HashMap;
@@ -27,7 +43,11 @@ public class RedirectExceptionHandler implements AjaxExceptionHandler {
     public AjaxResponse handle(HttpServletRequest request, Exception ex) {
         // Expose the exception message:
         Map model = new HashMap(1);
-        model.put(this.exceptionMessageAttribute, ex.getMessage());
+        if (ex.getMessage() != null && !ex.getMessage().equals("")) {
+            model.put(this.exceptionMessageAttribute, ex.getMessage());
+        } else {
+            model.put(this.exceptionMessageAttribute, ex.getClass());
+        }
         // Create the response with the redirect action:
         AjaxResponse ajaxResponse = new AjaxResponseImpl();
         AjaxAction ajaxRedirect = new RedirectAction(new StringBuilder(request.getContextPath()).append(this.redirectUrl).toString(), model);

@@ -29,7 +29,7 @@ public class H4Test extends XMLEnhancedTestCase {
     }
 
     public void testRender() throws Exception {
-        H4 h = new H4(new SimpleText("Heading"));
+        H4 h = new H4("Heading");
         
         System.out.println(h.render());
         

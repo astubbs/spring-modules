@@ -458,6 +458,12 @@ public interface DynamicGenerator&lt;T&gt; {
             <emphasis>org.springmodules.xt.model.generator.annotation.FactoryMethod</emphasis>
             javadoc) annotation.</para>
           </listitem>
+
+          <listitem>
+            <para>Moreover, there can be <emphasis
+            role="bold">getter</emphasis> methods corresponding to the setter
+            methods above.</para>
+          </listitem>
         </itemizedlist>
 
         <para>Any other method, if called, will throw an exception.</para>
@@ -466,6 +472,9 @@ public interface DynamicGenerator&lt;T&gt; {
 
         <programlisting>
 public interface EmployeeFactory {
+
+    <emphasis role="bold">// Setter methods must be annotated because they represent constructor arguments or
+    // just object properties:</emphasis>
     
     @ConstructorArg(position = 0)
     void setNickname(String nickname);
@@ -478,6 +487,18 @@ public interface EmployeeFactory {
     
     @Property()
     void setSurname(String surname);
+
+    <emphasis role="bold">// Getter methods must not be annotated:</emphasis>
+
+    String getNickname();
+    
+    String getMatriculationCode();
+    
+    String getFirstname();
+
+    String getSurname();
+
+    <emphasis role="bold">// The factory method must be annotated in order to make it clear its purpose:</emphasis>
     
     @FactoryMethod()
     IEmployee make();

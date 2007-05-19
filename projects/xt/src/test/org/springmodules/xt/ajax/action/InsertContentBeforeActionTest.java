@@ -42,12 +42,6 @@ public class InsertContentBeforeActionTest extends XMLEnhancedTestCase {
 
     protected void tearDown() throws Exception {
     }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(InsertContentBeforeActionTest.class);
-        
-        return suite;
-    }
     
     public void testExecute() throws Exception {
         AjaxAction action = new InsertContentBeforeAction("testId", Arrays.asList(new Component[]{new TaggedText("Test Component 1", TaggedText.Tag.DIV), new TaggedText("Test Component 2", TaggedText.Tag.DIV)}));
@@ -86,7 +80,7 @@ public class InsertContentBeforeActionTest extends XMLEnhancedTestCase {
         assertXpathEvaluatesTo("Test Component 1", "/taconite-insert-before/div[position()=1]", result);
         assertXpathEvaluatesTo("Test Component 2", "/taconite-insert-before/div[position()=2]", result);
         assertXpathEvaluatesTo("plain", "/taconite-insert-before/@matchMode", result);
-        assertXpathEvaluatesTo("testId1, testId2", "/taconite-insert-before/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/taconite-insert-before/@contextNodeID", result);
     }
     
     public void testExecuteWithSelectorMatcher() throws Exception {
@@ -100,6 +94,6 @@ public class InsertContentBeforeActionTest extends XMLEnhancedTestCase {
         assertXpathEvaluatesTo("Test Component 1", "/taconite-insert-before/div[position()=1]", result);
         assertXpathEvaluatesTo("Test Component 2", "/taconite-insert-before/div[position()=2]", result);
         assertXpathEvaluatesTo("selector", "/taconite-insert-before/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1, #testId2", "/taconite-insert-before/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-insert-before/@contextNodeSelector", result);
     }
 }

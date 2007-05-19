@@ -19,33 +19,30 @@ package org.springmodules.xt.ajax.component;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
- * @author Peter Bona
  * @author Sergio Bossa
  */
-public class TextAreaTest extends XMLEnhancedTestCase {
+public class ParagraphTest extends XMLEnhancedTestCase {
 
-	public TextAreaTest(String testName) {
+	public ParagraphTest(String testName) {
         super(testName);
     }
 
     public void testAddAttribute() throws Exception {
-        TextArea textArea = new TextArea(4, 5);
-        textArea.addAttribute("id", "test-id");
+        Paragraph p = new Paragraph("test");
+        p.addAttribute("id", "test-id");
         
-        String rendering = textArea.render();
+        String rendering = p.render();
         System.out.println(rendering);
         
-        assertXpathEvaluatesTo("test-id", "/textarea/@id", rendering);
+        assertXpathEvaluatesTo("test-id", "/p/@id", rendering);
     }
     
     public void testRender() throws Exception {
-    	TextArea textArea = new TextArea(4, 5, "Test");
+    	Paragraph p = new Paragraph("Test");
         
-        String rendering = textArea.render();
+        String rendering = p.render();
         System.out.println(rendering);
         
-        assertXpathEvaluatesTo("4", "/textarea/@rows", rendering);
-        assertXpathEvaluatesTo("5", "/textarea/@cols", rendering);
-        assertXpathEvaluatesTo("Test", "/textarea", rendering);
+        assertXpathEvaluatesTo("Test", "/p", rendering);
     }
 }

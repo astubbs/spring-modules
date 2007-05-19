@@ -38,12 +38,6 @@ public class PredicateGenericAdapterTest extends TestCase {
     protected void tearDown() throws Exception {
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(PredicateGenericAdapterTest.class);
-        
-        return suite;
-    }
-
     /**
      * Test of evaluate method, of class org.springmodules.xt.model.specifications.adapter.PredicateGenericAdapter.
      */

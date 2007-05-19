@@ -41,12 +41,6 @@ public class RemoveContentActionTest extends XMLEnhancedTestCase {
     protected void tearDown() throws Exception {
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(RemoveContentActionTest.class);
-        
-        return suite;
-    }
-
     public void testExecute() throws Exception {
         AjaxAction action = new RemoveContentAction("testId");
         
@@ -78,7 +72,7 @@ public class RemoveContentActionTest extends XMLEnhancedTestCase {
         System.out.println(result);
         
         assertXpathEvaluatesTo("plain", "/taconite-replace-children/@matchMode", result);
-        assertXpathEvaluatesTo("testId1, testId2", "/taconite-replace-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/taconite-replace-children/@contextNodeID", result);
     }
     
     public void testExecuteWithSelectorMatcher() throws Exception {
@@ -90,6 +84,6 @@ public class RemoveContentActionTest extends XMLEnhancedTestCase {
         System.out.println(result);
         
         assertXpathEvaluatesTo("selector", "/taconite-replace-children/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1, #testId2", "/taconite-replace-children/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-replace-children/@contextNodeSelector", result);
     }
 }

@@ -55,12 +55,6 @@ public class IntroductorSetTest extends TestCase {
     protected void tearDown() throws Exception {
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite(IntroductorSetTest.class);
-        
-        return suite;
-    }
-    
     /**
      * Test of adding and removing a new object.
      */

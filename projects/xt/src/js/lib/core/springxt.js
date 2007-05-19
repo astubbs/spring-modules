@@ -111,7 +111,7 @@ var XT = {
  form elements to be sent to the server as par of an Ajax request.
  */
 
-var taconite_client_xt_version=20070502;
+var taconite_client_xt_version=20070513;
 
 /**
  Constructor for the AjaxRequest class. 
@@ -484,23 +484,8 @@ function AjaxRequest(url) {
                 if(nodes[i].nodeType != 1 || !isTaconiteTag(nodes[i])) {
                     continue;
                 }
-
-                parseInBrowser = nodes[i].getAttribute("parseInBrowser");
-                if(parseInBrowser == null || parseInBrowser == "true") {
-                    parser.parseXhtml(nodes[i]);
-                    var js = parser.getJavaScript();
-                    if(debug) {
-                        echoParsedJavaScript(js);
-                    }
-                }
-                else {
-                    eval(nodes[i].firstChild.nodeValue);
-                }
-            }
-            
-            if(ajaxRequest.getPostRequest()) {
-                var f = ajaxRequest.getPostRequest();
-                f(ajaxRequest);
+                
+                parser.parseXhtml(nodes[i]);
             }
         }
         catch(exception) {
@@ -509,6 +494,19 @@ function AjaxRequest(url) {
             }
             else {
                 throw exception;
+            }
+        }
+        finally {
+            try {
+                if(ajaxRequest.getPostRequest()) {
+                    var f = ajaxRequest.getPostRequest();
+                    f(ajaxRequest);
+                }
+            }
+            catch(exception) {
+                if(errorHandler) {
+                    errorHandler(self, exception);
+                }
             }
         }
     }
@@ -698,8 +696,7 @@ function createXMLHttpRequest() {
  The DOMSelector is based on document.getElementsBySelector(selector) method, Copyright (C) Simon Willison 2004.
  */
 
-var taconite_parser_xt_version=20070502;
-
+var taconite_parser_xt_version=20070513;
 var isIE=document.uniqueID;
 
 var TaconiteDOMUtils = {
@@ -802,10 +799,6 @@ function XhtmlToDOMParser(){
             }  
             return true;
         }
-    }
-    
-    this.getJavaScript= function() {
-        return "var dummy_taconite_variable=0";
     }
     
     function requiresContextNode(xmlTagName) {
@@ -1123,6 +1116,7 @@ function XhtmlToDOMParser(){
         }
         for(var i=0;i<xml.childNodes.length;i++){
             domChildNode=handleNode(xml.childNodes[i]);
+            checkForIEMultipleSelectHack(domNode, domChildNode);
             if(domChildNode!=null) {
                 domNode.appendChild(domChildNode);
             }
@@ -1144,7 +1138,32 @@ function XhtmlToDOMParser(){
             }
         }
     }
+
+    function checkForIEMultipleSelectHack(domNode, domChildNode) {
+        if(isIE && domChildNode.nodeType == 1 && domChildNode.tagName.toLowerCase() == "select" && domChildNode.getAttribute("multiple") != null) {
+            createIEMultipleSelectHack(domNode);
+        }
+    }
     
+    function createIEMultipleSelectHack(contextNode) {
+        //this is a total and complete hack for IE 6's totally broken select
+        //box implementation.  A "multiple" select box only appears as a drop-
+        //down box... but for some reason, creating another select around it
+        //makes it render correctly (??).  So, create a bogus select box and hide
+        //it.
+        var selectBox = document.createElement("select");
+        selectBox.size = 3;
+
+        for (x=0; x < 1; x++) {
+            selectBox.options[x] = new Option(x, x);
+        }
+
+        //hide it
+        selectBox.style.display = "none";
+        
+        contextNode.appendChild(selectBox);
+    }
+
     function cleanAttributeName(name) {
         if(isIE == false) {
             return;
@@ -1240,32 +1259,32 @@ function DOMSelector() {
                 switch (attrOperator) {
                     case '=': // Equality
                         filterFunction = function(e) { 
-                            return (e.getAttribute(attrName) == attrValue); 
+                            return (e.getAttribute(attrName) && e.getAttribute(attrName) == attrValue); 
                         };
                         break;
                     case '~': // Match one of space seperated words 
                         filterFunction = function(e) { 
-                            return (e.getAttribute(attrName).match(new RegExp('(\\s|^)' + attrValue + '(\\s|$)'))); 
+                            return (e.getAttribute(attrName) && e.getAttribute(attrName).match(new RegExp('(\\s|^)' + attrValue + '(\\s|$)'))); 
                         };
                         break;
                     case '|': // Match start with value followed by optional hyphen
                         filterFunction = function(e) { 
-                            return (e.getAttribute(attrName).match(new RegExp('^' + attrValue + '-?'))); 
+                            return (e.getAttribute(attrName) && e.getAttribute(attrName).match(new RegExp('^' + attrValue + '-?'))); 
                         };
                         break;
                     case '^': // Match starts with value
                         filterFunction = function(e) { 
-                            return (e.getAttribute(attrName).indexOf(attrValue) == 0); 
+                            return (e.getAttribute(attrName) && e.getAttribute(attrName).indexOf(attrValue) == 0); 
                         };
                         break;
                     case '$': // Match ends with value - fails with "Warning" in Opera 7
                         filterFunction = function(e) { 
-                            return (e.getAttribute(attrName).lastIndexOf(attrValue) == e.getAttribute(attrName).length - attrValue.length); 
+                            return (e.getAttribute(attrName) && (e.getAttribute(attrName).lastIndexOf(attrValue) == e.getAttribute(attrName).length - attrValue.length)); 
                         };
                         break;
                     case '*': // Match contains value
                         filterFunction = function(e) { 
-                            return (e.getAttribute(attrName).indexOf(attrValue) > -1); 
+                            return (e.getAttribute(attrName) && e.getAttribute(attrName).indexOf(attrValue) > -1); 
                         };
                         break;
                     default :
@@ -1448,7 +1467,8 @@ document.getElementsByMatchingId = function(matchingId) {
         }
     }
     return matchingElements;
-};/*
+};
+/*
     json.js
     2006-04-28
 

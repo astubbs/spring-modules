@@ -34,12 +34,6 @@ public class SimpleTextTest extends TestCase {
     protected void tearDown() throws Exception {
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SimpleTextTest.class);
-        
-        return suite;
-    }
-
     /**
      * Test of render method, of class org.springmodules.xt.ajax.component.SimpleText.
      */

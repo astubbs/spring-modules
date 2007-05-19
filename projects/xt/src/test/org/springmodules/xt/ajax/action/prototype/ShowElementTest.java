@@ -26,9 +26,9 @@ import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
  *
  * @author Sergio Bossa
  */
-public class ShowElementActionTest extends XMLEnhancedTestCase {
+public class ShowElementTest extends XMLEnhancedTestCase {
     
-    public ShowElementActionTest(String testName) {
+    public ShowElementTest(String testName) {
         super(testName);
     }
 
@@ -38,19 +38,11 @@ public class ShowElementActionTest extends XMLEnhancedTestCase {
     protected void tearDown() throws Exception {
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(SetAttributeActionTest.class);
-        
-        return suite;
-    }
-
     public void testExecute() throws Exception {
-        AjaxAction action = new ShowElementAction("testId");
+        AjaxAction action = new ShowElement("testId");
         
         String result = action.execute();
         
         System.out.println(result);
-        
-        assertXpathEvaluatesTo("Element.show('testId');", "/taconite-execute-javascript/script[@type=\"text/javascript\"]", result);
     }
 }

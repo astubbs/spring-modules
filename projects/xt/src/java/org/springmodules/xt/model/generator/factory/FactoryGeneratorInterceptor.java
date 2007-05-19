@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 the original author or authors.
+ * Copyright 2006 - 2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.springmodules.xt.model.generator.annotation.Property;
 import org.springmodules.xt.model.generator.support.IllegalArgumentPositionException;
 import org.springmodules.xt.model.generator.support.ObjectConstructionException;
 import org.springmodules.xt.model.generator.support.ReturnTypeMismatchException;
+import org.springmodules.xt.model.introductor.support.IllegalReturnTypeException;
 
 /**
  * Java dynamic Proxy-based interceptor for implementing factory generation.
@@ -42,9 +43,9 @@ import org.springmodules.xt.model.generator.support.ReturnTypeMismatchException;
  *
  * @author Sergio Bossa
  */
-public class DynamicFactoryInterceptor implements InvocationHandler {
+public class FactoryGeneratorInterceptor implements InvocationHandler {
     
-    private static final Logger logger = Logger.getLogger(DynamicFactoryInterceptor.class);
+    private static final Logger logger = Logger.getLogger(FactoryGeneratorInterceptor.class);
     
     private Class productClass;
     
@@ -52,30 +53,35 @@ public class DynamicFactoryInterceptor implements InvocationHandler {
     private TreeMap<Integer, ConstructorArgPair> constructorArgs = new TreeMap<Integer, ConstructorArgPair>();
     // No need to be ordered:
     private HashMap<String, PropertyPair> properties = new HashMap<String, PropertyPair>();
+    // General values map, holding both constructor args and properties values:
+    private HashMap<String, Object> values = new HashMap<String, Object>();
   
     /**
      * Constructor.
      * 
      * @param productClass The factory product class, that is, the class of the object created by the factory.
      */
-    public DynamicFactoryInterceptor(Class productClass) {
+    public FactoryGeneratorInterceptor(Class productClass) {
         this.productClass = productClass;
     }
     
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (this.isConstructorArg(method)) {
-            return putConstructorArg(args, method);
+            return this.putConstructorArg(args, method);
         } 
-        else if (this.isProperty(method)) {
-            return putProperty(args, method);
-        } 
+        else if (this.isPropertySetter(method)) {
+            return this.putProperty(args, method);
+        }
+        else if (this.isPropertyGetter(method)) {
+            return this.readProperty(args, method);
+        }
         else if (this.isFactoryMethod(method)) {
             Class returnType = method.getReturnType();
-            if (! returnType.isAssignableFrom(this.productClass)) {
+            if (!returnType.isAssignableFrom(this.productClass)) {
                 throw new ReturnTypeMismatchException("Return type mismatch. Expected assignable from: " + this.productClass + ", found: " + returnType);
             } 
             else {
-                Object product = make();
+                Object product = this.make();
                 // Fill properties:
                 for (Map.Entry<String, PropertyPair> entry : this.properties.entrySet()) {
                     String propertyName = entry.getKey();
@@ -110,8 +116,17 @@ public class DynamicFactoryInterceptor implements InvocationHandler {
         }
     }
     
-    private boolean isProperty(Method method) {
+    private boolean isPropertySetter(Method method) {
         if (method.getName().startsWith("set") && method.isAnnotationPresent(Property.class)) {
+            return true;
+        } 
+        else {
+            return false;
+        }
+    }
+    
+    private boolean isPropertyGetter(Method method) {
+        if (method.getName().startsWith("get") || method.getName().startsWith("is")) {
             return true;
         } 
         else {
@@ -140,28 +155,47 @@ public class DynamicFactoryInterceptor implements InvocationHandler {
             pair.setValue(args[0]);
             pair.setAccess(access);
             this.properties.put(name, pair);
-
-            logger.debug("Put property: " + name);
-
+            this.values.put(name, args[0]);
+            logger.debug(new StringBuilder("Put property with name and value: ").append(name).append(",").append(args[0]));
             return null;
         }
     }
-    
+        
     private Object putConstructorArg(final Object[] args, final Method method) {
         if (args.length != 1) {
             throw new IllegalStateException("The setter method " + method.getName() + " must have only one argument!");
         }
         else {
+            String name = StringUtils.uncapitalize(method.getName().substring(3));
             ConstructorArg annotation = method.getAnnotation(ConstructorArg.class);
             int position = annotation.position();
             ConstructorArgPair pair = new ConstructorArgPair();
             pair.setValue(args[0]);
             pair.setType(args[0].getClass());
             this.constructorArgs.put(position, pair);
-
-            logger.debug("Put constructor arg at position: " + position);
-
+            this.values.put(name, args[0]);
+            logger.debug(new StringBuilder("Put constructor arg with position and value: ").append(position).append(",").append(args[0]));
             return null;
+        }
+    }
+    
+    private Object readProperty(final Object[] args, final Method method) {
+        if (args != null && args.length != 0) {
+            throw new IllegalStateException("The getter method " + method.getName() + " must have no arguments!");
+        }
+        if (method.getReturnType().isPrimitive()) {
+            throw new IllegalReturnTypeException("Return types cannot be primitives.");
+        }
+        else {
+            String name = null;
+            if (method.getName().startsWith("get")) {
+                name = StringUtils.uncapitalize(method.getName().substring(3));
+            } else {
+                name = StringUtils.uncapitalize(method.getName().substring(2));
+            }
+            Object value = values.get(name);
+            logger.debug(new StringBuilder("Read property with name and value: ").append(name).append(",").append(value));
+            return value;
         }
     }
     

@@ -44,6 +44,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.BaseCommandController;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.util.UrlPathHelper;
+import org.springframework.web.util.WebUtils;
 import org.springmodules.xt.ajax.support.IllegalViewException;
 import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
@@ -110,6 +111,9 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
      */
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
     throws Exception {
+        if (WebUtils.isIncludeRequest(request)) {
+            return true;
+        }
         try {
             String requestType = request.getParameter(this.ajaxParameter);
             if (requestType != null && requestType.equals(AJAX_ACTION_REQUEST)) {
@@ -183,6 +187,9 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
      */
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
     throws Exception {
+        if (WebUtils.isIncludeRequest(request)) {
+            return;
+        }
         try {
             // If modelAndView object is null, it means that the controller handled the request by itself ...
             // See : http://static.springframework.org/spring/docs/2.0.x/api/org/springframework/web/servlet/mvc/Controller.html#handleRequest(javax.servlet.http.HttpServletRequest,%20javax.servlet.http.HttpServletResponse)

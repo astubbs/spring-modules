@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 the original author or authors.
+ * Copyright 2006 - 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,16 +120,16 @@ public class BeanIntroductorInterceptor extends AbstractIntroductorInterceptor {
         Object result = null;
         try {
             if (method.getName().startsWith("get")) {
-                result = this.fields.get(method.getName().substring(3));
-                if ((result == null) && (method.getReturnType().isPrimitive())) {
+                if (method.getReturnType().isPrimitive()) {
                     throw new IllegalReturnTypeException("Return types of your introduced interfaces cannot be primitives.");
                 }
+                result = this.fields.get(method.getName().substring(3));
             }
             else if (method.getName().startsWith("is")) {
-                result = this.fields.get(method.getName().substring(2));
-                if ((result == null) && (method.getReturnType().isPrimitive())) {
+                if (method.getReturnType().isPrimitive()) {
                     throw new IllegalReturnTypeException("Return types of your introduced interfaces cannot be primitives.");
                 }
+                result = this.fields.get(method.getName().substring(2));
             }
             else if (method.getName().startsWith("set")) {
                 if (methodInvocation.getArguments().length != 1) {

@@ -37,12 +37,6 @@ public class InputFieldTest extends XMLEnhancedTestCase {
     protected void tearDown() throws Exception {
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(InputFieldTest.class);
-        
-        return suite;
-    }
-
     /**
      * Test of addAttribute method, of class org.springmodules.xt.ajax.component.InputField.
      */

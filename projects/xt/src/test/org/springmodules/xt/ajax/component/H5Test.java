@@ -29,7 +29,7 @@ public class H5Test extends XMLEnhancedTestCase {
     }
 
     public void testRender() throws Exception {
-        H5 h = new H5(new SimpleText("Heading"));
+        H5 h = new H5("Heading");
         
         System.out.println(h.render());
         

@@ -83,13 +83,19 @@ public abstract class AbstractRenderingAction implements AjaxAction {
     
     public String execute() {
         String startTag = this.getOpeningTag().substring(0, this.getOpeningTag().length() - 1);
-        StringBuilder response = new StringBuilder(startTag);
+        String endTag = this.getClosingTag();
+        StringBuilder response = new StringBuilder();
+        
+        response.append(startTag);
         response.append(" ").append(this.matcher.render());
         response.append(">");
+        
         for (Component c : this.components) {
             response.append(c.render());
         }
-        response.append(this.getClosingTag());
+        
+        response.append(endTag);
+        
         return response.toString();
     }
     

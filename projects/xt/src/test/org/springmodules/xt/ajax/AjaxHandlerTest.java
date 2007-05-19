@@ -13,11 +13,6 @@ public class AjaxHandlerTest extends TestCase {
     public AjaxHandlerTest(String testName) {
         super(testName);
     }
-    
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AjaxHandlerTest.class);   
-        return suite;
-    }
 
     public void testHandleAjaxEvent() {
         AbstractAjaxHandler handler = new AbstractAjaxHandler() {

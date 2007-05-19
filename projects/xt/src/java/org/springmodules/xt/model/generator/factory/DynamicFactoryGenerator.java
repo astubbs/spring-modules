@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 the original author or authors.
+ * Copyright 2006 - 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,13 +28,14 @@ import org.springmodules.xt.model.generator.DynamicGenerator;
  * returning the class (or superclass) of that product object.
  * </p>
  * <p>
- * More specifically, the factory interface methods must obey the following rules:
+ * More specifically, the factory interface supports the following methods, that must obey the following rules:
  * <ul>
  *      <li><b>Setter</b> methods must be annotated either with the {@link org.springmodules.xt.model.generator.annotation.ConstructorArg}
  *          annotation if they are constructor arguments, or with the {@link org.springmodules.xt.model.generator.annotation.Property}
  *          annotation if they are properties to be set.</li>
  *      <li>The <b>factory</b> method must be annotated with the {@link org.springmodules.xt.model.generator.annotation.FactoryMethod}
  *          annotation.</li>
+ *      <li>Moreover, there can be <b>getter</b> methods corresponding to the setter methods above.</li>
  * </ul>
  * Any other method, if called, will throw an exception.
  * </p>
@@ -46,6 +47,11 @@ import org.springmodules.xt.model.generator.DynamicGenerator;
  * Please <b>note</b> that this generator generates a new factory object for every call to its {@link #generate()} method, and the factory
  * generates a new product object for every call to its factory method.
  * </p>
+ * <p>
+ * <b>Restrictions</b>: The only restriction is that the getter methods of your factory cannot return primitive values; so, you
+ * have to use wrapper objects instead when you need to return a primitive type.
+ * </p>
+ * <p>This class is <b>thread-safe</b>.</p>
  *
  * @param F The type of the dynamically generated factory object.
  * @param P The type of the product object created by the factory.
@@ -77,7 +83,7 @@ public class DynamicFactoryGenerator<F, P> implements DynamicGenerator<F> {
      * Generate a new factory.
      */
     public F generate() {
-        DynamicFactoryInterceptor interceptor = new DynamicFactoryInterceptor(this.productClass);
+        FactoryGeneratorInterceptor interceptor = new FactoryGeneratorInterceptor(this.productClass);
         F factory = (F) Proxy.newProxyInstance(this.factoryClass.getClassLoader(), new Class[]{this.factoryClass}, interceptor);
         return factory; 
     }
