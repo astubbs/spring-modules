@@ -17,8 +17,6 @@
  */
 package org.springmodules.cache.config;
 
-import java.lang.reflect.Method;
-
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
@@ -26,6 +24,8 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springmodules.AssertExt;
 import org.w3c.dom.Element;
+
+import java.lang.reflect.Method;
 
 /**
  * <p>
@@ -124,7 +124,7 @@ public class CacheNamespaceHandlerTests extends TestCase {
 
 		findParserForElementMethod.setAccessible(true);
 		return (BeanDefinitionParser) findParserForElementMethod.invoke(handler,
-				new DomElementStub(elementName));
+				new Object[] {new DomElementStub(elementName)});
   }
 
 }
