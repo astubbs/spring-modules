@@ -34,12 +34,10 @@
 
 
 
-    <!-- cache dependencies
-    <dependency org="tangosol" name="coherence" rev="3.2-b351">
-      <artifact name="coherence" type="jar" conf="global" />
-      <artifact name="tangosol" type="jar" conf="global" />
+    <!-- cache dependencies -->
+    <dependency org="tangosol" name="coherence" rev="3.3-rc1">
+      <artifact name="coherence-mock" type="jar" conf="global" />
     </dependency>
-	 -->
 
     <dependency org="gigaspaces" name="gigaspaces-ce" rev="5.1-1603-000"/>
 
