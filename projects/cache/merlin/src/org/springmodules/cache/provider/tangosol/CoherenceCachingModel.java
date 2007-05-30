@@ -1,19 +1,19 @@
-/* 
+/*
  * Created on Jan 25, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2006 the original author or authors.
+ * Copyright @2007 the original author or authors.
  */
 package org.springmodules.cache.provider.tangosol;
 
@@ -28,7 +28,7 @@ import org.springmodules.util.Objects;
  * Configuration options needed to store, retrieve and remove objects from
  * Tangosol Coherence.
  * </p>
- * 
+ *
  * @author Alex Ruiz
  */
 public class CoherenceCachingModel implements CachingModel {
@@ -48,7 +48,7 @@ public class CoherenceCachingModel implements CachingModel {
 
   /**
    * Constructor.
-   * 
+   *
    * @param newCacheName
    *          the name of the cache to use
    */
@@ -107,7 +107,7 @@ public class CoherenceCachingModel implements CachingModel {
 
   /**
    * Sets the name of the cache to use.
-   * 
+   *
    * @param newCacheName
    *          the new cache name to set
    */
@@ -117,7 +117,7 @@ public class CoherenceCachingModel implements CachingModel {
 
   /**
    * Sets the time in milliseconds an entry should stay in the cache
-   * 
+   *
    * @param newTimeToLive
    *          the new time to set
    */
@@ -127,7 +127,7 @@ public class CoherenceCachingModel implements CachingModel {
 
   /**
    * Sets the time in milliseconds an entry should stay in the cache
-   * 
+   *
    * @param newTimeToLive
    *          the new time to set
    */
@@ -139,10 +139,14 @@ public class CoherenceCachingModel implements CachingModel {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[cacheName=" + StringUtils.quote(cacheName) + ", ");
-    buffer.append("timeToLive=" + timeToLive + "]");
-    return buffer.toString();
+	StringBuffer buffer = Objects.identityToString(this);
+	buffer.append("[cacheName=")
+			.append(StringUtils.quote(cacheName))
+			.append(", ")
+			.append("timeToLive=")
+			.append(timeToLive)
+			.append("]");
+	return buffer.toString();
   }
 
 }
