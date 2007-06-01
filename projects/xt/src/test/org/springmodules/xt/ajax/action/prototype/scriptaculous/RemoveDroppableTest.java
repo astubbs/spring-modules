@@ -14,7 +14,7 @@ public class RemoveDroppableTest extends XMLEnhancedTestCase {
     public void testRender() throws Exception {
         RemoveDroppable action = new RemoveDroppable("id");
         
-        String rendering = action.execute();
+        String rendering = action.render();
         
         System.out.println(rendering);
     }

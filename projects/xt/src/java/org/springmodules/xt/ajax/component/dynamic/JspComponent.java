@@ -24,7 +24,7 @@ import org.springmodules.xt.ajax.component.support.RenderingException;
 
 
 /**
- * Component that uses a JSP to build dynamic XHTML content.
+ * Component that uses a Jsp to build dynamic XHTML content.
  *
  * @author Nicolas De Loof
  * @author Sergio Bossa
@@ -40,7 +40,7 @@ public class JspComponent implements Component {
      * Construct the component.
      *
      * @param request The HttpServletRequest to use for dynamic content.
-     * @param path The JSP path: it is relative to the current path.
+     * @param path The Jsp path.
      */
     public JspComponent(HttpServletRequest request, String path) {
         this.request = request;

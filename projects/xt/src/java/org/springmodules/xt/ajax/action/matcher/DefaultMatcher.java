@@ -15,6 +15,8 @@
  */
 package org.springmodules.xt.ajax.action.matcher;
 
+import org.springmodules.xt.ajax.ElementMatcher;
+
 /**
  * Match elements to modify by identifier.
  *
@@ -23,9 +25,6 @@ package org.springmodules.xt.ajax.action.matcher;
 public class DefaultMatcher implements ElementMatcher {
     
     private static final long serialVersionUID = 26L;
-    
-    private static final String MATCH_MODE = "matchMode=\"plain\"";
-    private static final String CONTEXT = "contextNodeID=";
     
     private String elementId;
     
@@ -38,8 +37,12 @@ public class DefaultMatcher implements ElementMatcher {
 
     public String render() {
         StringBuilder response = new StringBuilder();
-        response.append(MATCH_MODE).append(" ");
-        response.append(CONTEXT).append('"').append(this.elementId).append('"');
+        
+        response.append("<matcher ");
+        response.append("matchMode=\"plain\" ");
+        response.append("contextNodeID=").append('"').append(this.elementId).append('"');
+        response.append("/>");
+        
         return response.toString();
     }
 }

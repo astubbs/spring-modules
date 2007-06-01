@@ -16,12 +16,15 @@
 
 package org.springmodules.xt.ajax.action;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.action.matcher.DefaultMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
- * Taconite based action for appending content to a given html element.
+ * Ajax action for appending content to a given html element.
  * 
  * @author Sergio Bossa
  */
@@ -29,43 +32,49 @@ public class AppendContentAction extends AbstractRenderingAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-append-as-children>";
-    private static final String CLOSE = "</taconite-append-as-children>";
+    private static final String OPEN = "<append-as-children>";
+    private static final String CLOSE = "</append-as-children>";
+    
+    private List<Component> components = new LinkedList<Component>();
     
     /**
      * Construct the action.
      * @param elementId The id of the html element for appending content to.
-     * @param components A list of components (html elements) that will be appended.
+     * @param components The list of components representing the content to render through this action.
      */
     public AppendContentAction(String elementId, List<Component> components) {
-        super(elementId, components);
+        super(new DefaultMatcher(elementId));
+        this.components = components;
     }
     
     /**
      * Construct the action.
      * @param elementId The id of the html element for appending content to.
-     * @param components The component (html element) that will be appended.
+     * @param components The list of components representing the content to render through this action.
      */
-    public AppendContentAction(String elementId, Component component) {
-        super(elementId, component);
+    public AppendContentAction(String elementId, Component... components) {
+        super(new DefaultMatcher(elementId));
+        this.components = Arrays.asList(components);
     }
     
     /**
      * Construct the action.
      * @param matcher The matcher that identifies html elements to append content to.
-     * @param components A list of components (html elements) that will be appended.
+     * @param components The list of components representing the content to render through this action.
      */
     public AppendContentAction(ElementMatcher matcher, List<Component> components) {
-        super(matcher, components);
+        super(matcher);
+        this.components = components;
     }
     
     /**
      * Construct the action.
      * @param matcher The matcher that identifies html elements to append content to.
-     * @param components The component (html element) that will be appended.
+     * @param components The list of components representing the content to render through this action.
      */
-    public AppendContentAction(ElementMatcher matcher, Component component) {
-        super(matcher, component);
+    public AppendContentAction(ElementMatcher matcher, Component... components) {
+        super(matcher);
+        this.components = Arrays.asList(components);
     }
     
     protected String getOpeningTag() {
@@ -74,5 +83,13 @@ public class AppendContentAction extends AbstractRenderingAction {
 
     protected String getClosingTag() {
         return CLOSE;
+    }
+    
+    protected String getContent() {
+        StringBuilder response = new StringBuilder();
+        for (Component c : this.components) {
+            response.append(c.render());
+        }
+        return response.toString();
     }
 }

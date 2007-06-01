@@ -16,12 +16,15 @@
 
 package org.springmodules.xt.ajax.action;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.action.matcher.DefaultMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
- * Taconite based action for replacing a given html element.
+ * Ajax action for replacing a given html element.
  * 
  * @author Sergio Bossa
  */
@@ -29,43 +32,49 @@ public class ReplaceElementAction extends AbstractRenderingAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-replace>";
-    private static final String CLOSE = "</taconite-replace>";
+    private static final String OPEN = "<replace>";
+    private static final String CLOSE = "</replace>";
+    
+    private List<Component> components = new LinkedList<Component>();
     
     /**
      * Construct the action.
      * @param elementId The id of the html element to replace.
-     * @param components A list of components (html elements) that will replace the given element.
+     * @param components The list of components representing the content to render through this action.
      */
     public ReplaceElementAction(String elementId, List<Component> components) {
-        super(elementId, components);
+        super(new DefaultMatcher(elementId));
+        this.components = components;
     }
     
     /**
      * Construct the action.
      * @param elementId The id of the html element to replace.
-     * @param components The component (html element) that will replace the given element.
+     * @param components The list of components representing the content to render through this action.
      */
-    public ReplaceElementAction(String elementId, Component component) {
-        super(elementId, component);
+    public ReplaceElementAction(String elementId, Component... components) {
+        super(new DefaultMatcher(elementId));
+        this.components = Arrays.asList(components);
     }
     
     /**
      * Construct the action.
      * @param matcher The matcher that identifies html elements to replace.
-     * @param components A list of components (html elements) that will replace matching elements.
+     * @param components The list of components representing the content to render through this action.
      */
     public ReplaceElementAction(ElementMatcher matcher, List<Component> components) {
-        super(matcher, components);
+        super(matcher);
+        this.components = components;
     }
     
     /**
      * Construct the action.
      * @param matcher The matcher that identifies html elements to replace.
-     * @param components The component (html element) that will replace matching elements.
+     * @param components The list of components representing the content to render through this action.
      */
-    public ReplaceElementAction(ElementMatcher matcher, Component component) {
-        super(matcher, component);
+    public ReplaceElementAction(ElementMatcher matcher, Component... components) {
+        super(matcher);
+        this.components = Arrays.asList(components);
     }
     
     protected String getOpeningTag() {
@@ -74,5 +83,13 @@ public class ReplaceElementAction extends AbstractRenderingAction {
 
     protected  String getClosingTag() {
         return CLOSE;
+    }
+    
+    protected String getContent() {
+        StringBuilder response = new StringBuilder();
+        for (Component c : this.components) {
+            response.append(c.render());
+        }
+        return response.toString();
     }
 }

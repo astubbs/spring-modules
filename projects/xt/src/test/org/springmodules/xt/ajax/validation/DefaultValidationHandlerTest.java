@@ -45,12 +45,12 @@ public class DefaultValidationHandlerTest extends XMLEnhancedTestCase {
         handler.setMessageSource(new DelegatingMessageSource());
         
         response = handler.validate(submitEvent);
-        rendering = response.getResponse();
+        rendering = response.render();
         System.out.println(rendering);
         
-        assertXpathEvaluatesTo("Default Message 1", "//taconite-append-as-children/div", rendering);
-        assertXpathEvaluatesTo("wildcard", "//taconite-append-as-children/@matchMode", rendering);
-        assertXpathExists("//taconite-execute-javascript/script", rendering);
+        assertXpathEvaluatesTo("Default Message 1", "//append-as-children/content/div", rendering);
+        assertXpathEvaluatesTo("wildcard", "//append-as-children/context/matcher/@matchMode", rendering);
+        assertXpathExists("//execute-javascript/content/script", rendering);
         assertTrue(rendering.indexOf("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});") != -1);
     }
     
@@ -66,12 +66,12 @@ public class DefaultValidationHandlerTest extends XMLEnhancedTestCase {
         });
         
         response = handler.validate(submitEvent);
-        rendering = response.getResponse();
+        rendering = response.render();
         System.out.println(rendering);
         
-        assertXpathEvaluatesTo("Default Message 1 for event : submitEvent", "//taconite-append-as-children/span", rendering);
-        assertXpathEvaluatesTo("wildcard", "//taconite-append-as-children/@matchMode", rendering);
-        assertXpathExists("//taconite-execute-javascript/script", rendering);
+        assertXpathEvaluatesTo("Default Message 1 for event : submitEvent", "//append-as-children/content/span", rendering);
+        assertXpathEvaluatesTo("wildcard", "//append-as-children/context/matcher/@matchMode", rendering);
+        assertXpathExists("//execute-javascript/content/script", rendering);
         assertTrue(rendering.indexOf("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});") != -1);
     }
 }

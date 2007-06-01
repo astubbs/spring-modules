@@ -32,16 +32,10 @@ public class HideElementTest extends XMLEnhancedTestCase {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
-
-    public void testExecute() throws Exception {
+    public void testRender() throws Exception {
         AjaxAction action = new HideElement("testId");
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
     }

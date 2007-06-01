@@ -1,24 +1,11 @@
-/*
-    json.js
-    2006-04-28
+/**
+ @fileoverview
+ Spring Modules Ajax XT integrated json support.
+ json.js (http://www.json.org/js.html) : Copyright (C) Douglas Crockford
+ */
 
-    This file adds these methods to JavaScript:
+var springxt_json_version=20070526;
 
-        object.toJSONString()
-
-            This method produces a JSON text from an object. The
-            object must not contain any cyclical references.
-
-        array.toJSONString()
-
-            This method produces a JSON text from an array. The
-            array must not contain any cyclical references.
-
-        string.parseJSON()
-
-            This method parses a JSON text to produce an object or
-            array. It will return false if there is an error.
-*/
 (function () {
     var m = {
             '\b': '\\b',

@@ -17,9 +17,8 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.Arrays;
-import junit.framework.*;
 import org.springmodules.xt.ajax.AjaxAction;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 import org.springmodules.xt.ajax.action.matcher.ListMatcher;
 import org.springmodules.xt.ajax.action.matcher.SelectorMatcher;
 import org.springmodules.xt.ajax.action.matcher.WildcardMatcher;
@@ -35,60 +34,54 @@ public class AppendContentActionTest extends XMLEnhancedTestCase {
     public AppendContentActionTest(String testName) {
         super(testName);
     }
-
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
     
-    public void testExecute() throws Exception {
+    public void testRender() throws Exception {
         AjaxAction action = new AppendContentAction("testId", new SimpleText("Test Component"));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component", "/taconite-append-as-children", result);
-        assertXpathEvaluatesTo("testId", "/taconite-append-as-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component", "/append-as-children/content", result);
+        assertXpathEvaluatesTo("testId", "/append-as-children/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithWildcardMatcher() throws Exception {
+    public void testRenderWithWildcardMatcher() throws Exception {
         ElementMatcher matcher = new WildcardMatcher("testId");
         AjaxAction action = new AppendContentAction(matcher, new SimpleText("Test Component"));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component", "/taconite-append-as-children", result);
-        assertXpathEvaluatesTo("wildcard", "/taconite-append-as-children/@matchMode", result);
-        assertXpathEvaluatesTo("testId", "/taconite-append-as-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component", "/append-as-children/content", result);
+        assertXpathEvaluatesTo("wildcard", "/append-as-children/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId", "/append-as-children/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithListMatcher() throws Exception {
+    public void testRenderWithListMatcher() throws Exception {
         ElementMatcher matcher = new ListMatcher(Arrays.asList("testId1", "testId2"));
         AjaxAction action = new AppendContentAction(matcher, new SimpleText("Test Component"));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component", "/taconite-append-as-children", result);
-        assertXpathEvaluatesTo("plain", "/taconite-append-as-children/@matchMode", result);
-        assertXpathEvaluatesTo("testId1,testId2", "/taconite-append-as-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component", "/append-as-children/content", result);
+        assertXpathEvaluatesTo("plain", "/append-as-children/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/append-as-children/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithSelectorMatcher() throws Exception {
+    public void testRenderWithSelectorMatcher() throws Exception {
         ElementMatcher matcher = new SelectorMatcher(Arrays.asList("#testId1", "#testId2"));
         AjaxAction action = new AppendContentAction(matcher, new SimpleText("Test Component"));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component", "/taconite-append-as-children", result);
-        assertXpathEvaluatesTo("selector", "/taconite-append-as-children/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-append-as-children/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("Test Component", "/append-as-children/content", result);
+        assertXpathEvaluatesTo("selector", "/append-as-children/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/append-as-children/context/matcher/@contextNodeSelector", result);
     }
 }

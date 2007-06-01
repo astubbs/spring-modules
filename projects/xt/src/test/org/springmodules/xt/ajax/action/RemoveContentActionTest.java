@@ -17,9 +17,8 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.Arrays;
-import junit.framework.*;
 import org.springmodules.xt.ajax.AjaxAction;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 import org.springmodules.xt.ajax.action.matcher.ListMatcher;
 import org.springmodules.xt.ajax.action.matcher.SelectorMatcher;
 import org.springmodules.xt.ajax.action.matcher.WildcardMatcher;
@@ -35,55 +34,49 @@ public class RemoveContentActionTest extends XMLEnhancedTestCase {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
-
-    public void testExecute() throws Exception {
+    public void testRender() throws Exception {
         AjaxAction action = new RemoveContentAction("testId");
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("testId", "/taconite-replace-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId", "/replace-children/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithWildcardMatcher() throws Exception {
+    public void testRenderWithWildcardMatcher() throws Exception {
         ElementMatcher matcher = new WildcardMatcher("testId");
         AjaxAction action = new RemoveContentAction(matcher);
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("wildcard", "/taconite-replace-children/@matchMode", result);
-        assertXpathEvaluatesTo("testId", "/taconite-replace-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("wildcard", "/replace-children/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId", "/replace-children/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithListMatcher() throws Exception {
+    public void testRenderWithListMatcher() throws Exception {
         ElementMatcher matcher = new ListMatcher(Arrays.asList("testId1", "testId2"));
         AjaxAction action = new RemoveContentAction(matcher);
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("plain", "/taconite-replace-children/@matchMode", result);
-        assertXpathEvaluatesTo("testId1,testId2", "/taconite-replace-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("plain", "/replace-children/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/replace-children/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithSelectorMatcher() throws Exception {
+    public void testRenderWithSelectorMatcher() throws Exception {
         ElementMatcher matcher = new SelectorMatcher(Arrays.asList("#testId1", "#testId2"));
         AjaxAction action = new RemoveContentAction(matcher);
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("selector", "/taconite-replace-children/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-replace-children/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("selector", "/replace-children/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/replace-children/context/matcher/@contextNodeSelector", result);
     }
 }

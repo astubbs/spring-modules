@@ -17,9 +17,8 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.Arrays;
-import junit.framework.*;
 import org.springmodules.xt.ajax.AjaxAction;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 import org.springmodules.xt.ajax.action.matcher.ListMatcher;
 import org.springmodules.xt.ajax.action.matcher.SelectorMatcher;
 import org.springmodules.xt.ajax.action.matcher.WildcardMatcher;
@@ -35,55 +34,49 @@ public class RemoveElementActionTest extends XMLEnhancedTestCase {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
-
-    public void testExecute() throws Exception {
+    public void testRender() throws Exception {
         AjaxAction action = new RemoveElementAction("testId");
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("testId", "/taconite-delete/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId", "/delete/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithWildcardMatcher() throws Exception {
+    public void testRenderWithWildcardMatcher() throws Exception {
         ElementMatcher matcher = new WildcardMatcher("testId");
         AjaxAction action = new RemoveElementAction(matcher);
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("wildcard", "/taconite-delete/@matchMode", result);
-        assertXpathEvaluatesTo("testId", "/taconite-delete/@contextNodeID", result);
+        assertXpathEvaluatesTo("wildcard", "/delete/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId", "/delete/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithListMatcher() throws Exception {
+    public void testRenderWithListMatcher() throws Exception {
         ElementMatcher matcher = new ListMatcher(Arrays.asList("testId1", "testId2"));
         AjaxAction action = new RemoveElementAction(matcher);
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("plain", "/taconite-delete/@matchMode", result);
-        assertXpathEvaluatesTo("testId1,testId2", "/taconite-delete/@contextNodeID", result);
+        assertXpathEvaluatesTo("plain", "/delete/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/delete/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithSelectorMatcher() throws Exception {
+    public void testRenderWithSelectorMatcher() throws Exception {
         ElementMatcher matcher = new SelectorMatcher(Arrays.asList("#testId1", "#testId2"));
         AjaxAction action = new RemoveElementAction(matcher);
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("selector", "/taconite-delete/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-delete/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("selector", "/delete/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/delete/context/matcher/@contextNodeSelector", result);
     }
 }

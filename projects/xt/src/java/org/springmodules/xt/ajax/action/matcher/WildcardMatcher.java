@@ -15,6 +15,8 @@
  */
 package org.springmodules.xt.ajax.action.matcher;
 
+import org.springmodules.xt.ajax.ElementMatcher;
+
 /**
  * Match elements to modify by identifier <b>and</b> the underscore ("_") wildcard.<br>
  * The WildcardMatcher will make actions matching elements whose identifier starts with a substring of the identifier provided here, 
@@ -29,9 +31,6 @@ public class WildcardMatcher implements ElementMatcher {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String MATCH_MODE = "matchMode=\"wildcard\"";
-    private static final String CONTEXT = "contextNodeID=";
-    
     private String elementId;
     
     /**
@@ -43,8 +42,12 @@ public class WildcardMatcher implements ElementMatcher {
 
     public String render() {
         StringBuilder response = new StringBuilder();
-        response.append(MATCH_MODE).append(" ");
-        response.append(CONTEXT).append('"').append(this.elementId).append('"');
+        
+        response.append("<matcher ");
+        response.append("matchMode=\"wildcard\" ");
+        response.append("contextNodeID=").append('"').append(this.elementId).append('"');
+        response.append("/>");
+        
         return response.toString();
     }
 }

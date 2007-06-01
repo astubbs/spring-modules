@@ -19,7 +19,7 @@ public class EffectTest extends XMLEnhancedTestCase {
         action.addOption("boolean", true);
         action.addOption("string", "v2");
         
-        String rendering = action.execute();
+        String rendering = action.render();
         
         System.out.println(rendering);
     }

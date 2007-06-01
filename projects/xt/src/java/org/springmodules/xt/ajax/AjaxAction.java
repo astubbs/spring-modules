@@ -26,8 +26,9 @@ import java.io.Serializable;
 public interface AjaxAction extends Serializable {
    
     /**
-     * Execute this action.
-     * @return A string containing the result of this action.
+     * Render this action, returning its textual representation.
+     *
+     * @return A text response containing the result of this action.
      */
-    public String execute();
+    public String render();
 }

@@ -52,7 +52,7 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         ajaxInterceptor.preHandle(httpRequest, httpResponse, controller);
         
         String response1 = httpResponse.getContentAsString();
-        String response2 = new DummyHandler().action(new AjaxActionEventImpl("action", httpRequest)).getResponse();
+        String response2 = new DummyHandler().action(new AjaxActionEventImpl("action", httpRequest)).render();
         
         assertEquals(response1, response2);
     }
@@ -98,7 +98,7 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
         
         String response1 = httpResponse.getContentAsString();
-        String response2 = new DummySubmitHandler().submit(new AjaxSubmitEventImpl("submit", httpRequest)).getResponse();
+        String response2 = new DummySubmitHandler().submit(new AjaxSubmitEventImpl("submit", httpRequest)).render();
         
         assertEquals(response1, response2);
     }
@@ -126,8 +126,7 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         
         ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
         
-        assertEquals("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> <taconite-redirect targetUrl=\"/ajax/success.page\"></taconite-redirect> </taconite-root>", 
-                httpResponse.getContentAsString());
+        assertTrue(httpResponse.getContentAsString().indexOf("/ajax/success.page") != -1);
     }
     
     public void testPostHandleWithStandardRedirectPrefix() throws Exception {
@@ -153,8 +152,7 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         
         ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
         
-        assertEquals("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> <taconite-redirect targetUrl=\"/ajax/success.page\"></taconite-redirect> </taconite-root>", 
-                httpResponse.getContentAsString());
+        assertTrue(httpResponse.getContentAsString().indexOf("/ajax/success.page") != -1);
     }
     
     public void testPostHandleFails() throws Exception {

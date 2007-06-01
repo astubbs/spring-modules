@@ -31,13 +31,7 @@ public class AjaxResponseImplTest extends XMLEnhancedTestCase {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
-
-    public void testGetResponse() throws Exception {
+    public void testRender() throws Exception {
         AppendContentAction action1 = new AppendContentAction("action1", new SimpleText("Test Text"));
         ReplaceContentAction action2 = new ReplaceContentAction("action2", new SimpleText("Test Text"));
         AjaxResponseImpl response = new AjaxResponseImpl();
@@ -45,11 +39,11 @@ public class AjaxResponseImplTest extends XMLEnhancedTestCase {
         response.addAction(action1);
         response.addAction(action2);
         
-        String result = response.getResponse();
+        String result = response.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("action1", "/taconite-root/taconite-append-as-children/@contextNodeID", result);
-        assertXpathEvaluatesTo("action2", "/taconite-root/taconite-replace-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("action1", "/ajax-response/append-as-children/context/matcher/@contextNodeID", result);
+        assertXpathEvaluatesTo("action2", "/ajax-response/replace-children/context/matcher/@contextNodeID", result);
     }
 }

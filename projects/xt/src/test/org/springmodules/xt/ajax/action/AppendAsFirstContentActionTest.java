@@ -17,9 +17,8 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.Arrays;
-import junit.framework.*;
 import org.springmodules.xt.ajax.AjaxAction;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 import org.springmodules.xt.ajax.action.matcher.ListMatcher;
 import org.springmodules.xt.ajax.action.matcher.SelectorMatcher;
 import org.springmodules.xt.ajax.action.matcher.WildcardMatcher;
@@ -36,64 +35,58 @@ public class AppendAsFirstContentActionTest extends XMLEnhancedTestCase {
     public AppendAsFirstContentActionTest(String testName) {
         super(testName);
     }
-
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
     
-    public void testExecute() throws Exception {
+    public void testRender() throws Exception {
         AjaxAction action = new AppendAsFirstContentAction("testId", Arrays.asList(new Component[]{new TaggedText("Test Component 1", TaggedText.Tag.DIV), new TaggedText("Test Component 2", TaggedText.Tag.DIV)}));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component 1", "/taconite-append-as-first-child/div[position()=1]", result);
-        assertXpathEvaluatesTo("Test Component 2", "/taconite-append-as-first-child/div[position()=2]", result);
-        assertXpathEvaluatesTo("testId", "/taconite-append-as-first-child/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component 1", "/append-as-first-child/content/div[position()=1]", result);
+        assertXpathEvaluatesTo("Test Component 2", "/append-as-first-child/content/div[position()=2]", result);
+        assertXpathEvaluatesTo("testId", "/append-as-first-child/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithListMatcher() throws Exception {
+    public void testRenderWithListMatcher() throws Exception {
         ElementMatcher matcher = new ListMatcher(Arrays.asList("testId1", "testId2"));
         AjaxAction action = new AppendAsFirstContentAction(matcher, Arrays.asList(new Component[]{new TaggedText("Test Component 1", TaggedText.Tag.DIV), new TaggedText("Test Component 2", TaggedText.Tag.DIV)}));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component 1", "/taconite-append-as-first-child/div[position()=1]", result);
-        assertXpathEvaluatesTo("Test Component 2", "/taconite-append-as-first-child/div[position()=2]", result);
-        assertXpathEvaluatesTo("plain", "/taconite-append-as-first-child/@matchMode", result);
-        assertXpathEvaluatesTo("testId1,testId2", "/taconite-append-as-first-child/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component 1", "/append-as-first-child/content/div[position()=1]", result);
+        assertXpathEvaluatesTo("Test Component 2", "/append-as-first-child/content/div[position()=2]", result);
+        assertXpathEvaluatesTo("plain", "/append-as-first-child/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/append-as-first-child/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithWildcardMatcher() throws Exception {
+    public void testRenderWithWildcardMatcher() throws Exception {
         ElementMatcher matcher = new WildcardMatcher("testId");
         AjaxAction action = new AppendAsFirstContentAction(matcher, Arrays.asList(new Component[]{new TaggedText("Test Component 1", TaggedText.Tag.DIV), new TaggedText("Test Component 2", TaggedText.Tag.DIV)}));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component 1", "/taconite-append-as-first-child/div[position()=1]", result);
-        assertXpathEvaluatesTo("Test Component 2", "/taconite-append-as-first-child/div[position()=2]", result);
-        assertXpathEvaluatesTo("wildcard", "/taconite-append-as-first-child/@matchMode", result);
-        assertXpathEvaluatesTo("testId", "/taconite-append-as-first-child/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component 1", "/append-as-first-child/content/div[position()=1]", result);
+        assertXpathEvaluatesTo("Test Component 2", "/append-as-first-child/content/div[position()=2]", result);
+        assertXpathEvaluatesTo("wildcard", "/append-as-first-child/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId", "/append-as-first-child/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithSelectorMatcher() throws Exception {
+    public void testRenderWithSelectorMatcher() throws Exception {
         ElementMatcher matcher = new SelectorMatcher(Arrays.asList("#testId1", "#testId2"));
         AjaxAction action = new AppendAsFirstContentAction(matcher, Arrays.asList(new Component[]{new TaggedText("Test Component 1", TaggedText.Tag.DIV), new TaggedText("Test Component 2", TaggedText.Tag.DIV)}));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component 1", "/taconite-append-as-first-child/div[position()=1]", result);
-        assertXpathEvaluatesTo("Test Component 2", "/taconite-append-as-first-child/div[position()=2]", result);
-        assertXpathEvaluatesTo("selector", "/taconite-append-as-first-child/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-append-as-first-child/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("Test Component 1", "/append-as-first-child/content/div[position()=1]", result);
+        assertXpathEvaluatesTo("Test Component 2", "/append-as-first-child/content/div[position()=2]", result);
+        assertXpathEvaluatesTo("selector", "/append-as-first-child/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/append-as-first-child/context/matcher/@contextNodeSelector", result);
     }
 }

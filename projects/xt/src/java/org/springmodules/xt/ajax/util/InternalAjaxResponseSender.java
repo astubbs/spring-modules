@@ -33,7 +33,7 @@ public class InternalAjaxResponseSender {
     
     public static void sendResponse(HttpServletResponse httpResponse, AjaxResponse ajaxResponse)
     throws IOException {
-        String response = ajaxResponse.getResponse();
+        String response = ajaxResponse.render();
         logger.debug(new StringBuilder("Sending ajax response: ").append(response));
         httpResponse.setContentType("text/xml");
         httpResponse.setCharacterEncoding(ajaxResponse.getEncoding());

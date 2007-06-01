@@ -18,6 +18,7 @@ package org.springmodules.xt.ajax.action.matcher;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import org.springmodules.xt.ajax.ElementMatcher;
 
 /**
  * Match elements to modify against a given a list of identifiers.<br>
@@ -30,9 +31,6 @@ public class ListMatcher implements ElementMatcher {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String MATCH_MODE = "matchMode=\"plain\"";
-    private static final String CONTEXT = "contextNodeID=";
-    
     private List<String> elementsId = new LinkedList();
     
     /**
@@ -44,8 +42,10 @@ public class ListMatcher implements ElementMatcher {
 
     public String render() {
         StringBuilder response = new StringBuilder();
-        response.append(MATCH_MODE).append(" ");
-        response.append(CONTEXT).append('"');
+        
+        response.append("<matcher ");
+        response.append("matchMode=\"plain\" ");
+        response.append("contextNodeID=").append('"');
         Iterator<String> it = this.elementsId.iterator();
         while (it.hasNext()) {
             String element = it.next();
@@ -55,6 +55,8 @@ public class ListMatcher implements ElementMatcher {
             }
         }
         response.append('"');
+        response.append("/>");
+        
         return response.toString();
     }
 }

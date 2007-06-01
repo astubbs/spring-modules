@@ -17,9 +17,8 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.Arrays;
-import junit.framework.*;
 import org.springmodules.xt.ajax.AjaxAction;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 import org.springmodules.xt.ajax.action.matcher.ListMatcher;
 import org.springmodules.xt.ajax.action.matcher.SelectorMatcher;
 import org.springmodules.xt.ajax.action.matcher.WildcardMatcher;
@@ -35,59 +34,53 @@ public class SetAttributeActionTest extends XMLEnhancedTestCase {
         super(testName);
     }
     
-    protected void setUp() throws Exception {
-    }
-    
-    protected void tearDown() throws Exception {
-    }
-    
-    public void testExecute() throws Exception {
+    public void testRender() throws Exception {
         AjaxAction action = new SetAttributeAction("testId", "class", "testClass");
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("testId", "/taconite-set-attributes/@contextNodeID", result);
-        assertXpathEvaluatesTo("testClass", "/taconite-set-attributes/@class", result);
+        assertXpathEvaluatesTo("testId", "/set-attributes/context/matcher/@contextNodeID", result);
+        assertXpathEvaluatesTo("testClass", "/set-attributes/content/attributes/@class", result);
     }
     
-    public void testExecuteWithWildcardMatcher() throws Exception {
+    public void testRenderWithWildcardMatcher() throws Exception {
         ElementMatcher matcher = new WildcardMatcher("testId");
         AjaxAction action = new SetAttributeAction(matcher, "class", "testClass");
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("wildcard", "/taconite-set-attributes/@matchMode", result);
-        assertXpathEvaluatesTo("testId", "/taconite-set-attributes/@contextNodeID", result);
-        assertXpathEvaluatesTo("testClass", "/taconite-set-attributes/@class", result);
+        assertXpathEvaluatesTo("wildcard", "/set-attributes/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId", "/set-attributes/context/matcher/@contextNodeID", result);
+        assertXpathEvaluatesTo("testClass", "/set-attributes/content/attributes/@class", result);
     }
     
-    public void testExecuteWithListMatcher() throws Exception {
+    public void testRenderWithListMatcher() throws Exception {
         ElementMatcher matcher = new ListMatcher(Arrays.asList("testId1", "testId2"));
         AjaxAction action = new SetAttributeAction(matcher, "class", "testClass");
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("plain", "/taconite-set-attributes/@matchMode", result);
-        assertXpathEvaluatesTo("testId1,testId2", "/taconite-set-attributes/@contextNodeID", result);
-        assertXpathEvaluatesTo("testClass", "/taconite-set-attributes/@class", result);
+        assertXpathEvaluatesTo("plain", "/set-attributes/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/set-attributes/context/matcher/@contextNodeID", result);
+        assertXpathEvaluatesTo("testClass", "/set-attributes/content/attributes/@class", result);
     }
     
-    public void testExecuteWithSelectorMatcher() throws Exception {
+    public void testRenderWithSelectorMatcher() throws Exception {
         ElementMatcher matcher = new SelectorMatcher(Arrays.asList("#testId1", "#testId2"));
         AjaxAction action = new SetAttributeAction(matcher, "class", "testClass");
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("selector", "/taconite-set-attributes/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-set-attributes/@contextNodeSelector", result);
-        assertXpathEvaluatesTo("testClass", "/taconite-set-attributes/@class", result);
+        assertXpathEvaluatesTo("selector", "/set-attributes/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/set-attributes/context/matcher/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("testClass", "/set-attributes/content/attributes/@class", result);
     }
 }

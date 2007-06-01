@@ -14,7 +14,7 @@ public class ApplyBehaviourTest extends XMLEnhancedTestCase {
     public void testRender() throws Exception {
         ApplyBehaviour action = new ApplyBehaviour();
         
-        String rendering = action.execute();
+        String rendering = action.render();
         
         System.out.println(rendering);
     }

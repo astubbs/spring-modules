@@ -16,11 +16,11 @@
 
 package org.springmodules.xt.ajax.action;
 
-import java.util.ArrayList;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.action.matcher.DefaultMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 
 /**
- * Taconite based ajax action for setting an attribute value.
+ * Ajax action for setting an attribute value.
  *
  * @author Sergio Bossa
  */
@@ -28,8 +28,8 @@ public class SetAttributeAction extends AbstractRenderingAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-set-attributes $key=\"$value\">";
-    private static final String CLOSE = "</taconite-set-attributes>";
+    private static final String OPEN = "<set-attributes>";
+    private static final String CLOSE = "</set-attributes>";
     
     private String attribute;
     private String value;
@@ -41,7 +41,7 @@ public class SetAttributeAction extends AbstractRenderingAction {
      * @param value The value to set. 
      */
     public SetAttributeAction(String elementId, String attribute, String value) {
-        super(elementId, new ArrayList(0));
+        super(new DefaultMatcher(elementId));
         this.attribute = attribute;
         this.value = value;
     }
@@ -53,16 +53,25 @@ public class SetAttributeAction extends AbstractRenderingAction {
      * @param value The value to set. 
      */
     public SetAttributeAction(ElementMatcher matcher, String attribute, String value) {
-        super(matcher, new ArrayList(0));
+        super(matcher);
         this.attribute = attribute;
         this.value = value;
     }
     
     protected String getOpeningTag() {
-        return OPEN.replaceFirst("\\$key", this.attribute).replaceFirst("\\$value", this.value);
+        return OPEN;
     }
 
     protected  String getClosingTag() {
         return CLOSE;
+    }
+
+    protected String getContent() {
+        StringBuilder response = new StringBuilder();
+        response.append("<attributes ")
+        .append(this.attribute).append('=')
+        .append('"').append(this.value).append('"')
+        .append("/>");
+        return response.toString();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 the original author or authors.
+ * Copyright 2006 - 2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.component;
-
-import java.io.Serializable;
+package org.springmodules.xt.ajax;
 
 /**
- * Interface representing a web component to render.
+ * Interface representing a kind of ajax action that directly renders content into a web page.<br>
+ * Rendering actions use {@link ElementMatcher}s for
+ * identifying the web page elements to modify.
  *
  * @author Sergio Bossa
  */
-public interface Component extends Serializable {
-    
+public interface AjaxRenderingAction extends AjaxAction {
+   
     /**
-     * Render a web component.
+     * Get the {@link ElementMatcher} to use for
+     * identifying the web page elements to modify.
      *
-     * @return A string representing the rendering of this component. 
+     * @return An {@link ElementMatcher}.
      */
-    public String render();
+    public ElementMatcher getElementMatcher();
 }

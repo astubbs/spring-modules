@@ -19,82 +19,52 @@ package org.springmodules.xt.ajax.action;
 import java.util.LinkedList;
 import java.util.List;
 import org.springmodules.xt.ajax.AjaxAction;
+import org.springmodules.xt.ajax.AjaxRenderingAction;
 import org.springmodules.xt.ajax.action.matcher.DefaultMatcher;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
- * Abstract Taconite based action for modifying web pages content by rendering data into html elements.<br>
- * Html elements to modify are identified:
+ * Abstract rendering action for modifying web pages content by directly rendering data.<br>
+ * Web page elements to modify are identified:
  * <ul>
  * <li>By html element identifier.</li>
- * <li>By {@link org.springmodules.xt.ajax.action.matcher.ElementMatcher}.</li>
+ * <li>By {@link org.springmodules.xt.ajax.action.elementMatcher.ElementMatcher}.</li>
  * </ul>
  * The concrete action (element replacing, content replacing etc.) is defined by subclasses via template methods.
- *
+ * 
  * @author Sergio Bossa
  */
-public abstract class AbstractRenderingAction implements AjaxAction {
+public abstract class AbstractRenderingAction implements AjaxRenderingAction {
     
-    private ElementMatcher matcher;
-    private List<Component> components = new LinkedList();
-    
-    /**
-     * Construct the action.
-     * @param elementId The id of the element matching this action.
-     * @param components A list of components that will be rendered.
-     */
-    public AbstractRenderingAction(String elementId, List<Component> components) {
-        this.matcher = new DefaultMatcher(elementId);
-        this.components = components;
-    }
+    private ElementMatcher elementMatcher;
     
     /**
-     * Construct the action.
-     * @param elementId The id of the element matching this action.
-     * @param component The component that will be rendered.
+     * @param elementMatcher The {@link org.springmodules.xt.ajax.action.elementMatcher.ElementMatcher} 
+     * to use for selecting elements matching this action.
      */
-    public AbstractRenderingAction(String elementId, Component component) {
-        this.matcher = new DefaultMatcher(elementId);
-        this.components.add(component);
+    public AbstractRenderingAction(ElementMatcher elementMatcher) {
+        this.elementMatcher = elementMatcher;
     }
     
-    /**
-     * Construct the action.
-     * @param elementMatcher The {@link org.springmodules.xt.ajax.action.matcher.ElementMatcher} 
-     * to use for selecting the elements matching this action.
-     * @param components A list of components that will be rendered.
-     */
-    public AbstractRenderingAction(ElementMatcher elementMatcher, List<Component> components) {
-        this.matcher = elementMatcher;
-        this.components = components;
+    public ElementMatcher getElementMatcher() {
+        return this.elementMatcher;
     }
     
-    /**
-     * Construct the action.
-     * @param elementMatcher The {@link org.springmodules.xt.ajax.action.matcher.ElementMatcher} 
-     * to use for selecting the elements matching this action.
-     * @param component The component that will be rendered.
-     */
-    public AbstractRenderingAction(ElementMatcher elementMatcher, Component component) {
-        this.matcher = elementMatcher;
-        this.components.add(component);
-    }
-    
-    public String execute() {
-        String startTag = this.getOpeningTag().substring(0, this.getOpeningTag().length() - 1);
-        String endTag = this.getClosingTag();
+    public String render() {
         StringBuilder response = new StringBuilder();
         
-        response.append(startTag);
-        response.append(" ").append(this.matcher.render());
-        response.append(">");
+        response.append(this.getOpeningTag());
         
-        for (Component c : this.components) {
-            response.append(c.render());
-        }
+        response.append("<context>");
+        response.append(this.elementMatcher.render());
+        response.append("</context>");
         
-        response.append(endTag);
+        response.append("<content>");
+        response.append(this.getContent());
+        response.append("</content>");
+        
+        response.append(this.getClosingTag());
         
         return response.toString();
     }
@@ -108,4 +78,9 @@ public abstract class AbstractRenderingAction implements AjaxAction {
      * Get the action closing tag.
      */
     protected abstract String getClosingTag();
+    
+    /**
+     * Get the action content
+     */
+    protected abstract String getContent();
 }

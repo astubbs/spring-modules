@@ -17,9 +17,8 @@
 package org.springmodules.xt.ajax.action;
 
 import java.util.Arrays;
-import junit.framework.*;
 import org.springmodules.xt.ajax.AjaxAction;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 import org.springmodules.xt.ajax.action.matcher.ListMatcher;
 import org.springmodules.xt.ajax.action.matcher.SelectorMatcher;
 import org.springmodules.xt.ajax.action.matcher.WildcardMatcher;
@@ -36,64 +35,58 @@ public class InsertContentBeforeActionTest extends XMLEnhancedTestCase {
     public InsertContentBeforeActionTest(String testName) {
         super(testName);
     }
-
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
     
-    public void testExecute() throws Exception {
+    public void testRender() throws Exception {
         AjaxAction action = new InsertContentBeforeAction("testId", Arrays.asList(new Component[]{new TaggedText("Test Component 1", TaggedText.Tag.DIV), new TaggedText("Test Component 2", TaggedText.Tag.DIV)}));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component 1", "/taconite-insert-before/div[position()=1]", result);
-        assertXpathEvaluatesTo("Test Component 2", "/taconite-insert-before/div[position()=2]", result);
-        assertXpathEvaluatesTo("testId", "/taconite-insert-before/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component 1", "/insert-before/content/div[position()=1]", result);
+        assertXpathEvaluatesTo("Test Component 2", "/insert-before/content/div[position()=2]", result);
+        assertXpathEvaluatesTo("testId", "/insert-before/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithWildcardMatcher() throws Exception {
+    public void testRenderWithWildcardMatcher() throws Exception {
         ElementMatcher matcher = new WildcardMatcher("testId");
         AjaxAction action = new InsertContentBeforeAction(matcher, Arrays.asList(new Component[]{new TaggedText("Test Component 1", TaggedText.Tag.DIV), new TaggedText("Test Component 2", TaggedText.Tag.DIV)}));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component 1", "/taconite-insert-before/div[position()=1]", result);
-        assertXpathEvaluatesTo("Test Component 2", "/taconite-insert-before/div[position()=2]", result);
-        assertXpathEvaluatesTo("wildcard", "/taconite-insert-before/@matchMode", result);
-        assertXpathEvaluatesTo("testId", "/taconite-insert-before/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component 1", "/insert-before/content/div[position()=1]", result);
+        assertXpathEvaluatesTo("Test Component 2", "/insert-before/content/div[position()=2]", result);
+        assertXpathEvaluatesTo("wildcard", "/insert-before/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId", "/insert-before/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithListMatcher() throws Exception {
+    public void testRenderWithListMatcher() throws Exception {
         ElementMatcher matcher = new ListMatcher(Arrays.asList("testId1", "testId2"));
         AjaxAction action = new InsertContentBeforeAction(matcher, Arrays.asList(new Component[]{new TaggedText("Test Component 1", TaggedText.Tag.DIV), new TaggedText("Test Component 2", TaggedText.Tag.DIV)}));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component 1", "/taconite-insert-before/div[position()=1]", result);
-        assertXpathEvaluatesTo("Test Component 2", "/taconite-insert-before/div[position()=2]", result);
-        assertXpathEvaluatesTo("plain", "/taconite-insert-before/@matchMode", result);
-        assertXpathEvaluatesTo("testId1,testId2", "/taconite-insert-before/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component 1", "/insert-before/content/div[position()=1]", result);
+        assertXpathEvaluatesTo("Test Component 2", "/insert-before/content/div[position()=2]", result);
+        assertXpathEvaluatesTo("plain", "/insert-before/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("testId1,testId2", "/insert-before/context/matcher/@contextNodeID", result);
     }
     
-    public void testExecuteWithSelectorMatcher() throws Exception {
+    public void testRenderWithSelectorMatcher() throws Exception {
         ElementMatcher matcher = new SelectorMatcher(Arrays.asList("#testId1", "#testId2"));
         AjaxAction action = new InsertContentBeforeAction(matcher, Arrays.asList(new Component[]{new TaggedText("Test Component 1", TaggedText.Tag.DIV), new TaggedText("Test Component 2", TaggedText.Tag.DIV)}));
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component 1", "/taconite-insert-before/div[position()=1]", result);
-        assertXpathEvaluatesTo("Test Component 2", "/taconite-insert-before/div[position()=2]", result);
-        assertXpathEvaluatesTo("selector", "/taconite-insert-before/@matchMode", result);
-        assertXpathEvaluatesTo("#testId1,#testId2", "/taconite-insert-before/@contextNodeSelector", result);
+        assertXpathEvaluatesTo("Test Component 1", "/insert-before/content/div[position()=1]", result);
+        assertXpathEvaluatesTo("Test Component 2", "/insert-before/content/div[position()=2]", result);
+        assertXpathEvaluatesTo("selector", "/insert-before/context/matcher/@matchMode", result);
+        assertXpathEvaluatesTo("#testId1,#testId2", "/insert-before/context/matcher/@contextNodeSelector", result);
     }
 }

@@ -442,35 +442,48 @@ public AjaxResponse eventId(AjaxSubmitEvent )
       <para>Ajax actions are created by handlers and act on client web
       pages.</para>
 
-      <para>XT Ajax Framework provides many useful actions ready to be used
-      (see the <emphasis>org.springmodules.xt.ajax.action</emphasis> package
-      for details); however, creating custom actions is just a matter of
+      <para>XT Ajax Framework provides many useful actions ready to be used:
+      see the <emphasis>org.springmodules.xt.ajax.action</emphasis> package
+      for details; however, creating custom actions is just a matter of
       implementing the following simple interface:</para>
 
       <programlisting>
 public interface AjaxAction { 
 
-    public String execute(); 
+    public String render(); 
 } 
 </programlisting>
 
-      <para>The <emphasis>execute()</emphasis> method is the one you call for
+      <para>The <emphasis>render()</emphasis> method is the one you call for
       producing the action result.</para>
 
-      <para>Most of the actions will act on web pages by rendering components
-      and so modifying page parts. But ... <emphasis role="bold">how can
-      actions identify page parts to modify</emphasis>?</para>
+      <para>You can also implement the following interface, used by actions
+      that render data into the web page:</para>
+
+      <programlisting>
+public interface AjaxRenderingAction extends AjaxAction {
+
+    public ElementMatcher getElementMatcher();
+}</programlisting>
+
+      <para>So, there are actions that render data into the web page,
+      modifying page parts, but ... <emphasis role="bold">how can actions
+      identify page parts to modify</emphasis>?</para>
     </sect3>
 
     <sect3 id="identifying-page-parts">
       <title id="identifying-page-parts-title">Identifying page parts</title>
 
+      <para>Ajax actions that render data into the web page are all
+      implementations of the
+      <emphasis>org.springmodules.xt.ajax.AjaxRenderingAction</emphasis>
+      interface.</para>
+
       <para>By default, Ajax actions that need to identify page parts to
       modify use the HTML <emphasis role="bold"><emphasis
-      role="bold">id</emphasis> </emphasis>attribute.</para>
-
-      <para>So, assigning an identifier to your HTML elements is a way to make
-      Ajax actions identify them:</para>
+      role="bold">id</emphasis> </emphasis>attribute. So, assigning an
+      identifier to your HTML elements is a way to make Ajax actions identify
+      them:</para>
 
       <programlisting>
 &lt;select id="toFill"&gt;
@@ -479,8 +492,8 @@ public interface AjaxAction {
 
       <para>However, Ajax actions are not limited to HTML identifiers.</para>
 
-      <para>More specifically, <emphasis role="bold">all actions that want to
-      modify page contents must use either</emphasis>:</para>
+      <para>More specifically, <emphasis role="bold">all actions that modify
+      page contents must use either</emphasis>:</para>
 
       <itemizedlist>
         <listitem>
@@ -489,7 +502,8 @@ public interface AjaxAction {
 
         <listitem>
           <para>An
-          <emphasis>org.springmodules.xt.ajax.action.matcher.ElementMatcher</emphasis>.</para>
+          <emphasis>org.springmodules.xt.ajax.ElementMatcher</emphasis>
+          implementation.</para>
         </listitem>
       </itemizedlist>
 
@@ -611,7 +625,7 @@ public interface AjaxResponse {
 
     public void addAction(AjaxAction action); 
 
-    public String getResponse(); 
+    public String render(); 
 
     public String getEncoding();
 
@@ -627,8 +641,8 @@ public interface AjaxResponse {
         </listitem>
 
         <listitem>
-          <para><emphasis>public String getResponse()</emphasis> : This method
-          executes the added actions and returns their result.</para>
+          <para><emphasis>public String render()</emphasis> : This method
+          renders the added actions and returns the result.</para>
         </listitem>
 
         <listitem>
@@ -651,8 +665,8 @@ public interface AjaxResponse {
       </note>
 
       <note>
-        <para>In the context of an Ajax response, actions are executed
-        <emphasis role="bold">following their order of
+        <para>In the context of an Ajax response, actions are rendered (and
+        executed client side) <emphasis role="bold">following their order of
         adding</emphasis>.</para>
       </note>
     </sect3>
@@ -968,7 +982,7 @@ XT.doAjaxSubmit(id, element, jsonParams, {'loadingElementId' : '...', 'loadingIm
         <listitem>
           <para><ulink
           url="http://www.bennolan.com/behaviour/"><emphasis>Behaviour</emphasis></ulink>
-          : see javadocs for the
+          (version 1.1 or higher) : see javadocs for the
           <emphasis>org.springmodules.xt.ajax.action.behaviour</emphasis>
           classes.</para>
         </listitem>

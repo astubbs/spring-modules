@@ -38,6 +38,6 @@ public class RedirectExceptionHandlerTest extends XMLEnhancedTestCase {
         
         AjaxResponse response = handler.handle(httpRequest, ex);
         assertNotNull(response);
-        assertXpathExists("//taconite-redirect/@targetUrl", response.getResponse());
+        assertXpathExists("//redirect/content/target/@url", response.render());
     }
 }

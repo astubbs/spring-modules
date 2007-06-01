@@ -18,7 +18,7 @@ public class ExecuteJavascriptFunctionActionTest extends XMLEnhancedTestCase {
         options.put("message", "Greetings!");
         
         ExecuteJavascriptFunctionAction action = new ExecuteJavascriptFunctionAction("test", options);
-        String rendering = action.execute();
+        String rendering = action.render();
         
         System.out.println(rendering);
     }

@@ -18,7 +18,6 @@ package org.springmodules.xt.ajax.action;
 
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.*;
 import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
@@ -31,24 +30,18 @@ public class RedirectActionTest extends XMLEnhancedTestCase {
     public RedirectActionTest(String testName) {
         super(testName);
     }
-
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
     
-    public void testExecute() throws Exception {
+    public void testRender() throws Exception {
         Map model = new HashMap();
         
         model.put("ex", "ex");
         
         AjaxAction action = new RedirectAction("/ajax/redirect.action", model);
         
-        String result = action.execute();
+        String result = action.render();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("/ajax/redirect.action?ex=ex", "/taconite-redirect/@targetUrl", result);
+        assertXpathEvaluatesTo("/ajax/redirect.action?ex=ex", "/redirect/content/target/@url", result);
     }
 }

@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springmodules.xt.ajax.AjaxAction;
 
 /**
- * Taconite based ajax action for redirecting to a given URL.
+ * Ajax action for redirecting to a given URL.
  *
  * @author Sergio Bossa
  */
@@ -32,8 +32,8 @@ public class RedirectAction implements AjaxAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-redirect targetUrl=\"$url\">";
-    private static final String CLOSE = "</taconite-redirect>";
+    private static final String OPEN = "<redirect>";
+    private static final String CLOSE = "</redirect>";
     
     private StringBuilder redirectUrl;
     private Map model;
@@ -69,7 +69,7 @@ public class RedirectAction implements AjaxAction {
         }
     }
     
-    public String execute() {
+    public String render() {
         try {
             this.appendQueryProperties(this.model, "UTF-8");
         }
@@ -77,8 +77,14 @@ public class RedirectAction implements AjaxAction {
             // FIXME : Unexpected ....
             throw new RuntimeException("Unexpected", ex);
         }
-        StringBuilder response = new StringBuilder(OPEN.replaceFirst("\\$url", this.redirectUrl.toString()));
-        response.append(CLOSE);
+        StringBuilder response = new StringBuilder();
+        response.append(OPEN)
+        .append("<content>")
+        .append("<target ")
+        .append("url=").append('"').append(this.redirectUrl.toString()).append('"')
+        .append("/>")
+        .append("</content>")
+        .append(CLOSE);
         return response.toString();
     }
     

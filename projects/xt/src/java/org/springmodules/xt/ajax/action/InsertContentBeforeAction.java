@@ -16,12 +16,15 @@
 
 package org.springmodules.xt.ajax.action;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.action.matcher.DefaultMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
- * Taconite based action for inserting content before a given html element.
+ * Ajax action for inserting content before a given html element.
  * 
  * @author Sergio Bossa
  * @author Jean van Wyk
@@ -30,43 +33,50 @@ public class InsertContentBeforeAction extends AbstractRenderingAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-insert-before>";
-    private static final String CLOSE = "</taconite-insert-before>";
+    private static final String OPEN = "<insert-before>";
+    private static final String CLOSE = "</insert-before>";
+    
+    private List<Component> components = new LinkedList<Component>();
     
     /**
      * Construct the action.
      * @param elementId The id of the html element which the content will be inserted before.
-     * @param components The content to insert : a list of components (html elements).
+     * @param components The list of components representing the content to render through this action.
      */
     public InsertContentBeforeAction(String elementId, List<Component> components) {
-        super(elementId, components);
+        super(new DefaultMatcher(elementId));
+        this.components = components;
     }
     
     /**
      * Construct the action.
      * @param elementId The id of the html element which the content will be inserted before.
-     * @param component The content to insert : a component (html element).
+     * @param components The list of components representing the content to render through this action.
      */
-    public InsertContentBeforeAction(String elementId, Component component) {
-        super(elementId, component);
+    public InsertContentBeforeAction(String elementId, Component... components) {
+        super(new DefaultMatcher(elementId));
+        this.components = Arrays.asList(components);
     }
     
     /**
      * Construct the action.
      * @param matcher The matcher that identifies html elements which the content will be inserted before.
-     * @param component The content to insert : a component (html element).
+     * @param components The list of components representing the content to render through this action.
      */
-    public InsertContentBeforeAction(ElementMatcher matcher, Component component) {
-        super(matcher, component);
+    public InsertContentBeforeAction(ElementMatcher matcher, Component... components) {
+        super(matcher);
+        this.components = Arrays.asList(components);
     }
     
     /**
      * Construct the action.
      * @param matcher The matcher that identifies html elements which the content will be inserted before.
-     * @param components The content to insert : a list of components (html elements).
+     * @param components The list of components representing the content to render through this action.
      */
     public InsertContentBeforeAction(ElementMatcher matcher, List<Component> components) {
-        super(matcher, components);
+        super(matcher);
+        this.components = components;
+        
     }
     
     protected String getOpeningTag() {
@@ -75,5 +85,13 @@ public class InsertContentBeforeAction extends AbstractRenderingAction {
 
     protected String getClosingTag() {
         return CLOSE;
+    }
+    
+    protected String getContent() {
+        StringBuilder response = new StringBuilder();
+        for (Component c : this.components) {
+            response.append(c.render());
+        }
+        return response.toString();
     }
 }

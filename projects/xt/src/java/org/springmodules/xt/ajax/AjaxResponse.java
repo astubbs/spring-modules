@@ -19,9 +19,9 @@ package org.springmodules.xt.ajax;
 import java.io.Serializable;
 
 /**
- * <p>Represents an ajax response.</p>
+ * <p>Interface representing an ajax response.</p>
  * <p>An ajax response is a set of ajax actions taking effect on the client.<br>
- * Each action creates a response string: an ajax response contains the response of all ajax actions.</p>
+ * Each action creates a given text response: an ajax response contains the response of all ajax actions.</p>
  *
  * @author Sergio Bossa
  */
@@ -35,11 +35,11 @@ public interface AjaxResponse extends Serializable {
     public void addAction(AjaxAction action);
     
     /**
-     * Get the response containing the result of all added actions.
+     * Check if this response is empty, that is, has no actions.
      *
-     * @return The response of all added actions.
+     * @return True if empty, false otherwise.
      */
-    public String getResponse();
+    public boolean isEmpty();
     
     /**
      * Get the charset name of the encoding of the response.
@@ -51,9 +51,11 @@ public interface AjaxResponse extends Serializable {
     public String getEncoding();
     
     /**
-     * Check if this response is empty, that is, has no actions.
+     * Render the response, containing the result of all rendered added actions.
      *
-     * @return True if empty, false otherwise.
+     * @return A textual representation of this ajax response.
      */
-    public boolean isEmpty();
+    public String render();
+    
+    
 }

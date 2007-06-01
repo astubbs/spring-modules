@@ -16,7 +16,7 @@ public class AddDroppableTest extends XMLEnhancedTestCase {
         action.addOption("k1", "v1");
         action.addOption("k2", "v2");
         
-        String rendering = action.execute();
+        String rendering = action.render();
         
         System.out.println(rendering);
     }

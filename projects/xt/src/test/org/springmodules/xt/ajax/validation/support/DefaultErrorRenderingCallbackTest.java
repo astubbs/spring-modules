@@ -42,8 +42,8 @@ public class DefaultErrorRenderingCallbackTest extends XMLEnhancedTestCase {
 
     public void testGetRenderingAction() throws Exception {
         AjaxAction action = this.callback.getRenderingAction(this.errors.getGlobalError());
-        String rendering = action.execute();
-        assertXpathExists("//taconite-execute-javascript/script", rendering);
+        String rendering = action.render();
+        assertXpathExists("//script", rendering);
         assertTrue(rendering.indexOf("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});") != -1);
     }   
     
@@ -55,8 +55,8 @@ public class DefaultErrorRenderingCallbackTest extends XMLEnhancedTestCase {
     public void testGetErrosActions() throws Exception {
         AjaxAction[] actions = this.callback.getErrorActions(new AjaxSubmitEventImpl("submit", new MockHttpServletRequest()), this.errors.getGlobalError());
         assertEquals(1, actions.length);
-        String rendering = actions[0].execute();
-        assertXpathExists("//taconite-execute-javascript/script", rendering);
+        String rendering = actions[0].render();
+        assertXpathExists("//script", rendering);
         assertTrue(rendering.indexOf("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});") != -1);
     }   
 }

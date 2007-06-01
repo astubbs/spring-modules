@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Default Taconite based implementation of {@link AjaxResponse}.
+ * Default implementation of {@link AjaxResponse}.
  *
  * @author Sergio Bossa
  */
@@ -29,8 +29,8 @@ public class AjaxResponseImpl implements AjaxResponse {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN_RESPONSE = new String("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> ");
-    private static final String CLOSE_RESPONSE = new String(" </taconite-root>");
+    private static final String OPEN_RESPONSE = new String("<?xml version=\"1.0\"?>\n<ajax-response xml:space=\"preserve\">\n");
+    private static final String CLOSE_RESPONSE = new String("\n</ajax-response>");
     
     public static final String DEFAULT_ENCODING = "ISO-8859-1";
     
@@ -54,22 +54,22 @@ public class AjaxResponseImpl implements AjaxResponse {
     public void addAction(AjaxAction action) {
         this.actions.add(action);
     }
+    
+    public boolean isEmpty() {
+        return this.actions.isEmpty();
+    }
 
     public String getEncoding() {
         return this.encoding;
     }
 
-    public String getResponse() {
+    public String render() {
         StringBuilder response = new StringBuilder(OPEN_RESPONSE);
         for (Iterator it = actions.iterator(); it.hasNext(); ) {
             AjaxAction action = (AjaxAction) it.next();
-            response.append(action.execute());
+            response.append(action.render());
         }
         response.append(CLOSE_RESPONSE);
         return response.toString();
-    }
-
-    public boolean isEmpty() {
-        return this.actions.isEmpty();
     }
 }

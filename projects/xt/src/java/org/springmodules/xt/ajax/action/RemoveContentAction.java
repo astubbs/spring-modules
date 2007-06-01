@@ -16,11 +16,11 @@
 
 package org.springmodules.xt.ajax.action;
 
-import java.util.ArrayList;
-import org.springmodules.xt.ajax.action.matcher.ElementMatcher;
+import org.springmodules.xt.ajax.action.matcher.DefaultMatcher;
+import org.springmodules.xt.ajax.ElementMatcher;
 
 /**
- * Taconite based ajax action for removing the whole content of a given element.
+ * Ajax action for removing the whole content of a given element.
  *
  * @author Sergio Bossa
  */
@@ -28,15 +28,15 @@ public class RemoveContentAction extends AbstractRenderingAction {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN = "<taconite-replace-children>";
-    private static final String CLOSE = "</taconite-replace-children>";
+    private static final String OPEN = "<replace-children>";
+    private static final String CLOSE = "</replace-children>";
     
     /** 
      * Construct the action.
      * @param elementId The id of the html element whose content must be removed.
      */
     public RemoveContentAction(String elementId) {
-        super(elementId, new ArrayList(0));
+        super(new DefaultMatcher(elementId));
     }
     
     /** 
@@ -44,7 +44,7 @@ public class RemoveContentAction extends AbstractRenderingAction {
      * @param matcher The matcher that identifies html elements whose content must be removed.
      */
     public RemoveContentAction(ElementMatcher matcher) {
-        super(matcher, new ArrayList(0));
+        super(matcher);
     }
     
     protected String getOpeningTag() {
@@ -53,5 +53,9 @@ public class RemoveContentAction extends AbstractRenderingAction {
     
     protected String getClosingTag() {
         return CLOSE;
+    }
+
+    protected String getContent() {
+        return "";
     }
 }

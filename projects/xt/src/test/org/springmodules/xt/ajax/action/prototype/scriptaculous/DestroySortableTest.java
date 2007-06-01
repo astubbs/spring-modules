@@ -14,7 +14,7 @@ public class DestroySortableTest extends XMLEnhancedTestCase {
     public void testRender() throws Exception {
         DestroySortable action = new DestroySortable("id");
         
-        String rendering = action.execute();
+        String rendering = action.render();
         
         System.out.println(rendering);
     }

@@ -18,6 +18,7 @@ package org.springmodules.xt.ajax.action.matcher;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import org.springmodules.xt.ajax.ElementMatcher;
 
 /**
  * <p>
@@ -130,9 +131,6 @@ public class SelectorMatcher implements ElementMatcher {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String MATCH_MODE = "matchMode=\"selector\"";
-    private static final String CONTEXT = "contextNodeSelector=";
-    
     private List<String> selectors = new LinkedList();
     
     /**
@@ -144,8 +142,10 @@ public class SelectorMatcher implements ElementMatcher {
 
     public String render() {
         StringBuilder response = new StringBuilder();
-        response.append(MATCH_MODE).append(" ");
-        response.append(CONTEXT).append('"');
+        
+        response.append("<matcher ");
+        response.append("matchMode=\"selector\" ");
+        response.append("contextNodeSelector=").append('"');
         Iterator<String> it = this.selectors.iterator();
         while (it.hasNext()) {
             String element = it.next();
@@ -155,6 +155,8 @@ public class SelectorMatcher implements ElementMatcher {
             }
         }
         response.append('"');
+        response.append("/>");
+        
         return response.toString();
     }
 }
