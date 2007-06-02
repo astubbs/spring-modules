@@ -23,6 +23,8 @@ import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.util.TangosolUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.beans.PropertyEditor;
 
@@ -49,6 +51,17 @@ public class CoherenceFacadeTests extends TestCase {
 	private NamedCache cache;
 
 	private CoherenceFacade facade;
+
+	protected final Log logger = LogFactory.getLog(getClass());
+
+	// check whether required Tangosol API is on classpath
+	public void runBare() throws Throwable {
+		if (TangosolUtils.isApiPresent()) {
+			super.runBare();
+		} else {
+			logger.info("Unable to run tests. Tangosol API is missing.");
+		}
+	}
 
 	/**
 	 * Verifies that the method

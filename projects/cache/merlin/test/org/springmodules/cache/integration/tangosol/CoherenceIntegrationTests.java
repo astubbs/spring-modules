@@ -39,6 +39,15 @@ import org.springmodules.cache.util.TangosolUtils;
 public class CoherenceIntegrationTests extends
 		AbstractIntegrationTests {
 
+	// check whether required Tangosol API is on classpath
+	public void runBare() throws Throwable {
+		if (TangosolUtils.isApiPresent()) {
+			super.runBare();
+		} else {
+			logger.info("Unable to run tests. Tangosol API is missing");
+		}
+	}
+
 	/**
 	 * @see AbstractIntegrationTests#assertCacheWasFlushed()
 	 */

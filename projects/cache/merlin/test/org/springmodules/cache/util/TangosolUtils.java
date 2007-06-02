@@ -36,6 +36,8 @@ public abstract class TangosolUtils {
 
 	private static final String SHUTDOWN_METHOD_NAME = "shutdown";
 
+	private static final boolean tangosolApiPresent = ClassUtils.isPresent(CACHE_FACTORY_CLASS_NAME);
+
 	private static Class cacheFactoryClass;
 
 	private static Method getCacheMethod;
@@ -58,6 +60,15 @@ public abstract class TangosolUtils {
 		}
 
 		return cacheFactoryClass;
+	}
+
+	/**
+	 * Returns whether Tangosol CacheFactory class is present in classpath.
+	 *
+	 * @return <code>true</code> if Tangosol's CacheFactory class is found in classpath.
+	 */
+	public static boolean isApiPresent() {
+		return tangosolApiPresent;
 	}
 
 	/**
