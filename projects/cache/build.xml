@@ -88,8 +88,7 @@
                debug="${debug}"
                deprecation="${deprecation}"
                optimize="${optimize}"
-               failonerror="true"
-       		   excludes="**/tangosol/**">
+               failonerror="true">
             <src path="${merlin.src.dir}"/>
             <classpath refid="compile.classpath" />
         </javac>
@@ -101,8 +100,7 @@
                debug="${debug}"
                deprecation="${deprecation}"
                optimize="${optimize}"
-               failonerror="true"
-    		   excludes="**/tangosol/**">
+               failonerror="true">
             <src path="${merlin.test.dir}" />
             <classpath>
                 <pathelement location="${target.classes.dir}" />
@@ -119,40 +117,37 @@
                debug="${debug}"
                deprecation="${deprecation}"
                optimize="${optimize}"
-               failonerror="true"
-        	   excludes="**/tangosol/**">
+               failonerror="true">
             <src path="${tiger.src.dir}" />
             <classpath refid="compile.classpath" />
         </javac>
 
-        <echo>compiling JDK 5.0+ tests - SHOULD BE FIXED</echo>
-        <!--
+        <echo>compiling JDK 5.0+ tests</echo>
+        <!-- -->
         <javac destdir="${target.testclasses.dir}"
                source="1.5"
                target="1.5"
                debug="${debug}"
                deprecation="${deprecation}"
                optimize="${optimize}"
-               failonerror="true"
-         	   excludes="**/tangosol/**">
+               failonerror="true">
             <src path="${tiger.test.dir}" />
             <classpath>
                 <pathelement location="${target.classes.dir}" />
                 <path refid="test.classpath" />
             </classpath>
         </javac>
-        -->
+        <!-- -->
     </target>
 
     <target name="compile.tests">
-        <echo>compiling test sources (including generated code) - SHOULD BE FIXED!</echo>
+        <echo>compiling test sources (including generated code)</echo>
         <javac destdir="${target.testclasses.dir}"
                debug="${debug}"
                deprecation="${deprecation}"
                optimize="${optimize}"
                source="${javac.source}"
                target="${javac.target}"
-               excludes="**/config/**, **/integration/**"
                >
             <src path="${target.gen.java.test.dir}" />
             <src path="${src.java.test.dir}" />
