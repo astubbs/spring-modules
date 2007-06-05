@@ -13,11 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2006 the original author or authors.
+ * Copyright @2007 the original author or authors.
  */
 package org.springmodules.cache.config;
-
-import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
 import org.easymock.classextension.MockClassControl;
@@ -33,10 +31,10 @@ import org.springframework.util.StringUtils;
 import org.springmodules.AssertExt;
 import org.w3c.dom.Element;
 
+import java.lang.reflect.Method;
+
 /**
- * <p>
  * Unit Tests for <code>{@link BeanReferenceParserImpl}</code>.
- * </p>
  *
  * @author Omar Irbouh
  * @author Alex Ruiz
@@ -92,7 +90,7 @@ public class BeanReferenceParserImplTests extends TestCase {
   }
 
   public void testParseWithAnonymousBean() {
-    String beanName = null;
+    String beanName = "";
     Element beanElement = createBeanElementBuilder(beanName).toXml();
 
     Element referenceElement = elementBuilder.toXml();
@@ -102,7 +100,7 @@ public class BeanReferenceParserImplTests extends TestCase {
     BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition,
         beanName);
 
-    delegate.parseBeanDefinitionElement(beanElement, beanDefinition);
+    delegate.parseBeanDefinitionElement(beanElement, null);
     helperControl.setReturnValue(holder);
     helperControl.replay();
 
@@ -137,7 +135,7 @@ public class BeanReferenceParserImplTests extends TestCase {
     BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition,
         beanName);
 
-    delegate.parseBeanDefinitionElement(beanElement, beanDefinition);
+    delegate.parseBeanDefinitionElement(beanElement, null);
     helperControl.setReturnValue(holder);
     helperControl.replay();
 
@@ -160,7 +158,7 @@ public class BeanReferenceParserImplTests extends TestCase {
     BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition,
         beanName);
 
-    delegate.parseBeanDefinitionElement(beanElement, beanDefinition);
+    delegate.parseBeanDefinitionElement(beanElement, null);
     helperControl.setReturnValue(holder);
     helperControl.replay();
 

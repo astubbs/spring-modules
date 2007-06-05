@@ -17,10 +17,6 @@
  */
 package org.springmodules.cache.config;
 
-import java.util.List;
-
-import org.w3c.dom.Element;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -29,61 +25,61 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
+import org.w3c.dom.Element;
+
+import java.util.List;
 
 /**
- * <p>
  * Default implementation of <code>{@link BeanReferenceParser}</code>.
- * </p>
  *
  * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public class BeanReferenceParserImpl implements BeanReferenceParser {
 
-  /**
-   * @see BeanReferenceParser#parse(Element, ParserContext)
-   */
-  public Object parse(Element element, ParserContext parserContext) {
-    return parse(element, parserContext, false);
-  }
+	/**
+	 * @see BeanReferenceParser#parse(Element,ParserContext)
+	 */
+	public Object parse(Element element, ParserContext parserContext) {
+		return parse(element, parserContext, false);
+	}
 
-  /**
-   * @see BeanReferenceParser#parse(Element, ParserContext, boolean)
-   */
-  public Object parse(Element element, ParserContext parserContext,
-      boolean registerInnerBean) {
+	/**
+	 * @see BeanReferenceParser#parse(Element,ParserContext,boolean)
+	 */
+	public Object parse(Element element, ParserContext parserContext,
+						boolean registerInnerBean) {
 
-    String refId = element.getAttribute("refId");
-    if (StringUtils.hasText(refId)) {
-      return new RuntimeBeanReference(refId);
-    }
+		String refId = element.getAttribute("refId");
+		if (StringUtils.hasText(refId)) {
+			return new RuntimeBeanReference(refId);
+		}
 
-    Element beanElement = null;
-    List beanElements = DomUtils.getChildElementsByTagName(element, "bean");
-    if (!CollectionUtils.isEmpty(beanElements)) {
-      beanElement = (Element) beanElements.get(0);
-    }
-    if (beanElement == null) {
-      throw new IllegalStateException("The XML element "
-          + StringUtils.quote(element.getNodeName()) + " should either have a "
-          + "reference to an already registered bean definition or contain a "
-          + "bean definition");
-    }
+		Element beanElement = null;
+		List beanElements = DomUtils.getChildElementsByTagName(element, "bean");
+		if (!CollectionUtils.isEmpty(beanElements)) {
+			beanElement = (Element) beanElements.get(0);
+		}
+		if (beanElement == null) {
+			throw new IllegalStateException("The XML element "
+					+ StringUtils.quote(element.getNodeName()) + " should either have a "
+					+ "reference to an already registered bean definition or contain a "
+					+ "bean definition");
+		}
 
 		BeanDefinitionHolder holder = parserContext.getDelegate()
-        .parseBeanDefinitionElement(beanElement,
-						parserContext.getContainingBeanDefinition());
+				.parseBeanDefinitionElement(beanElement);
 
-    String beanName = holder.getBeanName();
+		String beanName = holder.getBeanName();
 
-    if (registerInnerBean && StringUtils.hasText(beanName)) {
-      BeanDefinitionRegistry registry = parserContext.getRegistry();
-      BeanDefinition beanDefinition = holder.getBeanDefinition();
-      registry.registerBeanDefinition(beanName, beanDefinition);
+		if (registerInnerBean && StringUtils.hasText(beanName)) {
+			BeanDefinitionRegistry registry = parserContext.getRegistry();
+			BeanDefinition beanDefinition = holder.getBeanDefinition();
+			registry.registerBeanDefinition(beanName, beanDefinition);
 
-      return new RuntimeBeanReference(beanName);
-    }
+			return new RuntimeBeanReference(beanName);
+		}
 
-    return holder;
-  }
+		return holder;
+	}
 }
