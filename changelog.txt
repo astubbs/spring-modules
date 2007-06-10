@@ -5,6 +5,11 @@ http://springmodules.dev.java.net
 Changes in version 0.9 (in progress)
 ------------------------------------
 
+Package org.springmodules.cache
+* Upgraded Spring version to 2.0.5
+* Upgraded XStream version to 1.2.2
+* Added support for Tangosol Coherence (again), thanks to Andy Nguyen for providing Tangosol mock jar: MOD-188
+
 Package org.springmodules.validation
 * Added validation context support documentation
 * Added ValidationRef annotation and xml element support for referencing Validator beans in app context

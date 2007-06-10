@@ -29,6 +29,12 @@
         <artifact
           pattern="http://www.ibiblio.org/maven2/net/sf/ehcache/ehcache/[revision]/[artifact]-[revision].[ext]" />
       </url>
+      <!-- xstream url -->
+      <url name="xstream">
+        <!-- url pattern for xstream repository -->
+        <artifact
+          pattern="http://www.ibiblio.org/maven2/com/thoughtworks/xstream/xstream/[revision]/[artifact]-[revision].[ext]" />
+      </url>
     </chain>
   </resolvers>
 </ivyconf>
