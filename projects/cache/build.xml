@@ -157,4 +157,14 @@
             </classpath>
         </javac>
     </target>
+
+    <target name="source-zip" depends="jar">
+        <zip zipfile="${target.lib.dir}/${project.name}-src.zip">
+            <fileset dir="${src.java.main.dir}" />
+            <fileset dir="${merlin.src.dir}" />
+            <fileset dir="${tiger.src.dir}" />
+            <fileset dir="${target.gen.java.dir}" />
+        </zip>
+    </target>
+
 </project>
