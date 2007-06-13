@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on Oct 7, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -17,19 +17,9 @@
  */
 package org.springmodules.cache.interceptor.caching;
 
-import java.beans.PropertyEditor;
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-
 import junit.framework.TestCase;
-
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
-
 import org.springmodules.AssertExt;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
@@ -40,11 +30,18 @@ import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.CacheProviderFacade;
 import org.springmodules.cache.provider.InvalidCacheModelException;
 
+import java.beans.PropertyEditor;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+
 /**
- * <p>
  * Unit Tests for <code>{@link AbstractCachingInterceptor}</code>.
- * </p>
- * 
+ *
+ * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public class CachingInterceptorTests extends TestCase {
@@ -122,72 +119,71 @@ public class CachingInterceptorTests extends TestCase {
     assertFalse(interceptor.onAfterPropertiesSetCalled);
   }
 
-//  public void testAfterPropertiesSetWhenCachingModelEditorThrowsException() {
-//    expectGetCacheModelValidator();
-//    expectGetCachingModelEditor();
-//
-//    Properties models = createModelsAsProperties(1);
-//
-//    // create a Map of CachingModels from each of the properties.
-//    RuntimeException expected = new RuntimeException();
-//    for (Iterator i = models.keySet().iterator(); i.hasNext();) {
-//      String key = (String) i.next();
-//      String value = models.getProperty(key);
-//
-//      editor.setAsText(value);
-//      editorControl.expectAndThrow(editor.getValue(), expected);
-//    }
-//
-//    replay();
-//
-//    interceptor.setCachingModels(models);
-//    try {
-//      interceptor.afterPropertiesSet();
-//      fail();
-//    } catch (FatalCacheException exception) {
-//      assertSame(expected, exception.getCause());
-//    }
-//
-//    verify();
-//    assertFalse(interceptor.onAfterPropertiesSetCalled);
-//  }
+  public void testAfterPropertiesSetWhenCachingModelEditorThrowsException() {
+    expectGetCachingModelEditor();
+
+    Properties models = createModelsAsProperties(1);
+
+    // create a Map of CachingModels from each of the properties.
+    RuntimeException expected = new RuntimeException();
+    for (Iterator i = models.keySet().iterator(); i.hasNext();) {
+      String key = (String) i.next();
+      String value = models.getProperty(key);
+
+      editor.setAsText(value);
+      editorControl.expectAndThrow(editor.getValue(), expected);
+    }
+
+    replay();
+
+    interceptor.setCachingModels(models);
+    try {
+      interceptor.afterPropertiesSet();
+      fail();
+    } catch (RuntimeException exception) {
+      assertSame(expected, exception);
+    }
+
+    verify();
+    assertFalse(interceptor.onAfterPropertiesSetCalled);
+  }
 
   public void testAfterPropertiesSetWithCacheProviderFacadeEqualToNull() {
     interceptor.setCacheProviderFacade(null);
     assertAfterPropertiesSetThrowsException();
   }
 
-//  public void testAfterPropertiesSetWithCachingModelMapBeingProperties() {
-//    expectGetCacheModelValidator();
-//    expectGetCachingModelEditor();
-//
-//    Properties models = createModelsAsProperties(2);
-//
-//    // create a Map of CachingModels from each of the properties.
-//    Map expected = new HashMap();
-//    for (Iterator i = models.keySet().iterator(); i.hasNext();) {
-//      String key = (String) i.next();
-//      String value = models.getProperty(key);
-//
-//      MockCachingModel model = new MockCachingModel();
-//
-//      editor.setAsText(value);
-//      editorControl.expectAndReturn(editor.getValue(), model);
-//
-//      validator.validateCachingModel(model);
-//
-//      expected.put(key, model);
-//    }
-//
-//    replay();
-//
-//    interceptor.setCachingModels(models);
-//    interceptor.afterPropertiesSet();
-//    assertEquals(expected, interceptor.models());
-//
-//    verify();
-//    assertTrue(interceptor.onAfterPropertiesSetCalled);
-//  }
+  public void testAfterPropertiesSetWithCachingModelMapBeingProperties() {
+    expectGetCachingModelEditor();
+	expectGetCacheModelValidator();
+
+    Properties models = createModelsAsProperties(2);
+
+    // create a Map of CachingModels from each of the properties.
+    Map expected = new HashMap();
+    for (Iterator i = models.keySet().iterator(); i.hasNext();) {
+      String key = (String) i.next();
+      String value = models.getProperty(key);
+
+      MockCachingModel model = new MockCachingModel();
+
+      editor.setAsText(value);
+      editorControl.expectAndReturn(editor.getValue(), model);
+
+      validator.validateCachingModel(model);
+
+      expected.put(key, model);
+    }
+
+    replay();
+
+    interceptor.setCachingModels(models);
+    interceptor.afterPropertiesSet();
+    assertEquals(expected, interceptor.models());
+
+    verify();
+    assertTrue(interceptor.onAfterPropertiesSetCalled);
+  }
 
   public void testAfterPropertiesSetWithCachingModelMapEqualToNull() {
     interceptor.setCachingModels(null);
@@ -273,8 +269,11 @@ public class CachingInterceptorTests extends TestCase {
 
     expectGetFromCache(CACHE_ENTRY_KEY, null);
 
-    Exception expected = new Exception();
-    invocationControl.expectAndThrow(invocation.proceed(), expected);
+	Method method = MethodFactory.createCacheableMethod();
+	invocationControl.expectAndReturn(invocation.getMethod(), method);
+
+	Exception expected = new Exception();
+	invocationControl.expectAndThrow(invocation.proceed(), expected);
 
     cacheProviderFacade.cancelCacheUpdate(CACHE_ENTRY_KEY);
     replay();
@@ -316,7 +315,7 @@ public class CachingInterceptorTests extends TestCase {
     assertSame(expected, interceptor.invoke(invocation));
     verify();
   }
-  
+
   public void testInvokeWhenCacheReturnsStoredObject() throws Throwable {
     expectMethodInvocationReturnsCacheableMethod();
 
@@ -333,7 +332,7 @@ public class CachingInterceptorTests extends TestCase {
     setUpMethodInvocation();
     Method method = MethodFactory.createNonCacheableMethod();
     invocationControl.expectAndReturn(invocation.getMethod(), method);
-    
+
     Object expected = new Object();
     invocationControl.expectAndReturn(invocation.proceed(), expected);
     replay();
@@ -423,7 +422,7 @@ public class CachingInterceptorTests extends TestCase {
     Method method = MethodFactory.createCacheableMethod();
     invocationControl.expectAndReturn(invocation.getMethod(), method);
   }
-  
+
   private void replay() {
     cacheProviderFacadeControl.replay();
     replay(editorControl);
@@ -460,7 +459,7 @@ public class CachingInterceptorTests extends TestCase {
     keyGeneratorControl.verify();
     verify(validatorControl);
   }
-  
+
   private void verify(MockControl mockControl) {
     if (mockControl == null) {
       return;
