@@ -15,7 +15,7 @@
       <url name="jcs">
         <!-- url pattern for jcs svn repository -->
         <artifact
-          pattern="http://svn.apache.org/viewcvs.cgi/*checkout*/jakarta/jcs/trunk/tempbuild/[artifact]-[revision].[ext]" />
+          pattern="http://mirrors.ibiblio.org/pub/mirrors/maven2/org/apache/jcs/jcs/[revision]/[artifact]-[revision].[ext]" />
       </url>
       <!-- xpp3_min official url -->
       <url name="xpp3">

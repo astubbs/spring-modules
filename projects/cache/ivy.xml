@@ -84,7 +84,7 @@
     </dependency>
 	<dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="2.1" conf="test->*"/>
 
-    <dependency org="jcs" name="jcs" rev="1.2.6.5" />
+    <dependency org="jcs" name="jcs" rev="1.3" />
 
     <dependency org="jgroups" name="jgroups" rev="2.2.8">
       <artifact name="jgroups-all" type="jar" />
