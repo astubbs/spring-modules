@@ -39,7 +39,7 @@
       <artifact name="coherence-mock" type="jar" conf="global" />
     </dependency>
 
-    <dependency org="gigaspaces" name="gigaspaces-ce" rev="5.1-1603-000"/>
+    <dependency org="gigaspaces" name="gigaspaces-ce" rev="5.2-1706"/>
 
 
 	<dependency org="jini" name="jsk" rev="2.1">
