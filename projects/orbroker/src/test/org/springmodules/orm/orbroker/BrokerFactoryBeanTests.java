@@ -28,9 +28,9 @@ import org.springmodules.orm.orbroker.support.BrokerDaoSupport;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * BrokerFactoryBean Tests.
@@ -40,166 +40,170 @@ import java.sql.ResultSet;
  */
 public class BrokerFactoryBeanTests extends TestCase {
 
-  public void testBrokerFactoryWithNullDataSource() {
-    BrokerFactoryBean factory = new BrokerFactoryBean();
-    try {
-      factory.afterPropertiesSet();
-      fail("Should have thrown IllegalArgumentException");
-    } catch (IllegalArgumentException e) {
-      // expected
-    } catch (Exception e) {
-      fail("Exception not expected " + e);
-    }
-  }
+	public void testBrokerFactoryWithNullDataSource() {
+		BrokerFactoryBean factory = new BrokerFactoryBean();
+		try {
+			factory.afterPropertiesSet();
+			fail("Should have thrown IllegalArgumentException");
+		} catch (IllegalArgumentException e) {
+			// expected
+		} catch (Exception e) {
+			fail("Exception not expected " + e);
+		}
+	}
 
-  public void testBrokerFactoryWithNullConfigLocation() {
-    MockControl dsControl = MockControl.createControl(DataSource.class);
-    BrokerFactoryBean factory = new BrokerFactoryBean();
-    factory.setDataSource((DataSource) dsControl.getMock());
-    try {
-      factory.afterPropertiesSet();
-      fail("Should have thrown IllegalArgumentException");
-    } catch (IllegalArgumentException e) {
-      // expected
-    } catch (Exception e) {
-      fail("Exception not expected " + e);
-    }
-  }
+	public void testBrokerFactoryWithNullConfigLocation() throws SQLException, IOException {
+		// prepare mock objects
+		MockControl dsControl = MockControl.createControl(DataSource.class);
+		DataSource ds = (DataSource) dsControl.getMock();
 
-  public void testBrokerFactoryWithConfigNotFound() {
-    MockControl dsControl = MockControl.createControl(DataSource.class);
-    BrokerFactoryBean factory = new BrokerFactoryBean();
-    factory.setDataSource((DataSource) dsControl.getMock());
-    factory.setConfigLocation(new ClassPathResource("path/not-found.xml"));
-    try {
-      factory.afterPropertiesSet();
-      fail("Should have thrown IOException");
-    } catch (IOException e) {
-      // expected
-    }
-  }
+		//needed for orbroker internal since I can not mock ORBroker classes
+		prepareNewBrokerInternals(dsControl, ds);
 
-  public void testBrokerTemplate() throws SQLException, IOException {
-    // prepare mock objects
-    MockControl dsControl = MockControl.createControl(DataSource.class);
-    DataSource ds = (DataSource) dsControl.getMock();
+		dsControl.replay();
 
-    MockControl conControl = MockControl.createControl(Connection.class);
-    Connection con = (Connection) conControl.getMock();
+		// run scenario
+		BrokerFactoryBean factory = new BrokerFactoryBean();
+		factory.setDataSource(ds);
+		factory.afterPropertiesSet();
 
-    //needed for orbroker internal since I can not mock ORBroker classes
-    prepareNewBrokerInternals(dsControl, ds);
+		dsControl.verify();
+	}
 
-    ds.getConnection();
-    dsControl.setReturnValue(con);
+	public void testBrokerFactoryWithConfigNotFound() {
+		MockControl dsControl = MockControl.createControl(DataSource.class);
+		BrokerFactoryBean factory = new BrokerFactoryBean();
+		factory.setDataSource((DataSource) dsControl.getMock());
+		factory.setConfigLocation(new ClassPathResource("path/not-found.xml"));
+		try {
+			factory.afterPropertiesSet();
+			fail("Should have thrown IOException");
+		} catch (IOException e) {
+			// expected
+		}
+	}
 
-    //needed for orbroker internal since I can not mock ORBroker classes
-    prepareObtainExecutableInternals(conControl, con);
+	public void testBrokerTemplate() throws SQLException, IOException {
+		// prepare mock objects
+		MockControl dsControl = MockControl.createControl(DataSource.class);
+		DataSource ds = (DataSource) dsControl.getMock();
 
-    con.close();
-    conControl.setVoidCallable(1);
+		MockControl conControl = MockControl.createControl(Connection.class);
+		Connection con = (Connection) conControl.getMock();
 
-    dsControl.replay();
-    conControl.replay();
+		//needed for orbroker internal since I can not mock ORBroker classes
+		prepareNewBrokerInternals(dsControl, ds);
 
-    // run scenario
-    Resource config = new ClassPathResource("org/springmodules/orm/orbroker/broker.xml");
-    Broker broker = new Broker(config.getInputStream(), ds);
-    BrokerTemplate brokerTemplate = new BrokerTemplate();
-    brokerTemplate.setBroker(broker);
-    brokerTemplate.afterPropertiesSet();
+		ds.getConnection();
+		dsControl.setReturnValue(con);
 
-    Object result = brokerTemplate.execute(new BrokerCallback() {
-      public Object doInBroker(Executable executable) throws BrokerException {
-        return "done";
-      }
-    });
+		//needed for orbroker internal since I can not mock ORBroker classes
+		prepareObtainExecutableInternals(conControl, con);
 
-    assertEquals("result should be [done]", "done", result);
+		con.close();
+		conControl.setVoidCallable(1);
 
-    dsControl.verify();
-    conControl.verify();
-  }
+		dsControl.replay();
+		conControl.replay();
 
-  public void testBrokerDaoSupport() throws Exception {
-    // prepare mock objects
-    MockControl dsControl = MockControl.createControl(DataSource.class);
-    DataSource ds = (DataSource) dsControl.getMock();
+		// run scenario
+		Resource config = new ClassPathResource("org/springmodules/orm/orbroker/broker.xml");
+		Broker broker = new Broker(config.getInputStream(), ds);
+		BrokerTemplate brokerTemplate = new BrokerTemplate();
+		brokerTemplate.setBroker(broker);
+		brokerTemplate.afterPropertiesSet();
 
-    //needed for orbroker internal since I can not mock ORBroker classes
-    prepareNewBrokerInternals(dsControl, ds);
+		Object result = brokerTemplate.execute(new BrokerCallback() {
+			public Object doInBroker(Executable executable) throws BrokerException {
+				return "done";
+			}
+		});
 
-    dsControl.replay();
+		assertEquals("result should be [done]", "done", result);
 
-    BrokerTemplate template = new BrokerTemplate();
-    Broker broker = new Broker(ds);
-    template.setBroker(broker);
-    assertEquals(broker, template.getBroker());
+		dsControl.verify();
+		conControl.verify();
+	}
 
-    BrokerDaoSupport testDao = new BrokerDaoSupport() {
-    };
-    testDao.setBrokerTemplate(template);
-    assertEquals(template, testDao.getBrokerTemplate());
+	public void testBrokerDaoSupport() throws Exception {
+		// prepare mock objects
+		MockControl dsControl = MockControl.createControl(DataSource.class);
+		DataSource ds = (DataSource) dsControl.getMock();
 
-    testDao.afterPropertiesSet();
-    dsControl.verify();
-  }
+		//needed for orbroker internal since I can not mock ORBroker classes
+		prepareNewBrokerInternals(dsControl, ds);
 
-  /**
-   * This method may be updated when upgrading ORBroker to a newer version.
-   * ORBroker does not use interfaces, and its main classes are final with a package scope visibility!!!
-   * I found noway to mock ORBroker classes!!! jmock / cglib does not support final classes
-   *
-   * @param dsControl DataSource mock control
-   * @param ds DataSource mock
-   * @throws SQLException
-   */
-  protected void prepareNewBrokerInternals(MockControl dsControl, DataSource ds) throws SQLException {
-    MockControl conControl = MockControl.createControl(Connection.class);
-    Connection con = (Connection) conControl.getMock();
+		dsControl.replay();
 
-    MockControl mdControl = MockControl.createControl(DatabaseMetaData.class);
-    DatabaseMetaData md = (DatabaseMetaData) mdControl.getMock();
+		BrokerTemplate template = new BrokerTemplate();
+		Broker broker = new Broker(ds);
+		template.setBroker(broker);
+		assertEquals(broker, template.getBroker());
 
-    ds.getConnection();
-    dsControl.setReturnValue(con);
+		BrokerDaoSupport testDao = new BrokerDaoSupport() {
+		};
+		testDao.setBrokerTemplate(template);
+		assertEquals(template, testDao.getBrokerTemplate());
 
-    con.getTransactionIsolation();
-    conControl.setReturnValue(Connection.TRANSACTION_READ_COMMITTED);
-    con.getAutoCommit();
-    conControl.setReturnValue(false);
+		testDao.afterPropertiesSet();
+		dsControl.verify();
+	}
 
-    con.getMetaData();
-    conControl.setReturnValue(md);
+	/**
+	 * This method may be updated when upgrading ORBroker to a newer version.
+	 * ORBroker does not use interfaces, and its main classes are final with a package scope visibility!!!
+	 * I found noway to mock ORBroker classes!!! jmock / cglib does not support final classes
+	 *
+	 * @param dsControl DataSource mock control
+	 * @param ds		DataSource mock
+	 * @throws SQLException
+	 */
+	protected void prepareNewBrokerInternals(MockControl dsControl, DataSource ds) throws SQLException {
+		MockControl conControl = MockControl.createControl(Connection.class);
+		Connection con = (Connection) conControl.getMock();
 
-    md.supportsResultSetConcurrency(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-    mdControl.setReturnValue(true);
+		MockControl mdControl = MockControl.createControl(DatabaseMetaData.class);
+		DatabaseMetaData md = (DatabaseMetaData) mdControl.getMock();
 
-    md.supportsBatchUpdates();
-    mdControl.setReturnValue(true);
+		ds.getConnection();
+		dsControl.setReturnValue(con);
 
-    con.close();
-    conControl.setVoidCallable(1);
+		con.getTransactionIsolation();
+		conControl.setReturnValue(Connection.TRANSACTION_READ_COMMITTED);
+		con.getAutoCommit();
+		conControl.setReturnValue(false);
 
-    conControl.replay();
-    mdControl.replay();
-  }
+		con.getMetaData();
+		conControl.setReturnValue(md);
 
-  /**
-   * This method may be updated when upgrading ORBroker to a newer version.
-   * ORBroker does not use interface, and its main classes are final with a package scope visibility!!!
-   * I found noway to mock ORBroker classes!!! jmock / cglib does not support final classes
-   *
-   * @param conControl Connection mock control
-   * @param con Connection mock
-   * @throws SQLException
-   */
-  protected void prepareObtainExecutableInternals(MockControl conControl, Connection con) throws SQLException {
-    con.getAutoCommit();
-    conControl.setReturnValue(false);
+		md.supportsResultSetConcurrency(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		mdControl.setReturnValue(true);
 
-    con.getTransactionIsolation();
-    conControl.setReturnValue(Connection.TRANSACTION_READ_COMMITTED);
-  }
+		md.supportsBatchUpdates();
+		mdControl.setReturnValue(true);
+
+		con.close();
+		conControl.setVoidCallable(1);
+
+		conControl.replay();
+		mdControl.replay();
+	}
+
+	/**
+	 * This method may be updated when upgrading ORBroker to a newer version.
+	 * ORBroker does not use interface, and its main classes are final with a package scope visibility!!!
+	 * I found noway to mock ORBroker classes!!! jmock / cglib does not support final classes
+	 *
+	 * @param conControl Connection mock control
+	 * @param con		Connection mock
+	 * @throws SQLException
+	 */
+	protected void prepareObtainExecutableInternals(MockControl conControl, Connection con) throws SQLException {
+		con.getAutoCommit();
+		conControl.setReturnValue(false);
+
+		con.getTransactionIsolation();
+		conControl.setReturnValue(Connection.TRANSACTION_READ_COMMITTED);
+	}
 
 }

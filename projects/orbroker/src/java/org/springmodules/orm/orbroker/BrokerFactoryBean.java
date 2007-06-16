@@ -16,39 +16,45 @@
 
 package org.springmodules.orm.orbroker;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
 import net.sourceforge.orbroker.Broker;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.util.Properties;
+
 /**
  * FactoryBean that creates a local O/R Broker's Broker instance.
  * Behaves like a Broker instance when used as bean reference, e.g.
  * for BrokerTemplate's "broker" property.
- *
- * <p>The typical usage will be to register this as singleton factory
+ * <p/>
+ * The typical usage will be to register this as singleton factory
  * (for a certain underlying JDBC DataSource) in an application context,
  * and give bean references to application services that need it.
  *
  * @author Omar Irbouh
- * @since 2005.06.02
  * @see BrokerTemplate#setBroker
+ * @since 0.7
  */
 public class BrokerFactoryBean implements FactoryBean, InitializingBean {
 
-	private DataSource dataSource;
-
 	private Resource configLocation;
+
+	private DataSource dataSource;
 
 	private Properties textReplacements = null;
 
 	private Broker broker;
+
+	/**
+	 * Set the location of the O/R Broker config file.
+	 */
+	public void setConfigLocation(Resource configLocation) {
+		this.configLocation = configLocation;
+	}
 
 	/**
 	 * Set the DataSource to be used by O/R Broker.
@@ -59,15 +65,8 @@ public class BrokerFactoryBean implements FactoryBean, InitializingBean {
 	}
 
 	/**
-	 * Set the location of the O/R Broker config file.
-	 */
-	public void setConfigLocation(Resource configLocation) {
-		this.configLocation = configLocation;
-	}
-
-	/**
 	 * Set text replacement values. This will replace all <code>{{key}}</code>
-   * type properties in an sql-statement with the values.
+	 * type properties in an sql-statement with the values.
 	 */
 	public void setTextReplacements(Properties textReplacements) {
 		this.textReplacements = textReplacements;
@@ -76,10 +75,13 @@ public class BrokerFactoryBean implements FactoryBean, InitializingBean {
 	public void afterPropertiesSet() throws IOException {
 		// some assertions
 		Assert.notNull(dataSource, "dataSource can not be null");
-		Assert.notNull(configLocation, "configLocation can not be null");
 
 		// create and initialize the broker
-		this.broker = new Broker(configLocation.getInputStream(), dataSource);
+		if (this.configLocation != null) {
+			this.broker = new Broker(configLocation.getInputStream(), dataSource);
+		} else {
+			this.broker = new Broker(dataSource);
+		}
 
 		// register text replacements
 		if (this.textReplacements != null && !this.textReplacements.isEmpty())
