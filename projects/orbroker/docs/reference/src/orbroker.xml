@@ -203,4 +203,85 @@
 
 &lt;/beans&gt;</programlisting>
   </sect1>
+
+  <sect1>
+    <title>Unit Testing</title>
+
+    <para>You can leverage the excellent <ulink
+    url="http://static.springframework.org/spring/docs/2.0.x/reference/testing.html">Spring
+    Framework testing support</ulink> to test your O/R Broker based DAOs. More
+    informations on integration testing DAOs (using a DataSource,
+    TransactionManager...) can be found at <ulink
+    url="http://static.springframework.org/spring/docs/2.0.x/reference/testing.html#testing-tx"><emphasis
+    role="bold">8.3.3. Transaction management</emphasis></ulink>. </para>
+
+    <para>O/R Broker module also allows for quick creation of O/R Broker
+    intances without providing an external configuration file. Statements
+    could then be created dynamically.</para>
+
+    <para>Let's suppose we would like to test the following method:</para>
+
+    <programlisting>public class BrokerUserDao extends BrokerDaoSupport implements UserDao {
+
+    public int countUsers() throws DataAccessException {
+        Long count = (Long) getBrokerTemplate().selectOne("userCount");
+        return count.intValue();
+   }
+
+}</programlisting>
+
+    <para>The application context file would be:</para>
+
+    <programlisting>&lt;beans&gt;
+
+    &lt;bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"&gt;
+        &lt;property name="location" value="jdbc.properties"/&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"&gt;
+        &lt;property name="driverClassName" value="${jdbc.driverClassName}"/&gt;
+        &lt;property name="url" value="${jdbc.url}"/&gt;
+        &lt;property name="username" value="${jdbc.username}"/&gt;
+        &lt;property name="password" value="${jdbc.password}"/&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"&gt;
+        &lt;property name="dataSource" ref="dataSource"/&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id="broker" class="org.springmodules.orm.orbroker.BrokerFactoryBean"&gt;
+        &lt;property name="dataSource" ref="dataSource"/&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;</programlisting>
+
+    <para>and the test case:</para>
+
+    <programlisting>public class UserDaoTests extends AbstractTransactionalDataSourceSpringContextTests {
+
+    protected Broker broker;
+
+    public void testCountUsers() throws Exception {
+        // setup the dao
+        broker.addStatement("userCount", "select count(*) from users");
+        BrokerUserDao dao = new BrokerUserDao();
+        dao.setBroker(broker);
+
+        // empty users table
+        deleteFromTables(new String[]{"users"});
+
+        // run the target method and check the returned value
+        assertEquals(0, dao.countUsers());
+    }
+
+    public void setBroker(Broker broker) {
+        this.broker = broker;
+    }
+
+    protected String getConfigPath() {
+        return "applicationContext.xml";
+    }
+
+}</programlisting>
+  </sect1>
 </chapter>
