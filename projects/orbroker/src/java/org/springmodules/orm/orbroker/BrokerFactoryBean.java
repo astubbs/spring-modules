@@ -34,6 +34,10 @@ import java.util.Properties;
  * The typical usage will be to register this as singleton factory
  * (for a certain underlying JDBC DataSource) in an application context,
  * and give bean references to application services that need it.
+ * <p/>
+ * As of 0.9, BrokerFactoryBean can be configured without a
+ * {@link #setConfigLocation(org.springframework.core.io.Resource) broker
+ * config file}, this scenario is mainly used for testing.
  *
  * @author Omar Irbouh
  * @see BrokerTemplate#setBroker
