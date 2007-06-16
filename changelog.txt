@@ -31,6 +31,10 @@ Package org.springmodules.lucene
 * Added concurrency support using lock
 * Updated index template to support resource management and transaction support
 
+Package org.springmodules.orm.orbroker
+* upgraded O/RBroker library to 2.0.3
+* added support for configuring BrokerFactoryBean without config file (mainly for testing)
+
 Changes in version 0.8 (2007.03.11)
 -----------------------------------
 
