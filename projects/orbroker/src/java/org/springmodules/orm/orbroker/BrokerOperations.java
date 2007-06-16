@@ -16,11 +16,11 @@
 
 package org.springmodules.orm.orbroker;
 
+import org.springframework.dao.DataAccessException;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import org.springframework.dao.DataAccessException;
 
 /**
  * Interface that specifies a basic set of O/R Broker Executable operations.
@@ -39,10 +39,10 @@ public interface BrokerOperations {
 	int execute(String statementID, String[] paramNames, Object[] values) throws DataAccessException;
 
 	int executeBatch(String statementID, String batchParameterName,
-									 Collection batchParameters) throws DataAccessException;
+					 Collection batchParameters) throws DataAccessException;
 
 	int[] executeBatch(String statementID, String batchParameterName,
-										 Object[] batchParameters) throws DataAccessException;
+					   Object[] batchParameters) throws DataAccessException;
 
 	Object selectOne(String statementID) throws DataAccessException;
 
@@ -53,18 +53,18 @@ public interface BrokerOperations {
 	boolean selectOne(String statementID, Object resultObject) throws DataAccessException;
 
 	boolean selectOne(String statementID, String paramName, Object value,
-										Object resultObject) throws DataAccessException;
+					  Object resultObject) throws DataAccessException;
 
 	boolean selectOne(String statementID, String[] paramNames, Object[] values,
-										Object resultObject) throws DataAccessException;
+					  Object resultObject) throws DataAccessException;
 
 	Object selectOneFromMany(String statementID, int fromRow) throws DataAccessException;
 
 	Object selectOneFromMany(String statementID, int fromRow,
-													 String paramName, Object value) throws DataAccessException;
+							 String paramName, Object value) throws DataAccessException;
 
 	Object selectOneFromMany(String statementID, int fromRow,
-													 String[] paramNames, Object[] values) throws DataAccessException;
+							 String[] paramNames, Object[] values) throws DataAccessException;
 
 	List selectMany(String statementID) throws DataAccessException;
 
@@ -75,34 +75,34 @@ public interface BrokerOperations {
 	int selectMany(String statementID, Collection resultCollection) throws DataAccessException;
 
 	int selectMany(String statementID, String paramName, Object value,
-								 Collection resultCollection) throws DataAccessException;
+				   Collection resultCollection) throws DataAccessException;
 
 	int selectMany(String statementID, String[] paramNames, Object[] values,
-								 Collection resultCollection) throws DataAccessException;
+				   Collection resultCollection) throws DataAccessException;
 
 	List selectMany(String statementID, int startRow, int rowCount) throws DataAccessException;
 
 	List selectMany(String statementID, String paramName, Object value,
-									int startRow, int rowCount) throws DataAccessException;
+					int startRow, int rowCount) throws DataAccessException;
 
 	List selectMany(String statementID, String[] paramNames, Object[] values,
-									int startRow, int rowCount) throws DataAccessException;
+					int startRow, int rowCount) throws DataAccessException;
 
 	int selectMany(String statementID, Collection resultCollection,
-								 int startRow, int rowCount) throws DataAccessException;
+				   int startRow, int rowCount) throws DataAccessException;
 
 	int selectMany(String statementID, String paramName, Object value,
-								 Collection resultCollection, int startRow, int rowCount) throws DataAccessException;
+				   Collection resultCollection, int startRow, int rowCount) throws DataAccessException;
 
 	int selectMany(String statementID, String[] paramNames, Object[] values,
-								 Collection resultCollection, int startRow, int rowCount) throws DataAccessException;
+				   Collection resultCollection, int startRow, int rowCount) throws DataAccessException;
 
 	Iterator iterate(String statementID, int fetchSize) throws DataAccessException;
 
 	Iterator iterate(String statementID, int fetchSize,
-									 String paramName, Object value) throws DataAccessException;
+					 String paramName, Object value) throws DataAccessException;
 
 	Iterator iterate(String statementID, int fetchSize,
-									 String[] paramNames, Object[] values) throws DataAccessException;
+					 String[] paramNames, Object[] values) throws DataAccessException;
 
 }

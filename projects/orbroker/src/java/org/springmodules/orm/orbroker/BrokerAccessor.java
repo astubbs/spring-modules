@@ -16,11 +16,6 @@
 
 package org.springmodules.orm.orbroker;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
 import net.sourceforge.orbroker.Broker;
 import net.sourceforge.orbroker.BrokerException;
 import net.sourceforge.orbroker.Executable;
@@ -32,6 +27,10 @@ import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLStateSQLExceptionTranslator;
 import org.springframework.util.Assert;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * Base class for BrokerTemplate.

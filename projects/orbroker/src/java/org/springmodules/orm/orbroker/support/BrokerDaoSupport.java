@@ -19,16 +19,16 @@ package org.springmodules.orm.orbroker.support;
 import net.sourceforge.orbroker.Broker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.Assert;
 import org.springframework.dao.support.DaoSupport;
+import org.springframework.util.Assert;
 import org.springmodules.orm.orbroker.BrokerTemplate;
 
 /**
  * Convenient super class for O/R Broker data access objects.
  * Requires a Broker to be set, providing a BrokerTemplate
  * based on it to subclasses.
- *
- * <p>Instead of a plain Broker, you can also pass a preconfigured
+ * <p/>
+ * Instead of a plain Broker, you can also pass a preconfigured
  * BrokerTemplate instance in. This allows you to share your
  * BrokerTemplate configuration for all your DAOs, for example
  * a custom SQLExceptionTranslator to use.
@@ -38,15 +38,15 @@ import org.springmodules.orm.orbroker.BrokerTemplate;
  * @see #setBrokerTemplate
  * @see org.springmodules.orm.orbroker.BrokerTemplate
  * @see org.springmodules.orm.orbroker.BrokerTemplate#setExceptionTranslator
- * @since 2005.06.02
+ * @since 0.7
  */
 public abstract class BrokerDaoSupport extends DaoSupport {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private boolean externalTemplate = false;
-
 	protected BrokerTemplate brokerTemplate = new BrokerTemplate();
+
+	private boolean externalTemplate = false;
 
 	public final void setBrokerTemplate(BrokerTemplate brokerTemplate) {
 		Assert.notNull(brokerTemplate, "Cannot set brokerTemplate to null");
@@ -62,7 +62,7 @@ public abstract class BrokerDaoSupport extends DaoSupport {
 		this.brokerTemplate.setBroker(broker);
 	}
 
-  protected final void checkDaoConfig() {
+	protected final void checkDaoConfig() {
 		Assert.notNull(this.brokerTemplate, "broker or brokerTemplate is required");
 		if (externalTemplate) {
 			this.brokerTemplate.afterPropertiesSet();

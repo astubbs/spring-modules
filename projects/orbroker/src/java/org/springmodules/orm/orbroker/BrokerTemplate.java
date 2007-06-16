@@ -16,17 +16,17 @@
 
 package org.springmodules.orm.orbroker;
 
-import java.sql.Connection;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.orbroker.Broker;
 import net.sourceforge.orbroker.BrokerException;
 import net.sourceforge.orbroker.Executable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.util.Assert;
+
+import java.sql.Connection;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Helper class that simplifies O/R Broker data access code, and converts
@@ -125,7 +125,7 @@ public class BrokerTemplate extends BrokerAccessor implements BrokerOperations {
 	}
 
 	public int executeBatch(final String statementID, final String batchParameterName,
-													final Collection batchParameters) throws DataAccessException {
+							final Collection batchParameters) throws DataAccessException {
 		return executeWithIntResult(new BrokerCallback() {
 			public Object doInBroker(Executable executable) throws BrokerException {
 				return new Integer(executable.executeBatch(statementID, batchParameterName, batchParameters));
@@ -134,7 +134,7 @@ public class BrokerTemplate extends BrokerAccessor implements BrokerOperations {
 	}
 
 	public int[] executeBatch(final String statementID, final String batchParameterName,
-														final Object[] batchParameters) throws DataAccessException {
+							  final Object[] batchParameters) throws DataAccessException {
 		return (int[]) execute(new BrokerCallback() {
 			public Object doInBroker(Executable executable) throws BrokerException {
 				return executable.executeBatch(statementID, batchParameterName, batchParameters);
@@ -164,12 +164,12 @@ public class BrokerTemplate extends BrokerAccessor implements BrokerOperations {
 	}
 
 	public boolean selectOne(final String statementID, final String paramName, final Object value,
-													 final Object resultObject) throws DataAccessException {
+							 final Object resultObject) throws DataAccessException {
 		return selectOne(statementID, new String[]{paramName}, new Object[]{value}, resultObject);
 	}
 
 	public boolean selectOne(final String statementID, final String[] paramNames, final Object[] values,
-													 final Object resultObject) throws DataAccessException {
+							 final Object resultObject) throws DataAccessException {
 		return executeWithBooleanResult(new BrokerCallback() {
 			public Object doInBroker(Executable executable) throws BrokerException {
 				applyNamedParamsToExecutable(executable, paramNames, values);
@@ -183,12 +183,12 @@ public class BrokerTemplate extends BrokerAccessor implements BrokerOperations {
 	}
 
 	public Object selectOneFromMany(final String statementID, final int fromRow,
-																	final String paramName, final Object value) throws DataAccessException {
+									final String paramName, final Object value) throws DataAccessException {
 		return selectOneFromMany(statementID, fromRow, new String[]{paramName}, new Object[]{value});
 	}
 
 	public Object selectOneFromMany(final String statementID, final int fromRow,
-																	final String[] paramNames, final Object[] values) throws DataAccessException {
+									final String[] paramNames, final Object[] values) throws DataAccessException {
 		return execute(new BrokerCallback() {
 			public Object doInBroker(Executable executable) throws BrokerException {
 				applyNamedParamsToExecutable(executable, paramNames, values);
@@ -219,12 +219,12 @@ public class BrokerTemplate extends BrokerAccessor implements BrokerOperations {
 	}
 
 	public int selectMany(final String statementID, final String paramName, final Object value,
-												final Collection resultCollection) throws DataAccessException {
+						  final Collection resultCollection) throws DataAccessException {
 		return selectMany(statementID, new String[]{paramName}, new Object[]{value}, resultCollection);
 	}
 
 	public int selectMany(final String statementID, final String[] paramNames, final Object[] values,
-												final Collection resultCollection) throws DataAccessException {
+						  final Collection resultCollection) throws DataAccessException {
 		return executeWithIntResult(new BrokerCallback() {
 			public Object doInBroker(Executable executable) throws BrokerException {
 				applyNamedParamsToExecutable(executable, paramNames, values);
@@ -238,12 +238,12 @@ public class BrokerTemplate extends BrokerAccessor implements BrokerOperations {
 	}
 
 	public List selectMany(final String statementID, final String paramName, final Object value,
-												 final int startRow, final int rowCount) throws DataAccessException {
+						   final int startRow, final int rowCount) throws DataAccessException {
 		return selectMany(statementID, new String[]{paramName}, new Object[]{value}, startRow, rowCount);
 	}
 
 	public List selectMany(final String statementID, final String[] paramNames, final Object[] values,
-												 final int startRow, final int rowCount) throws DataAccessException {
+						   final int startRow, final int rowCount) throws DataAccessException {
 		return executeWithListResult(new BrokerCallback() {
 			public Object doInBroker(Executable executable) throws BrokerException {
 				applyNamedParamsToExecutable(executable, paramNames, values);
@@ -253,19 +253,19 @@ public class BrokerTemplate extends BrokerAccessor implements BrokerOperations {
 	}
 
 	public int selectMany(final String statementID, final Collection resultCollection,
-												final int startRow, final int rowCount) throws DataAccessException {
+						  final int startRow, final int rowCount) throws DataAccessException {
 		return selectMany(statementID, new String[0], new Object[0], resultCollection,
 				startRow, rowCount);
 	}
 
 	public int selectMany(final String statementID, final String paramName, final Object value,
-												final Collection resultCollection, final int startRow, final int rowCount) throws DataAccessException {
+						  final Collection resultCollection, final int startRow, final int rowCount) throws DataAccessException {
 		return selectMany(statementID, new String[]{paramName}, new Object[]{value}, resultCollection,
 				startRow, rowCount);
 	}
 
 	public int selectMany(final String statementID, final String[] paramNames, final Object[] values,
-												final Collection resultCollection, final int startRow, final int rowCount) throws DataAccessException {
+						  final Collection resultCollection, final int startRow, final int rowCount) throws DataAccessException {
 		return executeWithIntResult(new BrokerCallback() {
 			public Object doInBroker(Executable executable) throws BrokerException {
 				applyNamedParamsToExecutable(executable, paramNames, values);
@@ -279,12 +279,12 @@ public class BrokerTemplate extends BrokerAccessor implements BrokerOperations {
 	}
 
 	public Iterator iterate(final String statementID, final int fetchSize,
-													final String paramName, final Object value) throws DataAccessException {
+							final String paramName, final Object value) throws DataAccessException {
 		return iterate(statementID, fetchSize, new String[]{paramName}, new Object[]{value});
 	}
 
 	public Iterator iterate(final String statementID, final int fetchSize,
-													final String[] paramNames, final Object[] values) throws DataAccessException {
+							final String[] paramNames, final Object[] values) throws DataAccessException {
 		return (Iterator) execute(new BrokerCallback() {
 			public Object doInBroker(Executable executable) throws BrokerException {
 				applyNamedParamsToExecutable(executable, paramNames, values);
@@ -294,8 +294,7 @@ public class BrokerTemplate extends BrokerAccessor implements BrokerOperations {
 	}
 
 	protected void applyNamedParamsToExecutable(Executable executable, final String[] paramNames, final Object[] values) {
-		if (paramNames != null && values != null && paramNames.length != values.length)
-		{
+		if (paramNames != null && values != null && paramNames.length != values.length) {
 			throw new IllegalArgumentException("Length of paramNames array must match length of values array");
 		}
 		for (int i = 0; i < paramNames.length; i++) {
