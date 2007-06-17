@@ -19,11 +19,11 @@
   <dependencies defaultconf="global->default">
     <!-- global (compile, test, runtime) dependencies -->
 
-    <dependency org="apache" name="commons-logging" rev="1.0.4" />
-    <dependency org="apache" name="log4j" rev="1.2.13" />
+    <dependency org="apache" name="commons-logging" rev="1.1" />
+    <dependency org="apache" name="log4j" rev="1.2.14" />
     <dependency org="springframework" name="springframework" rev="2.0.5">
-		<artifact name="spring" type="jar"/>
-		<artifact name="spring-mock" type="jar"/>
+      <artifact name="spring" type="jar"/>
+      <artifact name="spring-mock" type="jar"/>
     </dependency>
     <dependency org="orbroker" name="orbroker"  rev="2.0.3-debug"/>
 
