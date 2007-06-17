@@ -6,10 +6,14 @@ Changes in version 0.9 (in progress)
 ------------------------------------
 
 Package org.springmodules.cache
+* upgraded Commons-attributes library to 2.2
+* upgraded Commons-collections library to 3.2
+* upgraded Commons-lang library to 2.2
 * upgraded JCS library to 1.3
 * upgraded JBoss Cache library to 1.4.0.GA
 * upgraded JBoss Javassist library to 3.4.GA
 * upgraded GigaSpaces library to 5.2-1706
+* upgraded OpenSymphony cache library to 2.4
 * upgraded Spring library to 2.0.5
 * upgraded XStream library to 1.2.2
 * added support for Tangosol Coherence (again), thanks to Andy Nguyen for providing Tangosol mock jar: MOD-188
@@ -35,6 +39,8 @@ Package org.springmodules.lucene
 
 Package org.springmodules.orm.orbroker
 * upgraded O/RBroker library to 2.0.3
+* upgraded Commons-logging library to 1.4
+* upgraded Log4j library to 1.2.14
 * added support for configuring BrokerFactoryBean without config file (mainly for testing)
 
 Changes in version 0.8 (2007.03.11)
