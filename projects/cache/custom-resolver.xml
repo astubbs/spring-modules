@@ -11,21 +11,21 @@
           pattern="http://moria.sourceforge.net/maven/jboss/[type]s/[artifact]-[revision].[ext]" />
       </url>
       <url name="jboss-ibiblio">
-        <!-- url pattern for jcs svn repository -->
+        <!-- url pattern for jboss repository -->
         <artifact
-          pattern="http://mirrors.ibiblio.org/pub/mirrors/maven2/jboss/[artifact]/[revision]/[artifact]-[revision].[ext]" />
+          pattern="http://www.ibiblio.org/maven2/jboss/[artifact]/[revision]/[artifact]-[revision].[ext]" />
       </url>
       <!-- jcs official url -->
       <url name="jcs">
-        <!-- url pattern for jcs svn repository -->
+        <!-- url pattern for jcs repository -->
         <artifact
-          pattern="http://mirrors.ibiblio.org/pub/mirrors/maven2/org/apache/jcs/jcs/[revision]/[artifact]-[revision].[ext]" />
+          pattern="http://www.ibiblio.org/maven2/org/apache/jcs/jcs/[revision]/[artifact]-[revision].[ext]" />
       </url>
       <!-- xpp3_min official url -->
       <url name="xpp3">
-        <!-- url pattern for jcs svn repository -->
+        <!-- url pattern for xpp3 repository -->
         <artifact
-          pattern="http://www.extreme.indiana.edu/dist/java-repository/xpp3/jars/[artifact]-[revision].[ext]" />
+          pattern="http://www.ibiblio.org/maven2/xpp3/xpp3_min/[revision]/[artifact]-[revision].[ext]" />
       </url>
       <!-- ehcache url -->
       <url name="ehcache">

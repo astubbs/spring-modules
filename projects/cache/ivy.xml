@@ -26,8 +26,8 @@
 -->
 
     <dependency org="apache" name="log4j" rev="1.2.14" />
-    <dependency org="springframework" name="org.springframework"
-      rev="2.0.5" conf="global,test->default">
+    <dependency org="springframework" name="springframework" rev="2.0.5"
+      conf="global,test->default">
       <artifact name="spring" type="jar" conf="global" />
       <artifact name="spring-mock" type="jar" conf="test" />
     </dependency>
@@ -55,14 +55,14 @@
 		<artifact name="webster" type="jar"/>
 	</dependency>
 
-    <dependency org="apache" name="commons-attributes" rev="2.1">
+    <dependency org="apache" name="commons-attributes" rev="2.2">
       <artifact name="commons-attributes-api" type="jar" />
       <artifact name="commons-attributes-compiler" type="jar" />
     </dependency>
 
-    <dependency org="apache" name="commons-lang" rev="2.1" />
+    <dependency org="apache" name="commons-lang" rev="2.2" />
 
-    <dependency org="apache" name="commons-collections" rev="3.1" />
+    <dependency org="apache" name="commons-collections" rev="3.2" />
 
     <dependency org="concurrent" name="concurrent" rev="1.3.4" />
 
@@ -83,20 +83,20 @@
       <artifact name="jboss-system" type="jar" />
     </dependency>
 
-    <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="2.1" conf="test->*"/>
+    <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.0" conf="test->*"/>
 
-    <dependency org="jcs" name="jcs" rev="1.3" />
+    <dependency org="apache" name="jcs" rev="1.3" />
 
     <dependency org="jgroups" name="jgroups" rev="2.2.8">
       <artifact name="jgroups-all" type="jar" />
     </dependency>
 
-        <dependency org="apache" name="geronimo-spec" rev="rc4">
+    <dependency org="apache" name="geronimo-spec" rev="rc4">
 			<artifact name="geronimo-spec-jta-1.0.1B" type="jar"/>
 		</dependency>
 
 
-    <dependency org="opensymphony" name="opensymphony" rev="2.1.1">
+    <dependency org="opensymphony" name="opensymphony" rev="2.4">
       <artifact name="oscache" type="jar" />
     </dependency>
 
@@ -108,18 +108,20 @@
 
     <dependency org="xjavadoc" name="xjavadoc" rev="1.1" />
 
+    <dependency org="qdox" name="qdox" rev="1.5" />
+
     <dependency org="xstream" name="xstream" rev="1.2.2" />
 
     <!-- test time only dependencies -->
     <dependency org="clover" name="clover" rev="1.3.9"
       conf="test->*" />
 
-	    <dependency org="easymock" name="easymock" rev="1.1"
-		      conf="test->default"/>
+    <dependency org="easymock" name="easymock" rev="1.1"
+      conf="test->default"/>
 
 		<!-- do not upgrade since 1.2 doesn't call the class constructor and leads to NPE problems) -->
-	    <dependency org="easymock" name="easymockclassextension" rev="1.1"
-		      conf="test->default"/>
+    <dependency org="easymock" name="easymockclassextension" rev="1.1"
+      conf="test->default"/>
 
     <dependency org="junit" name="junit" rev="3.8.1"
       conf="test->*" />
