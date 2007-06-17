@@ -72,9 +72,9 @@
 
     <dependency org="ehcache" name="ehcache" rev="1.2.4" />
 
-    <dependency org="jboss" name="javassist" rev="3.0" />
+    <dependency org="jboss" name="javassist" rev="3.4.ga" />
 
-    <dependency org="jboss" name="jboss-cache" rev="1.2.4"/>
+    <dependency org="jboss" name="jboss-cache" rev="1.4.0.GA"/>
 
     <dependency org="jboss" name="jboss" rev="4.0.3">
       <artifact name="jboss-common" type="jar" />
@@ -82,7 +82,8 @@
       <artifact name="jboss-minimal" type="jar" />
       <artifact name="jboss-system" type="jar" />
     </dependency>
-	<dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="2.1" conf="test->*"/>
+
+    <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="2.1" conf="test->*"/>
 
     <dependency org="jcs" name="jcs" rev="1.3" />
 

@@ -7,6 +7,8 @@ Changes in version 0.9 (in progress)
 
 Package org.springmodules.cache
 * upgraded JCS library to 1.3
+* upgraded JBoss Cache library to 1.4.0.GA
+* upgraded JBoss Javassist library to 3.4.GA
 * upgraded GigaSpaces library to 5.2-1706
 * upgraded Spring library to 2.0.5
 * upgraded XStream library to 1.2.2
