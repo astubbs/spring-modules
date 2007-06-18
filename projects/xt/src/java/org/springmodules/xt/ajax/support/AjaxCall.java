@@ -25,6 +25,7 @@ import net.sf.json.JSONObject;
  *
  * @author Sergio Bossa
  */
+@Deprecated
 public enum AjaxCall {
     
     AJAX_ACTION {
