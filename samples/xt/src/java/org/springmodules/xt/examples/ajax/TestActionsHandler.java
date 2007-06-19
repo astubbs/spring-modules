@@ -1,6 +1,7 @@
 package org.springmodules.xt.examples.ajax;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -153,6 +154,7 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     
     public AjaxResponse includeJsp(AjaxActionEvent event) {
         // Create the component for including jsp content:
+        event.getHttpRequest().setAttribute("date", new Date());
         JspComponent jsp = new JspComponent(event.getHttpRequest(), "/includes/include.jsp");
         // Create an ajax action for appending it: 
         AppendContentAction action = new AppendContentAction("jsp", jsp);

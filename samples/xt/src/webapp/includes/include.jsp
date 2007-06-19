@@ -1,8 +1,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <%-- Dynamic content: --%> 
 <div>
     <c:out value="This is ${param.msg}!"/>
+</div>
+<div>
+    Today date : <fmt:formatDate value="${requestScope.date}"/>
 </div>
 
 <%-- Dynamic Javascript: --%>
