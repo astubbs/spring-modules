@@ -21,6 +21,10 @@ public final class InternalHttpServletResponse implements HttpServletResponse {
     
     private StringWriter writer;
     private ServletOutputStream out;
+
+    private String characterEncoding;
+    private String contentType;
+    private Locale locale;
     
     public InternalHttpServletResponse(StringWriter writer) {
         this.writer = writer;
@@ -107,15 +111,15 @@ public final class InternalHttpServletResponse implements HttpServletResponse {
     }
     
     public String getCharacterEncoding() {
-        throw new UnsupportedOperationException();
+        return this.characterEncoding;
     }
     
     public String getContentType() {
-        throw new UnsupportedOperationException();
+        return this.contentType;
     }
     
     public Locale getLocale() {
-        throw new UnsupportedOperationException();
+        return this.locale;
     }
     
     public ServletOutputStream getOutputStream() throws IOException {
@@ -143,7 +147,7 @@ public final class InternalHttpServletResponse implements HttpServletResponse {
     }
     
     public void setCharacterEncoding(String charset) {
-        throw new UnsupportedOperationException();
+        this.characterEncoding = charset;
     }
     
     public void setContentLength(int len) {
@@ -151,10 +155,10 @@ public final class InternalHttpServletResponse implements HttpServletResponse {
     }
     
     public void setContentType(String type) {
-        throw new UnsupportedOperationException();
+        this.contentType = type;
     }
     
     public void setLocale(Locale loc) {
-        throw new UnsupportedOperationException();
+        this.locale = loc;
     }
 }

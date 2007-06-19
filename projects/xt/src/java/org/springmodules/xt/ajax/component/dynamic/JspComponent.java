@@ -17,6 +17,7 @@
 package org.springmodules.xt.ajax.component.dynamic;
 
 import java.io.StringWriter;
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.springmodules.xt.ajax.component.Component;
 import org.springmodules.xt.ajax.util.InternalHttpServletResponse;
@@ -36,6 +37,10 @@ public class JspComponent implements Component {
     private HttpServletRequest request;
     private String path;
     
+    private String characterEncoding;
+    private String contentType;
+    private Locale locale;
+    
     /**
      * Construct the component.
      *
@@ -49,12 +54,28 @@ public class JspComponent implements Component {
     
     public String render() {
         StringWriter writer = new StringWriter();
+        InternalHttpServletResponse response = new InternalHttpServletResponse(writer);
+        response.setCharacterEncoding(this.characterEncoding);
+        response.setContentType(this.contentType);
+        response.setLocale(this.locale);
         try {
-            request.getRequestDispatcher(path).include(request, new InternalHttpServletResponse(writer));
+            request.getRequestDispatcher(this.path).include(this.request, response);
         } 
         catch (Exception e) {
             throw new RenderingException("Error while rendering a component of type: " + this.getClass().getName(), e);
         }
         return writer.toString();
+    }
+
+    public void setCharacterEncoding(String characterEncoding) {
+        this.characterEncoding = characterEncoding;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }
