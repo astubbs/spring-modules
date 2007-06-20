@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springmodules.lucene.index.LuceneIndexingException;
+import org.springmodules.lucene.index.factory.MockIndexFactory;
 
 public class ResourceInterceptorTests extends TestCase {
 

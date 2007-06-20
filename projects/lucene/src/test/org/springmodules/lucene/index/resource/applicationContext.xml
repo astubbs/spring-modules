@@ -13,7 +13,7 @@
 		<property name="create" value="true"/>
 	</bean>
 
-	<bean id="indexFactory" class="org.springmodules.lucene.index.resource.MockIndexFactory">
+	<bean id="indexFactory" class="org.springmodules.lucene.index.factory.MockIndexFactory">
 		<property name="targetIndexFactory" ref="targetIndexFactory"/>
 	</bean>
 
