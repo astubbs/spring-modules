@@ -30,6 +30,8 @@ import org.apache.lucene.index.IndexReader.FieldOption;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
+import org.springmodules.lucene.index.core.ReaderCallback;
+import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
 import org.springmodules.lucene.index.factory.LuceneIndexReader;
 import org.springmodules.lucene.index.transaction.AbstractTransactionalLuceneIndexReader;
@@ -47,10 +49,9 @@ import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
  * @author Thierry Templier
  */
 public class CacheTransactionalLuceneIndexReader extends AbstractTransactionalLuceneIndexReader {
-	private LuceneIndexReader delegate;
 	private LuceneTransactionalIndexCache transactionalIndexCache;
 
-	public CacheTransactionalLuceneIndexReader(LuceneIndexReader delegate,
+	public CacheTransactionalLuceneIndexReader(IndexFactory delegate,
 						LuceneTransactionalIndexCache transactionalIndexCache,
 						LuceneRollbackSegment rollbackSegment) {
 		setDelegate(delegate);
@@ -59,7 +60,6 @@ public class CacheTransactionalLuceneIndexReader extends AbstractTransactionalLu
 	}
 
 	public void close() throws IOException {
-		IndexReaderFactoryUtils.closeIndexReader(delegate);
 	}
 
 	public Searcher createNativeSearcher() {
@@ -68,21 +68,37 @@ public class CacheTransactionalLuceneIndexReader extends AbstractTransactionalLu
 	}
 
 	public LuceneSearcher createSearcher() {
-		return getDelegate().createSearcher();
+		//return getDelegate().createSearcher();
+		return null;
 	}
 
-	public void deleteDocument(int docNum) throws IOException {
-		Document document = getDelegate().document(docNum);
-		LuceneOperation operation = LuceneOperationUtils.getDeleteDocumentOperation(document);
-		getTransactionalIndexCache().addOperation(operation);
-		getRollbackSegment().addCompensateOperation(operation);
+	/**
+	 * @see org.springmodules.lucene.index.factory.LuceneIndexReader#deleteDocument(int)
+	 */
+	public void deleteDocument(final int docNum) throws IOException {
+		executeOnReader(new ReaderCallback() {
+			public Object doWithReader(LuceneIndexReader reader) throws Exception {
+				Document document = reader.document(docNum);
+				LuceneOperation operation = LuceneOperationUtils.getDeleteDocumentOperation(document);
+				getTransactionalIndexCache().addOperation(operation);
+				getRollbackSegment().addCompensateOperation(operation);
+				return null;
+			}
+		});
 	}
-	
-	public int deleteDocuments(Term term) throws IOException {
+
+	/**
+	 * 
+	 * @param term
+	 * @param reader
+	 * @return
+	 * @throws IOException
+	 */
+	private int doDeleteDocuments(final Term term, LuceneIndexReader reader) throws IOException {
 		LuceneSearcher searcher = null;
 		int nbDocuments = 0;
 		try {
-			searcher = getDelegate().createSearcher();
+			searcher = reader.createSearcher();
 			LuceneHits hits = searcher.search(new TermQuery(term));
 			nbDocuments = hits.length();
 			Document[] documents = new Document[nbDocuments];
@@ -96,15 +112,33 @@ public class CacheTransactionalLuceneIndexReader extends AbstractTransactionalLu
 		} finally {
 			SearcherFactoryUtils.closeSearcher(searcher);
 		}
-
+		
 		return nbDocuments;
+	}
+
+	/**
+	 * @see org.springmodules.lucene.index.factory.LuceneIndexReader#deleteDocuments(org.apache.lucene.index.Term)
+	 */
+	public int deleteDocuments(final Term term) throws IOException {
+		Integer nbDocuments = (Integer)executeOnReader(new ReaderCallback() {
+			public Object doWithReader(LuceneIndexReader reader) throws Exception {
+				int nbDocuments = doDeleteDocuments(term, reader);
+				return new Integer(nbDocuments);
+			}
+		});
+
+		return nbDocuments.intValue();
 	}
 
 	/**
 	 * @see LuceneIndexReader#directory()
 	 */
 	public Directory directory() {
-		return getDelegate().directory();
+		return (Directory)executeOnReader(new ReaderCallback() {
+			public Object doWithReader(LuceneIndexReader reader) throws Exception {
+				return reader.directory();
+			}
+		});
 	}
 
 	public int docFreq(Term t) throws IOException {
@@ -112,13 +146,20 @@ public class CacheTransactionalLuceneIndexReader extends AbstractTransactionalLu
 		return 0;
 	}
 
-	public Document document(int n) throws IOException {
-		Document document = getDelegate().document(n);
-		if( getTransactionalIndexCache().isDocumentDeleted(document) ) {
-			return null;
-		} else {
-			return document;
-		}
+	/**
+	 * @see org.springmodules.lucene.index.factory.LuceneIndexReader#document(int)
+	 */
+	public Document document(final int n) throws IOException {
+		return (Document)executeOnReader(new ReaderCallback() {
+			public Object doWithReader(LuceneIndexReader reader) throws Exception {
+				Document document = reader.document(n);
+				if( getTransactionalIndexCache().isDocumentDeleted(document) ) {
+					return null;
+				} else {
+					return document;
+				}
+			}
+		});
 	}
 
 	public Collection getFieldNames(FieldOption fldOption) {
@@ -140,9 +181,17 @@ public class CacheTransactionalLuceneIndexReader extends AbstractTransactionalLu
 	 * @see LuceneIndexReader#getVersion()
 	 */
 	public long getVersion() {
-		return getDelegate().getVersion();
+		Long getVersion = (Long)executeOnReader(new ReaderCallback() {
+			public Object doWithReader(LuceneIndexReader reader) throws Exception {
+				return new Long(reader.getVersion());
+			}
+		});
+		return getVersion.longValue();
 	}
 
+	/**
+	 * @see org.springmodules.lucene.index.factory.LuceneIndexReader#hasDeletions()
+	 */
 	public boolean hasDeletions() {
 		List operations = getTransactionalIndexCache().getOperationsByType(LuceneDeleteOperation.class);
 		return (operations.size()>0);
@@ -151,31 +200,54 @@ public class CacheTransactionalLuceneIndexReader extends AbstractTransactionalLu
 	/**
 	 * @see LuceneIndexReader#hasNorms(String)
 	 */
-	public boolean hasNorms(String field) throws IOException {
-		return getDelegate().hasNorms(field);
+	public boolean hasNorms(final String field) throws IOException {
+		Boolean hasNorms = (Boolean)executeOnReader(new ReaderCallback() {
+			public Object doWithReader(LuceneIndexReader reader) throws Exception {
+				return new Boolean(reader.hasNorms(field));
+			}
+		});
+		return hasNorms.booleanValue();
 	}
 
 	/**
 	 * @see LuceneIndexReader#isCurrent()
 	 */
 	public boolean isCurrent() throws IOException {
-		return getDelegate().isCurrent();
+		Boolean isCurrent = (Boolean)executeOnReader(new ReaderCallback() {
+			public Object doWithReader(LuceneIndexReader reader) throws Exception {
+				return new Boolean(reader.isCurrent());
+			}
+		});
+		return isCurrent.booleanValue();
 	}
 
-	public boolean isDeleted(int n) {
-		try {
-			Document document = getDelegate().document(n);
-			return (getTransactionalIndexCache().isDocumentDeleted(document));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return false;
+	/**
+	 * @see org.springmodules.lucene.index.factory.LuceneIndexReader#isDeleted(int)
+	 */
+	public boolean isDeleted(final int n) {
+		Boolean isDeleted = (Boolean)executeOnReader(new ReaderCallback() {
+			public Object doWithReader(LuceneIndexReader reader) throws Exception {
+				Document document = reader.document(n);
+				return new Boolean((getTransactionalIndexCache().isDocumentDeleted(document)));
+			}
+		});
+		return isDeleted.booleanValue();
 	}
 
+	
+	/**
+	 * @see org.springmodules.lucene.index.factory.LuceneIndexReader#maxDoc()
+	 */
 	public int maxDoc() {
-		// TODO Auto-generated method stub
-		return 0;
+		Integer maxDoc = (Integer)executeOnReader(new ReaderCallback() {
+			public Object doWithReader(LuceneIndexReader reader) throws Exception {
+				int addedDocumentNumber = transactionalIndexCache.getOperationNumberByType(
+																	LuceneAddOperation.class);
+				int maxDocsIndex = reader.maxDoc();
+				return new Integer(maxDocsIndex + addedDocumentNumber);
+			}
+		});
+		return maxDoc.intValue();
 	}
 
 	public byte[] norms(String field) throws IOException {
@@ -188,10 +260,21 @@ public class CacheTransactionalLuceneIndexReader extends AbstractTransactionalLu
 		
 	}
 
+	/**
+	 * @see org.springmodules.lucene.index.factory.LuceneIndexReader#numDocs()
+	 */
 	public int numDocs() {
-		int addedDocumentNumber = transactionalIndexCache.getOperationNumberByType(LuceneAddOperation.class);
-		int deletedDocumentNumber = transactionalIndexCache.getOperationNumberByType(LuceneDeleteOperation.class);
-		return getDelegate().numDocs() + addedDocumentNumber - deletedDocumentNumber;
+		Integer numDocs = (Integer)executeOnReader(new ReaderCallback() {
+			public Object doWithReader(LuceneIndexReader reader) throws Exception {
+				int addedDocumentNumber = transactionalIndexCache.getOperationNumberByType(
+																	LuceneAddOperation.class);
+				int deletedDocumentNumber = transactionalIndexCache.getOperationNumberByType(
+																	LuceneDeleteOperation.class);
+				int numDocsIndex = reader.numDocs();
+				return new Integer(numDocsIndex + addedDocumentNumber - deletedDocumentNumber);
+			}
+		});
+		return numDocs.intValue();
 	}
 
 	public void setNorm(int doc, String field, byte value) throws IOException {
@@ -245,14 +328,6 @@ public class CacheTransactionalLuceneIndexReader extends AbstractTransactionalLu
 	public void setTransactionalIndexCache(
 			LuceneTransactionalIndexCache transactionalIndexCache) {
 		this.transactionalIndexCache = transactionalIndexCache;
-	}
-
-	public LuceneIndexReader getDelegate() {
-		return delegate;
-	}
-
-	public void setDelegate(LuceneIndexReader delegate) {
-		this.delegate = delegate;
 	}
 
 }

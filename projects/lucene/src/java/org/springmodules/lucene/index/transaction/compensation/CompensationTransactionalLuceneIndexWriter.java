@@ -51,19 +51,6 @@ public class CompensationTransactionalLuceneIndexWriter extends AbstractTransact
 		setRollbackSegment(rollbackSegment);
 	}
 
-	private Object executeOnWriter(WriterCallback callback) {
-		LuceneIndexWriter indexWriter = null;
-		try {
-			indexWriter = IndexWriterFactoryUtils.getIndexWriter(delegate, false);
-			return callback.doWithWriter(indexWriter);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			return null;
-		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(delegate, indexWriter, false);
-		}
-	}
-	
 	public void forceClose() {
 		
 	}
@@ -320,14 +307,6 @@ public class CompensationTransactionalLuceneIndexWriter extends AbstractTransact
 				return null;
 			}
 		});
-	}
-
-	public IndexFactory getDelegate() {
-		return delegate;
-	}
-
-	public void setDelegate(IndexFactory delegate) {
-		this.delegate = delegate;
 	}
 
 }

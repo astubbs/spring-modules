@@ -21,7 +21,8 @@ import org.springmodules.lucene.index.factory.LuceneIndexReader;
 /** 
  * @author Thierry Templier
  */
-public abstract class AbstractTransactionalLuceneIndexReader implements LuceneIndexReader {
+public abstract class AbstractTransactionalLuceneIndexReader
+			extends TransactionIndexSupport implements LuceneIndexReader {
 
 	private LuceneRollbackSegment rollbackSegment;
 

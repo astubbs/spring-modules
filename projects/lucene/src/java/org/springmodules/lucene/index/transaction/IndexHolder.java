@@ -54,7 +54,7 @@ public class IndexHolder extends ResourceHolderSupport {
 		this.rollbackSegment = rollbackSegment;
 	}
 
-	public TransactionDefinition getTransactionDefintion() {
+	public TransactionDefinition getTransactionDefinition() {
 		return definition;
 	}
 

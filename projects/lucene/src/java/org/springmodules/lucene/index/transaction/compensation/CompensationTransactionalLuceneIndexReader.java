@@ -46,27 +46,12 @@ import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
  */
 public class CompensationTransactionalLuceneIndexReader extends AbstractTransactionalLuceneIndexReader {
 
-	private IndexFactory delegate;
-	
 	public CompensationTransactionalLuceneIndexReader(IndexFactory delegate, LuceneRollbackSegment rollbackSegment) {
 		setDelegate(delegate);
 		setRollbackSegment(rollbackSegment);
 	}
 
 	public void forceClose() {
-	}
-	
-	private Object executeOnReader(ReaderCallback callback) {
-		LuceneIndexReader indexReader = null;
-		try {
-			indexReader = IndexReaderFactoryUtils.getIndexReader(delegate, false);
-			return callback.doWithReader(indexReader);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			return null;
-		} finally {
-			IndexReaderFactoryUtils.releaseIndexReader(delegate, indexReader, false);
-		}
 	}
 	
 	public void close() throws IOException {
@@ -260,14 +245,6 @@ public class CompensationTransactionalLuceneIndexReader extends AbstractTransact
 				return null;
 			}
 		});
-	}
-
-	public IndexFactory getDelegate() {
-		return delegate;
-	}
-
-	public void setDelegate(IndexFactory delegate) {
-		this.delegate = delegate;
 	}
 
 }

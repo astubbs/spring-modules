@@ -16,6 +16,9 @@
 
 package org.springmodules.lucene.index.transaction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.springframework.beans.factory.InitializingBean;
@@ -28,11 +31,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
-import org.springmodules.lucene.index.factory.LuceneIndexReader;
-import org.springmodules.lucene.index.transaction.cache.CacheTransactionalLuceneIndexReader;
-import org.springmodules.lucene.index.transaction.cache.CacheTransactionalLuceneIndexWriter;
-import org.springmodules.lucene.index.transaction.compensation.CompensationTransactionalLuceneIndexReader;
-import org.springmodules.lucene.index.transaction.compensation.CompensationTransactionalLuceneIndexWriter;
+import org.springmodules.lucene.index.transaction.cache.LuceneCacheTransactionStrategy;
+import org.springmodules.lucene.index.transaction.compensation.LuceneCompensationTransactionStrategy;
 
 /** 
  * @author Thierry Templier
@@ -42,10 +42,10 @@ public class LuceneIndexTransactionManager extends AbstractPlatformTransactionMa
 	private Analyzer analyzer;
 	private LuceneTransactionProcessor transactionProcessor;
 	private boolean optimizeResourcesUsage = false;
+	Map transactionStrategies = new HashMap();
 
-	public LuceneIndexTransactionManager() {
-	}
-	
+	//protected final Log logger = LogFactory.getLog(getClass());
+
 	public void afterPropertiesSet() throws Exception {
 		if( this.transactionProcessor==null ) {
 			this.transactionProcessor = new DefaultLuceneTransactionProcessor(this.optimizeResourcesUsage);
@@ -57,8 +57,31 @@ public class LuceneIndexTransactionManager extends AbstractPlatformTransactionMa
 		if (this.analyzer == null) {
 			this.analyzer = new SimpleAnalyzer();
 		}
+		
+		LuceneCacheTransactionStrategy cacheStrategy = new LuceneCacheTransactionStrategy();
+		cacheStrategy.setAnalyzer(analyzer);
+		cacheStrategy.setOptimizeResourcesUsage(optimizeResourcesUsage);
+		transactionStrategies.put(
+				new Integer(TransactionDefinition.ISOLATION_REPEATABLE_READ), cacheStrategy);
+
+		LuceneCacheTransactionStrategy compensationStrategy = new LuceneCacheTransactionStrategy();
+		compensationStrategy.setAnalyzer(analyzer);
+		compensationStrategy.setOptimizeResourcesUsage(optimizeResourcesUsage);
+		transactionStrategies.put(
+				new Integer(TransactionDefinition.ISOLATION_READ_UNCOMMITTED), compensationStrategy);
 	}
 
+	private LuceneTransactionStrategy getTransactionStrategy(int isolationLevel) {
+		LuceneTransactionStrategy strategy
+			= (LuceneTransactionStrategy)transactionStrategies.get(new Integer(isolationLevel));
+		
+		if( strategy==null ) {
+			throw new LuceneTransactionException("No strategy supported to the isolation level "+isolationLevel);
+		}
+		
+		return strategy;
+	}
+	
 	/**
 	 * @see AbstractPlatformTransactionManager#doGetTransaction()
 	 */
@@ -77,114 +100,6 @@ public class LuceneIndexTransactionManager extends AbstractPlatformTransactionMa
 		LuceneTransactionObject txObject = (LuceneTransactionObject) transaction;
 		// Consider a pre-bound connection as transaction.
 		return (txObject.getIndexHolder() != null);
-	}
-
-	/**
-	 * 
-	 * @param definition
-	 * @param indexReader
-	 * @param transactionalIndexCache
-	 * @param rollbackSegment
-	 * @return
-	 */
-	private IndexHolder createTransactionalCacheIndexHolder(TransactionDefinition definition,
-										LuceneIndexReader indexReader,
-										LuceneTransactionalIndexCache transactionalIndexCache,
-										LuceneRollbackSegment rollbackSegment) {
-		CacheTransactionalLuceneIndexReader transactionalIndexReader
-						= new CacheTransactionalLuceneIndexReader(indexReader, transactionalIndexCache, rollbackSegment);
-		CacheTransactionalLuceneIndexWriter transactionalIndexWriter
-						= new CacheTransactionalLuceneIndexWriter(transactionalIndexCache, rollbackSegment);
-
-		IndexHolder holder = new IndexHolder(definition, transactionalIndexReader,
-							transactionalIndexWriter, transactionalIndexCache, rollbackSegment);
-		return holder;
-	}
-
-	/**
-	 * 
-	 * @param definition
-	 * @param rollbackSegment
-	 * @return
-	 */
-	private IndexHolder createTransactionalCompensationIndexHolder(TransactionDefinition definition,
-										LuceneRollbackSegment rollbackSegment) {
-		CompensationTransactionalLuceneIndexReader transactionalIndexReader =
-				new CompensationTransactionalLuceneIndexReader(indexFactory, rollbackSegment);
-		CompensationTransactionalLuceneIndexWriter transactionalIndexWriter =
-				new CompensationTransactionalLuceneIndexWriter(indexFactory, rollbackSegment);
-
-		IndexHolder holder = new IndexHolder(
-									definition, transactionalIndexReader,
-									transactionalIndexWriter, null, rollbackSegment);
-		return holder;
-	}
-
-	/**
-	 * 
-	 * @param txObject
-	 * @param definition
-	 */
-	private void doBeginWithoutCache(LuceneTransactionObject txObject, TransactionDefinition definition) {
-		try {
-			LuceneRollbackSegment rollbackSegment =
-					new DefaultLuceneRollbackSegment(getAnalyzer(), isOptimizeResourcesUsage());
-			
-			IndexHolder holder = createTransactionalCompensationIndexHolder(definition, rollbackSegment);
-			txObject.setIndexHolder(holder);
-			txObject.getIndexHolder().setSynchronizedWithTransaction(true);
-
-			//con.getLocalTransaction().begin();
-			int timeout = determineTimeout(definition);
-			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
-				txObject.getIndexHolder().setTimeoutInSeconds(timeout);
-			}
-			TransactionSynchronizationManager.bindResource(getIndexFactory(), txObject.getIndexHolder());
-		}
-
-		catch (Exception ex) {
-			throw new TransactionSystemException("Unexpected failure on begin of Lucene transaction", ex);
-		}
-	}
-
-	/**
-	 * 
-	 * @param txObject
-	 * @param definition
-	 */
-	private void doBeginWithCache(LuceneTransactionObject txObject, TransactionDefinition definition) {
-		LuceneIndexReader indexReader = null;
-
-		try {
-			indexReader = getIndexFactory().getIndexReader();
-
-			LuceneTransactionalIndexCache transactionalIndexCache =
-					new DefaultLuceneTransactionnalIndexCache();
-			transactionalIndexCache.clear();
-			LuceneRollbackSegment rollbackSegment =
-					new DefaultLuceneRollbackSegment(getAnalyzer(), isOptimizeResourcesUsage());
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Created LuceneTransactionalIndexCache [" + transactionalIndexCache + "] for Lucene transaction");
-			}
-			
-			IndexHolder holder = createTransactionalCacheIndexHolder(definition, indexReader,
-														transactionalIndexCache, rollbackSegment);
-			txObject.setIndexHolder(holder);
-			txObject.getIndexHolder().setSynchronizedWithTransaction(true);
-
-			//con.getLocalTransaction().begin();
-			int timeout = determineTimeout(definition);
-			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
-				txObject.getIndexHolder().setTimeoutInSeconds(timeout);
-			}
-			TransactionSynchronizationManager.bindResource(getIndexFactory(), txObject.getIndexHolder());
-		}
-
-		catch (Exception ex) {
-			IndexReaderFactoryUtils.releaseIndexReader(getIndexFactory(), indexReader);
-			throw new TransactionSystemException("Unexpected failure on begin of Lucene transaction", ex);
-		}
 	}
 
 	/**
@@ -221,14 +136,43 @@ public class LuceneIndexTransactionManager extends AbstractPlatformTransactionMa
 
 		boolean readOnly = definition.isReadOnly();
 		boolean cacheMustBeUsed = isCacheMustBeUsed(definition);
-		if( readOnly ) {
-			doBeginReadOnly(txObject);
-		} else if( !readOnly && !cacheMustBeUsed ) {
-			doBeginWithoutCache(txObject, definition);
-		} else if( !readOnly && cacheMustBeUsed ) {
-			doBeginWithCache(txObject, definition);
+		if( logger.isDebugEnabled() ) {
+			logger.debug(cacheMustBeUsed ? "Cache mode for transaction activated"
+									: "Cache mode for transaction not activated");
+			logger.debug(readOnly ? "Read only mode for transaction activated"
+					: "Read only mode for transaction not activated");
+		}
+		
+		try {
+			/*if( readOnly ) {
+				doBeginReadOnly(txObject);
+			} else if( !readOnly && !cacheMustBeUsed ) {
+				doBeginWithoutCache(txObject, definition);
+			} else if( !readOnly && cacheMustBeUsed ) {
+				doBeginWithCache(txObject, definition);
+			}*/
+			
+			LuceneTransactionStrategy strategy = getTransactionStrategy(definition.getIsolationLevel());
+			IndexHolder holder = strategy.doBegin(getIndexFactory(), txObject, definition);
+
+			txObject.setIndexHolder(holder);
+			txObject.getIndexHolder().setSynchronizedWithTransaction(true);
+
+			int timeout = determineTimeout(definition);
+			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
+				txObject.getIndexHolder().setTimeoutInSeconds(timeout);
+			}
+			TransactionSynchronizationManager.bindResource(indexFactory, txObject.getIndexHolder());
+		} catch (Exception ex) {
+			throw new TransactionSystemException("Unexpected failure on begin of Lucene transaction", ex);
 		}
 	}
+
+	/*protected abstract void doBeginWithoutCache(
+				LuceneTransactionObject txObject, TransactionDefinition definition) throws Exception;
+
+	protected abstract void doBeginWithCache(
+				LuceneTransactionObject txObject, TransactionDefinition definition) throws Exception;*/
 
 	/**
 	 * @see AbstractPlatformTransactionManager#doSuspend(Object)
@@ -260,18 +204,21 @@ public class LuceneIndexTransactionManager extends AbstractPlatformTransactionMa
 	 */
 	protected void doCommit(DefaultTransactionStatus status) {
 		LuceneTransactionObject txObject = (LuceneTransactionObject) status.getTransaction();
-		LuceneTransactionalIndexCache cache = txObject.getIndexHolder().getCache();
+		TransactionDefinition definition = txObject.getIndexHolder().getTransactionDefinition();
+		/*LuceneTransactionalIndexCache cache = txObject.getIndexHolder().getCache();
 		LuceneRollbackSegment rollbackSegment = txObject.getIndexHolder().getRollbackSegment();
 		if (status.isDebug()) {
 			logger.debug("Committing Lucene transaction on LuceneTransactionalIndexCache [" + cache + "]");
-		}
+		}*/
 		
 		try {
-			boolean readOnly = txObject.getIndexHolder().isRollbackOnly();
-			boolean cacheMustBeUsed = isCacheMustBeUsed(txObject.getIndexHolder().getTransactionDefintion());
+			/*boolean readOnly = txObject.getIndexHolder().isRollbackOnly();
+			boolean cacheMustBeUsed = isCacheMustBeUsed(txObject.getIndexHolder().getTransactionDefinition());
 			if( !readOnly && cacheMustBeUsed ) {
-				transactionProcessor.applyTransaction(getIndexFactory(), cache, rollbackSegment);
-			}
+				doCommitWithCache(cache, rollbackSegment);
+			}*/
+			LuceneTransactionStrategy strategy = getTransactionStrategy(definition.getIsolationLevel());
+			strategy.doCommit(getIndexFactory(), txObject);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -279,23 +226,30 @@ public class LuceneIndexTransactionManager extends AbstractPlatformTransactionMa
 		}
 	}
 
+	/*protected abstract void doCommitWithCache(
+				LuceneTransactionalIndexCache cache, LuceneRollbackSegment rollbackSegment);*/
+
 	/**
 	 * @see AbstractPlatformTransactionManager#doRollback(DefaultTransactionStatus)
 	 */
 	protected void doRollback(DefaultTransactionStatus status) {
 		LuceneTransactionObject txObject = (LuceneTransactionObject) status.getTransaction();
-		LuceneTransactionalIndexCache cache = txObject.getIndexHolder().getCache();
+		TransactionDefinition definition = txObject.getIndexHolder().getTransactionDefinition();
+		/*LuceneTransactionalIndexCache cache = txObject.getIndexHolder().getCache();
 		LuceneRollbackSegment rollbackSegment = txObject.getIndexHolder().getRollbackSegment();
 		if (status.isDebug()) {
 			logger.debug("Rolling back Lucene transaction on LuceneTransactionalIndexCache [" + cache + "]");
-		}
+		}*/
+		
 		try {
-			boolean cacheMustBeUsed = isCacheMustBeUsed(txObject.getIndexHolder().getTransactionDefintion());
+			/*boolean cacheMustBeUsed = isCacheMustBeUsed(txObject.getIndexHolder().getTransactionDefinition());
 			if( cacheMustBeUsed ) {
-				cache.clear();
+				doRollbackWithCache(cache);
 			} else {
-				rollbackSegment.compensate(getIndexFactory());
-			}
+				doRollbackWithoutCache(rollbackSegment);
+			}*/
+			LuceneTransactionStrategy strategy = getTransactionStrategy(definition.getIsolationLevel());
+			strategy.doRollback(getIndexFactory(), txObject);
 		}
 		catch (Exception ex) {
 			throw new TransactionSystemException("Unexpected failure on rollback of Lucene transaction", ex);
@@ -349,24 +303,6 @@ public class LuceneIndexTransactionManager extends AbstractPlatformTransactionMa
 	public void setTransactionProcessor(
 			LuceneTransactionProcessor transactionProcessor) {
 		this.transactionProcessor = transactionProcessor;
-	}
-
-	/**
-	 * Lucene transaction object, representing a IndexHolder.
-	 * Used as transaction object by LuceneIndexTransactionManager.
-	 * @see IndexHolder
-	 */
-	private static class LuceneTransactionObject {
-
-		private IndexHolder indexHolder;
-
-		public void setIndexHolder(IndexHolder indexHolder) {
-			this.indexHolder = indexHolder;
-		}
-
-		public IndexHolder getIndexHolder() {
-			return indexHolder;
-		}
 	}
 
 	public Analyzer getAnalyzer() {

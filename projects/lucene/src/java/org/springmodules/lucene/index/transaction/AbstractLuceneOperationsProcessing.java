@@ -127,9 +127,16 @@ public abstract class AbstractLuceneOperationsProcessing {
 
 		if( optimizeResourcesUsage ) {
 			List addOperations = LuceneOperationUtils.getOperationsByType(operations, LuceneAddOperation.class);
-			executeAddOperations(indexFactory, addOperations, rollbackSegment);
 			List deleteOperations = LuceneOperationUtils.getOperationsByType(operations, LuceneDeleteOperation.class);
-			executeDeleteOperations(indexFactory, deleteOperations, rollbackSegment);
+			
+			if( addOperations.size()>0 && deleteOperations.size()==0 ) {
+				executeAddOperations(indexFactory, addOperations, rollbackSegment);
+			} else if( addOperations.size()==0 && deleteOperations.size()>0 ) {
+				executeDeleteOperations(indexFactory, deleteOperations, rollbackSegment);
+			} else {
+				executeAddOperations(indexFactory, addOperations, rollbackSegment);
+				executeDeleteOperations(indexFactory, deleteOperations, rollbackSegment);
+			}
 		} else {
 			for(Iterator i = operations.iterator(); i.hasNext(); ) {
 				LuceneOperation operation = (LuceneOperation)i.next();

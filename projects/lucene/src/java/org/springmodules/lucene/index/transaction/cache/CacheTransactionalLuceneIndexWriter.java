@@ -24,7 +24,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Similarity;
 import org.apache.lucene.store.Directory;
-import org.springmodules.lucene.index.factory.LuceneIndexReader;
 import org.springmodules.lucene.index.transaction.AbstractTransactionalLuceneIndexWriter;
 import org.springmodules.lucene.index.transaction.LuceneRollbackSegment;
 import org.springmodules.lucene.index.transaction.LuceneTransactionalIndexCache;
@@ -34,8 +33,6 @@ import org.springmodules.lucene.index.transaction.operation.LuceneAddOperation;
  * @author Thierry Templier
  */
 public class CacheTransactionalLuceneIndexWriter extends AbstractTransactionalLuceneIndexWriter {
-	
-	private LuceneIndexReader delegate;
 	private LuceneTransactionalIndexCache transactionalIndexCache;
 
 	public CacheTransactionalLuceneIndexWriter(LuceneTransactionalIndexCache transactionalIndexCache,
@@ -47,11 +44,16 @@ public class CacheTransactionalLuceneIndexWriter extends AbstractTransactionalLu
 	public void close() throws IOException {
 	}
 
+	/**
+	 * @see org.springmodules.lucene.index.factory.LuceneIndexWriter#addDocument(org.apache.lucene.document.Document)
+	 */
 	public void addDocument(Document doc) throws IOException {
-		System.out.println("> TransactionalLuceneIndexWriter.addDocument");
 		addDocument(doc, null);
 	}
 
+	/**
+	 * @see org.springmodules.lucene.index.factory.LuceneIndexWriter#addDocument(org.apache.lucene.document.Document, org.apache.lucene.analysis.Analyzer)
+	 */
 	public void addDocument(Document doc, Analyzer analyzer) throws IOException {
 		LuceneAddOperation operation = new LuceneAddOperation();
 		operation.setDocuments(new Document[] { doc });
@@ -197,14 +199,6 @@ public class CacheTransactionalLuceneIndexWriter extends AbstractTransactionalLu
 	public void setTransactionalIndexCache(
 			LuceneTransactionalIndexCache transactionalIndexCache) {
 		this.transactionalIndexCache = transactionalIndexCache;
-	}
-
-	public LuceneIndexReader getDelegate() {
-		return delegate;
-	}
-
-	public void setDelegate(LuceneIndexReader delegate) {
-		this.delegate = delegate;
 	}
 
 }
