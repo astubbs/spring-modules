@@ -11,7 +11,7 @@
 
 	<lucene:index id="targetIndexFactory" create="true" analyzer-ref="analyzer"/>
 	
-	<bean id="indexFactory" class="org.springmodules.lucene.index.resource.MockIndexFactory">
+	<bean id="indexFactory" class="org.springmodules.lucene.index.factory.MockIndexFactory">
 		<property name="targetIndexFactory" ref="targetIndexFactory"/>
 	</bean>
 
