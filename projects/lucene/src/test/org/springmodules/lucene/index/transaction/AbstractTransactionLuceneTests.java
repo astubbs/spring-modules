@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -33,18 +32,16 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springmodules.lucene.index.core.DefaultLuceneIndexTemplate;
-import org.springmodules.lucene.index.core.WriterCallback;
+import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
 import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
-
-import com.sun.jndi.toolkit.dir.SearchFilter;
 
 /**
  * @author Thierry Templier
  */
 public abstract class AbstractTransactionLuceneTests extends TestCase {
 	private RAMDirectory directory;
-	private SimpleIndexFactory indexFactory;
+	private IndexFactory indexFactory;
 
 	private void initIndex() {
 		System.out.println("---- initIndex -----");
@@ -64,16 +61,17 @@ public abstract class AbstractTransactionLuceneTests extends TestCase {
 	protected void initializeIndex(IndexWriter writer) throws IOException {
 	}
 
-	private void initIndexFactory() {
+	protected IndexFactory initIndexFactory() {
 		System.out.println("---- initIndexFactory -----");
-		indexFactory = new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
 		indexFactory.setDirectory(directory);
 		indexFactory.setAnalyzer(new SimpleAnalyzer());
+		return indexFactory;
 	}
 	
 	protected final void setUp() throws Exception {
 		initIndex();
-		initIndexFactory();
+		this.indexFactory = initIndexFactory();
 		doSetUp();
 	}
 
@@ -161,7 +159,7 @@ public abstract class AbstractTransactionLuceneTests extends TestCase {
 		return directory;
 	}
 
-	protected SimpleIndexFactory getIndexFactory() {
+	protected IndexFactory getIndexFactory() {
 		return indexFactory;
 	}
 

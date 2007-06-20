@@ -45,7 +45,7 @@ public class DefaultTransactionnalIndexCacheTests extends AbstractLuceneTestCase
 			DefaultLuceneRollbackSegment rollbackSegment =
 					new DefaultLuceneRollbackSegment(new SimpleAnalyzer(), false);
 			CacheTransactionalLuceneIndexReader reader =
-					new CacheTransactionalLuceneIndexReader(indexReader, cache, rollbackSegment);
+					new CacheTransactionalLuceneIndexReader(indexFactory, cache, rollbackSegment);
 
 			reader.deleteDocument(1);
 			
@@ -90,7 +90,7 @@ public class DefaultTransactionnalIndexCacheTests extends AbstractLuceneTestCase
 			DefaultLuceneRollbackSegment rollbackSegment =
 					new DefaultLuceneRollbackSegment(new SimpleAnalyzer(), false);
 			CacheTransactionalLuceneIndexReader reader =
-					new CacheTransactionalLuceneIndexReader(indexReader, cache, rollbackSegment);
+					new CacheTransactionalLuceneIndexReader(indexFactory, cache, rollbackSegment);
 			CacheTransactionalLuceneIndexWriter writer =
 					new CacheTransactionalLuceneIndexWriter(cache, rollbackSegment);
 
