@@ -24,5 +24,5 @@ import java.util.Properties;
  */
 public interface ResourceAttributeSource {
 	ResourceAttribute getResourceAttribute(Method method, Class targetClass);
-	void setProperties(Properties transactionAttributes);
+	void setProperties(Properties resourceAttributes);
 }
