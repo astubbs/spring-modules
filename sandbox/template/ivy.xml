@@ -21,45 +21,36 @@
         <!-- global (compile, test, runtime) dependencies -->
 
         <dependency org="apache" name="commons-logging" rev="1.1"/>
-        <dependency org="apache" name="commons-lang" rev="2.2"/>
-        <dependency org="apache" name="commons-collections" rev="3.1"/>
-        <dependency org="apache" name="commons-validator" rev="1.3.0"/>
-        <dependency org="apache" name="commons-beanutils" rev="1.7.0"/>
-        <dependency org="commons-digester" name="commons-digester" rev="1.7"/>
-
-        <dependency org="antlr" name="antlr" rev="2.7.6"/>
 
         <dependency org="springframework" name="springframework" rev="2.0.3">
             <artifact name="spring" type="jar" conf="global"/>
         </dependency>
 
-        <dependency org="mozilla" name="rhino" rev="1.6R2">
-            <artifact name="js" type="jar"/>
-        </dependency>
 
         <!-- build time dependencies -->
 
-        <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.1" transitive="false"
-                    conf="buildtime->default"/>
+        <dependency org="org.freemarker" name="freemarker" rev="2.3.10" conf="buildtime->default"/>
 
-        <dependency org="ognl" name="ognl" rev="2.6.7" transitive="false" conf="buildtime->default"/>
-        <dependency org="joda-time" name="joda-time" rev="1.2.1" transitive="false" conf="buildtime->default"/>
-        <dependency org="org.hibernate" name="hibernate-annotations" rev="3.2.0.ga" transitive="false" conf="buildtime->default"/>
+        <dependency org="groovy" name="groovy" rev="1.0-jsr-06" conf="buildtime->default"/>
+
+        <dependency org="org.apache.velocity" name="velocity" rev="1.5" conf="buildtime->default"/>
+
+        <dependency org="commons-collections" name="commons-collections" rev="3.2" conf="buildtime->default"/>
+
+        <dependency org="javax.mail" name="mail" rev="1.4" conf="buildtime->default"/>
+
 
 
         <!-- test time only dependencies -->
 
-        <dependency org="javax.servlet" name="servlet-api" rev="2.3">
-            <artifact name="servlet-api" type="jar" conf="test"/>
-        </dependency>
-
-        <dependency org="org.springframework" name="spring-mock" rev="2.0.1" transitive="false">
+        <dependency org="org.springframework" name="spring-mock" rev="2.0.3" transitive="false">
             <artifact name="spring-mock" type="jar" conf="test->default"/>
         </dependency>
 
         <dependency org="clover" name="clover" rev="1.3.9" conf="test->default"/>
         <dependency org="easymock" name="easymock" rev="1.1" conf="test->default"/>
         <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
+        <!--<dependency org="org.subethamail" name="subethasmtp-wiser" rev="1.2" conf="test->default"/>-->
 
     </dependencies>
 </ivy-module>

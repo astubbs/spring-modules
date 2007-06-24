@@ -2655,7 +2655,7 @@
                             <row>
                                 <entry>min</entry>
                                 <entry>only if max is not defined</entry>
-                                <entry>non-negative integer</entry>
+                                <entry>string | number</entry>
                                 <entry>
                                     Specifies the lower bound of the range
                                 </entry>
@@ -2663,7 +2663,7 @@
                             <row>
                                 <entry>max</entry>
                                 <entry>only if min is not defined</entry>
-                                <entry>non-negative integer</entry>
+                                <entry>string | number</entry>
                                 <entry>
                                     Specifies the upper bound of the range
                                 </entry>
@@ -3446,7 +3446,7 @@
                             <row>
                                 <entry>min</entry>
                                 <entry>only if max is not defined</entry>
-                                <entry>non-negative integer</entry>
+                                <entry>double</entry>
                                 <entry>
                                     Specifies the lower bound of the range
                                 </entry>
@@ -3454,7 +3454,7 @@
                             <row>
                                 <entry>max</entry>
                                 <entry>only if min is not defined</entry>
-                                <entry>non-negative integer</entry>
+                                <entry>double</entry>
                                 <entry>
                                     Specifies the upper bound of the range
                                 </entry>
@@ -3491,7 +3491,7 @@
                             <row>
                                 <entry>value</entry>
                                 <entry>only if max is not defined</entry>
-                                <entry>non-negative integer</entry>
+                                <entry>double</entry>
                                 <entry>
                                     Specifies the lower bound of the range
                                 </entry>
@@ -3528,7 +3528,7 @@
                             <row>
                                 <entry>value</entry>
                                 <entry>only if min is not defined</entry>
-                                <entry>non-negative integer</entry>
+                                <entry>double</entry>
                                 <entry>
                                     Specifies the upper bound of the range
                                 </entry>
