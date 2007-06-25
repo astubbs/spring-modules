@@ -1,19 +1,24 @@
 package org.springmodules.template.resolver;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springmodules.template.Template;
 
 /**
+ * Extends {@link org.springmodules.template.resolver.BasicTemplateResolver} to support simple template caching.
+ *
  * @author Uri Boness
  */
-public class CachingTemplateResolver extends AbstractTemplateResolver {
+public class CachingTemplateResolver extends BasicTemplateResolver {
 
     // Map<String, Template>
     private Map cache;
 
+    /**
+     * Constructing a new CachingTemplateResolver.
+     */
     protected CachingTemplateResolver() {
         cache = Collections.synchronizedMap(new HashMap());
     }
@@ -22,9 +27,9 @@ public class CachingTemplateResolver extends AbstractTemplateResolver {
      * Resolves and returns the template associated with the given name and encoding. This method is thread
      * though in highly concurrent environment multiple template may be created for the same key in parallel.
      *
-     * @param name
-     * @param encoding
-     * @return
+     * @param name The name of the template
+     * @param encoding The encoding of the template
+     * @return The resolved template.
      */
     public Template resolve(String name, String encoding) {
         Template template = (Template)cache.get(name);

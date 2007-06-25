@@ -39,6 +39,9 @@
 
         <dependency org="javax.mail" name="mail" rev="1.4" conf="buildtime->default"/>
 
+        <dependency org="org.antlr" name="stringtemplate" rev="3.0" conf="buildtime->default"/>
+
+
 
 
         <!-- test time only dependencies -->

@@ -34,13 +34,13 @@
     </html-body>
 
     <attachments>
-        <attachment name="attachment1">classpath:/org/springmodules/email/test.eml</attachment>
-        <attachment name="attachment2">classpath:/org/springmodules/email/test.eml</attachment>
+        <attachment name="attachment1">classpath:/org/springmodules/email/test.xml</attachment>
+        <attachment name="attachment2">classpath:/org/springmodules/email/test.xml</attachment>
     </attachments>
 
     <inline-attachments>
-        <attachment name="attachment1">classpath:/org/springmodules/email/test.eml</attachment>
-        <attachment name="attachment2">classpath:/org/springmodules/email/test.eml</attachment>
+        <attachment name="attachment1">classpath:/org/springmodules/email/test.xml</attachment>
+        <attachment name="attachment2">classpath:/org/springmodules/email/test.xml</attachment>
     </inline-attachments>
 
 </email>

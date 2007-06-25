@@ -20,7 +20,7 @@ public class SaxEmailParserTests extends TestCase {
 
     protected void setUp() throws Exception {
         parser = new SaxEmailParser();
-        resource = new ClassPathResource("/org/springmodules/email/conf/test.eml");
+        resource = new ClassPathResource("/org/springmodules/email/conf/test.xml");
     }
 
     public void testParse() throws Exception {
@@ -75,19 +75,19 @@ public class SaxEmailParserTests extends TestCase {
         Iterator iter = attachments.iterator();
         Attachment attachment = (Attachment)iter.next();
         assertTrue("attachment1".equals(attachment.getName()) || "attachment2".equals(attachment.getName()));
-        assertEquals("test.eml", attachment.getResource().getFilename());
+        assertEquals("test.xml", attachment.getResource().getFilename());
         attachment = (Attachment)iter.next();
-        assertTrue("attachment2".equals(attachment.getName()) || "attachment2".equals(attachment.getName()));
-        assertEquals("test.eml", attachment.getResource().getFilename());
+        assertTrue("attachment1".equals(attachment.getName()) || "attachment2".equals(attachment.getName()));
+        assertEquals("test.xml", attachment.getResource().getFilename());
 
         attachments = email.getInlineAttachments();
         assertFalse(attachments.isEmpty());
         iter = attachments.iterator();
         attachment = (Attachment)iter.next();
         assertTrue("attachment1".equals(attachment.getName()) || "attachment2".equals(attachment.getName()));
-        assertEquals("test.eml", attachment.getResource().getFilename());
+        assertEquals("test.xml", attachment.getResource().getFilename());
         attachment = (Attachment)iter.next();
-        assertTrue("attachment2".equals(attachment.getName()) || "attachment2".equals(attachment.getName()));
-        assertEquals("test.eml", attachment.getResource().getFilename());
+        assertTrue("attachment1".equals(attachment.getName()) || "attachment2".equals(attachment.getName()));
+        assertEquals("test.xml", attachment.getResource().getFilename());
     }
 }
