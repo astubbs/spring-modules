@@ -39,11 +39,13 @@ public class DynamicFactoryGeneratorTest extends TestCase {
         factory.setMatriculationCode("111");
         factory.setFirstname("Sergio");
         factory.setSurname("Bossa");
+        factory.setValue("value");
         
         assertEquals("SB", factory.getNickname());
         assertEquals("111", factory.getMatriculationCode());
         assertEquals("Sergio", factory.getFirstname());
         assertEquals("Bossa", factory.getSurname());
+        assertEquals("value", factory.getValue());
     }
 
     public void testGenerate() {

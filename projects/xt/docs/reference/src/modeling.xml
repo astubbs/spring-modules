@@ -442,13 +442,31 @@ public interface DynamicGenerator&lt;T&gt; {
         <itemizedlist>
           <listitem>
             <para><emphasis role="bold">Setter</emphasis> methods must be
-            annotated either with the <emphasis
-            role="bold">ConstructorArg</emphasis> (see
-            <emphasis>org.springmodules.xt.model.generator.annotation.ConstructorArg</emphasis>
-            javadoc) annotation if they are constructor arguments, or with the
-            <emphasis role="bold">Property</emphasis> (see
-            <emphasis>org.springmodules.xt.model.generator.annotation.Property</emphasis>
-            javadoc) annotation if they are properties to be set.</para>
+            annotated either with:</para>
+
+            <itemizedlist>
+              <listitem>
+                <para>The ConstructorArg (see
+                <emphasis>org.springmodules.xt.model.generator.annotation.ConstructorArg</emphasis>)
+                annotation if they are constructor arguments, plus the
+                optional ConstructorArgType (see
+                <emphasis>org.springmodules.xt.model.generator.annotation.ConstructorArgType</emphasis>)
+                annotation.</para>
+              </listitem>
+
+              <listitem>
+                <para>The Property (see
+                <emphasis>org.springmodules.xt.model.generator.annotation.Property</emphasis>)
+                annotation if they are properties to be set.</para>
+              </listitem>
+
+              <listitem>
+                <para>The Value (see
+                <emphasis>org.springmodules.xt.model.generator.annotation.Value</emphasis>)
+                annotation if they are just simple values to use later for
+                other purposes.</para>
+              </listitem>
+            </itemizedlist>
           </listitem>
 
           <listitem>

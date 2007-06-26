@@ -1,12 +1,12 @@
 /*
  * Copyright 2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@ package org.springmodules.xt.model.notification;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * {@link Message} immutable implementation.
@@ -84,7 +85,7 @@ public class MessageImpl implements Message {
     public String getDefaultMessage() {
         return this.defaultMessage;
     }
-
+    
     public boolean equals(Object obj) {
         if (!(obj instanceof Message)) {
             return false;
@@ -93,13 +94,20 @@ public class MessageImpl implements Message {
         Message other = (Message) obj;
         
         return new EqualsBuilder().append(this.getCode(), other.getCode())
-                                                    .append(this.getType(), other.getType())
-                                                    .isEquals();
+        .append(this.getType(), other.getType())
+        .isEquals();
     }
-
+    
     public int hashCode() {
         return new HashCodeBuilder().append(this.getCode())
-                                                          .append(this.getType())
-                                                          .toHashCode();
+        .append(this.getType())
+        .toHashCode();
+    }
+    
+    public String toString() {
+        ToStringBuilder builder = new ToStringBuilder(this)
+        .append("code", this.code)
+        .append("type", this.type);
+        return builder.toString();
     }
 }

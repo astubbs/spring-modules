@@ -3,6 +3,7 @@ package org.springmodules.xt.test.domain;
 import org.springmodules.xt.model.generator.annotation.ConstructorArg;
 import org.springmodules.xt.model.generator.annotation.FactoryMethod;
 import org.springmodules.xt.model.generator.annotation.Property;
+import org.springmodules.xt.model.generator.annotation.Value;
 
 /**
  * {@link IEmployee} factory interface.
@@ -23,6 +24,9 @@ public interface EmployeeFactory {
     @Property()
     void setSurname(String surname);
     
+    @Value()
+    void setValue(String value);
+    
     String getNickname();
     
     String getMatriculationCode();
@@ -30,6 +34,8 @@ public interface EmployeeFactory {
     String getFirstname();
 
     String getSurname();
+    
+    String getValue();
     
     @FactoryMethod()
     IEmployee make();

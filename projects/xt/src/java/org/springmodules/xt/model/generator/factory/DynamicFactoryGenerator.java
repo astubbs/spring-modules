@@ -30,9 +30,14 @@ import org.springmodules.xt.model.generator.DynamicGenerator;
  * <p>
  * More specifically, the factory interface supports the following methods, that must obey the following rules:
  * <ul>
- *      <li><b>Setter</b> methods must be annotated either with the {@link org.springmodules.xt.model.generator.annotation.ConstructorArg}
- *          annotation if they are constructor arguments, or with the {@link org.springmodules.xt.model.generator.annotation.Property}
- *          annotation if they are properties to be set.</li>
+ *      <li><b>Setter</b> methods must be annotated either with:
+ *          <ul>
+ *          <li>The {@link org.springmodules.xt.model.generator.annotation.ConstructorArg} annotation if they are constructor arguments 
+ *          (plus the optional {@link org.springmodules.xt.model.generator.annotation.ConstructorArgType} annotation).</li>
+ *          <li>The {@link org.springmodules.xt.model.generator.annotation.Property} annotation if they are properties to be set.</li>
+ *          <li>The {@link org.springmodules.xt.model.generator.annotation.Value} annotation if they are just simple values to use later for other purposes.</li>
+ *          </ul>
+ *      </li>
  *      <li>The <b>factory</b> method must be annotated with the {@link org.springmodules.xt.model.generator.annotation.FactoryMethod}
  *          annotation.</li>
  *      <li>Moreover, there can be <b>getter</b> methods corresponding to the setter methods above.</li>

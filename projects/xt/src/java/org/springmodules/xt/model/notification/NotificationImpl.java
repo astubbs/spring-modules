@@ -22,6 +22,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * {@link Notification} implementation.
@@ -86,5 +89,31 @@ public class NotificationImpl implements Notification {
                 }
             }
         }
+    }
+    
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        } else if (!obj.getClass().equals(this.getClass())) {
+            return false;
+        } else {
+            NotificationImpl other = (NotificationImpl) obj;
+            EqualsBuilder builder = new EqualsBuilder().append(this.getAllMessages(), other.getAllMessages());
+            return builder.isEquals();
+        }
+    }
+    
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder().append(this.getAllMessages());
+        return builder.toHashCode();
+    }
+    
+    public String toString() {
+        ToStringBuilder builder = new ToStringBuilder(this);
+        for (Map.Entry<Message.Type, List<Message>> entry : this.messagesMap.entrySet()) {
+            builder.append("type", entry.getKey())
+            .append("messages", entry.getValue());
+        }
+        return builder.toString();
     }
 }

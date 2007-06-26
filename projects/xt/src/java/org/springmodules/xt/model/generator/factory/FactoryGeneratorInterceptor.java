@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -28,9 +29,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.log4j.Logger;
+import org.springframework.aop.support.AopUtils;
 import org.springmodules.xt.model.generator.annotation.ConstructorArg;
+import org.springmodules.xt.model.generator.annotation.ConstructorArgType;
 import org.springmodules.xt.model.generator.annotation.FactoryMethod;
 import org.springmodules.xt.model.generator.annotation.Property;
+import org.springmodules.xt.model.generator.annotation.Value;
 import org.springmodules.xt.model.generator.support.IllegalArgumentPositionException;
 import org.springmodules.xt.model.generator.support.ObjectConstructionException;
 import org.springmodules.xt.model.generator.support.ReturnTypeMismatchException;
@@ -55,10 +59,10 @@ public class FactoryGeneratorInterceptor implements InvocationHandler {
     private HashMap<String, PropertyPair> properties = new HashMap<String, PropertyPair>();
     // General values map, holding both constructor args and properties values:
     private HashMap<String, Object> values = new HashMap<String, Object>();
-  
+    
     /**
      * Constructor.
-     * 
+     *
      * @param productClass The factory product class, that is, the class of the object created by the factory.
      */
     public FactoryGeneratorInterceptor(Class productClass) {
@@ -68,19 +72,17 @@ public class FactoryGeneratorInterceptor implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (this.isConstructorArg(method)) {
             return this.putConstructorArg(args, method);
-        } 
-        else if (this.isPropertySetter(method)) {
+        } else if (this.isPropertySetter(method)) {
             return this.putProperty(args, method);
-        }
-        else if (this.isPropertyGetter(method)) {
+        } else if (this.isValueSetter(method)) {
+            return this.putValue(args, method);
+        } else if (this.isGetter(method)) {
             return this.readProperty(args, method);
-        }
-        else if (this.isFactoryMethod(method)) {
+        } else if (this.isFactoryMethod(method)) {
             Class returnType = method.getReturnType();
             if (!returnType.isAssignableFrom(this.productClass)) {
                 throw new ReturnTypeMismatchException("Return type mismatch. Expected assignable from: " + this.productClass + ", found: " + returnType);
-            } 
-            else {
+            } else {
                 Object product = this.make();
                 // Fill properties:
                 for (Map.Entry<String, PropertyPair> entry : this.properties.entrySet()) {
@@ -100,18 +102,24 @@ public class FactoryGeneratorInterceptor implements InvocationHandler {
                 // Return product:
                 return product;
             }
-        } 
-        else {
-            // Fail fast:
-            throw new UnsupportedOperationException("Unsupported method called: " + method.getName());
+        } else {
+            if (AopUtils.isEqualsMethod(method)) {
+                return this.doEquals(proxy, args[0]);
+            } else if (AopUtils.isHashCodeMethod(method)) {
+                return this.doHashCode(proxy);
+            } else if (AopUtils.isToStringMethod(method)) {
+                return this.doToString(proxy);
+            } else {
+                // Fail fast:
+                throw new UnsupportedOperationException("Unsupported method called: " + method.getName());
+            }
         }
     }
     
     private boolean isConstructorArg(Method method) {
         if (method.getName().startsWith("set") && method.isAnnotationPresent(ConstructorArg.class)) {
             return true;
-        } 
-        else {
+        } else {
             return false;
         }
     }
@@ -119,17 +127,23 @@ public class FactoryGeneratorInterceptor implements InvocationHandler {
     private boolean isPropertySetter(Method method) {
         if (method.getName().startsWith("set") && method.isAnnotationPresent(Property.class)) {
             return true;
-        } 
-        else {
+        } else {
             return false;
         }
     }
     
-    private boolean isPropertyGetter(Method method) {
+    private boolean isValueSetter(Method method) {
+        if (method.getName().startsWith("set") && method.isAnnotationPresent(Value.class)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean isGetter(Method method) {
         if (method.getName().startsWith("get") || method.getName().startsWith("is")) {
             return true;
-        } 
-        else {
+        } else {
             return false;
         }
     }
@@ -137,8 +151,7 @@ public class FactoryGeneratorInterceptor implements InvocationHandler {
     private boolean isFactoryMethod(Method method) {
         if (method.isAnnotationPresent(FactoryMethod.class)) {
             return true;
-        } 
-        else {
+        } else {
             return false;
         }
     }
@@ -146,8 +159,7 @@ public class FactoryGeneratorInterceptor implements InvocationHandler {
     private Object putProperty(final Object[] args, final Method method) {
         if (args.length != 1) {
             throw new IllegalStateException("The setter method " + method.getName() + " must have only one argument!");
-        }
-        else {
+        } else {
             String name = StringUtils.uncapitalize(method.getName().substring(3));
             Property annotation = method.getAnnotation(Property.class);
             Property.AccessType access = annotation.access();
@@ -160,18 +172,34 @@ public class FactoryGeneratorInterceptor implements InvocationHandler {
             return null;
         }
     }
-        
+    
+    private Object putValue(final Object[] args, final Method method) {
+        if (args.length != 1) {
+            throw new IllegalStateException("The setter method " + method.getName() + " must have only one argument!");
+        } else {
+            String name = StringUtils.uncapitalize(method.getName().substring(3));
+            this.values.put(name, args[0]);
+            logger.debug(new StringBuilder("Put value property with name and value: ").append(name).append(",").append(args[0]));
+            return null;
+        }
+    }
+    
     private Object putConstructorArg(final Object[] args, final Method method) {
         if (args.length != 1) {
             throw new IllegalStateException("The setter method " + method.getName() + " must have only one argument!");
-        }
-        else {
+        } else {
             String name = StringUtils.uncapitalize(method.getName().substring(3));
             ConstructorArg annotation = method.getAnnotation(ConstructorArg.class);
             int position = annotation.position();
+            Class type = null;
+            if (method.isAnnotationPresent(ConstructorArgType.class)) {
+                type = method.getAnnotation(ConstructorArgType.class).type();
+            } else {
+                type = args[0].getClass();
+            }
             ConstructorArgPair pair = new ConstructorArgPair();
             pair.setValue(args[0]);
-            pair.setType(args[0].getClass());
+            pair.setType(type);
             this.constructorArgs.put(position, pair);
             this.values.put(name, args[0]);
             logger.debug(new StringBuilder("Put constructor arg with position and value: ").append(position).append(",").append(args[0]));
@@ -185,8 +213,7 @@ public class FactoryGeneratorInterceptor implements InvocationHandler {
         }
         if (method.getReturnType().isPrimitive()) {
             throw new IllegalReturnTypeException("Return types cannot be primitives.");
-        }
-        else {
+        } else {
             String name = null;
             if (method.getName().startsWith("get")) {
                 name = StringUtils.uncapitalize(method.getName().substring(3));
@@ -221,25 +248,37 @@ public class FactoryGeneratorInterceptor implements InvocationHandler {
             Constructor constructor = this.productClass.getConstructor(typesArray);
             Object product = constructor.newInstance(argsArray);
             return product;
-        } 
-        catch (NoSuchMethodException ex) {
-            throw new ObjectConstructionException("No constructor found accepting the following array of types: " 
+        } catch (NoSuchMethodException ex) {
+            throw new ObjectConstructionException("No constructor found accepting the following array of types: "
                     + ToStringBuilder.reflectionToString(typesArray, ToStringStyle.SIMPLE_STYLE)
-                    + " Have you set all constructor arguments?", ex);
-        } 
-        catch (InvocationTargetException ex) {
-            throw new ObjectConstructionException("Exception thrown by the underlying constructor: " 
+                    + " Have you correctly set all constructor arguments?", ex);
+        } catch (InvocationTargetException ex) {
+            throw new ObjectConstructionException("Exception thrown by the underlying constructor: "
                     + ex.getMessage(), ex);
-        } 
-        catch (IllegalAccessException ex) {
-            throw new ObjectConstructionException("Cannot access a constructor with the following array of types: " 
+        } catch (IllegalAccessException ex) {
+            throw new ObjectConstructionException("Cannot access a constructor with the following array of types: "
                     + ToStringBuilder.reflectionToString(typesArray, ToStringStyle.SIMPLE_STYLE)
-                    + " Have you set all constructor arguments?", ex);
-        } 
-        catch (InstantiationException ex) {
-            throw new ObjectConstructionException("Unable to instantiate the following class: " 
+                    + " Have you correctly set all constructor arguments?", ex);
+        } catch (InstantiationException ex) {
+            throw new ObjectConstructionException("Unable to instantiate the following class: "
                     + this.productClass, ex);
         }
+    }
+
+    private boolean doEquals(Object proxy, Object other) {
+        if (other != null && Proxy.isProxyClass(other.getClass())) {
+            return Proxy.getInvocationHandler(proxy) == Proxy.getInvocationHandler(other);
+        } else {
+            return false;
+        }
+    }
+    
+    private int doHashCode(Object proxy) {
+        return Proxy.getInvocationHandler(proxy).hashCode();
+    }
+    
+    private String doToString(Object proxy) {
+        return Proxy.getInvocationHandler(proxy).toString();
     }
     
     /*** Inner classes ***/

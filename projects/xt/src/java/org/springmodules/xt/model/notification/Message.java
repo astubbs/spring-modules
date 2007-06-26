@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 /**
  * Interface representing a message to be notified.<br>
- * Each message has a code, a default message string and a type.<br>
+ * Each message has a code, a default message string, a property name, and a type.<br>
  * This interface has only getter methods because a message should be immutable.
  *
  * @author Sergio Bossa
