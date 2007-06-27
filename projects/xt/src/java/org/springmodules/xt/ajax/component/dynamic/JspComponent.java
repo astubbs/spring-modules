@@ -20,8 +20,8 @@ import java.io.StringWriter;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.springmodules.xt.ajax.component.Component;
-import org.springmodules.xt.ajax.util.InternalHttpServletResponse;
 import org.springmodules.xt.ajax.component.support.RenderingException;
+import org.springmodules.xt.ajax.util.internal.InternalHttpServletResponse;
 
 
 /**

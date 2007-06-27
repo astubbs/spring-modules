@@ -49,7 +49,7 @@ import org.springmodules.xt.ajax.support.IllegalViewException;
 import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
 import org.springmodules.xt.ajax.action.RedirectAction;
-import org.springmodules.xt.ajax.util.InternalAjaxResponseSender;
+import org.springmodules.xt.ajax.util.AjaxResponseSender;
 
 /**
  * <p>Spring web interceptor which intercepts http requests and handles ajax requests.<br>
@@ -153,9 +153,9 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                     } else {
                         if (ajaxResponse != null && ! ajaxResponse.isEmpty()) {
                             logger.info("Sending Ajax response after Ajax action.");
-                            InternalAjaxResponseSender.sendResponse(response, ajaxResponse);
+                            AjaxResponseSender.sendResponse(response, ajaxResponse);
                         } else {
-                            InternalAjaxResponseSender.sendResponse(response, new AjaxResponseImpl());
+                            AjaxResponseSender.sendResponse(response, new AjaxResponseImpl());
                         }
                         return false;
                     }
@@ -247,7 +247,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                         if (ajaxResponse != null && ! ajaxResponse.isEmpty()) {
                             // Need to clear the ModelAndView because we are handling the response by ourselves:
                             modelAndView.clear();
-                            InternalAjaxResponseSender.sendResponse(response, ajaxResponse);
+                            AjaxResponseSender.sendResponse(response, ajaxResponse);
                         } else {
                             // No response, so try an Ajax redirect:
                             String view = modelAndView.getViewName();
@@ -442,6 +442,6 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         ajaxResponse.addAction(ajaxAction);
         // Need to clear the ModelAndView because we are handling the response by ourselves:
         modelAndView.clear();
-        InternalAjaxResponseSender.sendResponse(response, ajaxResponse);
+        AjaxResponseSender.sendResponse(response, ajaxResponse);
     }
 }

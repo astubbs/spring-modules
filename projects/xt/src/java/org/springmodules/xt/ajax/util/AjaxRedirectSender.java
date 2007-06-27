@@ -17,29 +17,26 @@
 package org.springmodules.xt.ajax.util;
 
 import java.io.IOException;
-import javax.servlet.ServletOutputStream;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springmodules.xt.ajax.AjaxResponse;
+import org.springmodules.xt.ajax.AjaxResponseImpl;
+import org.springmodules.xt.ajax.action.RedirectAction;
 
 /**
- * Utility class for sending Ajax responses.
+ * Utility class for sending Ajax redirects to given URLs.
  *
  * @author Sergio Bossa
  */
-public class InternalAjaxResponseSender {
+public class AjaxRedirectSender {
     
-    private static final Logger logger = Logger.getLogger(InternalAjaxResponseSender.class);
+    private static final Logger logger = Logger.getLogger(AjaxRedirectSender.class);
     
-    public static void sendResponse(HttpServletResponse httpResponse, AjaxResponse ajaxResponse)
-    throws IOException {
-        String response = ajaxResponse.render();
-        logger.debug(new StringBuilder("Sending ajax response: ").append(response));
-        httpResponse.setContentType("text/xml");
-        httpResponse.setCharacterEncoding(ajaxResponse.getEncoding());
-        httpResponse.setHeader("Cache-Control", "no-cache");
-        ServletOutputStream out = httpResponse.getOutputStream();
-        out.print(response);
-        out.close();
+    public static void sendRedirect(HttpServletResponse httpResponse, String redirectUrl, Map model) throws IOException {
+        logger.debug(new StringBuilder("Sending ajax redirect: ").append(redirectUrl));
+        AjaxResponse ajaxResponse = new AjaxResponseImpl();
+        ajaxResponse.addAction(new RedirectAction(redirectUrl, (Map) null));
+        AjaxResponseSender.sendResponse(httpResponse, ajaxResponse);
     }
 }

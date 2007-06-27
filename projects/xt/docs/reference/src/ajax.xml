@@ -273,8 +273,8 @@ public interface AjaxSubmitEvent extends AjaxEvent {
         <para>This is because your Spring MVC Controller submit method missed
         to return a proper ModelAndView object containing the BindException
         model; for helping that, you are strongly encouraged to construct and
-        return an <emphasis role="bold">XTModelAndView</emphasis> object (see
-        <emphasis>org.springmodules.web.servlet.XTModelAndView</emphasis>
+        return an <emphasis role="bold">AjaxModelAndView</emphasis> object (see
+        <emphasis>org.springmodules.xt.ajax.web.servlet.AjaxModelAndView</emphasis>
         javadoc).</para>
       </important>
     </sect3>
@@ -733,8 +733,8 @@ public interface AjaxResponse {
           return a ModelAndView with the model contained into the
           BindException object; otherwise, the model and command objects into
           the Ajax event object will be null. You can use the <emphasis
-          role="bold">XTModelAndView</emphasis> object here (see
-          <emphasis>org.springmodules.web.servlet.XTModelAndView</emphasis>
+          role="bold">AjaxModelAndView</emphasis> object here (see
+          <emphasis>org.springmodules.xt.ajax.web.servlet.AjaxModelAndView</emphasis>
           javadoc).</para>
         </listitem>
 
@@ -1265,19 +1265,19 @@ throws Exception {
     // <emphasis role="bold">Construct and return the ModelAndView:</emphasis>
     Map model = new HashMap(1);
     model.put("employees", employees);
-    return new XTModelAndView(this.getSuccessView(), errors, model);
+    return new AjaxModelAndView(this.getSuccessView(), errors, model);
     // <emphasis role="bold">The model map contains the employee list that will be rendered using ajax!</emphasis>
 }
 </programlisting>
 
         <para>The only difference is the use of the <emphasis
-        role="bold">XTModelAndView</emphasis> (see
-        <emphasis>org.springmodules.web.servlet.XTModelAndView</emphasis>
+        role="bold">AjaxModelAndView</emphasis> (see
+        <emphasis>org.springmodules.xt.ajax.web.servlet.AjaxModelAndView</emphasis>
         javadoc), carrying the BindException errors object required by the
         Ajax framework.</para>
 
         <note>
-          <para>The XTModelAndView object behaves exactly the same as a
+          <para>The AjaxModelAndView object behaves exactly the same as a
           standard ModelAndView object.</para>
         </note>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 the original author or authors.
+ * Copyright 2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.web.servlet;
+package org.springmodules.xt.ajax.web.servlet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +22,21 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * @deprecated Use {@link org.springmodules.xt.ajax.web.servlet.AjaxModelAndView} instead.
+ * {@link org.springframework.web.servlet.ModelAndView} implementation to use
+ * in conjunction with Spring MVC and the XT Ajax Framework when returning  
+ * after form submission processing in Spring Controllers.
+ * <br><br>
+ * Users are not forced to return an AjaxModelAndView from their controllers, but 
+ * it is strongly recommended, in order to be able to properly access the command object and the model map
+ * from {@link org.springmodules.xt.ajax.AjaxSubmitEvent}s.
+ * <br><br>
+ * It behaves exactly the same as a standard {@link org.springframework.web.servlet.ModelAndView}, so it is
+ * absolutely safe to return an AjaxModelAndView in place of a standard ModelAndView, even if
+ * no Ajax behaviour is actually used.
+ *
+ * @author Sergio Bossa
  */
-@Deprecated
-public class XTModelAndView extends ModelAndView {
+public class AjaxModelAndView extends ModelAndView {
     
     /**
      * Ajax ModelAndView constructor: it creates a ModelAndView with a view name, a model map merging the model of the 
@@ -38,7 +49,7 @@ public class XTModelAndView extends ModelAndView {
      * @param model An additional model map to merge with the 
      * {@link org.springframework.validation.BindException} model map.
      */
-    public XTModelAndView(String viewName, BindException errors, Map model) {
+    public AjaxModelAndView(String viewName, BindException errors, Map model) {
         super(viewName, new HashMap(errors.getModel()));
         this.getModelInternal().putAll(model);
     }
@@ -51,7 +62,7 @@ public class XTModelAndView extends ModelAndView {
      * @param errors The {@link org.springframework.validation.BindException}
      * passed to the Spring Controller processing method.
      */
-    public XTModelAndView(String viewName, BindException errors) {
+    public AjaxModelAndView(String viewName, BindException errors) {
         super(viewName, new HashMap(errors.getModel()));
     }
 }
