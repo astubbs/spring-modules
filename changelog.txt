@@ -45,6 +45,13 @@ Package org.springmodules.orm.orbroker
 * upgraded Spring library to 2.0.6
 * added support for configuring BrokerFactoryBean without config file (mainly for testing)
 
+Package org.springmodules.orm.ojb
+* upgraded Apache log4j library to 1.2.14
+* upgraded Commons-dbcp library to 1.2.2
+* upgraded Commons-lang library to 2.2
+* upgraded Commons-logging library to 1.1
+* upgraded Spring library to 2.0.6
+
 Changes in version 0.8 (2007.03.11)
 -----------------------------------
 
