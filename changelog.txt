@@ -14,8 +14,9 @@ Package org.springmodules.cache
 * upgraded JBoss Javassist library to 3.4.GA
 * upgraded GigaSpaces library to 5.2-1706
 * upgraded OpenSymphony cache library to 2.4
-* upgraded Spring library to 2.0.5
+* upgraded Spring library to 2.0.6
 * upgraded XStream library to 1.2.2
+* added proper synchronization to MetadataCacheAttributeSource cached AttributeSource map. MOD-371 (thanks to Mathieu Poumeyrol)
 * added support for Tangosol Coherence (again), thanks to Andy Nguyen for providing Tangosol mock jar: MOD-188
 * AbstractCachingInterceptor no longer logs exceptions thrown by advised methods as errors, log a debug message instead: MOD-289
 
@@ -41,6 +42,7 @@ Package org.springmodules.orm.orbroker
 * upgraded O/RBroker library to 2.0.3
 * upgraded Commons-logging library to 1.4
 * upgraded Log4j library to 1.2.14
+* upgraded Spring library to 2.0.6
 * added support for configuring BrokerFactoryBean without config file (mainly for testing)
 
 Changes in version 0.8 (2007.03.11)
