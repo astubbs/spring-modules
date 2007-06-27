@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd 
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+    
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="placeholderPrefix" value="${"/>
+        <property name="locations">
+            <list>
+                <value>classpath:/application.properties</value>
+            </list>
+        </property>
+    </bean>  
+    
+    <!-- Data Access -->
+    
+    <bean id="db4oConfigurationFactory" class="org.springmodules.feedxt.infrastructure.dao.db4o.Db4oConfigurationFactory"/>
+    
+    <bean id="db4oConfiguration" factory-bean="db4oConfigurationFactory" factory-method="getConfiguration"/>
+    
+    <bean id="db4oContainer" class="org.springmodules.db4o.ObjectContainerFactoryBean">
+        <property name="configuration" ref="db4oConfiguration"/>
+        <property name="databaseFile" value="${db4o.file.location}"/>
+    </bean>
+    
+    <bean id="template" class="org.springmodules.db4o.Db4oTemplate">	
+        <property name="objectContainer" ref="db4oContainer"/>
+    </bean>
+    
+    <bean id="txManager" class="org.springmodules.db4o.Db4oTransactionManager">
+        <property name="objectContainer" ref="db4oContainer"/>
+    </bean>
+    
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+        <aop:advisor
+            pointcut="target(org.springmodules.feedxt.service.UserService)"
+            advice-ref="txAdvice"/>
+    </aop:config>
+    
+    <!-- -->
+    
+    <!-- Repository -->
+    
+    <bean id="userRepository" class="org.springmodules.feedxt.infrastructure.dao.db4o.Db4oUserDao">
+        <property name="template" ref="template"/>
+    </bean>
+    
+    <!-- -->
+    
+    <!-- Service -->
+    
+    <bean id="userService" class="org.springmodules.feedxt.service.UserServiceImpl">
+        <property name="userRepository" ref="userRepository"/>
+    </bean>
+    
+    <!-- -->
+    
+</beans>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+    
+    <!-- Message Source -->
+    
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename"><value>messages</value></property>
+    </bean>
+    
+    <!-- Property Editors -->
+    
+    <bean id="dateEditor" class="org.springframework.beans.propertyeditors.CustomDateEditor" scope="prototype">
+        <constructor-arg index="0">
+            <bean class="java.text.SimpleDateFormat">
+                <constructor-arg index="0">
+                    <value>dd/MM/yyyy</value>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+        <constructor-arg index="1">
+            <value>true</value>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="subscriptionCollectionEditor" class="org.springmodules.feedxt.web.editor.SubscriptionCollectionEditor" scope="prototype">
+        <constructor-arg><value>java.util.List</value></constructor-arg>
+        <property name="userHolder"><ref bean="userHolder"/></property>
+    </bean>
+    
+    <!-- Validators -->
+    
+    <bean id="loginValidator" class="org.springmodules.feedxt.web.controller.validator.LoginFormValidator"/>
+
+    <bean id="userValidator" class="org.springmodules.feedxt.web.controller.validator.UserValidator"/>
+    
+    <bean id="subscriptionValidator" class="org.springmodules.feedxt.web.controller.validator.SubscriptionValidator"/>
+    
+    <!-- Controllers -->
+    
+    <bean name="userHolder" class="org.springmodules.feedxt.web.controller.support.UserHolder" scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+    
+    <bean id="staticViewController" class="org.springmodules.web.servlet.mvc.FullPathUrlFilenameViewController"/>
+    
+    <bean id="loginController" class="org.springmodules.feedxt.web.controller.LogInController">
+        <property name="formView"><value>start</value></property>
+        <property name="successView"><value>redirect:/personal/home.page</value></property>
+        <property name="validator"><ref bean="loginValidator"/></property>
+        <property name="userService"><ref bean="userService"/></property>
+        <property name="userHolder"><ref bean="userHolder"/></property>
+    </bean>
+    
+    <bean id="logoutController" class="org.springmodules.feedxt.web.controller.LogOutController">
+        <property name="userHolder"><ref bean="userHolder"/></property>
+        <property name="logOutView"><value>redirect:/start.action</value></property>
+    </bean>
+    
+    <bean id="signupController" class="org.springmodules.feedxt.web.controller.SignUpController">
+        <property name="formView"><value>signup</value></property>
+        <property name="successView"><value>redirect:/personal/home.page</value></property>
+        <property name="validator"><ref bean="userValidator"/></property>
+        <property name="userService"><ref bean="userService"/></property>
+        <property name="userRepository"><ref bean="userRepository"/></property>
+        <property name="userHolder"><ref bean="userHolder"/></property>
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>property:birthdate</value></key>
+                    <value>dateEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="addSubscriptionController" class="org.springmodules.feedxt.web.controller.AddSubscriptionController">
+        <property name="formView"><value>personal/addSubscription</value></property>
+        <property name="validator"><ref bean="subscriptionValidator"/></property>
+        <property name="userService"><ref bean="userService"/></property>
+        <property name="userHolder"><ref bean="userHolder"/></property>
+    </bean>
+    
+    <bean id="removeSubscriptionsController" class="org.springmodules.feedxt.web.controller.RemoveSubscriptionsController">
+        <property name="formView"><value>personal/removeSubscriptions</value></property>
+        <property name="successView"><value>redirect:/personal/home.page</value></property>
+        <property name="userService"><ref bean="userService"/></property>
+        <property name="userHolder"><ref bean="userHolder"/></property>
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>property:subscriptionsToRemove</value></key>
+                    <value>subscriptionCollectionEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <!-- Interceptors -->
+    
+    <bean id="userPropagationInterceptor" class="org.springmodules.feedxt.web.controller.support.UserPropagationInterceptor">
+        <property name="userHolder"><ref bean="userHolder"/></property>
+    </bean>
+    
+    <bean id="accessControlInterceptor" class="org.springmodules.feedxt.web.auth.AccessControlInterceptor">
+        <property name="ajaxInterceptor"><ref bean="ajaxInterceptor"/></property>
+        <property name="userHolder"><ref bean="userHolder"/></property>
+        <property name="redirectUrl"><value>/start.action</value></property>
+        <property name="protectedPaths">
+            <list>
+                <value>/personal/**</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
+        <property name="handlerMappings">
+            <props>
+                <prop key="/start.action">defaultAjaxValidationHandler</prop>
+                <prop key="/signup.action">usernameValidationHandler, defaultAjaxValidationHandler</prop>
+                <prop key="/personal/addSubscription.action">successMessageAjaxValidationHandler</prop>
+                <prop key="/personal/removeSubscriptions.action">defaultAjaxValidationHandler</prop>
+                <prop key="/personal/viewer.page">feedViewerHandler</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <!-- Url Mappings -->
+
+    <bean id="urlHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="userPropagationInterceptor"/>
+                <ref bean="accessControlInterceptor"/>
+                <ref bean="ajaxInterceptor"/>
+            </list>
+        </property>
+        <property name="mappings">
+            <props>
+                <prop key="/**/*.page">staticViewController</prop>
+                <prop key="/start.action">loginController</prop>
+                <prop key="/logout.action">logoutController</prop>
+                <prop key="/signup.action">signupController</prop>
+                <prop key="/personal/addSubscription.action">addSubscriptionController</prop>
+                <prop key="/personal/removeSubscriptions.action">removeSubscriptionsController</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <!-- Ajax -->
+  
+    <bean id="defaultAjaxValidationHandler" class="org.springmodules.xt.ajax.validation.DefaultValidationHandler"/>
+    
+    <bean id="successMessageAjaxValidationHandler" class="org.springmodules.xt.ajax.validation.DefaultValidationHandler">
+        <property name="successRenderingCallback">
+            <bean class="org.springmodules.feedxt.web.ajax.support.SuccessMessageCallback"/>
+        </property>
+    </bean>
+    
+    <bean id="usernameValidationHandler" class="org.springmodules.feedxt.web.ajax.handler.UsernameValidationHandler">
+        <property name="userService"><ref bean="userService"/></property>
+    </bean>
+    
+    <bean id="feedViewerHandler" class="org.springmodules.feedxt.web.ajax.handler.FeedViewerHandler">
+        <property name="userHolder"><ref bean="userHolder"/></property>
+        <property name="userService"><ref bean="userService"/></property>
+    </bean>
+    
+    <!-- Resolvers-->
+       
+    <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="suffix"><value>.jsp</value></property>
+        <property name="prefix"><value>/WEB-INF/jsp/</value></property>
+        <property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
+    </bean>
+    
+    <bean id="ajaxExceptionResolver" class="org.springmodules.xt.ajax.AjaxExceptionHandlerResolver">
+        <property name="exceptionMappings">
+            <map>
+                <entry key="java.lang.Exception">
+                    <bean class="org.springmodules.xt.ajax.support.RedirectExceptionHandler">
+                        <property name="redirectUrl" value="/error.page"/>
+                        <property name="exceptionMessageAttribute" value="exceptionMessage"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="standardExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="java.lang.Exception">error</prop>
+            </props>
+        </property>
+        <property name="exceptionAttribute">
+            <value>exception</value>
+        </property>
+    </bean>
+    
+    <!-- Events management-->
+    
+    <bean id="applicationEventMulticaster" class="org.springmodules.xt.model.event.FilteringApplicationEventMulticaster"/>
+    
+</beans>
