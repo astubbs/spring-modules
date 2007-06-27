@@ -21,7 +21,7 @@
 
     <dependency org="apache" name="commons-logging" rev="1.1" />
     <dependency org="apache" name="log4j" rev="1.2.14" />
-    <dependency org="springframework" name="springframework" rev="2.0.5">
+    <dependency org="springframework" name="springframework" rev="2.0.6">
       <artifact name="spring" type="jar"/>
       <artifact name="spring-mock" type="jar"/>
     </dependency>
