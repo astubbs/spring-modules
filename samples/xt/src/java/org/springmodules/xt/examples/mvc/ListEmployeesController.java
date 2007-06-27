@@ -6,8 +6,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
-import org.springmodules.web.servlet.XTModelAndView;
 import org.springmodules.web.servlet.mvc.EnhancedSimpleFormController;
+import org.springmodules.xt.ajax.web.servlet.AjaxModelAndView;
 import org.springmodules.xt.examples.domain.IEmployee;
 import org.springmodules.xt.examples.mvc.form.EmployeesListForm;
 import org.springmodules.xt.examples.domain.MemoryRepository;
@@ -43,7 +43,7 @@ public class ListEmployeesController extends EnhancedSimpleFormController {
         
         model.put("employees", employees);
         
-        return new XTModelAndView(this.getSuccessView(), errors, model);
+        return new AjaxModelAndView(this.getSuccessView(), errors, model);
     }
     
     public void setStore(MemoryRepository store) {

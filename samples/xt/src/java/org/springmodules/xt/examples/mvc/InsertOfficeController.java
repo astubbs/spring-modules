@@ -12,8 +12,8 @@ import org.springmodules.xt.examples.domain.Office;
 import org.springmodules.xt.examples.domain.MemoryRepository;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
-import org.springmodules.web.servlet.XTModelAndView;
 import org.springmodules.web.servlet.mvc.EnhancedSimpleFormController;
+import org.springmodules.xt.ajax.web.servlet.AjaxModelAndView;
 import org.springmodules.xt.examples.domain.codes.OfficeErrorCodes;
 
 /**
@@ -56,7 +56,7 @@ public class InsertOfficeController extends EnhancedSimpleFormController {
                 return this.showForm(request, response, errors);
             }
 
-            return new XTModelAndView(this.getSuccessView(), errors);
+            return new AjaxModelAndView(this.getSuccessView(), errors);
         }
     }
     

@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.springmodules.web.servlet.XTModelAndView;
+import org.springmodules.xt.ajax.web.servlet.AjaxModelAndView;
 import org.springmodules.xt.examples.mvc.form.NoOpForm;
 
 /**
@@ -23,6 +23,6 @@ public class ExceptionController extends SimpleFormController {
         if (request.getParameter("source-element").equals("b1")) {
             throw new Exception("Exception occurred in controller!");
         }
-        return new XTModelAndView("/start.page", errors);
+        return new AjaxModelAndView("/start.page", errors);
     }
 }

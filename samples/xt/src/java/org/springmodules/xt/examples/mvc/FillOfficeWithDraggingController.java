@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
-import org.springmodules.web.servlet.XTModelAndView;
 import org.springmodules.web.servlet.mvc.EnhancedSimpleFormController;
+import org.springmodules.xt.ajax.web.servlet.AjaxModelAndView;
 import org.springmodules.xt.examples.domain.BusinessException;
 import org.springmodules.xt.examples.domain.Error;
 import org.springmodules.xt.examples.domain.MemoryRepository;
@@ -55,7 +55,7 @@ public class FillOfficeWithDraggingController extends EnhancedSimpleFormControll
             return this.showForm(request, response, errors);
         }
         
-        return new XTModelAndView(this.getSuccessView(), errors);
+        return new AjaxModelAndView(this.getSuccessView(), errors);
     }
     
     public void setStore(MemoryRepository store) {
