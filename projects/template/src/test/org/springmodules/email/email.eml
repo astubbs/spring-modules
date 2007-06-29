@@ -1,0 +1,17 @@
+<email xmlns="http://www.springmodules.org/template/email-1.0">
+
+    <from name="${sender.name}">${sender.email}</from>
+
+    <to>
+        <address name="${recipient.name}">${recipient.email}</address>
+    </to>
+
+    <reply-to name="No Reply">noreply@bla.org</reply-to>
+
+    <subject>subject</subject>
+
+    <text-body>
+        Some text body
+    </text-body>
+
+</email>

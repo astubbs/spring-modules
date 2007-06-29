@@ -1,0 +1,46 @@
+<email xmlns="http://www.springmodules.org/template/email-1.0">
+
+    <from name="From">from@springmodules.org</from>
+
+    <to>
+        <address name="To">to1@springmodules.org</address>
+        <address>to2@springmodules.org</address>
+    </to>
+
+    <cc>
+        <address name="Cc">cc1@springmodules.org</address>
+        <address>cc2@springmodules.org</address>
+    </cc>
+
+    <bcc>
+        <address name="Bcc">bcc1@springmodules.org</address>
+        <address>bcc2@springmodules.org</address>
+    </bcc>
+
+    <priority>HIGH</priority>
+
+    <reply-to name="Reply To">replyto@springmodules.org</reply-to>
+
+    <subject>subject</subject>
+
+    <text-body>
+        Some text body
+    </text-body>
+
+    <html-body>
+        <![CDATA[
+            <html><body>Some html body</body></html>
+        ]]>
+    </html-body>
+
+    <attachments>
+        <attachment name="attachment1">classpath:/org/springmodules/email/test.xml</attachment>
+        <attachment name="attachment2">classpath:/org/springmodules/email/test.xml</attachment>
+    </attachments>
+
+    <inline-attachments>
+        <attachment name="attachment1">classpath:/org/springmodules/email/test.xml</attachment>
+        <attachment name="attachment2">classpath:/org/springmodules/email/test.xml</attachment>
+    </inline-attachments>
+
+</email>
