@@ -186,7 +186,25 @@
 
                 <title>Groovy Template</title>
 
-                
+                <para>
+                    Groovy Template is a library that ships with groovy which enables writing templates in the groovy
+                    language (GString's for those familar with groovy). While current imlementation performance
+                    is somewhat lagging behind Velocity and Freemarker, groovy as a templating language brings quite
+                    a lot of power to the hands of temlate authors. The
+                    <emphasis>org.springmodules.template.engine.groovy.GroovyTemplateEngine</emphasis> is the template
+                    engine that create Groovy templates. Here is how this engine would be configured in an application
+                    context:
+                </para>
+
+                <programlisting>&lt;bean id="groovy" class="org.springmodules.template.engine.groovy.GroovyTemplateEngine"&gt;
+    &lt;property name="defaultEncoding" value="UTF-8"/&gt;
+&lt;/bean&gt;</programlisting>
+
+                <para>
+                    As seen above, there isn't much to configure when defining a groovy template engine. This engine is
+                    much more simplistic and less featured than both Velocity and Freemarker (for example, it has no support
+                    inter-template referencing).
+                </para>
 
             </sect3>
 
@@ -196,9 +214,44 @@
 
             <title>Template Resolvers</title>
 
+            <para>
+                We've seen how we can create/define the template engines that enables the creation of template of
+                different types. However, in order to utilize them to create those actual templates, one needs to first
+                load the appropriate template resource and hand it over to the engine. Although it is perfectly valid
+                approach, template resolvers come to simplify this process even more.
+            </para>
+
+            <para>
+                The following are the different types of template resolvers that are provided out-of-the-box:
+            </para>
+
             <sect3>
 
                 <title>BasicTemplateResolver</title>
+
+                <para>
+                    As the name suggests, this is a very basic implementation of the <emphasis>TemplateResolver</emphasis>
+                    interface. It is configured with a template engine and a resource loader. The resource loader is used
+                    to load the template resources based on the template name, while the template engine is used to create
+                    the templates from the loaded template resources. In this case, the resolver's <emphasis>resolve(String)</emphasis>
+                    calls the resource loader's <emphasis>getResource(String)</emphasis> with the provided template name.
+                    Here is how this resolver can be defined within an application context:
+                </para>
+
+                <programlisting>&lt;bean id="resolver" class="org.springmodules.template.resolver.BasicTemplateResolver"&gt;
+    &lt;property name="engine" ref="freemarker"/&gt;
+&lt;/bean&gt;</programlisting>
+
+                <para>
+                    The <emphasis>BasicTemplateResolver</emphasis> also implements the <emphasis>ResourceLoaderAware</emphasis>
+                    interface, so when defined in the application context, by default the application context is used
+                    as the resource loader implementation.
+                </para>
+
+                <para>
+                    Most of the time you wouldn't choose to use this implementation in your application. As we'll see soon,
+                    this class mainly serves as a base class for the other template resolver implementations.
+                </para>
 
             </sect3>
 
@@ -206,17 +259,82 @@
 
                 <title>CachingTemplateResolver</title>
 
+                <para>
+                    This is a simple extention on top of the <emphasis>BasicTemplateResolver</emphasis> which caches
+                    the resolved templates by their names. Calling <emphasis>resolve(String)</emphasis> on this resolver
+                    for the first time, will go through the same process as with the <emphasis>BasicTemplateResolver</emphasis>
+                    but with one differece, just before the resolved template is returned, it is cached internally by
+                    its name. As a consequence, the next call for the same tempate (using the same template name) will
+                    just return the cached template.
+                </para>
+
+                <para>
+                    Although for most cases using a cached template resolver is the preferred choice, there are some things
+                    to consider. First, the cache effectiveness high depends on the concrete implementation of the template
+                    that is used. For example, it could be that a template is implemented in such a way that every call to
+                    <emphasis>generate(Writer, Map)</emphasis> the template resource is being re-read. Another thing to
+                    consider is that some engines has a built-in support for automatic reload (that is, when the template
+                    source changes, the template is reloaded). For some implementations, caching the template will
+                    prevent from the reload to actually work. Hopefully, in a future release we'll have our own support
+                    for such reload funtionality.
+                </para>
+
             </sect3>
 
             <sect3>
 
                 <title>SimpleTempalteResolver</title>
 
+                <para>
+                    Again, as its name suggests, this is a simple template resolver that extends the caching resolver.
+                    It is very likely that you will use this resolver implementation most of the time. In addition to
+                    all functionality this resolver inherits from the caching and basic resolver, it adds two addition
+                    features. With this resolver it is possible to define a prefix and a suffix that when combined with
+                    the template name, are used to create the template resource path. Here's how this resolver can be
+                    configured within an application context:
+                </para>
+
+                <programlisting>&lt;bean id="simpleResolver" class="org.springmodules.template.resolver.SimpleTemplateResolver"&gt;
+    &lt;property name="engine" ref="freemarker"/&gt;
+    &lt;property name="prefix" value="classpath:/templates/"/&gt;
+    &lt;property name="suffix" value=".ftl"/&gt;
+&lt;/bean&gt;</programlisting>
+
+                <para>
+                    In the example above, when trying to resolve a template named "email", the resolver will try to load
+                    the template resource from the "classpath:/templates/email.ftl" location. This is quite powerful
+                    mechanism as it lets you define all template resources in a well defined and proprietary location,
+                    while still the user only needs to deal with the logical name of the template (i.e. "email").
+                </para>
+
             </sect3>
 
             <sect3>
 
                 <title>LocalizedTempalteResolver</title>
+
+                <para>
+                    While the <emphasis>SimpleTemplateResolver</emphasis> can serve you well most of the time, sometimes
+                    you want to support multiple locales and provide the same template in multiple languages. The
+                    <emphasis>LocalizedTempalteResolver</emphasis> enables you to do just that. Again, it inherits
+                    all the functionality from the caching and basic resolvers, while this time, it tries to load
+                    localized versions of the templates based on the resource bundles file naming convensions. For example,
+                    when resolving a template named "email" with an extension ".ftl" and assuming the current locale
+                    context is <emphasis>en_US</emphasis>, it will first try to load the "email_en_US.ftl" resource, when
+                    that fails, it will try loading "email_en.ftl", and if that fails it will fallback and try to load
+                    "email.ftl". Here's how this resolver can be configured within an application context:
+                </para>
+
+                <programlisting>&lt;bean id="localizedResolver" class="org.springmodules.template.resolver.LocalizedTemplateResolver"&gt;
+    &lt;property name="engine" ref="freemarker"/&gt;
+    &lt;property name="prefix" value="classpath:/termplates/"/&gt;
+    &lt;property name="extension" value=".ftl"/&gt;
+&lt;/bean&gt;</programlisting>
+
+                <para>
+                    As can be seen above, this is fairly similar to the configuration of the <emphasis>SimpleTempalteResolver</emphasis>.
+                    All of the localization extra work is done inside the resolver itself.
+                </para>
 
             </sect3>
 
