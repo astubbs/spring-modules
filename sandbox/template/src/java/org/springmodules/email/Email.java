@@ -16,12 +16,13 @@
 
 package org.springmodules.email;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
+import java.util.HashSet;
 
-import org.springframework.core.io.Resource;
 import javax.mail.internet.InternetAddress;
+import org.springframework.core.io.Resource;
 
 /**
  * Represents an email. This separate abstraction of an email message is required as a {@link javax.mail.internet.MimeMessage}
@@ -51,10 +52,10 @@ public class Email {
     private String textBody;
 
     // Set<Attachment>
-    private Set attachments;
+    private Set attachments = new HashSet();
 
     // Set<Attachment>
-    private Set inlineAttachments;
+    private Set inlineAttachments = new HashSet();
 
     /**
      * Sets the address from which this email is sent.
@@ -104,6 +105,16 @@ public class Email {
     }
 
     /**
+     * Sets the address to which this email is sent.
+     *
+     * @param to The address to which this email is sent.
+     */
+    public void setTo(InternetAddress to) {
+        this.to = new ArrayList();
+        addTo(to);
+    }
+
+    /**
      * Adds the given address to the address list to which this email is sent.
      *
      * @param address Another address to which this email should be sent.
@@ -121,6 +132,15 @@ public class Email {
         for (int i=0; i<addresses.length; i++) {
             this.to.add(addresses[i]);
         }
+    }
+
+    /**
+     * Sets the given address as the address to which this email is sent.
+     *
+     * @param address The address to which this email should be sent.
+     */
+    public void setTo(String address) {
+        setTo(EmailUtils.createAddress(address));
     }
 
     /**
@@ -160,6 +180,25 @@ public class Email {
     public void setCc(InternetAddress[] cc) {
         this.cc = new ArrayList();
         addCc(cc);
+    }
+
+    /**
+     * Sets the address to which this email is cc'ed.
+     *
+     * @param cc The address to which this email is cc'ed.
+     */
+    public void setCc(InternetAddress cc) {
+        this.cc = new ArrayList();
+        addCc(cc);
+    }
+
+    /**
+     * Sets the address to which this email is cc'ed.
+     *
+     * @param cc The address to which this email is cc'ed.
+     */
+    public void setCc(String cc) {
+        setCc(EmailUtils.createAddress(cc));
     }
 
     /**
@@ -219,6 +258,24 @@ public class Email {
     public void setBcc(InternetAddress[] bcc) {
         this.bcc = new ArrayList();
         addBcc(bcc);
+    }
+
+    /**
+     * Sets the address to which this email is bcc'ed.
+     *
+     * @param bcc The address to which this email is bcc'ed.
+     */
+    public void setBcc(InternetAddress bcc) {
+        setBcc(new InternetAddress[] { bcc });
+    }
+
+    /**
+     * Sets the address to which this email is bcc'ed.
+     *
+     * @param bcc The address to which this email is bcc'ed.
+     */
+    public void setBcc(String bcc) {
+        setBcc(EmailUtils.createAddress(bcc));
     }
 
     /**
