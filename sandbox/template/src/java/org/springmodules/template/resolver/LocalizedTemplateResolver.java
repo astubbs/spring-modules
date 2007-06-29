@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.LocalizedResourceHelper;
 
 /**
@@ -43,7 +44,7 @@ public class LocalizedTemplateResolver extends CachingTemplateResolver {
      * Constructs a new LocalizedTemplateResolver.
      */
     public LocalizedTemplateResolver() {
-        this.helper = new LocalizedResourceHelper(getResourceLoader());
+        this.helper = new LocalizedResourceHelper();
     }
 
     /**
@@ -96,5 +97,9 @@ public class LocalizedTemplateResolver extends CachingTemplateResolver {
      */
     public String getExtension() {
         return extension;
+    }
+
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        helper = new LocalizedResourceHelper(resourceLoader);
     }
 }

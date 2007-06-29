@@ -55,5 +55,11 @@
         <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
         <!--<dependency org="org.subethamail" name="subethasmtp-wiser" rev="1.2" conf="test->default"/>-->
 
+        <!-- needed by the groovy tests -->
+        <dependency org="asm" name="asm-all" rev="2.2.3" conf="test->default"/>
+
+        <!-- needed by the velocity tests -->
+        <dependency org="commons-lang" name="commons-lang" rev="2.3" conf="test->default"/>
+
     </dependencies>
 </ivy-module>

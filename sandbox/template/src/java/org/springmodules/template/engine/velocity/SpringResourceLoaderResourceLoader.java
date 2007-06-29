@@ -1,15 +1,15 @@
 package org.springmodules.template.engine.velocity;
 
-import java.io.InputStream;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.apache.velocity.runtime.resource.loader.ResourceLoader;
-import org.apache.velocity.runtime.resource.Resource;
-import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.collections.ExtendedProperties;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.resource.Resource;
+import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.springframework.core.io.DefaultResourceLoader;
 
 /**
@@ -81,7 +81,11 @@ public class SpringResourceLoaderResourceLoader extends ResourceLoader {
         String name = resource.getName();
         File file = null;
         try {
-            file = resourceLoader.getResource(name).getFile();
+            org.springframework.core.io.Resource springResource = resourceLoader.getResource(name);
+            if (springResource == null) {
+                return 0;
+            }
+            file = springResource.getFile();
         } catch (IOException ioe) {
             log.error("Could not get the last modified date of resource '" + name +
                 "' was modified. Assuming it was not...", ioe);

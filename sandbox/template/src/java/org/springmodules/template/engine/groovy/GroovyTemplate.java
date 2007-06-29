@@ -25,16 +25,31 @@ import org.springmodules.template.TemplateGenerationException;
 import groovy.text.Template;
 
 /**
+ * A {@link Template} implementation that represents a groovy template.
+ *
  * @author Uri Boness
  */
 public class GroovyTemplate extends AbstractTemplate {
 
     private Template template;
 
+    /**
+     * Creates a new GroovyTemplate with a given {@link groovy.text.Template groovy template}.
+     *
+     * @param template The underlaying groovy template.
+     */
     public GroovyTemplate(Template template) {
         this.template = template;
     }
 
+    /**
+     * Generates the template output based on the given model and writes it to the given writer.
+     *
+     * @param writer The writer to which the generated output will be written.
+     * @param model The model based on which the output will be generated.
+     * @throws TemplateGenerationException when an error occurs during the output generation
+     * @see org.springmodules.template.Template#generate(java.io.Writer, java.util.Map)
+     */
     public void generate(Writer writer, Map model) throws TemplateGenerationException {
         try {
             template.make(model).writeTo(writer);

@@ -16,20 +16,17 @@
 
 package org.springmodules.email;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.core.io.AbstractResource;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mail.MailSender;
 import org.springframework.util.Assert;
-import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.email.conf.EmailParser;
 import org.springmodules.template.Template;
 import org.springmodules.template.TemplateResolver;
+import org.springmodules.util.StringResource;
 
 /**
  * A template based based class for email dispatchers. A {@link org.springmodules.template.TemplateResolver} is used
@@ -71,7 +68,7 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
         send(email);
     }
 
-    //todo improve performance by parallel multi-threaded read/write.
+    // todo improve performance using pipes ?
     /**
      * Resolves the {@link Email} by its name and given model.
      *
@@ -163,32 +160,6 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
      */
     public String getEncoding() {
         return encoding;
-    }
-
-    //============================================== Inner Classes =====================================================
-
-    /**
-     * A resource implementation that wraps a static string.
-     */
-    protected class StringResource extends AbstractResource {
-
-        private String text;
-
-        public StringResource(String text) {
-            this.text = text;
-        }
-
-        public boolean exists() {
-            return true;
-        }
-
-        public String getDescription() {
-            return text;
-        }
-
-        public InputStream getInputStream() throws IOException {
-            return new ByteArrayInputStream(text.getBytes(getEncoding()));
-        }
     }
 
 }

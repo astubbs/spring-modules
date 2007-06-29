@@ -16,17 +16,18 @@
 
 package org.springmodules.template.engine.groovy;
 
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
-import org.springmodules.template.engine.AbstractTemplateEngine;
+import groovy.text.SimpleTemplateEngine;
+import groovy.text.TemplateEngine;
+import org.springframework.core.io.Resource;
 import org.springmodules.template.Template;
 import org.springmodules.template.TemplateCreationException;
-import org.springframework.core.io.Resource;
-import groovy.text.TemplateEngine;
-import groovy.text.SimpleTemplateEngine;
+import org.springmodules.template.engine.AbstractTemplateEngine;
 
 /**
+ * A {@link TemplateEngine template engine} that creates {@link GroovyTemplate}'s.
  *
  * @author Uri Boness
  */
@@ -34,10 +35,20 @@ public class GroovyTemplateEngine extends AbstractTemplateEngine {
 
     private TemplateEngine templateEngine;
 
+    /**
+     * Constructs a new GroovyTemplateEngine.
+     */
     public GroovyTemplateEngine() {
         templateEngine = new SimpleTemplateEngine();
     }
 
+    /**
+     * Creates and returns a new {@link GroovyTemplate groovy template}.
+     *
+     * @param resource The groovy template (script) resource.
+     * @param encoding The encoding of the template.
+     * @return The newly created groovy template.
+     */
     public Template createTemplate(Resource resource, String encoding) {
         groovy.text.Template template = null;
         try {
@@ -51,6 +62,5 @@ public class GroovyTemplateEngine extends AbstractTemplateEngine {
         }
         return new GroovyTemplate(template);
     }
-
 
 }

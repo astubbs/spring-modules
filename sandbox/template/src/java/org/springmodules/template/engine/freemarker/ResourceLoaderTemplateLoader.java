@@ -89,6 +89,14 @@ public class ResourceLoaderTemplateLoader implements TemplateLoader {
         // do nothing
     }
 
+    /**
+     * Returns the internal resource loader that is used to load the freemarker templates.
+     *
+     * @return The internal resource loader that is used to load the freemarker templates.
+     */
+    public ResourceLoader getResourceLoader() {
+        return resourceLoader;
+    }
 
     //============================================= Helper Methods =====================================================
 
