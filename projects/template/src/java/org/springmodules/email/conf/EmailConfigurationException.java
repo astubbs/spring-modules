@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,31 @@
  * limitations under the License.
  */
 
-package org.springmodules.template;
+package org.springmodules.email.conf;
 
 /**
- * The base exception for all template exceptions.
+ * Thrown by {@link EmailParser#parse(org.springframework.core.io.Resource)} when the parsing process fails.
  *
  * @author Uri Boness
  */
-public class TemplateException extends RuntimeException {
+public class EmailConfigurationException extends RuntimeException {
 
     /**
-     * Constructs a new TemplateException with a message.
-     * @param message The message that describes this exception
+     * Constructs a new EmailConfigurationException with a given error message.
+     *
+     * @param message The error message.
      */
-    public TemplateException(String message) {
+    public EmailConfigurationException(String message) {
         super(message);
     }
 
     /**
-     * Constructs a new TemplateException with a message and a cause.
+     * Constructs a new EmailConfigurationException with given error message and the original cause exception.
      *
-     * @param message The message that describes this exception.
+     * @param message The error message.
      * @param cause The cause for this exception.
      */
-    public TemplateException(String message, Throwable cause) {
+    public EmailConfigurationException(String message, Throwable cause) {
         super(message, cause);
     }
 

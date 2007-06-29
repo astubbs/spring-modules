@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,27 @@
 package org.springmodules.template;
 
 /**
- * Thrown during output generation.
+ * A strategy used to resolve templates based on a given name.
  *
  * @author Uri Boness
  */
-public class TemplateGenerationException extends TemplateException {
+public interface TemplateResolver {
 
     /**
-     * Constructs a new TemplateException with a message.
+     * Resolves the appropriate template based on the given name using the given encoding.
      *
-     * @param message The message that describes this exception
+     * @param name The name of the template
+     * @param encoding The encoding of the template
+     * @return The resolved template.
      */
-    public TemplateGenerationException(String message) {
-        super(message);
-    }
+    Template resolve(String name, String encoding);
 
     /**
-     * Constructs a new TemplateException with a message and a cause.
+     * Resolves the appropriate template based on the given name using the default encoding.
      *
-     * @param message The message that describes this exception.
-     * @param cause   The cause for this exception.
+     * @param name The name of the template.
+     * @return The resolved template.
      */
-    public TemplateGenerationException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    Template resolve(String name);
 
 }

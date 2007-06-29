@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<xsd:schema xmlns="http://www.springmodules.org/schemas/email"
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://www.springmodules.org/schemas/email">
+
+    <xsd:element name="email">
+        <xsd:annotation>
+            <xsd:documentation>
+                The root element in an Email definition
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="from" minOccurs="1" maxOccurs="1"/>
+                <xsd:element ref="reply-to" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="to" minOccurs="1" maxOccurs="1"/>
+                <xsd:element ref="cc" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="bcc" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="priority" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="subject" minOccurs="1" maxOccurs="1"/>
+                <xsd:element ref="text-body" minOccurs="1" maxOccurs="1"/>
+                <xsd:element ref="html-body" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="attachments" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="inline-attachments" minOccurs="0" maxOccurs="1"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+
+    <xsd:element name="from" type="addressType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configures the address from which the email is sent.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="reply-to" type="addressType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configures the address to which the recipients should reply.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="addressType" mixed="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Describes an address where the content of the element is the email address of the recipient and the name
+                attribute represents the personal name of the recipient.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="name" use="optional" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The personal name of the recipient.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+
+    <xsd:element name="to" type="address-list">
+        <xsd:annotation>
+            <xsd:documentation>
+                A list of addresses to which the email will be sent.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="cc" type="address-list">
+        <xsd:annotation>
+            <xsd:documentation>
+                A list of addresses to which the email will be cc'ed.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="bcc" type="address-list">
+        <xsd:annotation>
+            <xsd:documentation>
+                A list of addresses to which the email will be bcc'ed.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="address-list">
+        <xsd:annotation>
+            <xsd:documentation>
+                Represents an address list. This list may hold an unlimited number of addresses but must hold at
+                least one address.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:choice>
+            <xsd:element name="address" type="addressType" minOccurs="1" maxOccurs="unbounded" />
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:element name="priority" default="NORMAL">
+        <xsd:annotation>
+            <xsd:documentation>
+                Defines the priority of the email. There are 5 levels of priorities: HIGHEST, HIGH, NORMAL, LOW, LOWEST.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:NMTOKEN">
+                <xsd:enumeration value="HIGHEST"/>
+                <xsd:enumeration value="HIGH"/>
+                <xsd:enumeration value="NORMAL"/>
+                <xsd:enumeration value="LOW"/>
+                <xsd:enumeration value="LOWEST"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+
+
+    <xsd:element name="subject" type="xsd:string">
+        <xsd:annotation>
+            <xsd:documentation>
+                The subject of the email
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="text-body" type="xsd:string">
+        <xsd:annotation>
+            <xsd:documentation>
+                The body of the email in plain text.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="html-body" type="xsd:string">
+        <xsd:annotation>
+            <xsd:documentation>
+                An HTML version of the email body. Once defined, the framework will try to do its best to send the
+                email in a multipart format such that email client that support html will be able to present the html
+                version, while other clients will show the plain text version.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="attachments" type="attachment-list">
+        <xsd:annotation>
+            <xsd:documentation>
+                A list of attachments to be attached to the email.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="inline-attachments" type="attachment-list">
+        <xsd:annotation>
+            <xsd:documentation>
+                A list of attachments to be embedded in the email (e.g. css and images)
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="attachment-list">
+        <xsd:annotation>
+            <xsd:documentation>
+                Represents a list of attachments.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+                <xsd:element ref="attachment" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="attachment">
+        <xsd:annotation>
+            <xsd:documentation>
+                An attachment. If this represents a normal attachment the name attribute indicates the file name. If
+                it represents an embedded attachment the name represents the content id. The value of this tag is
+                the name/location of the resource to be attached. Typically Spring's DefaultResourceLoader will be used
+                to resolve this resource and so all resource descritors that are used in Spring apply here
+                (e.g. classpath:/test.xml or file:/test.xml).
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType mixed="true">
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>
