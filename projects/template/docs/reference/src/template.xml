@@ -283,7 +283,7 @@
 
             <sect3>
 
-                <title>SimpleTempalteResolver</title>
+                <title>SimpleTemplateResolver</title>
 
                 <para>
                     Again, as its name suggests, this is a simple template resolver that extends the caching resolver.
@@ -311,12 +311,12 @@
 
             <sect3>
 
-                <title>LocalizedTempalteResolver</title>
+                <title>LocalizedTemplateResolver</title>
 
                 <para>
                     While the <emphasis>SimpleTemplateResolver</emphasis> can serve you well most of the time, sometimes
                     you want to support multiple locales and provide the same template in multiple languages. The
-                    <emphasis>LocalizedTempalteResolver</emphasis> enables you to do just that. Again, it inherits
+                    <emphasis>LocalizedTemplateResolver</emphasis> enables you to do just that. Again, it inherits
                     all the functionality from the caching and basic resolvers, while this time, it tries to load
                     localized versions of the templates based on the resource bundles file naming convensions. For example,
                     when resolving a template named "email" with an extension ".ftl" and assuming the current locale
@@ -332,7 +332,7 @@
 &lt;/bean&gt;</programlisting>
 
                 <para>
-                    As can be seen above, this is fairly similar to the configuration of the <emphasis>SimpleTempalteResolver</emphasis>.
+                    As can be seen above, this is fairly similar to the configuration of the <emphasis>SimpleTemplateResolver</emphasis>.
                     All of the localization extra work is done inside the resolver itself.
                 </para>
 
@@ -347,8 +347,20 @@
         <title>Email Framwork</title>
 
         <para>
-
+            
         </para>
+
+        <sect2>
+            <title>Core Constructs &amp; Interfaces</title>
+        </sect2>
+
+        <sect2>
+            <title>EML files - Email Definition</title>
+        </sect2>
+
+        <sect2>
+            <title>Email Dispatcher</title>
+        </sect2>
 
     </sect1>
 
