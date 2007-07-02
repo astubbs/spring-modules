@@ -20,17 +20,15 @@ public class JavaMailDispatcherIntegrationTests extends TestCase {
     private EmailDispatcher dispatcher;
     private Properties properties;
 
-    protected void setUp() throws Exception {
-        appContext = new ClassPathXmlApplicationContext("appContext.xml", getClass());
-        dispatcher = (EmailDispatcher)appContext.getBean("emailDispatcher");
-        properties = (Properties)appContext.getBean("emailDetails");
-    }
-
     public void test() throws Exception {
 //        doTest();
     }
 
     protected void doTest() throws Exception {
+
+        appContext = new ClassPathXmlApplicationContext("appContext.xml", getClass());
+        dispatcher = (EmailDispatcher)appContext.getBean("emailDispatcher");
+        properties = (Properties)appContext.getBean("emailDetails");
 
         Map model = new HashMap();
         model.put("from", EmailUtils.createAddress(get("from.name"), get("from.email")));
