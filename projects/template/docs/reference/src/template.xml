@@ -7,7 +7,7 @@
         <title>Templates &amp; Template Engines</title>
 
         <para>
-            The Templates module provides an abstration over common template engines. This abstraction mainly targets
+            The Templates module provides an abstraction over common template engines. This abstraction mainly targets
             frameworks and products developers who don't wish to tie their implementation to a specific template engine.
         </para>
 
@@ -16,7 +16,7 @@
             <title>Core Constructs &amp; Interfaces</title>
 
             <para>
-                This abstration is based on the following three core interfaces:
+                This abstraction is based on the following three core interfaces:
             </para>
 
             <itemizedlist>
@@ -56,16 +56,16 @@
     Template createTemplate(Resource resource, String encoding) throws TemplateCreationException;
 
 }</programlisting>
-                        As seen above, the template engine methods accept a spring resource as an input (the template
-                        definitioning) and create the appropriate template from it. A runtime
+                        As seen above, the template engine methods accept a Spring resource as an input (the template
+                        definition) and create the appropriate template from it. A runtime
                         <emphasis>TemplateCreationException</emphasis> is thrown when for some reason the engine could
                         not create a template from the given resource (perhaps bad template syntax).
                     </para>
                 </listitem>
                 <listitem>
                     <para>
-                        TemplateResolver - This is essentailly a strategy of resolving template based on a template name.
-                        For those who are familar with Spring MVC, this resembels the ViewResolver.
+                        TemplateResolver - This is essentially a strategy for resolving templates based on a template names.
+                        For those who are familiar with Spring MVC, this resembles the ViewResolver.
 
                         <programlisting>public interface TemplateResolver {
 
@@ -93,8 +93,8 @@
                 <para>
                     The <emphasis>org.springmodules.template.engine.velocity.VelocityTemplate</emphasis> class is the
                     Apache Velocity implementation of the <emphasis>TemplateEngine</emphasis> interface. Under the hood
-                    it uses the VelocityEngine that can be configured by setting the appropriate velocity settings using
-                    the <emphasis>setConfiguration(Properties)</emphasis> method. Here is an example how thie engine
+                    it uses the VelocityEngine that can be configured by setting the appropriate Velocity settings using
+                    the <emphasis>setConfiguration(Properties)</emphasis> method. Here is an example how the engine
                     can be configured in Spring application context:
                 </para>
 
@@ -102,7 +102,7 @@
     &lt;property name="defaultEncoding" value="UTF-8"/&gt;
     &lt;property name="configuration"&gt;
         &lt;props&gt;
-            &lt;!-- velocity specific properties --&gt;
+            &lt;!-- Velocity specific properties --&gt;
             &lt;prop key="velocimacro.context.localscope"&gt;false&lt;/prop&gt;
         &lt;/props&gt;
     &lt;/property&gt;
@@ -112,9 +112,9 @@
                     A common feature among template engines is support for inter-resource referencing. This feature
                     enables the template author to modularize the structure of the templates and practice code reuse.
                     Velocity support this feature using the <emphasis>#include</emphasis> and <emphasis>#parse</emphasis>
-                    directives. The <emphasis>VelocityTemplateEngine</emphasis> integrates tightly with velocity resource
-                    management and leverages spring's resource &amp; resource loader support to resolve the referenced
-                    resources. This enables the template author to define the references in the spring common resource
+                    directives. The <emphasis>VelocityTemplateEngine</emphasis> integrates tightly with Velocity resource
+                    management and leverages Spring's resource &amp; resource loader support to resolve the referenced
+                    resources. This enables the template author to define the references in the Spring common resource
                     paths. For example:
                 </para>
 
@@ -129,7 +129,7 @@
 &lt;/html&gt;</programlisting>
 
                 <para>
-                    The <emphasis>VelocityTemplateEngine</emphasis> implements springs <emphasis>ResourceLoaderAware</emphasis>
+                    The <emphasis>VelocityTemplateEngine</emphasis> implements Spring's <emphasis>ResourceLoaderAware</emphasis>
                     interface so the application context serves as the resource loader by default.
                 </para>
 
@@ -142,7 +142,7 @@
                 <para>
                     Freemarker is a mature and feature rich template engine that is well designed and performs well. The
                     <emphasis>org.springmodules.template.engine.freemarker.FreemarkerTemplateEngine</emphasis> class is
-                    capable of reading freemarker template sources and generate the appropriate freemarker templates. The
+                    capable of reading FreeMarker template sources and generate the appropriate FreeMarker templates. The
                     following is an example of application context configuration:
                 </para>
 
@@ -166,7 +166,7 @@
                 </para>
 
                 <para>
-                    Like with velocity, <emphasis>FreemarkerTemplateEngine</emphasis> also laverages spring's
+                    Like with Velocity, <emphasis>FreemarkerTemplateEngine</emphasis> also leverages Spring's
                     resource support to support inter-resource referencing. This enables writing a template like:
                 </para>
 
@@ -188,9 +188,9 @@
 
                 <para>
                     Groovy Template is a library that ships with groovy which enables writing templates in the groovy
-                    language (GString's for those familar with groovy). While current imlementation performance
-                    is somewhat lagging behind Velocity and Freemarker, groovy as a templating language brings quite
-                    a lot of power to the hands of temlate authors. The
+                    language (GString's for those familiar with groovy). While current implementation performance
+                    is somewhat lagging behind Velocity and Freemarker, groovy as a template language brings quite
+                    a lot of power to the hands of template authors. The
                     <emphasis>org.springmodules.template.engine.groovy.GroovyTemplateEngine</emphasis> is the template
                     engine that create Groovy templates. Here is how this engine would be configured in an application
                     context:
@@ -260,11 +260,11 @@
                 <title>CachingTemplateResolver</title>
 
                 <para>
-                    This is a simple extention on top of the <emphasis>BasicTemplateResolver</emphasis> which caches
+                    This is a simple extension on top of the <emphasis>BasicTemplateResolver</emphasis> which caches
                     the resolved templates by their names. Calling <emphasis>resolve(String)</emphasis> on this resolver
                     for the first time, will go through the same process as with the <emphasis>BasicTemplateResolver</emphasis>
-                    but with one differece, just before the resolved template is returned, it is cached internally by
-                    its name. As a consequence, the next call for the same tempate (using the same template name) will
+                    but with one difference, just before the resolved template is returned, it is cached internally by
+                    its name. As a consequence, the next call for the same template (using the same template name) will
                     just return the cached template.
                 </para>
 
@@ -276,7 +276,7 @@
                     consider is that some engines has a built-in support for automatic reload (that is, when the template
                     source changes, the template is reloaded). For some implementations, caching the template will
                     prevent from the reload to actually work. Hopefully, in a future release we'll have our own support
-                    for such reload funtionality.
+                    for such reload functionality.
                 </para>
 
             </sect3>
@@ -318,7 +318,7 @@
                     you want to support multiple locales and provide the same template in multiple languages. The
                     <emphasis>LocalizedTemplateResolver</emphasis> enables you to do just that. Again, it inherits
                     all the functionality from the caching and basic resolvers, while this time, it tries to load
-                    localized versions of the templates based on the resource bundles file naming convensions. For example,
+                    localized versions of the templates based on the resource bundles file naming conventions. For example,
                     when resolving a template named "email" with an extension ".ftl" and assuming the current locale
                     context is <emphasis>en_US</emphasis>, it will first try to load the "email_en_US.ftl" resource, when
                     that fails, it will try loading "email_en.ftl", and if that fails it will fallback and try to load
@@ -327,7 +327,7 @@
 
                 <programlisting>&lt;bean id="localizedResolver" class="org.springmodules.template.resolver.LocalizedTemplateResolver"&gt;
     &lt;property name="engine" ref="freemarker"/&gt;
-    &lt;property name="prefix" value="classpath:/termplates/"/&gt;
+    &lt;property name="prefix" value="classpath:/templates/"/&gt;
     &lt;property name="extension" value=".ftl"/&gt;
 &lt;/bean&gt;</programlisting>
 
@@ -344,27 +344,27 @@
 
     <sect1 id="email-framework">
 
-        <title>Email Framwork</title>
+        <title>Email Framework</title>
 
         <para>
             Spring comes with an out-of-the-box support for emailing services. The main goal of this support is to
-            provide a higher absration of this type of service and hide all the complexities when dealing with
+            provide a higher abstraction of this type of service and hide all the complexities when dealing with
             the <emphasis>javax.mail</emphasis> and <emphasis>java.activation</emphasis> API.
         </para>
 
         <para>
-            While this absration succeeds in what it was set up to do, it only provides a new (simplier) set of API's for the developer to
+            While this abstraction succeeds in what it was set up to do, it only provides a new (simpler) set of API's for the developer to
             work with. When it comes to integrating the email service in an enterprise application, a quite common approach
-            is to write as set of templates (using velocity or freemarker) to represent the email body, so instead of having
+            is to write as set of templates (using Velocity or FreeMarker) to represent the email body, so instead of having
             the content of the email hardcoded in java, one can customize this content on demand without changing the codebase.
-            While this approach is better than the pure programatic one, it's only a partial solution to the problem as the
+            While this approach is better than the pure programmatic one, it's only a partial solution to the problem as the
             developer still needs to hard code the other properties of the email such as subject, sender, recipients, and more.
         </para>
 
         <para>
-            This email framework tries to answer all these issues by introducing an xml based email descriptor which
+            This email framework tries to answer all these issues by introducing an XML based email descriptor which
             can serve as a template for creating email definitions. This email definitions are then handled appropriately
-            by laveraging spring's mail services.
+            by leveraging Spring's mail services.
         </para>
 
         <sect2>
@@ -373,7 +373,7 @@
             <itemizedlist>
                 <listitem>
                     <para>
-                        <emphasis>Email</emphasis> - A simple POJO representing an email message. As opposed to all spring's
+                        <emphasis>Email</emphasis> - A simple POJO representing an email message. As opposed to all Spring's
                         <emphasis>MailMessage</emphasis> implementation, this POJO tries to capture all possible data of
                         a mail message as bean properties including normal and embedded (inline) attachements.
                     </para>
@@ -381,13 +381,13 @@
                 <listitem>
                     <para>
                         <emphasis>EmailDispatcher</emphasis> - An interface used to send Email messages. Can be seen
-                        as spring's <emphasis>MailSender</emphasis> counterpart which works with <emphasis>Email</emphasis>
+                        as Spring's <emphasis>MailSender</emphasis> counterpart which works with <emphasis>Email</emphasis>
                         objects.
                     </para>
                 </listitem>
                 <listitem>
                     <para>
-                        <emphasis>EmailParser</emphasis> - Represenets a parser that can read email descriptors, parse
+                        <emphasis>EmailParser</emphasis> - Represents a parser that can read email descriptors, parse
                         them, and create Email objects from them.
                     </para>
                 </listitem>
@@ -400,7 +400,7 @@
 
             <para>
                 The email descriptor is a simple XML source describing an email. It holds most (if not all) data
-                associated with an email, making it possible to keep all email defintions outside of the code base.
+                associated with an email, making it possible to keep all email definitions outside of the code base.
                 Below you can find a sample email descriptor:
             </para>
 
@@ -498,7 +498,7 @@
                         </para>
                     </callout>
                     <callout arearefs="inline-attachments-co" id="inline-attachments">
-                        <para>Holds a list of resources to be attached to the email as inline (embeded) attachments.</para>
+                        <para>Holds a list of resources to be attached to the email as inline (embedded) attachments.</para>
                     </callout>
                     <callout arearefs="inline-attachment-co" id="inline-attachment">
                         <para>
@@ -516,7 +516,7 @@
             <para>
                 This XML based email descriptor is the only descriptor that the framework is delivered with. Nonetheless,
                 it is possible to define other descriptors as well. The <emphasis>EmailParser</emphasis> interface enables
-                loading an email desriptor resource into an Email object. The default implementation is
+                loading an email descriptor resource into an Email object. The default implementation is
                 <emphasis>SaxEmailParser</emphasis> with parses the XML based descriptor.
             </para>
 
@@ -528,7 +528,7 @@
 
             <para>
                 The email dispatcher is the heart of this framework. This interface enables sending emails. Here is the
-                <emphasis>EmailDispatcher</emphasis> inteface:
+                <emphasis>EmailDispatcher</emphasis> interface:
             </para>
 
             <programlisting>public interface EmailDispatcher {
@@ -578,7 +578,7 @@
 
             <para>
                 <emphasis>AbstractEmailDispatcher</emphasis> is a base class for the two concrete implementation of this
-                inteface <emphasis>JavaMailEmailDispatcher</emphasis> and <emphasis>SimpleEmailDispatcher</emphasis>. The
+                interface <emphasis>JavaMailEmailDispatcher</emphasis> and <emphasis>SimpleEmailDispatcher</emphasis>. The
                 abstract class takes care of resolving and preparing the emails. It does this by first loading the
                 appropriate template for the given email, generating the output using the given model, The output is expected
                 to be an email descriptor and so an <emphasis>EmailParser</emphasis> is used to parse it to a concrete
@@ -588,23 +588,23 @@
             </para>
 
             <para>
-                As mentioned above there are two concrete <emphasis>EmailDispacher</emphasis> implementations:
+                As mentioned above there are two concrete <emphasis>EmailDispatcher</emphasis> implementations:
             </para>
 
             <itemizedlist>
                 <listitem>
                     <para>
-                        <emphasis>JavaMailEmailDispatcher</emphasis> - This dispacher should be used when configured with
+                        <emphasis>JavaMailEmailDispatcher</emphasis> - This dispatcher should be used when configured with
                         a <emphasis>JavaMailSender</emphasis> as the underlying <emphasis>MailSender</emphasis>.
                     </para>
                 </listitem>
                 <listitem>
                     <para>
-                        <emphasis>SimpleEmailDispatcher</emphasis> - This dispacher should be used when configured with
+                        <emphasis>SimpleEmailDispatcher</emphasis> - This dispatcher should be used when configured with
                         other <emphasis>MailSender</emphasis> implementations such as <emphasis>CosMailSenderImpl</emphasis>.
                         As <emphasis>MailSender</emphasis> works with <emphasis>SimpleMailMessage</emphasis>, this
                         dispatcher makes sure that only the supported information is extracted from the provided
-                        <emphasis>Email</emphasis> objects. For exmaple, the attachments in the provided emails will be
+                        <emphasis>Email</emphasis> objects. For example, the attachments in the provided emails will be
                         ignored since <emphasis>SimpleMailMessage</emphasis> does not support attachments of any kind.
                     </para>
                 </listitem>
