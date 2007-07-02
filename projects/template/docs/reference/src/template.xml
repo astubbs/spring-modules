@@ -8,7 +8,7 @@
 
         <para>
             The Templates module provides an abstration over common template engines. This abstraction mainly targets
-            framework and product developer who don't wish to tie their implementation to a specific template engine.
+            frameworks and products developers who don't wish to tie their implementation to a specific template engine.
         </para>
 
         <sect2>
@@ -347,19 +347,295 @@
         <title>Email Framwork</title>
 
         <para>
-            
+            Spring comes with an out-of-the-box support for emailing services. The main goal of this support is to
+            provide a higher absration of this type of service and hide all the complexities when dealing with
+            the <emphasis>javax.mail</emphasis> and <emphasis>java.activation</emphasis> API.
+        </para>
+
+        <para>
+            While this absration succeeds in what it was set up to do, it only provides a new (simplier) set of API's for the developer to
+            work with. When it comes to integrating the email service in an enterprise application, a quite common approach
+            is to write as set of templates (using velocity or freemarker) to represent the email body, so instead of having
+            the content of the email hardcoded in java, one can customize this content on demand without changing the codebase.
+            While this approach is better than the pure programatic one, it's only a partial solution to the problem as the
+            developer still needs to hard code the other properties of the email such as subject, sender, recipients, and more.
+        </para>
+
+        <para>
+            This email framework tries to answer all these issues by introducing an xml based email descriptor which
+            can serve as a template for creating email definitions. This email definitions are then handled appropriately
+            by laveraging spring's mail services.
         </para>
 
         <sect2>
             <title>Core Constructs &amp; Interfaces</title>
+
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <emphasis>Email</emphasis> - A simple POJO representing an email message. As opposed to all spring's
+                        <emphasis>MailMessage</emphasis> implementation, this POJO tries to capture all possible data of
+                        a mail message as bean properties including normal and embedded (inline) attachements.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>EmailDispatcher</emphasis> - An interface used to send Email messages. Can be seen
+                        as spring's <emphasis>MailSender</emphasis> counterpart which works with <emphasis>Email</emphasis>
+                        objects.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>EmailParser</emphasis> - Represenets a parser that can read email descriptors, parse
+                        them, and create Email objects from them.
+                    </para>
+                </listitem>
+            </itemizedlist>
+
         </sect2>
 
         <sect2>
-            <title>EML files - Email Definition</title>
+            <title>EML files - Email Descriptor</title>
+
+            <para>
+                The email descriptor is a simple XML source describing an email. It holds most (if not all) data
+                associated with an email, making it possible to keep all email defintions outside of the code base.
+                Below you can find a sample email descriptor:
+            </para>
+
+            <para>
+                <programlisting>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;email xmlns="http://www.springmodules.org/schema/template/email-1.0"&gt;
+
+    &lt;from name="John Doe"&gt;john@doe.org&lt;/from&gt; <co id="from-co" linkends="from"/>
+
+    &lt;reply-to name="No Reply"&gt;noreply@doe.org&lt;/reply-to&gt; <co id="reply-to-co" linkends="reply-to"/>
+
+    &lt;to&gt; <co id="to-co" linkends="to"/>
+        &lt;address name="Client"&gt;client@foo.com&lt;/address&gt; <co id="address-co" linkends="address-to"/>
+    &lt;/to&gt;
+
+    &lt;cc&gt; <co id="cc-co" linkends="cc"/>
+        &lt;address name="Managing Director"&gt;md@doe.org&lt;/address&gt;
+        &lt;address name="VP Marketing"&gt;vpm@doe.org&lt;/address&gt;
+    &lt;/cc&gt;
+
+    &lt;bcc&gt; <co id="bcc-co" linkends="bcc"/>
+        &lt;address&gt;anonymous@doe.org&lt;/address&gt;
+    &lt;/bcc&gt;
+
+    &lt;priority&gt;HIGH&lt;/priority&gt; <co id="priority-co" linkends="priority"/>
+
+    &lt;subject&gt;The subject of the mail&lt;/subject&gt; <co id="subject-co" linkends="subject"/>
+
+    &lt;text-body&gt; <co id="text-body-co" linkends="text-body"/>
+        This is the text based body of the email
+    &lt;/text-body&gt;
+
+    &lt;html-body&gt; <co id="html-body-co" linkends="html-body"/>
+        &lt;![CDATA[
+            &lt;html&gt;&lt;body&gt;
+                &lt;div&gt;&lt;img src="cid:logo"/&gt;&lt;/div&gt;
+                &lt;div&gt;This is the HTML based body of the email&lt;/div&gt;
+            &lt;/body&gt;&lt;/html&gt;
+        ]]&gt;
+    &lt;/html-body&gt;
+
+    &lt;attachments&gt; <co id="attachments-co" linkends="attachments"/>
+        &lt;attachment name="Marketing.doc"&gt;classpath:/documents/marketing.doc&lt;/attachment&gt; <co id="attachment-co" linkends="attachment"/>
+    &lt;/attachments&gt;
+
+    &lt;inline-attachments&gt; <co id="inline-attachments-co" linkends="inline-attachments"/>
+        &lt;attachment name="logo"&gt;classpath:/images/logo.gif&lt;/attachment&gt; <co id="inline-attachment-co" linkends="inline-attachment"/>
+    &lt;/inline-attachments&gt;
+
+&lt;/email&gt;</programlisting>
+
+                <calloutlist>
+                    <callout arearefs="from-co" id="from">
+                        <para>Specifying the sender's email address. The "name" attribute is optional and can be used to define the personal name of the sender.</para>
+                    </callout>
+                    <callout arearefs="reply-to-co" id="reply-to">
+                        <para>An optional element specifying the address to which the recipients should reply</para>
+                    </callout>
+                    <callout arearefs="to-co" id="to">
+                        <para>Holds a list of primary recipient addresses to which this email is sent</para>
+                    </callout>
+                    <callout arearefs="address-co" id="address">
+                        <para>Defines an address. The optional "name" attribute can be used to define a personal name for the address</para>
+                    </callout>
+                    <callout arearefs="cc-co" id="cc">
+                        <para>Holds a list of addresses to which this email is will be cc'ed</para>
+                    </callout>
+                    <callout arearefs="bcc-co" id="bcc">
+                        <para>Holds a list of addresses to which this email is will be bcc'ed</para>
+                    </callout>
+                    <callout arearefs="priority-co" id="priority">
+                        <para>
+                            Optional element to specify the priority of the email message. The priority can be on of
+                            5 options: LOWEST, LOW, NORMAL, HIGH, and HIGHEST. By default the priority is set to NORMAL.
+                        </para>
+                    </callout>
+                    <callout arearefs="subject-co" id="subject">
+                        <para>Specifies the subject of the email</para>
+                    </callout>
+                    <callout arearefs="text-body-co" id="text-body">
+                        <para>Specifies the plain text body of the email</para>
+                    </callout>
+                    <callout arearefs="html-body-co" id="html-body">
+                        <para>Specifies the html body of the email.</para>
+                    </callout>
+                    <callout arearefs="attachments-co" id="attachments">
+                        <para>Holds a list of resources to be attached to the email as normal attachments.</para>
+                    </callout>
+                    <callout arearefs="attachment-co" id="attachment">
+                        <para>
+                            Defines an attachment where the name serves as the file name and the value specifies
+                            the location of the resource. As we'll later see, the location path is determined by the
+                            <emphasis>ResourceLoader</emphasis> implementation that is used by the <emphasis>EmailParser</emphasis>.
+                            Most commonly the <emphasis>DefaultResourceLoader</emphasis>.
+                        </para>
+                    </callout>
+                    <callout arearefs="inline-attachments-co" id="inline-attachments">
+                        <para>Holds a list of resources to be attached to the email as inline (embeded) attachments.</para>
+                    </callout>
+                    <callout arearefs="inline-attachment-co" id="inline-attachment">
+                        <para>
+                            Defines an inline attachment where the "name" serves as the id of the attachment by which it
+                            can be referenced in the body of the content (for example, assuming the name is set to "001"
+                            , the html body can contain the following image element &lt;img src="cid:theId""/&gt;). Here too
+                            the value of the element specifies the location of the resource. As we'll later see, the
+                            location path is determined by the <emphasis>ResourceLoader</emphasis> implementation that
+                            is used by the <emphasis>EmailParser</emphasis>. Most commonly the <emphasis>DefaultResourceLoader</emphasis>.
+                        </para>
+                    </callout>
+                </calloutlist>
+            </para>
+
+            <para>
+                This XML based email descriptor is the only descriptor that the framework is delivered with. Nonetheless,
+                it is possible to define other descriptors as well. The <emphasis>EmailParser</emphasis> interface enables
+                loading an email desriptor resource into an Email object. The default implementation is
+                <emphasis>SaxEmailParser</emphasis> with parses the XML based descriptor.
+            </para>
+
+
         </sect2>
 
         <sect2>
             <title>Email Dispatcher</title>
+
+            <para>
+                The email dispatcher is the heart of this framework. This interface enables sending emails. Here is the
+                <emphasis>EmailDispatcher</emphasis> inteface:
+            </para>
+
+            <programlisting>public interface EmailDispatcher {
+
+    void send(Email email); <co id="email-co" linkends="email"/>
+
+    void send(String emailName); <co id="name-co" linkends="name"/>
+
+    void send(String emailName, Map model); <co id="name-model-co" linkends="name-model"/>
+
+    void send(String emailName, Map model, EmailPreparator preparator); <co id="name-model-preparator-co" linkends="name-model-preparator"/>
+
+}</programlisting>
+
+            <para>
+                <calloutlist>
+                    <callout arearefs="email-co" id="email">
+                        <para>
+                            Sends the given email
+                        </para>
+                    </callout>
+                    <callout arearefs="name-co" id="name">
+                        <para>
+                            Resolves the email identified by the given name and sends it.
+                        </para>
+                    </callout>
+                    <callout arearefs="name-model-co" id="name-model">
+                        <para>
+                            Resolves the email identified by the given name, populating it using the given model and
+                            sends it.
+                        </para>
+                    </callout>
+                    <callout arearefs="name-model-preparator-co" id="name-model-preparator">
+                        <para>
+                            Resolves the email identified by the given name, populating it using the given model, preparing
+                            it using the given email preparator and sends it.
+                        </para>
+                    </callout>
+                </calloutlist>
+            </para>
+
+            <para>
+                As can be seen, there are essentially two ways of sending an email. A direct way which mean the client
+                of this interface provides the email to be sent. The other way is more implicit way where the client
+                requests the dispatcher to send an email identified by its name.
+            </para>
+
+            <para>
+                <emphasis>AbstractEmailDispatcher</emphasis> is a base class for the two concrete implementation of this
+                inteface <emphasis>JavaMailEmailDispatcher</emphasis> and <emphasis>SimpleEmailDispatcher</emphasis>. The
+                abstract class takes care of resolving and preparing the emails. It does this by first loading the
+                appropriate template for the given email, generating the output using the given model, The output is expected
+                to be an email descriptor and so an <emphasis>EmailParser</emphasis> is used to parse it to a concrete
+                <emphasis>Email</emphasis> object. And last but not least, if necessary, preparing the result email using an
+                <emphasis>EmailPreparator</emphasis>. In this implementation, the email name essentially serves as an
+                email template name that will eventually be generating the actual emails descriptors.
+            </para>
+
+            <para>
+                As mentioned above there are two concrete <emphasis>EmailDispacher</emphasis> implementations:
+            </para>
+
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <emphasis>JavaMailEmailDispatcher</emphasis> - This dispacher should be used when configured with
+                        a <emphasis>JavaMailSender</emphasis> as the underlying <emphasis>MailSender</emphasis>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>SimpleEmailDispatcher</emphasis> - This dispacher should be used when configured with
+                        other <emphasis>MailSender</emphasis> implementations such as <emphasis>CosMailSenderImpl</emphasis>.
+                        As <emphasis>MailSender</emphasis> works with <emphasis>SimpleMailMessage</emphasis>, this
+                        dispatcher makes sure that only the supported information is extracted from the provided
+                        <emphasis>Email</emphasis> objects. For exmaple, the attachments in the provided emails will be
+                        ignored since <emphasis>SimpleMailMessage</emphasis> does not support attachments of any kind.
+                    </para>
+                </listitem>
+            </itemizedlist>
+
+            <para>
+                Here's an example of how the <emphasis>JavaMailEmailDispatcher</emphasis> can be configured in
+                an application context:
+            </para>
+
+            <programlisting>&lt;bean id="emailDispatcher" class="org.springmodules.email.JavaMailEmailDispatcher"&gt;
+    &lt;property name="emailParser" ref="emailParser"/&gt;
+    &lt;property name="mailSender" ref="mailSender"/&gt;
+    &lt;property name="templateResolver" ref="templateResolver"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="emailParser" class="org.springmodules.email.conf.SaxEmailParser"/&gt;
+
+&lt;bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"&gt;
+    &lt;property name="host" value="${mail.host}"/&gt;
+    &lt;property name="port" value="${mai.port}"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="templateResolver" class="org.springmodules.template.resolver.SimpleTemplateResolver"&gt;
+    &lt;property name="engine" ref="freemarker"/&gt;
+    &lt;property name="prefix" value="classpath:/emails/"/&gt;
+    &lt;property name="suffix" value=".eml"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="freemarker" class="org.springmodules.template.engine.freemarker.FreemarkerTemplateEngine"/&gt;</programlisting>
+
         </sect2>
 
     </sect1>

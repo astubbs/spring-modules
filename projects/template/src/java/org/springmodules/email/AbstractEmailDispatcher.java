@@ -24,6 +24,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mail.MailSender;
 import org.springframework.util.Assert;
 import org.springmodules.email.conf.EmailParser;
+import org.springmodules.email.conf.SaxEmailParser;
 import org.springmodules.template.Template;
 import org.springmodules.template.TemplateResolver;
 import org.springmodules.util.StringResource;
@@ -37,6 +38,11 @@ import org.springmodules.util.StringResource;
  * @author Uri Boness
  */
 public abstract class AbstractEmailDispatcher implements EmailDispatcher, InitializingBean {
+
+    private final static EmailPreparator EMPTY_PREPARATOR = new EmailPreparator() {
+        public void prepare(Email email) {
+        }
+    };
 
     private final static String DEFAULT_ENCODING = "UTF-8";
 
@@ -64,7 +70,12 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
      * @param model The model to populate the email prior to sending.
      */
     public void send(String emailName, Map model) {
+        send(emailName, model, EMPTY_PREPARATOR);
+    }
+
+    public void send(String emailName, Map model, EmailPreparator emailPreparator) {
         Email email = resolveEmail(emailName, model);
+        emailPreparator.prepare(email);
         send(email);
     }
 

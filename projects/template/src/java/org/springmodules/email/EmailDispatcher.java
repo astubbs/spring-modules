@@ -33,6 +33,13 @@ public interface EmailDispatcher {
     void send(Email email);
 
     /**
+     * Sends the email identified by the given name.
+     *
+     * @param emailName The name of the email.
+     */
+    void send(String emailName);
+
+    /**
      * Sends the email identified by the given name. This method enables dynamic email generation based on a given model.
      *
      * @param emailName The name of the email.
@@ -41,10 +48,14 @@ public interface EmailDispatcher {
     void send(String emailName, Map model);
 
     /**
-     * Sends the email identified by the given name.
+     * Sends the email identified by the given name. This method enables dynamic email generation based on a given model.
+     * The given email preparator enables to customize and prepare the email before sending. A typical use
+     * of the preparator is to attach runtime generated resources (e.g. reports).
      *
-     * @param emailName The name of the email.
+     * @param emailName The name of the email
+     * @param model The model by which the email will be created.
+     * @param emailPreparator The preparator that will prepare and customize the email before sending.
      */
-    void send(String emailName);
+    void send(String emailName, Map model, EmailPreparator emailPreparator);
 
 }

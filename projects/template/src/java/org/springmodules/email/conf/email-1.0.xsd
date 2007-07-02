@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<xsd:schema xmlns="http://www.springmodules.org/schemas/email"
+<xsd:schema xmlns:tns="http://www.springmodules.org/schema/template/email-1.0"
 			xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-			targetNamespace="http://www.springmodules.org/schemas/email">
+			targetNamespace="http://www.springmodules.org/schema/template/email-1.0">
 
     <xsd:element name="email">
         <xsd:annotation>
@@ -12,23 +12,23 @@
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="from" minOccurs="1" maxOccurs="1"/>
-                <xsd:element ref="reply-to" minOccurs="0" maxOccurs="1"/>
-                <xsd:element ref="to" minOccurs="1" maxOccurs="1"/>
-                <xsd:element ref="cc" minOccurs="0" maxOccurs="1"/>
-                <xsd:element ref="bcc" minOccurs="0" maxOccurs="1"/>
-                <xsd:element ref="priority" minOccurs="0" maxOccurs="1"/>
-                <xsd:element ref="subject" minOccurs="1" maxOccurs="1"/>
-                <xsd:element ref="text-body" minOccurs="1" maxOccurs="1"/>
-                <xsd:element ref="html-body" minOccurs="0" maxOccurs="1"/>
-                <xsd:element ref="attachments" minOccurs="0" maxOccurs="1"/>
-                <xsd:element ref="inline-attachments" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="tns:from" minOccurs="1" maxOccurs="1"/>
+                <xsd:element ref="tns:reply-to" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="tns:to" minOccurs="1" maxOccurs="1"/>
+                <xsd:element ref="tns:cc" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="tns:bcc" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="tns:priority" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="tns:subject" minOccurs="1" maxOccurs="1"/>
+                <xsd:element ref="tns:text-body" minOccurs="1" maxOccurs="1"/>
+                <xsd:element ref="tns:html-body" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="tns:attachments" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="tns:inline-attachments" minOccurs="0" maxOccurs="1"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
 
 
-    <xsd:element name="from" type="addressType">
+    <xsd:element name="from" type="tns:addressType">
         <xsd:annotation>
             <xsd:documentation>
                 Configures the address from which the email is sent.
@@ -36,7 +36,7 @@
         </xsd:annotation>
     </xsd:element>
 
-    <xsd:element name="reply-to" type="addressType">
+    <xsd:element name="reply-to" type="tns:addressType">
         <xsd:annotation>
             <xsd:documentation>
                 Configures the address to which the recipients should reply.
@@ -61,7 +61,7 @@
     </xsd:complexType>
 
 
-    <xsd:element name="to" type="address-list">
+    <xsd:element name="to" type="tns:address-list">
         <xsd:annotation>
             <xsd:documentation>
                 A list of addresses to which the email will be sent.
@@ -69,7 +69,7 @@
         </xsd:annotation>
     </xsd:element>
 
-    <xsd:element name="cc" type="address-list">
+    <xsd:element name="cc" type="tns:address-list">
         <xsd:annotation>
             <xsd:documentation>
                 A list of addresses to which the email will be cc'ed.
@@ -77,7 +77,7 @@
         </xsd:annotation>
     </xsd:element>
 
-    <xsd:element name="bcc" type="address-list">
+    <xsd:element name="bcc" type="tns:address-list">
         <xsd:annotation>
             <xsd:documentation>
                 A list of addresses to which the email will be bcc'ed.
@@ -92,10 +92,12 @@
                 least one address.
             </xsd:documentation>
         </xsd:annotation>
-        <xsd:choice>
-            <xsd:element name="address" type="addressType" minOccurs="1" maxOccurs="unbounded" />
-        </xsd:choice>
+        <xsd:sequence>
+            <xsd:element ref="tns:address" minOccurs="1" maxOccurs="unbounded" />
+        </xsd:sequence>
     </xsd:complexType>
+
+    <xsd:element name="address" type="tns:addressType"/>
 
     <xsd:element name="priority" default="NORMAL">
         <xsd:annotation>
@@ -141,7 +143,7 @@
         </xsd:annotation>
     </xsd:element>
 
-    <xsd:element name="attachments" type="attachment-list">
+    <xsd:element name="attachments" type="tns:attachment-list">
         <xsd:annotation>
             <xsd:documentation>
                 A list of attachments to be attached to the email.
@@ -149,7 +151,7 @@
         </xsd:annotation>
     </xsd:element>
 
-    <xsd:element name="inline-attachments" type="attachment-list">
+    <xsd:element name="inline-attachments" type="tns:attachment-list">
         <xsd:annotation>
             <xsd:documentation>
                 A list of attachments to be embedded in the email (e.g. css and images)
@@ -164,7 +166,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-                <xsd:element ref="attachment" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="tns:attachment" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
 
