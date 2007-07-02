@@ -20,11 +20,12 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mail.MailSender;
 import org.springframework.util.Assert;
 import org.springmodules.email.conf.EmailParser;
-import org.springmodules.email.conf.SaxEmailParser;
 import org.springmodules.template.Template;
 import org.springmodules.template.TemplateResolver;
 import org.springmodules.util.StringResource;
@@ -38,6 +39,8 @@ import org.springmodules.util.StringResource;
  * @author Uri Boness
  */
 public abstract class AbstractEmailDispatcher implements EmailDispatcher, InitializingBean {
+
+    private final static Log logger = LogFactory.getLog(AbstractEmailDispatcher.class);
 
     private final static EmailPreparator EMPTY_PREPARATOR = new EmailPreparator() {
         public void prepare(Email email) {
@@ -91,6 +94,11 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
         StringWriter writer = new StringWriter();
         Template template = templateResolver.resolve(name, getEncoding());
         template.generate(writer, model);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("The generated email descriptor for '" + name + "' is:\n" + writer.toString());
+        }
+
         return emailParser.parse(new StringResource(writer.toString()));
     }
 

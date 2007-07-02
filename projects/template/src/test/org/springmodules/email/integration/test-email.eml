@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<email xmlns="http://www.springmodules.org/schema/template/email-1.0">
+
+    <from name="${from.personal}">${from.address}</from>
+
+    <reply-to name="No Reply">noreply@doe.org</reply-to>
+
+    <to>
+        #foreach ($to in $tos)
+        <address name="${to.personal}">${to.address}</address>
+        #end
+    </to>
+
+    <cc>
+        #foreach ($cc in $ccs)
+        <address name="${cc.personal}">${cc.address}</address>
+        #end
+    </cc>
+
+    <bcc>
+        #foreach ($bcc in $bccs)
+        <address name="${bcc.personal}">${bcc.address}</address>
+        #end
+    </bcc>
+
+    <priority>HIGH</priority>
+
+    <subject>${subject}</subject>
+
+    <text-body>
+        This is an email from ${from.name}
+    </text-body>
+
+    <html-body>
+        <![CDATA[
+            <html>
+                <body>
+                    <div><img src="cid:logo"/></div>
+                    <div>This is an email from ${from.personal}</div>
+                </body>
+            </html>
+        ]]>
+    </html-body>
+
+    <attachments>
+        <attachment name="sample.txt">classpath:/org/springmodules/email/integration/attachment.txt</attachment>
+    </attachments>
+
+    <inline-attachments>
+        <attachment name="logo">/org/springmodules/email/integration/logo_small.jpg</attachment>
+    </inline-attachments>
+
+</email>

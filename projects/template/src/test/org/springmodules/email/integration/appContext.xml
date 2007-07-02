@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:/org/springmodules/email/integration/mail.properties"/>
+    </bean>
+
+    <bean id="velocity" class="org.springmodules.template.engine.velocity.VelocityTemplateEngine"/>
+
+    <bean id="templateResolver" class="org.springmodules.template.resolver.SimpleTemplateResolver">
+        <property name="engine" ref="velocity"/>
+        <property name="prefix" value="classpath:/org/springmodules/email/integration/"/>
+        <property name="suffix" value=".eml"/>
+    </bean>
+
+    <bean id="emailDispatcher" class="org.springmodules.email.JavaMailEmailDispatcher">
+        <property name="emailParser" ref="emailParser"/>
+        <property name="mailSender" ref="mailSender"/>
+        <property name="templateResolver" ref="templateResolver"/>
+    </bean>
+
+    <bean id="emailParser" class="org.springmodules.email.conf.SaxEmailParser"/>
+
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${mail.host}"/>
+        <property name="port" value="${mail.port}"/>
+    </bean>
+
+    <bean id="emailDetails" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="location" value="classpath:/org/springmodules/email/integration/email-details.properties"/>
+    </bean>
+
+</beans>
