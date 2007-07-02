@@ -16,7 +16,7 @@
 
 <!DOCTYPE xsl:stylesheet [
 												 <!ENTITY db_xsl_path				"../lib/docbook-xsl/">
-												 <!ENTITY admon_gfx_path		 "./images/admons/">
+												 <!ENTITY admon_gfx_path		 	"./images/admons/">
 												 ]>
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -451,9 +451,10 @@
     ################################################### -->
 
 	<!-- Use images for callouts instead of (1) (2) (3) -->
+	<xsl:param name="callout.graphics.number.limit">15</xsl:param>
 	<xsl:param name="callout.graphics">0</xsl:param>
 	<xsl:param name="callout.unicode">1</xsl:param>
-
+	
 	<!-- Place callout marks at this column in annotated areas -->
 	<xsl:param name="callout.defaultcolumn">90</xsl:param>
 

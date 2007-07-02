@@ -114,7 +114,13 @@
         <include name="**/*.png" />
       </fileset>
 		</copy>
-
+		
+		<mkdir dir="${docs.ref.target.dir}/html/styles" />
+		<copy todir="${docs.ref.target.dir}/html/styles" failonerror="false">
+			<fileset dir="${docs.global.styles.dir}">
+		        <include name="**/*.css" />
+		    </fileset>
+		</copy>
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.target.dir}/html/">
 			<classpath>
 				<fileset dir="${docs.global.lib.dir}">

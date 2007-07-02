@@ -165,4 +165,11 @@ HR  {
 .legalnotice {
     font-size: 70%;
 }
+
+.programlisting {
+	padding: 15px;
+	margin: 10px;
+	border: 1px solid black;
+	background-color: #F4F4F4;
+}
     

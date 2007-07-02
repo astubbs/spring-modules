@@ -65,6 +65,7 @@
 
 	<!-- Use images for callouts instead of (1) (2) (3) -->
 	<xsl:param name="callout.graphics">1</xsl:param>
+	<xsl:param name="callout.graphics.number.limit">15</xsl:param>
 	<xsl:param name="callout.graphics.path">&callout_gfx_path;</xsl:param>
 
 	<!-- Place callout marks at this column in annotated areas -->

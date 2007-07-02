@@ -32,7 +32,7 @@
 
 	<xsl:param name="chunk.section.depth">'5'</xsl:param>
 	<xsl:param name="use.id.as.filename">'1'</xsl:param>
-	<xsl:param name="html.stylesheet">../styles/html.css</xsl:param>
+	<xsl:param name="html.stylesheet">styles/html.css</xsl:param>
 
 	<!-- These extensions are required for table printing and other stuff -->
 	<xsl:param name="use.extensions">1</xsl:param>
@@ -67,6 +67,7 @@
 
 	<!-- Use images for callouts instead of (1) (2) (3) -->
 	<xsl:param name="callout.graphics">1</xsl:param>
+	<xsl:param name="callout.graphics.number.limit">15</xsl:param>
 	<xsl:param name="callout.graphics.path">&callout_gfx_path;</xsl:param>
 
 	<!-- Place callout marks at this column in annotated areas -->

@@ -16,6 +16,7 @@
 	<!ENTITY javaspaces			SYSTEM "../../../projects/javaspaces/docs/reference/src/javaspaces.xml">
 	<!ENTITY gigaspaces			SYSTEM "../../../projects/javaspaces/docs/reference/src/gigaspaces.xml">
 	<!ENTITY validation			SYSTEM "../../../projects/validation/docs/reference/src/validation.xml">
+	<!ENTITY commons			SYSTEM "../../../projects/commons/docs/reference/src/validator.xml">
 	<!ENTITY jbpm				SYSTEM "../../../projects/jbpm31/docs/reference/src/jbpm31.xml">
     <!ENTITY xt-about   		SYSTEM "../../../projects/xt/docs/reference/src/about.xml">
     <!ENTITY xt-modeling   		SYSTEM "../../../projects/xt/docs/reference/src/modeling.xml">
@@ -23,9 +24,9 @@
     <!ENTITY springmvc-extra  	SYSTEM "../../../projects/springmvc-extra/docs/reference/src/springmvc-extra.xml">
     <!ENTITY orbroker    		SYSTEM "../../../projects/orbroker/docs/reference/src/orbroker.xml">
     <!ENTITY ojb    			SYSTEM "../../../projects/ojb/docs/reference/src/ojb.xml">
-	<!ENTITY commons  			SYSTEM "../../../projects/commons/docs/reference/src/commons.xml">    
-	<!ENTITY ant  			SYSTEM "../../../projects/ant/docs/reference/src/ant.xml">    	
-	<!ENTITY db4o  			SYSTEM "../../../projects/db4o/docs/reference/src/db4o.xml">	
+	<!ENTITY ant  				SYSTEM "../../../projects/ant/docs/reference/src/ant.xml">    	
+	<!ENTITY db4o  				SYSTEM "../../../projects/db4o/docs/reference/src/db4o.xml">	
+	<!ENTITY template  			SYSTEM "../../../projects/template/docs/reference/src/template.xml">	
 	]>
 
 
@@ -67,6 +68,8 @@
 	&springmvc-extra;
 
 	&validation;
+	
+	&template;
 
   <chapter id="xt">
 

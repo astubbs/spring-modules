@@ -24,7 +24,9 @@
 		  under jboss folder which means forces the user to use the name of the module
 		  jboss when in fact it is jboss-cache. With maven2 namings this problem does
 		  not occur -->
+	  <ibiblio name="repo1-maven2" m2compatible="true" root="http://repo1.maven.org/maven2/"/>					
 	  <ibiblio name="ibiblio-maven2" m2compatible="true" root="http://www.ibiblio.org/maven2"/>					
+	  
 	  <ibiblio name="org-ibiblio" m2compatible="false" root="http://www.ibiblio.org/maven2/org/" pattern="[module]/[artifact]/[revision]/[artifact]-[revision].[ext]" />				
 		
 	  <!-- custom per-project resolvers -->
