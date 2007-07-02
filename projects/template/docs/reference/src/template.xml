@@ -6,6 +6,14 @@
 
         <title>Templates &amp; Template Engines</title>
 
+        <important>
+            <para>
+                The template module was completely rewritten for 0.9 release. The old version of this module was actually
+                experimental and should have never been released. As a consequence, that version will not be mantained or
+                supported in any way from 0.9 on.
+            </para>
+        </important>
+
         <para>
             The Templates module provides an abstraction over common template engines. This abstraction mainly targets
             frameworks and products developers who don't wish to tie their implementation to a specific template engine.
@@ -92,7 +100,7 @@
 
                 <para>
                     The <emphasis>org.springmodules.template.engine.velocity.VelocityTemplate</emphasis> class is the
-                    Apache Velocity implementation of the <emphasis>TemplateEngine</emphasis> interface. Under the hood
+                    <ulink url="http://velocity.apache.org/">Apache Velocity</ulink> implementation of the <emphasis>TemplateEngine</emphasis> interface. Under the hood
                     it uses the VelocityEngine that can be configured by setting the appropriate Velocity settings using
                     the <emphasis>setConfiguration(Properties)</emphasis> method. Here is an example how the engine
                     can be configured in Spring application context:
@@ -140,7 +148,7 @@
                 <title>Freemarker</title>
 
                 <para>
-                    Freemarker is a mature and feature rich template engine that is well designed and performs well. The
+                    <ulink url="http://freemarker.sourceforge.net/">Freemarker</ulink> is a mature and feature rich template engine that is well designed and performs well. The
                     <emphasis>org.springmodules.template.engine.freemarker.FreemarkerTemplateEngine</emphasis> class is
                     capable of reading FreeMarker template sources and generate the appropriate FreeMarker templates. The
                     following is an example of application context configuration:
@@ -187,7 +195,7 @@
                 <title>Groovy Template</title>
 
                 <para>
-                    Groovy Template is a library that ships with groovy which enables writing templates in the groovy
+                    <ulink url="http://groovy.codehaus.org/Groovy+Templates">Groovy Template</ulink> is a library that ships with groovy which enables writing templates in the groovy
                     language (GString's for those familiar with groovy). While current implementation performance
                     is somewhat lagging behind Velocity and Freemarker, groovy as a template language brings quite
                     a lot of power to the hands of template authors. The
