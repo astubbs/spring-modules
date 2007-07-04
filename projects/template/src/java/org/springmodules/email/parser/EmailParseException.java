@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package org.springmodules.email.conf;
+package org.springmodules.email.parser;
 
 /**
- * Thrown by {@link EmailParser#parse(org.springframework.core.io.Resource)} when the parsing process fails.
+ * Thrown by {@link org.springmodules.email.EmailParser#parse(org.springframework.core.io.Resource)} when the parsing process fails.
  *
  * @author Uri Boness
  */
-public class EmailConfigurationException extends RuntimeException {
+public class EmailParseException extends RuntimeException {
 
     /**
-     * Constructs a new EmailConfigurationException with a given error message.
+     * Constructs a new EmailParseException with a given error message.
      *
      * @param message The error message.
      */
-    public EmailConfigurationException(String message) {
+    public EmailParseException(String message) {
         super(message);
     }
 
     /**
-     * Constructs a new EmailConfigurationException with given error message and the original cause exception.
+     * Constructs a new EmailParseException with given error message and the original cause exception.
      *
      * @param message The error message.
      * @param cause The cause for this exception.
      */
-    public EmailConfigurationException(String message, Throwable cause) {
+    public EmailParseException(String message, Throwable cause) {
         super(message, cause);
     }
 

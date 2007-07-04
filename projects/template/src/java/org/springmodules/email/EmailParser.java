@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package org.springmodules.email.conf;
+package org.springmodules.email;
 
-import java.io.Reader;
-
-import org.springmodules.email.Email;
 import org.springframework.core.io.Resource;
 
 /**
@@ -34,8 +31,7 @@ public interface EmailParser {
      *
      * @param resource The given resource that reprsents an email.
      * @return The email represented by the given resource.
-     * @throws EmailConfigurationException when parsing fails.
      */
-    Email parse(Resource resource) throws EmailConfigurationException;
+    Email parse(Resource resource);
 
 }

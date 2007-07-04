@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.email;
+package org.springmodules.email.dispatcher;
 
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -25,7 +25,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mail.MailSender;
 import org.springframework.util.Assert;
-import org.springmodules.email.conf.EmailParser;
+import org.springmodules.email.EmailParser;
+import org.springmodules.email.EmailDispatcher;
+import org.springmodules.email.EmailPreparator;
+import org.springmodules.email.Email;
 import org.springmodules.template.Template;
 import org.springmodules.template.TemplateResolver;
 import org.springmodules.util.StringResource;
@@ -33,7 +36,7 @@ import org.springmodules.util.StringResource;
 /**
  * A template based based class for email dispatchers. A {@link org.springmodules.template.TemplateResolver} is used
  * to resolve the appropriate template based on the email name. Then the template is executed with the email model,
- * and the output of that execution is parsed using a {@link EmailParser} into an {@link Email} object which is sent
+ * and the output of that execution is parsed using a {@link EmailParser} into an {@link org.springmodules.email.Email} object which is sent
  * using the configured {@link org.springframework.mail.MailSender}.
  *
  * @author Uri Boness

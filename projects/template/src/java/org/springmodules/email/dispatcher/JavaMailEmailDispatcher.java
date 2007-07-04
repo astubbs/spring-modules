@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.email;
+package org.springmodules.email.dispatcher;
 
 import java.util.Iterator;
 
@@ -22,9 +22,11 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springmodules.email.Email;
+import org.springmodules.email.Attachment;
 
 /**
- * A JavaMail implementation of {@link org.springmodules.email.AbstractEmailDispatcher} where a {@link JavaMailSender} is
+ * A JavaMail implementation of {@link AbstractEmailDispatcher} where a {@link JavaMailSender} is
  * assumed to be used and a {@link MimeMessage} is constructed based on the resolved email.
  *
  * @author Uri Boness

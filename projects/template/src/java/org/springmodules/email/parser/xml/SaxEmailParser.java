@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.email.conf;
+package org.springmodules.email.parser.xml;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,16 +30,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.util.StringUtils;
-import org.springmodules.email.Attachment;
-import org.springmodules.email.Email;
-import org.springmodules.email.EmailUtils;
-import org.springmodules.email.EmailPriority;
+import org.springmodules.email.*;
+import org.springmodules.email.parser.EmailParseException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * A SAX based implementation of {@link EmailParser} where the parsed XML defines an email.
+ * A SAX based implementation of {@link org.springmodules.email.EmailParser} where the parsed XML defines an email.
  *
  * @author Uri Boness
  */
@@ -77,11 +75,11 @@ public class SaxEmailParser implements EmailParser, ResourceLoaderAware {
         try {
             SAXParserFactory.newInstance().newSAXParser().parse(resource.getInputStream(), handler);
         } catch (ParserConfigurationException pce) {
-            throw new EmailConfigurationException("Could not parse email resource '" + resource.getDescription() + "'", pce);
+            throw new EmailParseException("Could not parse email resource '" + resource.getDescription() + "'", pce);
         } catch (SAXException se) {
-            throw new EmailConfigurationException("Could not parse email resource '" + resource.getDescription() + "'", se);
+            throw new EmailParseException("Could not parse email resource '" + resource.getDescription() + "'", se);
         } catch (IOException ioe) {
-            throw new EmailConfigurationException("Could not parse email resource '" + resource.getDescription() + "'", ioe);
+            throw new EmailParseException("Could not parse email resource '" + resource.getDescription() + "'", ioe);
         }
         return handler.getEmail();
     }

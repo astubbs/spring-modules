@@ -623,13 +623,14 @@
                 an application context:
             </para>
 
-            <programlisting>&lt;bean id="emailDispatcher" class="org.springmodules.email.JavaMailEmailDispatcher"&gt;
+            <programlisting>&lt;bean id="emailDispatcher"
+                class="org.springmodules.email.dispatcher.JavaMailEmailDispatcher"&gt;
     &lt;property name="emailParser" ref="emailParser"/&gt;
     &lt;property name="mailSender" ref="mailSender"/&gt;
     &lt;property name="templateResolver" ref="templateResolver"/&gt;
 &lt;/bean&gt;
 
-&lt;bean id="emailParser" class="org.springmodules.email.conf.SaxEmailParser"/&gt;
+&lt;bean id="emailParser" class="org.springmodules.email.parser.xml.SaxEmailParser"/&gt;
 
 &lt;bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"&gt;
     &lt;property name="host" value="${mail.host}"/&gt;

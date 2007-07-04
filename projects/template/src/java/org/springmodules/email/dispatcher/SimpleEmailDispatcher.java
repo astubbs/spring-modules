@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.springmodules.email;
+package org.springmodules.email.dispatcher;
 
 import java.util.Date;
 
 import javax.mail.internet.InternetAddress;
 import org.springframework.mail.SimpleMailMessage;
+import org.springmodules.email.Email;
 
 /**
- * A simple implementation of {@link org.springmodules.email.AbstractEmailDispatcher} where the type of the mail
+ * A simple implementation of {@link AbstractEmailDispatcher} where the type of the mail
  * sender does not matter and the email is translated to spring's {@link SimpleMailMessage}.
  * <p/>
  * <b>NOTE:</b> Using this dispatcher all attachments and address personal names will be ignored. Moreover, this

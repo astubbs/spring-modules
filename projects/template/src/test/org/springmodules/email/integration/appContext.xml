@@ -15,13 +15,13 @@
         <property name="suffix" value=".eml"/>
     </bean>
 
-    <bean id="emailDispatcher" class="org.springmodules.email.JavaMailEmailDispatcher">
+    <bean id="emailDispatcher" class="org.springmodules.email.dispatcher.JavaMailEmailDispatcher">
         <property name="emailParser" ref="emailParser"/>
         <property name="mailSender" ref="mailSender"/>
         <property name="templateResolver" ref="templateResolver"/>
     </bean>
 
-    <bean id="emailParser" class="org.springmodules.email.conf.SaxEmailParser"/>
+    <bean id="emailParser" class="org.springmodules.email.parser.xml.SaxEmailParser"/>
 
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="${mail.host}"/>

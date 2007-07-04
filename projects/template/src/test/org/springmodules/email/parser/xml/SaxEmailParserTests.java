@@ -1,4 +1,4 @@
-package org.springmodules.email.conf;
+package org.springmodules.email.parser.xml;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -9,6 +9,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springmodules.email.Attachment;
 import org.springmodules.email.Email;
+import org.springmodules.email.parser.xml.SaxEmailParser;
 
 /**
  * @author Uri Boness
@@ -20,7 +21,7 @@ public class SaxEmailParserTests extends TestCase {
 
     protected void setUp() throws Exception {
         parser = new SaxEmailParser();
-        resource = new ClassPathResource("/org/springmodules/email/conf/test.xml");
+        resource = new ClassPathResource("/org/springmodules/email/parser/test.xml");
     }
 
     public void testParse() throws Exception {

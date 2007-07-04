@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springmodules.email;
+package org.springmodules.email.dispatcher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +31,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springmodules.email.conf.SaxEmailParser;
+import org.springmodules.email.parser.xml.SaxEmailParser;
+import org.springmodules.email.Person;
+import org.springmodules.email.Email;
+import org.springmodules.email.EmailPriority;
 import org.springmodules.template.engine.velocity.VelocityTemplateEngine;
 import org.springmodules.template.resolver.BasicTemplateResolver;
 
