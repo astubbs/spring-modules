@@ -290,15 +290,14 @@ public abstract class AbstractCacheProviderFacade implements
 			return obj;
 		}
 		if (obj instanceof Serializable) {
+			if (serializableFactory != null) {
+				return serializableFactory.getOriginalValue(obj);
+			}
 			return obj;
-		}
-		if (serializableFactory != null) {
-			return serializableFactory.getOriginalValue(obj);
 		}
 		throw new InvalidObjectInCacheException(
 				"The object retrieved from the cache is not of the required " +
-						"type: java.io.Serializable and no serializableFactory " +
-						"was configured.");
+						"type: java.io.Serializable.");
 	}
 
 	/**
