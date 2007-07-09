@@ -16,10 +16,12 @@ Package org.springmodules.cache
 * upgraded OpenSymphony cache library to 2.4
 * upgraded Spring library to 2.0.6
 * upgraded XStream library to 1.2.2
-* added proper synchronization to MetadataCacheAttributeSource cached AttributeSource map. MOD-371 (thanks to Mathieu Poumeyrol)
+* added proper synchronization to MetadataCacheAttributeSource cached AttributeSource map: MOD-371 (thanks to Mathieu Poumeyrol)
 * added support for Tangosol Coherence (again), thanks to Andy Nguyen for providing Tangosol mock jar: MOD-188
 * AbstractCachingInterceptor no longer logs exceptions thrown by advised methods as errors, log a debug message instead: MOD-289
 * AbstractCacheProviderFacade correctly handles caching of non serializble entities now: MOD-374
+* enhanced ReflectionCacheModelEditor to support multiple caches: MOD-366
+* EhCacheFacade uses ehcache-constructs to decorate caches: MOD-43
 
 Package org.springmodules.validation
 * Added validation context support documentation
