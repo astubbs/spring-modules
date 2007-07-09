@@ -17,163 +17,161 @@ package org.springmodules.cache.provider.gigaspaces;
 
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-
 import org.springmodules.cache.CachingModel;
 import org.springmodules.util.Objects;
 
 /**
- * <p>
+ * <p/>
  * Configuration options needed to store, retrieve and remove objects from
  * GigaSpaces.
  *
+ * @author Omar Irbouh
  * @author Lior Ben Yizhak
  */
 public class GigaSpacesCachingModel implements CachingModel {
 
-  private static final long serialVersionUID = 3762529035888112945L;
+	private static final long serialVersionUID = 3762529035888112945L;
 
-  private String cacheName;
-  private Long timeToLive;
-  private Long waitForResponse;
-
-
-  /**
-   * Constructor.
-   */
-  public GigaSpacesCachingModel() {
-    super();
-  }
-
-  /**
-   * Constructor.
-   *
-   * @param cacheName
-   *          the name of the GigaSpaces cache to use
-   */
-  public GigaSpacesCachingModel(String cacheName) {
-    this();
-    setCacheName(cacheName);
-  }
-
-  /**
-   * @see Object#equals(Object)
-   */
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof GigaSpacesCachingModel)) {
-      return false;
-    }
-
-    GigaSpacesCachingModel cachingModel = (GigaSpacesCachingModel) obj;
-
-    if (!ObjectUtils.nullSafeEquals(cacheName, cachingModel.cacheName)) {
-      return false;
-    }
-    if (!ObjectUtils.nullSafeEquals(timeToLive, cachingModel.timeToLive)) {
-        return false;
-    }
-    if (!ObjectUtils.nullSafeEquals(waitForResponse, cachingModel.waitForResponse)) {
-        return false;
-    }
-
-    return true;
-  }
-
-  /**
-   * @return how long (in milliseconds) a given entry should stay in the cache
-   */
-  public final Long getTimeToLive() {
-    return timeToLive;
-  }
-
-  /**
-   * @return how long (in milliseconds) a take entry should be.
-   */
-  public final Long getWaitForResponse() {
-    return waitForResponse;
-  }
-  /**
-   * @return the name of the GigaSpaces cache to use
-   */
-  public final String getCacheName() {
-    return cacheName;
-  }
-
-  /**
-   * @see Object#hashCode()
-   */
-  public int hashCode() {
-	  int multiplier = 31;
-	  int hash = 7;
-	  hash = multiplier * hash + (Objects.nullSafeHashCode(cacheName));
-	  hash = multiplier * hash + (Objects.nullSafeHashCode(timeToLive));
-	  hash = multiplier * hash + (Objects.nullSafeHashCode(waitForResponse));
-	  return hash;
-  }
+	private String cacheName;
+	private Long timeToLive;
+	private Long waitForResponse;
 
 
-  /**
-   * Sets the name of the GigaSpaces cache to use.
-   *
-   * @param newCacheName
-   *          the new name of the GigaSpaces cache
-   */
-  public final void setCacheName(String newCacheName) {
-    cacheName = newCacheName;
-  }
+	/**
+	 * Constructor.
+	 */
+	public GigaSpacesCachingModel() {
+		super();
+	}
 
-  /**
-   * Sets the time in milliseconds an entry should stay in the cache
-   *
-   * @param newTimeToLive
-   *          the new time to set
-   */
-  public void setTimeToLive(long newTimeToLive) {
-    setTimeToLive(new Long(newTimeToLive));
-  }
+	/**
+	 * Constructor.
+	 *
+	 * @param cacheName the name of the GigaSpaces cache to use
+	 */
+	public GigaSpacesCachingModel(String cacheName) {
+		this();
+		setCacheName(cacheName);
+	}
 
-  /**
-   * Sets the time in milliseconds an entry should stay in the cache
-   *
-   * @param newTimeToLive
-   *          the new time to set
-   */
-  public final void setTimeToLive(Long newTimeToLive) {
-    timeToLive = newTimeToLive;
-  }
+	/**
+	 * @see Object#equals(Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof GigaSpacesCachingModel)) {
+			return false;
+		}
 
-  /**
-   * Sets the time in milliseconds an entry should be taken
-   *
-   * @param newWaitForResponse
-   *          the new time to set
-   */
-  public void setWaitForResponse(long newWaitForResponse) {
-    setWaitForResponse(new Long(newWaitForResponse));
-  }
+		GigaSpacesCachingModel cachingModel = (GigaSpacesCachingModel) obj;
 
-  /**
-   * Sets the time in milliseconds an entry should stay in the cache
-   *
-   * @param newTimeToLive
-   *          the new time to set
-   */
-  public final void setWaitForResponse(Long newWaitForResponse) {
-	  waitForResponse = newWaitForResponse;
-  }
+		if (!ObjectUtils.nullSafeEquals(cacheName, cachingModel.cacheName)) {
+			return false;
+		}
+		if (!ObjectUtils.nullSafeEquals(timeToLive, cachingModel.timeToLive)) {
+			return false;
+		}
+		if (!ObjectUtils.nullSafeEquals(waitForResponse, cachingModel.waitForResponse)) {
+			return false;
+		}
 
-  /**
-   * @see Object#toString()
-   */
-  public String toString() {
-    StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[cacheName=" + StringUtils.quote(cacheName) + ", ");
-    buffer.append("waitForResponse=" + waitForResponse + ", ");
-    buffer.append("timeToLive=" + timeToLive + "]");
-    return buffer.toString();
-  }
+		return true;
+	}
 
+	/**
+	 * @return how long (in milliseconds) a given entry should stay in the cache
+	 */
+	public final Long getTimeToLive() {
+		return timeToLive;
+	}
+
+	/**
+	 * @return how long (in milliseconds) a take entry should be.
+	 */
+	public final Long getWaitForResponse() {
+		return waitForResponse;
+	}
+
+	/**
+	 * @return the name of the GigaSpaces cache to use
+	 */
+	public final String getCacheName() {
+		return cacheName;
+	}
+
+	/**
+	 * @see Object#hashCode()
+	 */
+	public int hashCode() {
+		int multiplier = 31;
+		int hash = 7;
+		hash = multiplier * hash + (Objects.nullSafeHashCode(cacheName));
+		hash = multiplier * hash + (Objects.nullSafeHashCode(timeToLive));
+		hash = multiplier * hash + (Objects.nullSafeHashCode(waitForResponse));
+		return hash;
+	}
+
+
+	/**
+	 * Sets the name of the GigaSpaces cache to use.
+	 *
+	 * @param newCacheName the new name of the GigaSpaces cache
+	 */
+	public final void setCacheName(String newCacheName) {
+		cacheName = newCacheName;
+	}
+
+	/**
+	 * Sets the time in milliseconds an entry should stay in the cache
+	 *
+	 * @param newTimeToLive the new time to set
+	 */
+	public void setTimeToLive(long newTimeToLive) {
+		setTimeToLive(new Long(newTimeToLive));
+	}
+
+	/**
+	 * Sets the time in milliseconds an entry should stay in the cache
+	 *
+	 * @param newTimeToLive the new time to set
+	 */
+	public final void setTimeToLive(Long newTimeToLive) {
+		timeToLive = newTimeToLive;
+	}
+
+	/**
+	 * Sets the time in milliseconds an entry should be taken
+	 *
+	 * @param newWaitForResponse the new time to set
+	 */
+	public void setWaitForResponse(long newWaitForResponse) {
+		setWaitForResponse(new Long(newWaitForResponse));
+	}
+
+	/**
+	 * Sets the time in milliseconds an entry should stay in the cache
+	 *
+	 * @param newWaitForResponse the new time to set
+	 */
+	public final void setWaitForResponse(Long newWaitForResponse) {
+		waitForResponse = newWaitForResponse;
+	}
+
+	/**
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		return Objects.identityToString(this)
+				.append("[cacheName=")
+				.append(StringUtils.quote(cacheName))
+				.append(", waitForResponse=")
+				.append(waitForResponse)
+				.append(", timeToLive=")
+				.append(timeToLive)
+				.append("]")
+				.toString();
+	}
 
 }

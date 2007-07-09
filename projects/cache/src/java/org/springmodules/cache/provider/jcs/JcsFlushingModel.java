@@ -1,296 +1,282 @@
-/* 
+/*
  * Created on Sep 29, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2005 the original author or authors.
+ * Copyright @2007 the original author or authors.
  */
 package org.springmodules.cache.provider.jcs;
+
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import org.springmodules.cache.provider.AbstractFlushingModel;
+import org.springmodules.util.Objects;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
-
-import org.springmodules.cache.provider.AbstractFlushingModel;
-import org.springmodules.util.Objects;
-
 /**
- * <p>
  * Configuration options needed to flush one or more cache and/or groups from
  * JCS.
- * </p>
- * 
+ *
+ * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public final class JcsFlushingModel extends AbstractFlushingModel {
 
-  /**
-   * Specifies which cache (and optionally which groups) should be flushed.
-   */
-  public static class CacheStruct implements Serializable {
+	private static final long serialVersionUID = -1497138716500203888L;
 
-    private static final long serialVersionUID = -2168328935167938683L;
+	/**
+	 * Struct containing the names of the caches and/or groups to flush.
+	 */
+	private CacheStruct[] cacheStructs;
 
-    private String cacheName;
+	/**
+	 * Constructor.
+	 */
+	public JcsFlushingModel() {
+	}
 
-    private String[] groups;
+	/**
+	 * Constructor.
+	 *
+	 * @param cacheStruct a single cache structure that specifies what should be flushed
+	 */
+	public JcsFlushingModel(CacheStruct cacheStruct) {
+		setCacheStruct(cacheStruct);
+	}
 
-    /**
-     * Constructor.
-     */
-    public CacheStruct() {
-      super();
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @param cacheName the name of the cache that should be flushed
+	 */
+	public JcsFlushingModel(String cacheName) {
+		this(new CacheStruct(cacheName));
+	}
 
-    /**
-     * Constructor.
-     * 
-     * @param cacheName
-     *          the name of the cache to flush.
-     */
-    public CacheStruct(String cacheName) {
-      this();
-      setCacheName(cacheName);
-    }
+	/**
+	 * Sets a single structure specifying which cache (and optionally groups)
+	 * should be flushed
+	 *
+	 * @param cacheStruct the new cache structure
+	 */
+	public void setCacheStruct(CacheStruct cacheStruct) {
+		setCacheStructs(new CacheStruct[]{cacheStruct});
+	}
 
-    /**
-     * Constructor.
-     * 
-     * @param cacheName
-     *          the name of the cache to use.
-     * @param csvGroups
-     *          a comma-delimited list containing the groups to flush. Such
-     *          groups belong to the specified cache.
-     */
-    public CacheStruct(String cacheName, String csvGroups) {
-      this(cacheName);
-      setGroups(csvGroups);
-    }
+	/**
+	 * Sets the cache structures that specify which caches (and optionally groups)
+	 * should to be flushed.
+	 *
+	 * @param newCacheStructs the new cache structs
+	 */
+	public void setCacheStructs(CacheStruct[] newCacheStructs) {
+		cacheStructs = newCacheStructs;
+	}
 
-    /**
-     * Constructor.
-     * 
-     * @param cacheName
-     *          the name of the cache to use.
-     * @param groups
-     *          the groups to flush. Such groups belong to the specified cache.
-     */
-    public CacheStruct(String cacheName, String[] groups) {
-      this(cacheName);
-      setGroups(groups);
-    }
+	/**
+	 * @return the cache structures that specify which caches (and optionally
+	 *         groups) should to be flushed.
+	 */
+	public CacheStruct[] getCacheStructs() {
+		return cacheStructs;
+	}
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public boolean equals(Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (!(obj instanceof CacheStruct)) {
-        return false;
-      }
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof JcsFlushingModel)) {
+			return false;
+		}
+		JcsFlushingModel flushingModel = (JcsFlushingModel) obj;
+		if (!Arrays.equals(cacheStructs, flushingModel.cacheStructs)) {
+			return false;
+		}
+		return true;
+	}
 
-      CacheStruct cacheStruct = (CacheStruct) obj;
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		int multiplier = 31;
+		int hash = 7;
+		hash = multiplier * hash + Objects.nullSafeHashCode(cacheStructs);
+		return hash;
+	}
 
-      if (!ObjectUtils.nullSafeEquals(cacheName, cacheStruct.cacheName)) {
-        return false;
-      }
-      if (!Arrays.equals(groups, cacheStruct.groups)) {
-        return false;
-      }
-      return true;
-    }
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return Objects.identityToString(this)
+				.append("[cacheStructs=")
+				.append(Objects.nullSafeToString(cacheStructs))
+				.append(", flushBeforeMethodExecution=")
+				.append(flushBeforeMethodExecution())
+				.append("]")
+				.toString();
+	}
 
-    /**
-     * @return the name of the cache to flush. If no groups are specified, the
-     *         whole cache is flushed.
-     */
-    public String getCacheName() {
-      return cacheName;
-    }
+	/**
+	 * Specifies which cache (and optionally which groups) should be flushed.
+	 */
+	public static class CacheStruct implements Serializable {
 
-    /**
-     * @return the groups to flush. If no groups are specified, the whole cache
-     *         is flushed.
-     */
-    public String[] getGroups() {
-      return groups;
-    }
+		private static final long serialVersionUID = -2168328935167938683L;
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
-    public int hashCode() {
-      int multiplier = 31;
-      int hash = 7;
-      hash = multiplier * hash + Objects.nullSafeHashCode(cacheName);
-      hash = multiplier * hash + Objects.nullSafeHashCode(groups);
-      return hash;
-    }
+		private String cacheName;
 
-    /**
-     * Sets the name of the cache to flush. If no groups are specified, the
-     * whole cache is flushed.
-     * 
-     * @param newCacheName
-     *          the new name
-     */
-    public void setCacheName(String newCacheName) {
-      cacheName = newCacheName;
-    }
+		private String[] groups;
 
-    /**
-     * Sets the groups to flush in a comma-delimited list. If no groups are
-     * specified, the whole cache is flushed.
-     * 
-     * @param csvGroups
-     *          the new groups to flush
-     */
-    public void setGroups(String csvGroups) {
-      String[] newGroups = null;
-      if (StringUtils.hasText(csvGroups)) {
-        newGroups = StringUtils.commaDelimitedListToStringArray(csvGroups);
-      }
-      setGroups(newGroups);
-    }
+		/**
+		 * Constructor.
+		 */
+		public CacheStruct() {
+		}
 
-    /**
-     * Sets the groups to flush. If no groups are specified, the whole cache is
-     * flushed.
-     * 
-     * @param newGroups
-     *          the new groups to flush
-     */
-    public void setGroups(String[] newGroups) {
-      groups = newGroups;
-    }
+		/**
+		 * Constructor.
+		 *
+		 * @param cacheName the name of the cache to flush.
+		 */
+		public CacheStruct(String cacheName) {
+			setCacheName(cacheName);
+		}
 
-    /**
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-      StringBuffer buffer = Objects.identityToString(this);
-      buffer.append("[cacheName=" + StringUtils.quote(cacheName) + ", ");
-      buffer.append("groups=" + Objects.nullSafeToString(groups) + "]");
-      return buffer.toString();
-    }
-  }
+		/**
+		 * Constructor.
+		 *
+		 * @param cacheName the name of the cache to use.
+		 * @param csvGroups a comma-delimited list containing the groups to flush. Such
+		 *                  groups belong to the specified cache.
+		 */
+		public CacheStruct(String cacheName, String csvGroups) {
+			this(cacheName);
+			setGroups(csvGroups);
+		}
 
-  private static final long serialVersionUID = -1497138716500203888L;
+		/**
+		 * Constructor.
+		 *
+		 * @param cacheName the name of the cache to use.
+		 * @param groups	the groups to flush. Such groups belong to the specified cache.
+		 */
+		public CacheStruct(String cacheName, String[] groups) {
+			this(cacheName);
+			setGroups(groups);
+		}
 
-  /**
-   * Struct containing the names of the caches and/or groups to flush.
-   */
-  private CacheStruct[] cacheStructs;
+		/**
+		 * Sets the name of the cache to flush. If no groups are specified, the
+		 * whole cache is flushed.
+		 *
+		 * @param newCacheName the new name
+		 */
+		public void setCacheName(String newCacheName) {
+			cacheName = newCacheName;
+		}
 
-  /**
-   * Constructor.
-   */
-  public JcsFlushingModel() {
-    super();
-  }
+		/**
+		 * @return the name of the cache to flush. If no groups are specified, the
+		 *         whole cache is flushed.
+		 */
+		public String getCacheName() {
+			return cacheName;
+		}
 
-  /**
-   * Constructor.
-   * 
-   * @param cacheStruct
-   *          a single cache structure that specifies what should be flushed
-   */
-  public JcsFlushingModel(CacheStruct cacheStruct) {
-    this();
-    setCacheStruct(cacheStruct);
-  }
+		/**
+		 * Sets the groups to flush in a comma-delimited list. If no groups are
+		 * specified, the whole cache is flushed.
+		 *
+		 * @param csvGroups the new groups to flush
+		 */
+		public void setGroups(String csvGroups) {
+			String[] newGroups = null;
+			if (StringUtils.hasText(csvGroups)) {
+				newGroups = StringUtils.commaDelimitedListToStringArray(csvGroups);
+			}
+			setGroups(newGroups);
+		}
 
-  /**
-   * Constructor.
-   * 
-   * @param cacheName
-   *          the name of the cache that should be flushed
-   */
-  public JcsFlushingModel(String cacheName) {
-    this(new CacheStruct(cacheName));
-  }
+		/**
+		 * Sets the groups to flush. If no groups are specified, the whole cache is
+		 * flushed.
+		 *
+		 * @param newGroups the new groups to flush
+		 */
+		public void setGroups(String[] newGroups) {
+			groups = newGroups;
+		}
 
-  /**
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof JcsFlushingModel)) {
-      return false;
-    }
-    JcsFlushingModel flushingModel = (JcsFlushingModel) obj;
-    if (!Arrays.equals(cacheStructs, flushingModel.cacheStructs)) {
-      return false;
-    }
-    return true;
-  }
+		/**
+		 * @return the groups to flush. If no groups are specified, the whole cache
+		 *         is flushed.
+		 */
+		public String[] getGroups() {
+			return groups;
+		}
 
-  /**
-   * @return the cache structures that specify which caches (and optionally
-   *         groups) should to be flushed.
-   */
-  public CacheStruct[] getCacheStructs() {
-    return cacheStructs;
-  }
+		/**
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof CacheStruct)) {
+				return false;
+			}
 
-  /**
-   * @see java.lang.Object#hashCode()
-   */
-  public int hashCode() {
-    int multiplier = 31;
-    int hash = 7;
-    hash = multiplier * hash + Objects.nullSafeHashCode(cacheStructs);
-    return hash;
-  }
+			CacheStruct cacheStruct = (CacheStruct) obj;
 
-  /**
-   * Sets a single structure specifying which cache (and optionally groups)
-   * should be flushed
-   * 
-   * @param cacheStruct
-   *          the new cache structure
-   */
-  public void setCacheStruct(CacheStruct cacheStruct) {
-    setCacheStructs(new CacheStruct[] { cacheStruct });
-  }
+			if (!ObjectUtils.nullSafeEquals(cacheName, cacheStruct.cacheName)) {
+				return false;
+			}
+			if (!Arrays.equals(groups, cacheStruct.groups)) {
+				return false;
+			}
+			return true;
+		}
 
-  /**
-   * Sets the cache structures that specify which caches (and optionally groups)
-   * should to be flushed.
-   * 
-   * @param newCacheStructs
-   *          the new cache structs
-   */
-  public void setCacheStructs(CacheStruct[] newCacheStructs) {
-    cacheStructs = newCacheStructs;
-  }
+		/**
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			int multiplier = 31;
+			int hash = 7;
+			hash = multiplier * hash + Objects.nullSafeHashCode(cacheName);
+			hash = multiplier * hash + Objects.nullSafeHashCode(groups);
+			return hash;
+		}
 
-  /**
-   * @see java.lang.Object#toString()
-   */
-  public String toString() {
-    StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[cacheStructs=" + Objects.nullSafeToString(cacheStructs)
-        + ", ");
-    buffer.append("flushBeforeMethodExecution="
-        + flushBeforeMethodExecution() + "]");
-    return buffer.toString();
-  }
+		/**
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			return Objects.identityToString(this)
+					.append("[cacheName=")
+					.append(StringUtils.quote(cacheName))
+					.append(", groups=")
+					.append(Objects.nullSafeToString(groups))
+					.append("]")
+					.toString();
+		}
+	}
 
 }
