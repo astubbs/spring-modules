@@ -26,6 +26,7 @@ import com.opensymphony.oscache.extra.CacheEntryEventListenerImpl;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 import junit.framework.TestCase;
 import org.easymock.classextension.MockClassControl;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.ReflectionCacheModelEditor;
@@ -96,6 +97,19 @@ public class OsCacheFacadeTests extends TestCase {
 		assertNotNull(validator);
 
 		assertEquals(OsCacheModelValidator.class, validator.getClass());
+	}
+
+	public void testGetFlushingModelEditor() {
+		PropertyEditor editor = osCacheFacade.getFlushingModelEditor();
+		
+		assertNotNull(editor);
+		assertEquals(ReflectionCacheModelEditor.class, editor.getClass());
+
+		ReflectionCacheModelEditor modelEditor = (ReflectionCacheModelEditor) editor;
+		assertEquals(OsCacheFlushingModel.class, modelEditor.getCacheModelClass());
+		Map propertyEditors = modelEditor.getCacheModelPropertyEditors();
+		assertEquals(1, propertyEditors.size());
+		assertSame(StringArrayPropertyEditor.class, propertyEditors.get("cacheNames").getClass());
 	}
 
 	public void testIsSerializableCacheElementRequired() {

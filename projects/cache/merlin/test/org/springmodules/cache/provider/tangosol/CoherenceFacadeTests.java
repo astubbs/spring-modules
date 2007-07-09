@@ -19,23 +19,23 @@ package org.springmodules.cache.provider.tangosol;
 
 import com.tangosol.net.NamedCache;
 import junit.framework.TestCase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.util.TangosolUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.beans.PropertyEditor;
+import java.util.Map;
 
 /**
- * <p/>
  * Unit Tests for <code>{@link CoherenceFacade}</code>.
  * <p/>
  * <Strong>Note:</Strong> This class requires
  * <a href="http://www.tangosol.com">Tangosol Coherence</a> jars in the
  * classpath to work.
- * </p>
  *
  * @author Omar Irbouh
  * @author Alex Ruiz
@@ -94,7 +94,9 @@ public class CoherenceFacadeTests extends TestCase {
 
 		ReflectionCacheModelEditor modelEditor = (ReflectionCacheModelEditor) editor;
 		assertEquals(CoherenceFlushingModel.class, modelEditor.getCacheModelClass());
-		assertNull(modelEditor.getCacheModelPropertyEditors());
+		Map propertyEditors = modelEditor.getCacheModelPropertyEditors();
+		assertEquals(1, propertyEditors.size());
+		assertSame(StringArrayPropertyEditor.class, propertyEditors.get("cacheNames").getClass());
 	}
 
 	public void testIsSerializableCacheElementRequired() {

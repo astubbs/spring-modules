@@ -13,21 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2004 the original author or authors.
+ * Copyright @2007 the original author or authors.
  */
-
 package org.springmodules.cache.provider.oscache;
-
-import java.beans.PropertyEditor;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
-
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.util.ObjectUtils;
-
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
@@ -35,191 +28,192 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
+import java.beans.PropertyEditor;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * <p>
  * Implementation of
  * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
  * that uses OSCache as the underlying cache implementation
- * </p>
  *
  * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacade {
 
-  /**
-   * OSCache cache manager.
-   */
-  private GeneralCacheAdministrator cacheManager;
+	/**
+	 * OSCache cache manager.
+	 */
+	private GeneralCacheAdministrator cacheManager;
 
-  private CacheModelValidator cacheModelValidator;
+	private CacheModelValidator cacheModelValidator;
 
-  /**
-   * Constructor.
-   */
-  public OsCacheFacade() {
-    super();
-    cacheModelValidator = new OsCacheModelValidator();
-  }
+	/**
+	 * Constructor.
+	 */
+	public OsCacheFacade() {
+		super();
+		cacheModelValidator = new OsCacheModelValidator();
+	}
 
-  /**
-   * Returns the validator of cache models. It is always an instance of
-   * <code>{@link OsCacheModelValidator}</code>.
-   *
-   * @return the validator of cache models
-   */
-  public CacheModelValidator modelValidator() {
-    return cacheModelValidator;
-  }
+	/**
+	 * Returns the validator of cache models. It is always an instance of
+	 * <code>{@link OsCacheModelValidator}</code>.
+	 *
+	 * @return the validator of cache models
+	 */
+	public CacheModelValidator modelValidator() {
+		return cacheModelValidator;
+	}
 
-  /**
-   * @see org.springmodules.cache.provider.CacheProviderFacade#getCachingModelEditor()
-   */
-  public PropertyEditor getCachingModelEditor() {
-    Map propertyEditors = new HashMap();
-    propertyEditors.put("refreshPeriod", new RefreshPeriodEditor());
+	/**
+	 * @see org.springmodules.cache.provider.CacheProviderFacade#getCachingModelEditor()
+	 */
+	public PropertyEditor getCachingModelEditor() {
+		Map propertyEditors = new HashMap();
+		propertyEditors.put("refreshPeriod", new RefreshPeriodEditor());
 
-    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
-    editor.setCacheModelClass(OsCacheCachingModel.class);
-    editor.setCacheModelPropertyEditors(propertyEditors);
-    return editor;
-  }
+		ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
+		editor.setCacheModelClass(OsCacheCachingModel.class);
+		editor.setCacheModelPropertyEditors(propertyEditors);
+		return editor;
+	}
 
-  /**
-   * @see org.springmodules.cache.provider.CacheProviderFacade#getFlushingModelEditor()
-   */
-  public PropertyEditor getFlushingModelEditor() {
-    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
-    editor.setCacheModelClass(OsCacheFlushingModel.class);
-    return editor;
-  }
+	/**
+	 * @see org.springmodules.cache.provider.CacheProviderFacade#getFlushingModelEditor()
+	 */
+	public PropertyEditor getFlushingModelEditor() {
+		Map propertyEditors = new HashMap();
+		propertyEditors.put("cacheNames", new StringArrayPropertyEditor());
 
-  /**
-   * Sets the OSCache cache manager to use.
-   *
-   * @param newCacheManager
-   *          the new cache manager
-   */
-  public void setCacheManager(GeneralCacheAdministrator newCacheManager) {
-    cacheManager = newCacheManager;
-  }
+		ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
+		editor.setCacheModelClass(OsCacheFlushingModel.class);
+		editor.setCacheModelPropertyEditors(propertyEditors);
+		return editor;
+	}
 
-  /**
-   * Returns the <code>String</code> representation of the given key.
-   *
-   * @param key
-   *          the cache key.
-   * @return the <code>String</code> representation of <code>cacheKey</code>.
-   */
-  protected String getEntryKey(Serializable key) {
-    return key.toString();
-  }
+	/**
+	 * Sets the OSCache cache manager to use.
+	 *
+	 * @param newCacheManager the new cache manager
+	 */
+	public void setCacheManager(GeneralCacheAdministrator newCacheManager) {
+		cacheManager = newCacheManager;
+	}
 
-  /**
-   * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
-   */
-  protected boolean isSerializableCacheElementRequired() {
-    return false;
-  }
+	/**
+	 * Returns the <code>String</code> representation of the given key.
+	 *
+	 * @param key the cache key.
+	 * @return the <code>String</code> representation of <code>cacheKey</code>.
+	 */
+	protected String getEntryKey(Serializable key) {
+		return key.toString();
+	}
 
-  /**
-   *
-   * @see AbstractCacheProviderFacade#onCancelCacheUpdate(Serializable)
-   */
-  protected void onCancelCacheUpdate(Serializable key) {
-    String newKey = getEntryKey(key);
-    cacheManager.cancelUpdate(newKey);
-  }
+	/**
+	 * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
+	 */
+	protected boolean isSerializableCacheElementRequired() {
+		return false;
+	}
 
-  /**
-   * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
-   */
-  protected void onFlushCache(FlushingModel model) {
-    OsCacheFlushingModel cachingModel = (OsCacheFlushingModel) model;
-    String[] groups = cachingModel.getGroups();
+	/**
+	 * @see AbstractCacheProviderFacade#onCancelCacheUpdate(Serializable)
+	 */
+	protected void onCancelCacheUpdate(Serializable key) {
+		String newKey = getEntryKey(key);
+		cacheManager.cancelUpdate(newKey);
+	}
 
-    if (!ObjectUtils.isEmpty(groups)) {
-      int groupCount = groups.length;
+	/**
+	 * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
+	 */
+	protected void onFlushCache(FlushingModel model) {
+		OsCacheFlushingModel cachingModel = (OsCacheFlushingModel) model;
+		String[] groups = cachingModel.getGroups();
 
-      for (int i = 0; i < groupCount; i++) {
-        String group = groups[i];
-        cacheManager.flushGroup(group);
-      }
+		if (!ObjectUtils.isEmpty(groups)) {
+			int groupCount = groups.length;
 
-    } else {
-      cacheManager.flushAll();
-    }
-  }
+			for (int i = 0; i < groupCount; i++) {
+				String group = groups[i];
+				cacheManager.flushGroup(group);
+			}
 
-  /**
-   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CachingModel)
-   */
-  protected Object onGetFromCache(Serializable key, CachingModel model) {
-    OsCacheCachingModel cachingModel = (OsCacheCachingModel) model;
+		} else {
+			cacheManager.flushAll();
+		}
+	}
 
-    Integer refreshPeriod = cachingModel.getRefreshPeriod();
-    String cronExpression = cachingModel.getCronExpression();
+	/**
+	 * @see AbstractCacheProviderFacade#onGetFromCache(Serializable,CachingModel)
+	 */
+	protected Object onGetFromCache(Serializable key, CachingModel model) {
+		OsCacheCachingModel cachingModel = (OsCacheCachingModel) model;
 
-    String newKey = getEntryKey(key);
-    Object cachedObject = null;
+		Integer refreshPeriod = cachingModel.getRefreshPeriod();
+		String cronExpression = cachingModel.getCronExpression();
 
-    try {
-      if (null == refreshPeriod) {
-        cachedObject = cacheManager.getFromCache(newKey);
+		String newKey = getEntryKey(key);
+		Object cachedObject = null;
 
-      } else if (null == cronExpression) {
-        cachedObject = cacheManager.getFromCache(newKey, refreshPeriod
-            .intValue());
+		try {
+			if (null == refreshPeriod) {
+				cachedObject = cacheManager.getFromCache(newKey);
 
-      } else {
-        cachedObject = cacheManager.getFromCache(newKey, refreshPeriod
-            .intValue(), cronExpression);
-      }
-    } catch (NeedsRefreshException needsRefreshException) {
+			} else if (null == cronExpression) {
+				cachedObject = cacheManager.getFromCache(newKey, refreshPeriod
+						.intValue());
+
+			} else {
+				cachedObject = cacheManager.getFromCache(newKey, refreshPeriod
+						.intValue(), cronExpression);
+			}
+		} catch (NeedsRefreshException needsRefreshException) {
 			// prevent the cache entry from being locked
 			// see: http://www.opensymphony.com/oscache/api/com/opensymphony/oscache/base/Cache.html#getFromCache(java.lang.String, int)
 			cacheManager.cancelUpdate(newKey);
 		}
 
-    return cachedObject;
-  }
+		return cachedObject;
+	}
 
-  /**
-   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CachingModel,
-   *      Object)
-   */
-  protected void onPutInCache(Serializable key, CachingModel model, Object obj) {
-    OsCacheCachingModel cachingModel = (OsCacheCachingModel) model;
+	/**
+	 * @see AbstractCacheProviderFacade#onPutInCache(Serializable,CachingModel,
+	 *Object)
+	 */
+	protected void onPutInCache(Serializable key, CachingModel model, Object obj) {
+		OsCacheCachingModel cachingModel = (OsCacheCachingModel) model;
 
-    String newKey = getEntryKey(key);
-    String[] groups = cachingModel.getGroups();
+		String newKey = getEntryKey(key);
+		String[] groups = cachingModel.getGroups();
 
-    if (groups == null || groups.length == 0) {
-      cacheManager.putInCache(newKey, obj);
+		if (groups == null || groups.length == 0) {
+			cacheManager.putInCache(newKey, obj);
 
-    } else {
-      cacheManager.putInCache(newKey, obj, groups);
-    }
-  }
+		} else {
+			cacheManager.putInCache(newKey, obj, groups);
+		}
+	}
 
-  /**
-   *
-   * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
-   *      CachingModel)
-   */
-  protected void onRemoveFromCache(Serializable key, CachingModel model) {
-    String newKey = getEntryKey(key);
-    cacheManager.flushEntry(newKey);
-  }
+	/**
+	 * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
+	 *CachingModel)
+	 */
+	protected void onRemoveFromCache(Serializable key, CachingModel model) {
+		String newKey = getEntryKey(key);
+		cacheManager.flushEntry(newKey);
+	}
 
-  /**
-   * @see AbstractCacheProviderFacade#validateCacheManager()
-   *
-   * @throws FatalCacheException
-   *           if the cache manager is <code>null</code>.
-   */
-  protected void validateCacheManager() throws FatalCacheException {
-    assertCacheManagerIsNotNull(cacheManager);
-  }
+	/**
+	 * @throws FatalCacheException if the cache manager is <code>null</code>.
+	 * @see AbstractCacheProviderFacade#validateCacheManager()
+	 */
+	protected void validateCacheManager() throws FatalCacheException {
+		assertCacheManagerIsNotNull(cacheManager);
+	}
 
 }

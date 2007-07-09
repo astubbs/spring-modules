@@ -15,24 +15,22 @@
 */
 package org.springmodules.cache.provider.gigaspaces;
 
-import java.beans.PropertyEditor;
-
-import junit.framework.TestCase;
-
 import com.j_spaces.core.client.FinderException;
 import com.j_spaces.map.CacheFinder;
 import com.j_spaces.map.IMap;
-
+import junit.framework.TestCase;
 import org.springframework.util.StringUtils;
-
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
+import java.beans.PropertyEditor;
+import java.util.Map;
+
 /**
- * <p>
  * Unit Tests for <code>{@link GigaSpacesFacade}</code>.
- * </p>
  *
+ * @author omar Irbouh
  * @author Alex Ruiz
  */
 public class GigaSpacesFacadeTests extends TestCase {
@@ -78,7 +76,9 @@ public class GigaSpacesFacadeTests extends TestCase {
 
     ReflectionCacheModelEditor modelEditor = (ReflectionCacheModelEditor) editor;
     assertEquals(GigaSpacesFlushingModel.class, modelEditor.getCacheModelClass());
-    assertNull(modelEditor.getCacheModelPropertyEditors());
+	Map propertyEditors = modelEditor.getCacheModelPropertyEditors();
+	assertEquals(1, propertyEditors.size());
+	assertSame(StringArrayPropertyEditor.class, propertyEditors.get("cacheNames").getClass());
   }
 
   public void testIsSerializableCacheElementRequired() {

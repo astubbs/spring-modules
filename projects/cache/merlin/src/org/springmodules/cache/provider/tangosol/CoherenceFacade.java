@@ -18,6 +18,7 @@
 package org.springmodules.cache.provider.tangosol;
 
 import com.tangosol.net.NamedCache;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
@@ -32,13 +33,13 @@ import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import java.beans.PropertyEditor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * <p/>
  * Implementation of
  * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
  * that uses Tangosol Coherence as the underlying cache implementation.
- * </p>
  *
  * @author Omar Irbouh
  * @author Alex Ruiz
@@ -88,8 +89,12 @@ public class CoherenceFacade extends AbstractCacheProviderFacade {
 	 * @see org.springmodules.cache.provider.CacheProviderFacade#getFlushingModelEditor()
 	 */
 	public PropertyEditor getFlushingModelEditor() {
+		Map propertyEditors = new HashMap();
+		propertyEditors.put("cacheNames", new StringArrayPropertyEditor());
+
 		ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
 		editor.setCacheModelClass(CoherenceFlushingModel.class);
+		editor.setCacheModelPropertyEditors(propertyEditors);
 		return editor;
 	}
 
