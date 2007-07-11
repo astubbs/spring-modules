@@ -16,41 +16,50 @@
 
 package org.springmodules.template.engine.velocity;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Writer;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.Map;
 
-import org.apache.velocity.VelocityContext;
-import org.springframework.core.io.Resource;
 import org.springmodules.template.AbstractTemplate;
 import org.springmodules.template.TemplateGenerationException;
 import org.springmodules.template.engine.velocity.extended.ExtendedVelocityEngine;
+import org.springmodules.template.engine.velocity.extended.SpecialTemplate;
+import org.springframework.core.io.Resource;
+import org.apache.velocity.VelocityContext;
 
 /**
+ * A velocity based {@link org.springmodules.template.Template template} imlementation that uses an underlying
+ * {@link SpecialTemplate}.
  *
- * @deprecated Using {@link org.springmodules.template.engine.velocity.SpecialVelocityTemplate} now instead.
  * @author Uri Boness
  */
-public class VelocityTemplate extends AbstractTemplate {
+public class SpecialVelocityTemplate extends AbstractTemplate {
 
-    private final ExtendedVelocityEngine engine;
-    private final Resource resource;
-    private final String encoding;
+    private final SpecialTemplate template;
 
-    public VelocityTemplate(Resource resource, String encoding, ExtendedVelocityEngine engine) {
-        this.engine = engine;
-        this.resource = resource;
-        this.encoding = encoding;
+    private final String templateDescription;
+
+    /**
+     * Constructs a new SpecialVelocityTemplate with a given {@link SpecialTemplate} and a template description that
+     * will be used for log messages.
+     *
+     * @param template The given SpecialTemplate.
+     * @param templateDescription The description of the template that will be used in log meesages.
+     */
+    public SpecialVelocityTemplate(SpecialTemplate template, String templateDescription) {
+        this.template = template;
+        this.templateDescription = templateDescription;
     }
 
     public void generate(Writer writer, Map model) throws TemplateGenerationException {
         VelocityContext context = new VelocityContext(model);
         try {
-            engine.evaluate(context, writer, resource.getDescription(), new InputStreamReader(resource.getInputStream(), encoding));
+            template.merge(context, writer);
         } catch (IOException ioe) {
             throw new TemplateGenerationException("Could not generate velocity template for resource '" +
-                resource.getDescription() + "'", ioe);
+                templateDescription + "'", ioe);
         }
     }
+
 }

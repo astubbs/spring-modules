@@ -27,6 +27,7 @@ import org.springmodules.template.Template;
 import org.springmodules.template.engine.AbstractTemplateEngine;
 import org.springmodules.template.engine.velocity.extended.ExtendedResourceManager;
 import org.springmodules.template.engine.velocity.extended.ExtendedVelocityEngine;
+import org.springmodules.template.engine.velocity.extended.SpecialTemplate;
 
 /**
  * @author Uri Boness
@@ -48,7 +49,9 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine implements In
     }
 
     public Template createTemplate(Resource resource, String encoding) {
-        return new VelocityTemplate(resource, encoding, engine);
+//        return new VelocityTemplate(resource, encoding, engine);
+        SpecialTemplate template = engine.getSpecialTemplate(resource, encoding);
+        return new SpecialVelocityTemplate(template, resource.getDescription());
     }
 
     public void afterPropertiesSet() throws Exception {

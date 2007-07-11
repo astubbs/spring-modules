@@ -30,6 +30,11 @@ import org.apache.velocity.Template;
 import org.apache.velocity.app.event.*;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.exception.TemplateInitException;
+import org.apache.velocity.runtime.ParserPool;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.RuntimeServices;
+import org.apache.velocity.runtime.VelocimacroFactory;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.log.Log;
 import org.apache.velocity.runtime.log.LogManager;
@@ -38,10 +43,6 @@ import org.apache.velocity.runtime.parser.Parser;
 import org.apache.velocity.runtime.parser.node.SimpleNode;
 import org.apache.velocity.runtime.resource.ContentResource;
 import org.apache.velocity.runtime.resource.ResourceManager;
-import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.VelocimacroFactory;
-import org.apache.velocity.runtime.RuntimeServices;
-import org.apache.velocity.runtime.ParserPool;
 import org.apache.velocity.util.ClassUtils;
 import org.apache.velocity.util.RuntimeServicesAware;
 import org.apache.velocity.util.StringUtils;
@@ -94,7 +95,7 @@ import org.apache.velocity.util.introspection.UberspectLoggable;
  * @author <a href="mailto:jvanzyl@apache.org">Jason van Zyl</a>
  * @author <a href="mailto:jlb@houseofdistraction.com">Jeff Bowden</a>
  * @author <a href="mailto:geirm@optonline.net">Geir Magusson Jr.</a>
- * @version $Id: ExtendedRuntimeInstance.java,v 1.1 2007/06/29 14:03:50 hueboness Exp $
+ * @version $Id: ExtendedRuntimeInstance.java,v 1.2 2007/07/11 00:43:57 hueboness Exp $
  */
 public class ExtendedRuntimeInstance implements RuntimeConstants, RuntimeServices {
 
@@ -937,6 +938,35 @@ public class ExtendedRuntimeInstance implements RuntimeConstants, RuntimeService
             resourceManager.getResource(name,
                 ResourceManager.RESOURCE_TEMPLATE, encoding);
     }
+
+
+    //============================================== START EXTENSION ===================================================
+
+    /**
+     * Creates and returns a {@link SpecialTemplate specail template} from the given reader and encoding.
+     *
+     * @param reader The reader from which the template will be created.
+     * @param encoding The encoding of the template.
+     * @param name A name associated with the template that will be used in log messages.
+     * @return The created special template.
+     */
+    public SpecialTemplate getSpecialTemplate(Reader reader, String encoding, String name) {
+        SimpleNode nodeTree = null;
+
+        try {
+            nodeTree = parse(reader, name);
+        }
+        catch (ParseException pex) {
+            throw new ParseErrorException(pex);
+        }
+        catch (TemplateInitException pex) {
+            throw new ParseErrorException(pex);
+        }
+
+        return new SpecialTemplate(nodeTree, this, name);
+    }
+
+    //=============================================== END EXTENSION ====================================================
 
     /**
      * Returns a static content resource from the

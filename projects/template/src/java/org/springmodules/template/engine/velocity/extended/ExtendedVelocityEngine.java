@@ -35,6 +35,7 @@ import org.apache.velocity.runtime.resource.ResourceManager;
 import org.apache.velocity.runtime.log.Log;
 import org.apache.velocity.runtime.parser.ParseException;
 import org.apache.velocity.runtime.parser.node.SimpleNode;
+import org.springframework.core.io.Resource;
 
 /**
  * <p/>
@@ -57,7 +58,7 @@ import org.apache.velocity.runtime.parser.node.SimpleNode;
  * call init().
  * </p>
  *
- * @version $Id: ExtendedVelocityEngine.java,v 1.1 2007/06/29 14:03:50 hueboness Exp $
+ * @version $Id: ExtendedVelocityEngine.java,v 1.2 2007/07/11 00:43:57 hueboness Exp $
  */
 public class ExtendedVelocityEngine implements RuntimeConstants {
 
@@ -463,6 +464,41 @@ public class ExtendedVelocityEngine implements RuntimeConstants {
         throws ResourceNotFoundException, ParseErrorException, Exception {
         return ri.getTemplate(name, encoding);
     }
+
+
+    //============================================== START EXTENSION ===================================================
+
+    
+    /**
+     * Creates and returns a {@link SpecialTemplate specail template} from the given resource and encoding.
+     *
+     * @param resource The resouce from which the template will be created.
+     * @param encoding The encoding of the template.
+     * @return The created special template.
+     */
+    public SpecialTemplate getSpecialTemplate(Resource resource, String encoding) {
+        try {
+            return getSpecialTemplate(new InputStreamReader(resource.getInputStream()), encoding, resource.getDescription());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Creates and returns a {@link SpecialTemplate specail template} from the given reader and encoding.
+     *
+     * @param reader The reader from which the template will be created.
+     * @param encoding The encoding of the template.
+     * @param name A name associated with the template that will be used in log messages.
+     * @return The created special template.
+     */
+    public SpecialTemplate getSpecialTemplate(Reader reader, String encoding, String name) {
+        return ri.getSpecialTemplate(reader, encoding, name);
+    }
+
+
+    //=============================================== END EXTENSION ====================================================
+
 
     /**
      * Determines if a resource is accessable via the currently
