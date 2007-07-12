@@ -105,7 +105,7 @@
                 
                 <tr>
                     <td>Press to include external dynamic content through a Jsp:</td>
-                    <td><input id="includeJsp" type="button" value="Press" onclick="XT.doAjaxAction('includeJsp', this, null, {'loadingElementId' : 'loading9', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><input id="includeJsp" type="button" value="Press" onclick="XT.doAjaxAction('includeJsp', this, {'msg' : 'Javascript'}, {'loadingElementId' : 'loading9', 'loadingImage' : '../images/loading.gif'});"></td>
                     <td><div id="loading9"></div></td>
                 </tr>
                 <tr>

@@ -1,112 +1,114 @@
 /**
  @fileoverview
- This JavaScript file describes the XT object with actions for sending ajax requests using the XT Ajax Framework and Taconite.
- **/
+ Spring Modules XT Ajax Framework integrated json support.
+ json.js (http://www.json.org/js.html) : Copyright (C) Douglas Crockford.
+ */
 
-var springxt_core_version=20070526;
+var springxt_json_version=20070526;
 
-var XT = {
-    
-    ajaxParameter : "ajax-request",
-    
-    eventParameter : "event-id",
-    
-    elementParameter : "source-element",
-    
-    elementIdParameter : "source-element-id",
-    
-    jsonParamsParameter : "json-params",
-    
-    defaultLoadingElementId : null,
-    
-    defaultLoadingImage : null,
-    
-    createSimpleQueryString : function(sourceElement) {
-        var qs = "";
-        if (sourceElement != undefined && sourceElement != null) {
-            if (sourceElement.name != null) {
-                qs = "&" + this.elementParameter + "=" + sourceElement.name;
+(function () {
+    var m = {
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"' : '\\"',
+            '\\': '\\\\'
+        },
+        s = {
+            array: function (x) {
+                var a = ['['], b, f, i, l = x.length, v;
+                for (i = 0; i < l; i += 1) {
+                    v = x[i];
+                    f = s[typeof v];
+                    if (f) {
+                        v = f(v);
+                        if (typeof v == 'string') {
+                            if (b) {
+                                a[a.length] = ',';
+                            }
+                            a[a.length] = v;
+                            b = true;
+                        }
+                    }
+                }
+                a[a.length] = ']';
+                return a.join('');
+            },
+            'boolean': function (x) {
+                return String(x);
+            },
+            'null': function (x) {
+                return "null";
+            },
+            number: function (x) {
+                return isFinite(x) ? String(x) : 'null';
+            },
+            object: function (x) {
+                if (x) {
+                    if (x instanceof Array) {
+                        return s.array(x);
+                    }
+                    var a = ['{'], b, f, i, v;
+                    for (i in x) {
+                        v = x[i];
+                        f = s[typeof v];
+                        if (f) {
+                            v = f(v);
+                            if (typeof v == 'string') {
+                                if (b) {
+                                    a[a.length] = ',';
+                                }
+                                a.push(s.string(i), ':', v);
+                                b = true;
+                            }
+                        }
+                    }
+                    a[a.length] = '}';
+                    return a.join('');
+                }
+                return 'null';
+            },
+            string: function (x) {
+                if (/["\\\x00-\x1f]/.test(x)) {
+                    x = x.replace(/([\x00-\x1f\\"])/g, function(a, b) {
+                        var c = m[b];
+                        if (c) {
+                            return c;
+                        }
+                        c = b.charCodeAt();
+                        return '\\u00' +
+                            Math.floor(c / 16).toString(16) +
+                            (c % 16).toString(16);
+                    });
+                }
+                return '"' + x + '"';
             }
-            if (sourceElement.id != null) {
-                qs = qs + "&" + this.elementIdParameter + "=" + sourceElement.id;
-            }
-        }
-        return qs;
-    },
-    
-    createJSONQueryString : function(jsonObject) {
-        var qs = "";
-        if (jsonObject != undefined && jsonObject != null) {
-            qs = "&" + this.jsonParamsParameter + "=" + encodeURIComponent(jsonObject.toJSONString());
-        }
-        return qs;
-    },
-    
-    configureLoadingInfo : function(loadingInfo, ajaxRequest) {
-        if (loadingInfo != null && loadingInfo.loadingElementId != null && loadingInfo.loadingImage != null) {
-            ajaxRequest.loadingElementId = loadingInfo.loadingElementId; 
-            ajaxRequest.loadingImage = loadingInfo.loadingImage;
-            ajaxRequest.setPreRequest(this.showLoadingSign);
-            ajaxRequest.setPostRequest(this.removeLoadingSign);
-        } else if (this.defaultLoadingElementId != null && this.defaultLoadingImage != null) {
-            ajaxRequest.loadingElementId = this.defaultLoadingElementId; 
-            ajaxRequest.loadingImage = this.defaultLoadingImage;
-            ajaxRequest.setPreRequest(this.showLoadingSign);
-            ajaxRequest.setPostRequest(this.removeLoadingSign);
-        }
-    },
-    
-    showLoadingSign : function(ajaxRequest) {
-        var targetEl = document.getElementById(ajaxRequest.loadingElementId);
-        if (targetEl != null) {
-            var img = document.createElement("img");
-            img.setAttribute("src", ajaxRequest.loadingImage);
-            targetEl.appendChild(img);
-        }
-    },
-    
-    removeLoadingSign : function(ajaxRequest) {
-        var targetEl = document.getElementById(ajaxRequest.loadingElementId);
-        if (targetEl != null && targetEl.childNodes.length > 0) {
-            targetEl.removeChild(targetEl.childNodes[0]);
-        }
-    },
-    
-    doAjaxAction : function(eventId, sourceElement, jsonObject, loadingInfo) {
-        var ajaxRequest = new AjaxRequest(document.URL);
-        
-        ajaxRequest.addFormElements(document.forms[0]);
-        ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
-        + "&" + this.ajaxParameter + "=ajax-action" 
-        + "&" + this.eventParameter + "=" + eventId 
-        + this.createSimpleQueryString(sourceElement) 
-        + this.createJSONQueryString(jsonObject));
-        
-        this.configureLoadingInfo(loadingInfo, ajaxRequest);
-        
-        ajaxRequest.sendRequest();
-    },
-    
-    doAjaxSubmit : function(eventId, sourceElement, jsonObject, loadingInfo) {
-        var ajaxRequest = new AjaxRequest(document.URL);
-        
-        ajaxRequest.addFormElements(document.forms[0]);
-        ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
-        + "&" + this.ajaxParameter + "=ajax-submit" 
-        + "&" + this.eventParameter + "=" + eventId 
-        + this.createSimpleQueryString(sourceElement) 
-        + this.createJSONQueryString(jsonObject));
-        
-        this.configureLoadingInfo(loadingInfo, ajaxRequest);
-        
-        ajaxRequest.setUsePOST();
-        ajaxRequest.sendRequest();
+        };
+
+    Object.prototype.toJSONString = function () {
+        return s.object(this);
+    };
+
+    Array.prototype.toJSONString = function () {
+        return s.array(this);
+    };
+})();
+
+String.prototype.parseJSON = function () {
+    try {
+        return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(
+                this.replace(/"(\\.|[^"\\])*"/g, ''))) &&
+            eval('(' + this + ')');
+    } catch (e) {
+        return false;
     }
 };
 /**
  @fileoverview
- Spring Modules Ajax XT specific version of the Taconite Ajax Framework.
- Taconite (http://taconite.sourceforge.net/) : Copyright (C) 2007 Ryan Asleson 
+ Spring Modules XT Ajax Framework custom version of the Taconite Ajax Framework.
+ Taconite (http://taconite.sourceforge.net/) : Copyright (C) Ryan Asleson.
  */
 
 var springxt_taconite_version=20070526;
@@ -1407,110 +1409,109 @@ document.getElementsByMatchingId = function(matchingId) {
         }
     }
     return matchingElements;
-};/**
+};
+/**
  @fileoverview
- Spring Modules Ajax XT integrated json support.
- json.js (http://www.json.org/js.html) : Copyright (C) Douglas Crockford
- */
+ XT object declaration, with methods for sending Ajax action and submit events.
+ **/
 
-var springxt_json_version=20070526;
+var springxt_core_version=20070526;
 
-(function () {
-    var m = {
-            '\b': '\\b',
-            '\t': '\\t',
-            '\n': '\\n',
-            '\f': '\\f',
-            '\r': '\\r',
-            '"' : '\\"',
-            '\\': '\\\\'
-        },
-        s = {
-            array: function (x) {
-                var a = ['['], b, f, i, l = x.length, v;
-                for (i = 0; i < l; i += 1) {
-                    v = x[i];
-                    f = s[typeof v];
-                    if (f) {
-                        v = f(v);
-                        if (typeof v == 'string') {
-                            if (b) {
-                                a[a.length] = ',';
-                            }
-                            a[a.length] = v;
-                            b = true;
-                        }
-                    }
-                }
-                a[a.length] = ']';
-                return a.join('');
-            },
-            'boolean': function (x) {
-                return String(x);
-            },
-            'null': function (x) {
-                return "null";
-            },
-            number: function (x) {
-                return isFinite(x) ? String(x) : 'null';
-            },
-            object: function (x) {
-                if (x) {
-                    if (x instanceof Array) {
-                        return s.array(x);
-                    }
-                    var a = ['{'], b, f, i, v;
-                    for (i in x) {
-                        v = x[i];
-                        f = s[typeof v];
-                        if (f) {
-                            v = f(v);
-                            if (typeof v == 'string') {
-                                if (b) {
-                                    a[a.length] = ',';
-                                }
-                                a.push(s.string(i), ':', v);
-                                b = true;
-                            }
-                        }
-                    }
-                    a[a.length] = '}';
-                    return a.join('');
-                }
-                return 'null';
-            },
-            string: function (x) {
-                if (/["\\\x00-\x1f]/.test(x)) {
-                    x = x.replace(/([\x00-\x1f\\"])/g, function(a, b) {
-                        var c = m[b];
-                        if (c) {
-                            return c;
-                        }
-                        c = b.charCodeAt();
-                        return '\\u00' +
-                            Math.floor(c / 16).toString(16) +
-                            (c % 16).toString(16);
-                    });
-                }
-                return '"' + x + '"';
+var XT = {
+    
+    ajaxParameter : "ajax-request",
+    
+    eventParameter : "event-id",
+    
+    elementParameter : "source-element",
+    
+    elementIdParameter : "source-element-id",
+    
+    jsonParamsParameter : "json-params",
+    
+    defaultLoadingElementId : null,
+    
+    defaultLoadingImage : null,
+    
+    createSimpleQueryString : function(sourceElement) {
+        var qs = "";
+        if (sourceElement != undefined && sourceElement != null) {
+            if (sourceElement.name != null) {
+                qs = "&" + this.elementParameter + "=" + sourceElement.name;
             }
-        };
-
-    Object.prototype.toJSONString = function () {
-        return s.object(this);
-    };
-
-    Array.prototype.toJSONString = function () {
-        return s.array(this);
-    };
-})();
-
-String.prototype.parseJSON = function () {
-    try {
-        return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(
-                this.replace(/"(\\.|[^"\\])*"/g, ''))) &&
-            eval('(' + this + ')');
-    } catch (e) {
-        return false;
+            if (sourceElement.id != null) {
+                qs = qs + "&" + this.elementIdParameter + "=" + sourceElement.id;
+            }
+        }
+        return qs;
+    },
+    
+    createJSONQueryString : function(jsonObject) {
+        var qs = "";
+        if (jsonObject != undefined && jsonObject != null) {
+            qs = "&" + this.jsonParamsParameter + "=" + encodeURIComponent(jsonObject.toJSONString());
+        }
+        return qs;
+    },
+    
+    configureLoadingInfo : function(loadingInfo, ajaxRequest) {
+        if (loadingInfo != null && loadingInfo.loadingElementId != null && loadingInfo.loadingImage != null) {
+            ajaxRequest.loadingElementId = loadingInfo.loadingElementId; 
+            ajaxRequest.loadingImage = loadingInfo.loadingImage;
+            ajaxRequest.setPreRequest(this.showLoadingSign);
+            ajaxRequest.setPostRequest(this.removeLoadingSign);
+        } else if (this.defaultLoadingElementId != null && this.defaultLoadingImage != null) {
+            ajaxRequest.loadingElementId = this.defaultLoadingElementId; 
+            ajaxRequest.loadingImage = this.defaultLoadingImage;
+            ajaxRequest.setPreRequest(this.showLoadingSign);
+            ajaxRequest.setPostRequest(this.removeLoadingSign);
+        }
+    },
+    
+    showLoadingSign : function(ajaxRequest) {
+        var targetEl = document.getElementById(ajaxRequest.loadingElementId);
+        if (targetEl != null) {
+            var img = document.createElement("img");
+            img.setAttribute("src", ajaxRequest.loadingImage);
+            targetEl.appendChild(img);
+        }
+    },
+    
+    removeLoadingSign : function(ajaxRequest) {
+        var targetEl = document.getElementById(ajaxRequest.loadingElementId);
+        if (targetEl != null && targetEl.childNodes.length > 0) {
+            targetEl.removeChild(targetEl.childNodes[0]);
+        }
+    },
+    
+    doAjaxAction : function(eventId, sourceElement, jsonObject, loadingInfo) {
+        var ajaxRequest = new AjaxRequest(document.URL);
+        
+        ajaxRequest.addFormElements(document.forms[0]);
+        ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
+        + "&" + this.ajaxParameter + "=ajax-action" 
+        + "&" + this.eventParameter + "=" + eventId 
+        + this.createSimpleQueryString(sourceElement) 
+        + this.createJSONQueryString(jsonObject));
+        
+        this.configureLoadingInfo(loadingInfo, ajaxRequest);
+        
+        ajaxRequest.sendRequest();
+    },
+    
+    doAjaxSubmit : function(eventId, sourceElement, jsonObject, loadingInfo) {
+        var ajaxRequest = new AjaxRequest(document.URL);
+        
+        ajaxRequest.addFormElements(document.forms[0]);
+        ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
+        + "&" + this.ajaxParameter + "=ajax-submit" 
+        + "&" + this.eventParameter + "=" + eventId 
+        + this.createSimpleQueryString(sourceElement) 
+        + this.createJSONQueryString(jsonObject));
+        
+        this.configureLoadingInfo(loadingInfo, ajaxRequest);
+        
+        ajaxRequest.setUsePOST();
+        ajaxRequest.sendRequest();
     }
 };

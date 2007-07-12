@@ -155,6 +155,7 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     public AjaxResponse includeJsp(AjaxActionEvent event) {
         // Create the component for including jsp content:
         event.getHttpRequest().setAttribute("date", new Date());
+        event.getHttpRequest().setAttribute("msg", event.getParameters().get("msg"));
         JspComponent jsp = new JspComponent(event.getHttpRequest(), "/includes/include.jsp");
         // Create an ajax action for appending it: 
         AppendContentAction action = new AppendContentAction("jsp", jsp);
