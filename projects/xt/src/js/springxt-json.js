@@ -1,7 +1,7 @@
 /**
  @fileoverview
- Spring Modules Ajax XT integrated json support.
- json.js (http://www.json.org/js.html) : Copyright (C) Douglas Crockford
+ Spring Modules XT Ajax Framework integrated json support.
+ json.js (http://www.json.org/js.html) : Copyright (C) Douglas Crockford.
  */
 
 var springxt_json_version=20070526;

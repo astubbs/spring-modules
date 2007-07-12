@@ -1,7 +1,7 @@
 /**
  @fileoverview
- Spring Modules Ajax XT specific version of the Taconite Ajax Framework.
- Taconite (http://taconite.sourceforge.net/) : Copyright (C) 2007 Ryan Asleson 
+ Spring Modules XT Ajax Framework custom version of the Taconite Ajax Framework.
+ Taconite (http://taconite.sourceforge.net/) : Copyright (C) Ryan Asleson.
  */
 
 var springxt_taconite_version=20070526;

@@ -1,6 +1,6 @@
 /**
  @fileoverview
- This JavaScript file describes the XT object with actions for sending ajax requests using the XT Ajax Framework and Taconite.
+ XT object declaration, with methods for sending Ajax action and submit events.
  **/
 
 var springxt_core_version=20070526;
