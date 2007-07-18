@@ -63,13 +63,19 @@ public class JavaMailEmailDispatcher extends AbstractEmailDispatcher {
                 message.setCc(email.getCc());
                 message.setFrom(email.getFrom());
                 message.setSubject(email.getSubject());
-                if (email.getTextBody() != null) {
-                    message.setText(email.getTextBody(), false);
+                if (email.getTextBody() != null && email.getHtmlBody() != null) {
+                    message.setText(email.getTextBody(), email.getHtmlBody());
+                } else {
+                    if (email.getTextBody() != null) {
+                        message.setText(email.getTextBody(), false);
+                    }
+                    if (email.getHtmlBody() != null) {
+                        message.setText(email.getHtmlBody(), true);
+                    }
                 }
-                if (email.getHtmlBody() != null) {
-                    message.setText(email.getHtmlBody(), true);
+                if (email.getReplyTo() != null) {
+                    message.setReplyTo(email.getReplyTo());
                 }
-                message.setReplyTo(email.getReplyTo());
                 for (Iterator iter = email.getAttachments().iterator(); iter.hasNext();) {
                     Attachment attachment = (Attachment) iter.next();
                     message.addAttachment(attachment.getName(), attachment.getResource());

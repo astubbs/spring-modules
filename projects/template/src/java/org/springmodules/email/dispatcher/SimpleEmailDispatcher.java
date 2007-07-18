@@ -55,7 +55,9 @@ public class SimpleEmailDispatcher extends AbstractEmailDispatcher {
         message.setTo(extractEmails(email.getTo()));
         message.setCc(extractEmails(email.getCc()));
         message.setBcc(extractEmails(email.getBcc()));
-        message.setReplyTo(email.getReplyTo().getAddress());
+        if (email.getReplyTo() != null) {
+            message.setReplyTo(email.getReplyTo().getAddress());
+        }
         message.setSentDate(new Date());
         message.setSubject(email.getSubject());
         message.setText(email.getTextBody());

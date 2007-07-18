@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springmodules</groupId>
-    <artifactId>spring-modules-validation</artifactId>
+    <artifactId>spring-modules-template</artifactId>
     <packaging>jar</packaging>
     <version>0.8</version>
-    <name>spring-modules-validation</name>
+    <name>spring-modules-template</name>
     <url>https://springmodules.dev.java.net/</url>
     <licenses>
         <license>
