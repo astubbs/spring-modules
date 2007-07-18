@@ -29,8 +29,9 @@ public class AjaxResponseImpl implements AjaxResponse {
     
     private static final long serialVersionUID = 26L;
     
-    private static final String OPEN_RESPONSE = new String("<?xml version=\"1.0\"?>\n<ajax-response xml:space=\"preserve\">\n");
-    private static final String CLOSE_RESPONSE = new String("\n</ajax-response>");
+    private static final String ENCODING_PLACEHOLDER = AjaxResponseImpl.class + ".ENCODING_PLACEHOLDER";
+    private static final String OPEN_RESPONSE = "<?xml version=\"1.0\" encoding=\"" + ENCODING_PLACEHOLDER + "\"?>\n<ajax-response xml:space=\"preserve\">\n";
+    private static final String CLOSE_RESPONSE = "\n</ajax-response>";
     
     public static final String DEFAULT_ENCODING = "ISO-8859-1";
     
@@ -64,7 +65,7 @@ public class AjaxResponseImpl implements AjaxResponse {
     }
 
     public String render() {
-        StringBuilder response = new StringBuilder(OPEN_RESPONSE);
+        StringBuilder response = new StringBuilder(OPEN_RESPONSE.replaceFirst(ENCODING_PLACEHOLDER, this.encoding));
         for (Iterator it = actions.iterator(); it.hasNext(); ) {
             AjaxAction action = (AjaxAction) it.next();
             response.append(action.render());
