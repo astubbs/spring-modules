@@ -18,28 +18,19 @@ package org.springmodules.xt.model.event.collector;
 
 import java.util.List;
 import org.springframework.context.ApplicationEvent;
-import org.springmodules.xt.model.event.FilteringApplicationCollector;
 
 /**
- * {@link org.springmodules.xt.model.event.FilteringApplicationCollector} synchronized implementation that
+ * {@link org.springmodules.xt.model.event.ApplicationCollector} synchronized implementation that
  * wraps another non thread safe collector, in order to make it possible to safely share it among threads. 
  * 
  * @author Sergio Bossa
  */
-public class ConcurrentCollector implements FilteringApplicationCollector {
+public class ConcurrentCollector implements ApplicationCollector {
     
-    private FilteringApplicationCollector collector;
+    private ApplicationCollector collector;
 
-    public ConcurrentCollector(FilteringApplicationCollector collector) {
+    public ConcurrentCollector(ApplicationCollector collector) {
         this.collector = collector;
-    }
-    
-    public synchronized boolean accepts(ApplicationEvent event) {
-        return this.collector.accepts(event);
-    }
-
-    public synchronized Class[] getSupportedEventClasses() {
-        return this.collector.getSupportedEventClasses();
     }
 
     public synchronized void onApplicationEvent(ApplicationEvent event) {

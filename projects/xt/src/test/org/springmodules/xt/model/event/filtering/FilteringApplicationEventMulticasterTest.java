@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.model.event;
+package org.springmodules.xt.model.event.filtering;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springmodules.xt.model.event.support.PayloadEvent;
 import org.springmodules.xt.test.event.TestEvent;
 
@@ -86,6 +87,37 @@ public class FilteringApplicationEventMulticasterTest extends MockObjectTestCase
         this.multicaster.multicastEvent(event);
     }
     
+    public void testMulticastToListenersWithTaskExecutor() throws InterruptedException {
+        this.multicaster.setTaskExecutor(new SimpleAsyncTaskExecutor());
+        
+        Mock listenerMock1 = mock(FilteringApplicationListener.class);
+        FilteringApplicationListener mockedListener1 = (FilteringApplicationListener) listenerMock1.proxy();
+        Mock listenerMock2 = mock(FilteringApplicationListener.class);
+        FilteringApplicationListener mockedListener2 = (FilteringApplicationListener) listenerMock2.proxy();
+        Mock listenerMock3 = mock(FilteringApplicationListener.class);
+        FilteringApplicationListener mockedListener3 = (FilteringApplicationListener) listenerMock3.proxy();
+        
+        PayloadEvent event = new PayloadEvent(this);
+        
+        listenerMock1.expects(once()).method("getSupportedEventClasses").withNoArguments().will(returnValue(new Class[]{ApplicationEvent.class}));
+        listenerMock1.expects(once()).method("accepts").with(same(event)).will(returnValue(true));
+        listenerMock1.expects(once()).method("onApplicationEvent").with(same(event));
+        listenerMock2.expects(once()).method("getSupportedEventClasses").withNoArguments().will(returnValue(new Class[]{PayloadEvent.class}));
+        listenerMock2.expects(once()).method("accepts").with(same(event)).will(returnValue(true));
+        listenerMock2.expects(once()).method("onApplicationEvent").with(same(event));
+        listenerMock3.expects(once()).method("getSupportedEventClasses").withNoArguments().will(returnValue(new Class[]{TestEvent.class}));
+        listenerMock3.expects(never()).method("accepts");
+        listenerMock3.expects(never()).method("onApplicationEvent");
+        
+        this.multicaster.addApplicationListener(mockedListener1);
+        this.multicaster.addApplicationListener(mockedListener2);
+        this.multicaster.addApplicationListener(mockedListener3);
+        
+        this.multicaster.multicastEvent(event);
+        
+        Thread.sleep(3000);
+    }
+    
     public void testRemoveFilteringListener() {
         Mock listenerMock = mock(FilteringApplicationListener.class);
         FilteringApplicationListener mockedListener = (FilteringApplicationListener) listenerMock.proxy();
@@ -131,80 +163,4 @@ public class FilteringApplicationEventMulticasterTest extends MockObjectTestCase
         
         this.multicaster.multicastEvent(event);
     }
-    
-    /*public void testPublishAndRouteToMultipleConsumersWithException() {
-        Mock consumerMock1 = mock(FilteringApplicationListener.class);
-        FilteringApplicationListener mockedConsumer1 = (FilteringApplicationListener) consumerMock1.proxy();
-        Mock consumerMock2 = mock(FilteringApplicationListener.class);
-        FilteringApplicationListener mockedConsumer2 = (FilteringApplicationListener) consumerMock2.proxy();
-        
-        PayloadEvent event1 = new PayloadEvent(new EventType("test1"), this);
-        PayloadEvent event2 = new PayloadEvent(new EventType("test2"), this);
-        
-        consumerMock1.expects(once()).method("consume").with(same(event1)).will(throwException(new RuntimeException("Test Exception")));
-        consumerMock2.expects(once()).method("consume").with(same(event2));
-        
-        Mock filterMock1 = mock(EventFilter.class);
-        EventFilter mockedFilter1 = (EventFilter) filterMock1.proxy();
-        Mock filterMock2 = mock(EventFilter.class);
-        EventFilter mockedFilter2 = (EventFilter) filterMock2.proxy();
-        
-        filterMock1.expects(once()).method("accepts").with(same(event1)).will(returnValue(true));
-        filterMock1.expects(once()).method("accepts").with(same(event2)).will(returnValue(false));
-        filterMock2.expects(once()).method("accepts").with(same(event1)).will(returnValue(false));
-        filterMock2.expects(once()).method("accepts").with(same(event2)).will(returnValue(true));
-        
-        this.multicaster.registerConsumer(mockedConsumer1, mockedFilter1);
-        this.multicaster.registerConsumer(mockedConsumer2, mockedFilter2);
-        
-        this.multicaster.publish(event1);
-        this.multicaster.publish(event2);
-    }
-    
-    public void testPublishAndRouteToConsumerWithMultipleFilters() {
-        Mock consumerMock1 = mock(FilteringApplicationListener.class);
-        FilteringApplicationListener mockedConsumer1 = (FilteringApplicationListener) consumerMock1.proxy();
-        
-        PayloadEvent event1 = new PayloadEvent(new EventType("test1"), this);
-        
-        consumerMock1.expects(once()).method("consume").with(same(event1));
-        
-        Mock filterMock1 = mock(EventFilter.class);
-        EventFilter mockedFilter1 = (EventFilter) filterMock1.proxy();
-        Mock filterMock2 = mock(EventFilter.class);
-        EventFilter mockedFilter2 = (EventFilter) filterMock2.proxy();
-        
-        filterMock1.expects(once()).method("accepts").with(same(event1)).will(returnValue(true));
-        filterMock2.expects(atMostOnce()).method("accepts").with(same(event1)).will(returnValue(false));
-        
-        this.multicaster.registerConsumer(mockedConsumer1, mockedFilter1);
-        this.multicaster.registerConsumer(mockedConsumer1, mockedFilter2);
-        
-        this.multicaster.publish(event1);
-    }
-    
-    public void testRegisterListener() {
-        Mock consumerMock = mock(FilteringApplicationListener.class);
-        FilteringApplicationListener mockedConsumer = (FilteringApplicationListener) consumerMock.proxy();
-        
-        Mock filterMock = mock(EventFilter.class);
-        EventFilter mockedFilter = (EventFilter) filterMock.proxy();
-        
-        this.multicaster.registerConsumer(mockedConsumer, mockedFilter);
-        assertEquals(mockedConsumer, this.multicaster.getConsumers().get(0));
-    }
-
-    public void testRemoveListener() {
-        Mock consumerMock = mock(FilteringApplicationListener.class);
-        FilteringApplicationListener mockedConsumer = (FilteringApplicationListener) consumerMock.proxy();
-        
-        Mock filterMock = mock(EventFilter.class);
-        EventFilter mockedFilter = (EventFilter) filterMock.proxy();
-        
-        this.multicaster.registerConsumer(mockedConsumer, mockedFilter);
-        assertEquals(mockedConsumer, this.multicaster.getConsumers().get(0));
-        
-        this.multicaster.removeConsumer(mockedConsumer);
-        assertEquals(0, this.multicaster.getConsumers().size());
-    }*/
 }

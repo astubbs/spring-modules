@@ -20,18 +20,19 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.springframework.context.ApplicationEvent;
-import org.springmodules.xt.model.event.FilteringApplicationCollector;
 
 /**
- * Abstract {@link org.springmodules.xt.model.event.FilteringApplicationCollector} implementation that,
+ * {@link org.springmodules.xt.model.event.ApplicationCollector} implementation that,
  * by using a {@link java.util.concurrent.BlockingQueue},
  * blocks when polling for events if no event is actually available.<br>
- * Please note that the BlockingCollector doesn't support the {@link #getEvents()} method.<br>
+ * Please note that the BlockingCollector doesn't support the {@link #getEvents()} method.
+ * <br>
+ * <br>
  * This class is <b>thread safe</b>.
  * 
  * @author Sergio Bossa
  */
-public abstract class BlockingCollector implements FilteringApplicationCollector {
+public class BlockingCollector implements ApplicationCollector {
     
     private final BlockingQueue<ApplicationEvent> queue = new LinkedBlockingQueue<ApplicationEvent>();
     

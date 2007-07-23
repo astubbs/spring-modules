@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.model.event;
+package org.springmodules.xt.model.event.collector;
 
 import java.util.List;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 
 /**
- * {@link FilteringApplicationListener} special interface to be implemented by objects that want to listen to
+ * {@link org.springframework.context.ApplicationListener} extended interface to be implemented by objects that want to listen to
  * {@link org.springframework.context.ApplicationEvent}s and collect (store) them, in order to make them available to 
  * other external objects.<br>
  * Events are collected and later accessed in FIFO order.
  * 
  * @author Sergio Bossa
  */
-public interface FilteringApplicationCollector extends FilteringApplicationListener {
+public interface ApplicationCollector extends ApplicationListener {
     
     /**
      * Poll the first collected event, removing it from the queue of collected events.
@@ -37,7 +38,7 @@ public interface FilteringApplicationCollector extends FilteringApplicationListe
     public ApplicationEvent pollEvent();
     
     /**
-     * Get all collected events.
+     * Get all collected events, without removing them from the queue of collected events.
      * 
      * @return The list of collected {@link org.springframework.context.ApplicationEvent}s, in FIFO order.
      */

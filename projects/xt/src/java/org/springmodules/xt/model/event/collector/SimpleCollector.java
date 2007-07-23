@@ -22,16 +22,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import org.springframework.context.ApplicationEvent;
-import org.springmodules.xt.model.event.FilteringApplicationCollector;
 
 /**
- * Abstract {@link org.springmodules.xt.model.event.FilteringApplicationCollector} implementation that
- * simply collects events in a queue.<br>
+ * {@link org.springmodules.xt.model.event.ApplicationCollector} implementation that
+ * simply collects events in a queue.
+ * <br>
+ * <br>
  * This class is <b>not</b> thread safe.
  * 
  * @author Sergio Bossa
  */
-public abstract class SimpleCollector implements FilteringApplicationCollector {
+public class SimpleCollector implements ApplicationCollector {
     
     private final Queue<ApplicationEvent> queue = new LinkedList<ApplicationEvent>();
     

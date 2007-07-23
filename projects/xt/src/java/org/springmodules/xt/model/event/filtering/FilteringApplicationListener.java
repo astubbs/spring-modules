@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.model.event;
+package org.springmodules.xt.model.event.filtering;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
 /**
- * {@link org.springframework.context.ApplicationListener} based interface capable of filtering 
+ * {@link org.springframework.context.ApplicationListener} extended interface capable of filtering 
  * {@link org.springframework.context.ApplicationEvent}s multicasted through a 
  * {@link FilteringApplicationEventMulticaster}.
  * <br><br>
  * Implementors will have to implement the processing logic (as always) <b>plus</b> the filtering logic,
  * that is, <b>which</b> event classes are supported (see {@link #getSupportedEventClasses()}) 
  * and <b>how</b> events are filtered (see {@link #accepts(ApplicationEvent )}). 
+ * <br><br>
+ * <b>Note</b>: If a FilteringApplicationListener is used with another {@link org.springframework.context.event.ApplicationEventMulticaster}
+ * implementation, it will behave like a standard ApplicationListener and filtering capabilities will not be used.
  *
  * @see #getSupportedEventClasses()
  * @see #accepts(ApplicationEvent )

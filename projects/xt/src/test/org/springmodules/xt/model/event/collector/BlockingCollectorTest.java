@@ -36,14 +36,7 @@ public class BlockingCollectorTest extends TestCase {
     }
     
     protected void setUp() throws Exception {
-        this.collector = new BlockingCollector() {
-            public boolean accepts(ApplicationEvent event) {
-                return true;
-            }
-            public Class[] getSupportedEventClasses() {
-                return new Class[]{ApplicationEvent.class};
-            }
-        };
+        this.collector = new BlockingCollector();
         this.exchanger = new Exchanger<ApplicationEvent>();
     }
     

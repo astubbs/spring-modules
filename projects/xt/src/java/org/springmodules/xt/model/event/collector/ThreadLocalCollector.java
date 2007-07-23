@@ -22,16 +22,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import org.springframework.context.ApplicationEvent;
-import org.springmodules.xt.model.event.FilteringApplicationCollector;
 
 /**
- * Abstract {@link org.springmodules.xt.model.event.FilteringApplicationCollector} implementation
- * storing collected events with a thread local scope.<br>
+ * {@link org.springmodules.xt.model.event.ApplicationCollector} implementation
+ * storing collected events with a thread local scope.
+ * <br>
+ * <br>
  * That said, this implementation is intrinsically <b>thread safe</b>. 
  * 
  * @author Sergio Bossa
  */
-public abstract class ThreadLocalCollector implements FilteringApplicationCollector {
+public class ThreadLocalCollector implements ApplicationCollector {
     
     private final ThreadLocal<Queue> threadLocalQueue = new ThreadLocal<Queue>() {
         protected Queue<ApplicationEvent> initialValue() {

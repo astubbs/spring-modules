@@ -20,7 +20,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.FutureTask;
 import junit.framework.TestCase;
-import org.springframework.context.ApplicationEvent;
 import org.springmodules.xt.model.event.support.PayloadEvent;
 
 /**
@@ -36,14 +35,7 @@ public class ConcurrentCollectorTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        SimpleCollector c = new SimpleCollector() {
-            public boolean accepts(ApplicationEvent event) {
-                return true;
-            }
-            public Class[] getSupportedEventClasses() {
-                return new Class[]{ApplicationEvent.class};
-            }
-        };
+        SimpleCollector c = new SimpleCollector();
         this.collector = new ConcurrentCollector(c);
         this.barrier = new CyclicBarrier(2);
     }

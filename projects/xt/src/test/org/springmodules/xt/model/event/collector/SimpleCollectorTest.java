@@ -17,7 +17,6 @@
 package org.springmodules.xt.model.event.collector;
 
 import junit.framework.TestCase;
-import org.springframework.context.ApplicationEvent;
 import org.springmodules.xt.model.event.support.PayloadEvent;
 
 /**
@@ -32,14 +31,7 @@ public class SimpleCollectorTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        this.collector = new SimpleCollector() {
-            public boolean accepts(ApplicationEvent event) {
-                return true;
-            }
-            public Class[] getSupportedEventClasses() {
-                return new Class[]{ApplicationEvent.class};
-            }
-        };
+        this.collector = new SimpleCollector();
     }
     
     public void testCollectAndFIFOOrder() throws Exception {

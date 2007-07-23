@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.model.event.support.internal;
+package org.springmodules.xt.model.event.filtering.support.internal;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springmodules.xt.model.event.FilteringApplicationListener;
+import org.springmodules.xt.model.event.filtering.FilteringApplicationListener;
 
 /**
  * Adapt an {@link org.springframework.context.ApplicationListener} to an

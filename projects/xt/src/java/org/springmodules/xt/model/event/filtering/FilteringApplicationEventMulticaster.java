@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.model.event;
+package org.springmodules.xt.model.event.filtering;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,7 +27,8 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationEventMulticaster;
-import org.springmodules.xt.model.event.support.internal.FilteringApplicationListenerAdapter;
+import org.springframework.core.task.TaskExecutor;
+import org.springmodules.xt.model.event.filtering.support.internal.FilteringApplicationListenerAdapter;
 
 /**
  * {@link org.springframework.context.event.ApplicationEventMulticaster} implementation that used in conjunction
@@ -38,8 +39,12 @@ import org.springmodules.xt.model.event.support.internal.FilteringApplicationLis
  * Registered {@link FilteringApplicationListener}s are notified only of those events whose class is supported by the listener
  * (see {@link FilteringApplicationListener#getSupportedEventClasses()}) and that are accepted
  * by the listener itself (see {@link FilteringApplicationListener#accepts(ApplicationEvent )}).<br>
- * Every other registered {@link org.springframework.context.ApplicationListener} implementation will be notified of any event,
+ * Every other kind of registered {@link org.springframework.context.ApplicationListener} implementation will be notified of any event,
  * without applying any filtering logic.
+ * <br><br>
+ * All kind of listeners are by default executed in the calling thread; if you want to execute them in another thread, please
+ * use a proper {@link org.springframework.core.task.TaskExecutor} object, configuring it through the {@link #setTaskExecutor(TaskExecutor)}
+ * method.
  * <br><br>
  * This class is completely <b>thread-safe</b>, optimized for concurrent scenarios where event multicasting operations vastly outnumber
  * listener adding and removal operations.<br>
@@ -61,7 +66,9 @@ public class FilteringApplicationEventMulticaster implements ApplicationEventMul
     private final Lock readLock = rwl.readLock();
     private final Lock writeLock = rwl.writeLock();
     
-    public void multicastEvent(ApplicationEvent event) {
+    private TaskExecutor taskExecutor;
+    
+    public void multicastEvent(final ApplicationEvent event) {
         this.readLock.lock();
         try {
             if (logger.isDebugEnabled()) {
@@ -71,10 +78,18 @@ public class FilteringApplicationEventMulticaster implements ApplicationEventMul
                 Class supportedClass = entry.getKey();
                 if (supportedClass.isAssignableFrom(event.getClass())) {
                     Set<FilteringApplicationListener> listeners = entry.getValue();
-                    for (FilteringApplicationListener listener : listeners) {
+                    for (final FilteringApplicationListener listener : listeners) {
                         try {
                             if (listener.accepts(event)) {
-                                listener.onApplicationEvent(event);
+                                if (this.taskExecutor == null) {
+                                    listener.onApplicationEvent(event);
+                                } else {
+                                    this.taskExecutor.execute(new Runnable() {
+                                        public void run() {
+                                            listener.onApplicationEvent(event);
+                                        }
+                                    });
+                                }
                             }
                         } catch (Exception ex) {
                             logger.warn(new StringBuilder("Exception while processing the following event: ").append(event));
@@ -137,5 +152,22 @@ public class FilteringApplicationEventMulticaster implements ApplicationEventMul
         } finally {
             this.writeLock.unlock();
         }
+    }
+    
+    /**
+     * Set the {@link org.springframework.core.task.TaskExecutor} object to use for executing
+     * application listeners
+     */
+    public TaskExecutor getTaskExecutor() {
+        return this.taskExecutor;
+    }
+    
+    /**
+     * Set the {@link org.springframework.core.task.TaskExecutor} object to use for executing
+     * application listeners in an another thread context, without blocking the current calling thread.<br>
+     * If not set, listeners will be executed in the calling thread.
+     */
+    public void setTaskExecutor(TaskExecutor taskExecutor) {
+        this.taskExecutor = taskExecutor;
     }
 }
