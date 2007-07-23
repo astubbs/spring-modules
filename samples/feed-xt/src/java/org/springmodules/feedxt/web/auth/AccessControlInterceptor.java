@@ -18,7 +18,6 @@ import org.springmodules.feedxt.event.LogoutEvent;
 import org.springmodules.feedxt.web.controller.support.UserHolder;
 import org.springmodules.xt.ajax.AjaxInterceptor;
 import org.springmodules.xt.ajax.util.AjaxRedirectSender;
-import org.springmodules.xt.model.event.FilteringApplicationListener;
 
 /**
  * Interceptor implementation for user access control. It ensures that:
@@ -29,7 +28,7 @@ import org.springmodules.xt.model.event.FilteringApplicationListener;
  *
  * @author Sergio Bossa
  */
-public class AccessControlInterceptor extends HandlerInterceptorAdapter implements FilteringApplicationListener {
+public class AccessControlInterceptor extends HandlerInterceptorAdapter {
     
     private AjaxInterceptor ajaxInterceptor;
     
@@ -90,18 +89,16 @@ public class AccessControlInterceptor extends HandlerInterceptorAdapter implemen
         return true;
     }
     
-    public void onApplicationEvent(ApplicationEvent appEvent) {
-        if (appEvent instanceof LoginEvent) {
-            LoginEvent event = (LoginEvent) appEvent;
-            HttpSession session = event.getSession();
-            User user = event.getUser();
-            this.users.put(user, session);
-        } else if (appEvent instanceof LogoutEvent) {
-            LogoutEvent event = (LogoutEvent) appEvent;
-            HttpSession session = event.getSession();
-            User user = event.getUser();
-            this.users.remove(user);
-        }
+    public void onEvent(LoginEvent event) {
+        HttpSession session = event.getSession();
+        User user = event.getUser();
+        this.users.put(user, session);
+    }
+    
+    public void onEvent(LogoutEvent event) {
+        HttpSession session = event.getSession();
+        User user = event.getUser();
+        this.users.remove(user);
     }
     
     public void setAjaxInterceptor(AjaxInterceptor ajaxInterceptor) {

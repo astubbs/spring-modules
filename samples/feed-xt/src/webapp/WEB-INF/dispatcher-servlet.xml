@@ -207,6 +207,11 @@
     
     <!-- Events management-->
     
-    <bean id="applicationEventMulticaster" class="org.springmodules.xt.model.event.FilteringApplicationEventMulticaster"/>
+    <bean id="applicationEventMulticaster" class="org.springmodules.xt.model.event.filtering.FilteringApplicationEventMulticaster"/>
+    
+    <bean id="accessControlInterceptorInvoker" class="org.springmodules.xt.model.event.edp.DefaultEDPInvoker">
+        <property name="invokedBean" ref="accessControlInterceptor"/>
+        <property name="invokedMethodName" value="onEvent"/>
+    </bean>
     
 </beans>
