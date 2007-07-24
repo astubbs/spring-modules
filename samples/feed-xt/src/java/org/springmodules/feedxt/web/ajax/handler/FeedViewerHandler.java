@@ -3,7 +3,6 @@ package org.springmodules.feedxt.web.ajax.handler;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -58,19 +57,15 @@ public class FeedViewerHandler extends AbstractAjaxHandler implements MessageSou
     
     public AjaxResponse viewFeed(AjaxActionEvent event) {
         AjaxResponse response = new AjaxResponseImpl("UTF-8");
-        String feedName = event.getParameters().get("feed");
-        if (feedName != null) {
+        String subscriptionName = event.getParameters().get("subscription");
+        if (subscriptionName != null) {
             try {
                 // Get the feed from user's subscriptions:
-                User user = this.userHolder.getUser();
-                FeedSubscription subscription = this.userService.getUserSubscriptionByName(user, feedName);
-                if (subscription != null) {
-                    // Put the actual feed object into HTTP session:
-                    Feed feed = subscription.getFeed();
-                    HttpSession session = event.getHttpRequest().getSession();
-                    session.setAttribute("feed", feed);
-                    
+                Feed feed = this.getFeedFromSubscriptionName(subscriptionName);
+                if (feed != null) {
                     // Render the feed via external JSP content:
+                    event.getHttpRequest().setAttribute("feed", feed);
+                    event.getHttpRequest().setAttribute("subscription", subscriptionName);
                     JspComponent jsp = new JspComponent(event.getHttpRequest(), "/personal/includes/feedPanel.page");
                     // Replace the content of the "viewer" page part:
                     ReplaceContentAction action1 = new ReplaceContentAction("viewer", jsp);
@@ -110,52 +105,64 @@ public class FeedViewerHandler extends AbstractAjaxHandler implements MessageSou
      */
     private AjaxResponse showEntry(AjaxActionEvent event) {
         AjaxResponse response = new AjaxResponseImpl("UTF-8");
-        String sourceElementId = event.getElementId();
-        Feed feed = (Feed) event.getHttpRequest().getSession().getAttribute("feed");
-        if (feed != null) {
-            // Get the feed entry at the corresponding index:
-            int entryIndex = Integer.parseInt(event.getParameters().get("entryIndex"));
-            Entry entry = (Entry) feed.getEntries().get(entryIndex);
-            
-            // Set the entry object in the request:
-            event.getHttpRequest().setAttribute("entry", entry);
-            // Render the entry via external JSP content:
-            JspComponent jsp = new JspComponent(event.getHttpRequest(), "/personal/includes/entryPanel.page");
-            
-            // Change the class of the web element that fired the event:
-            SetAttributeAction action1 = new SetAttributeAction(sourceElementId, "class", "expanded");
-            
-            // Construct the CSS selector identifying the web page part that will be updated with the JSP content:
-            String selector = new StringBuilder("#").append(sourceElementId).append("~").append("div.entryBody").toString();
-            ElementMatcher matcher = new SelectorMatcher(Arrays.asList(selector));
-            // Replace the content of the web page part identified by the selector:
-            ReplaceContentAction action2 = new ReplaceContentAction(matcher, jsp);
-            // Call a client-side javascript function:
-            Map<String, Object> params = new HashMap<String, Object>();
-            params.put("selector", selector);
-            ExecuteJavascriptFunctionAction action3 = new ExecuteJavascriptFunctionAction("showEntryEffect", params);
-            
-            // Add actions to response:
-            response.addAction(action1);
-            response.addAction(action2);
-            response.addAction(action3);
+        String subscriptionName = event.getParameters().get("subscription");
+        if (subscriptionName != null) {
+            try {
+                // Get the feed from user's subscriptions:
+                Feed feed = this.getFeedFromSubscriptionName(subscriptionName);
+                if (feed != null) {
+                    // Get the feed entry at the corresponding index:
+                    int entryIndex = Integer.parseInt(event.getParameters().get("entryIndex"));
+                    Entry entry = (Entry) feed.getEntries().get(entryIndex);
+                    
+                    // Set the entry object in the request:
+                    event.getHttpRequest().setAttribute("entry", entry);
+                    // Render the entry via external JSP content:
+                    JspComponent jsp = new JspComponent(event.getHttpRequest(), "/personal/includes/entryPanel.page");
+                    
+                    // Change the class of the web element that fired the event:
+                    SetAttributeAction action1 = new SetAttributeAction(event.getElementId(), "class", "expanded");
+                    
+                    // Construct the CSS selector identifying the web page part that will be updated with the JSP content:
+                    String selector = new StringBuilder("#").append(event.getElementId()).append("~").append("div.entryBody").toString();
+                    ElementMatcher matcher = new SelectorMatcher(Arrays.asList(selector));
+                    // Replace the content of the web page part identified by the selector:
+                    ReplaceContentAction action2 = new ReplaceContentAction(matcher, jsp);
+                    // Call a client-side javascript function:
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("selector", selector);
+                    ExecuteJavascriptFunctionAction action3 = new ExecuteJavascriptFunctionAction("showEntryEffect", params);
+                    
+                    // Add actions to response:
+                    response.addAction(action1);
+                    response.addAction(action2);
+                    response.addAction(action3);
+                } else {
+                    this.renderErrorMessage(event, response, "message.error.feed.not.found", "No feed found.");
+                }
+            } catch (UserNotExistentException ex) {
+                logger.warn(ex.getMessage(), ex.getCause());
+                this.renderErrorMessage(event, response, "message.error.reading.feed", "Error while reading the feed.");
+            } catch (CannotAccessFeedException ex) {
+                logger.warn(ex.getMessage(), ex.getCause());
+                this.renderErrorMessage(event, response, "message.error.reading.feed", "Error while reading the feed.");
+            }
         }
         return response;
     }
     
     /**
      * Hide the feed entry: this could be completely done via pure client side javascript, but
-     * this is a sample application, so let us play a bit ;) 
+     * this is a sample application, so let us play a bit ;)
      */
     private AjaxResponse hideEntry(AjaxActionEvent event) {
         AjaxResponse response = new AjaxResponseImpl("UTF-8");
-        String sourceElementId = event.getElementId();
         
         // Change the class of the web element that fired the event:
-        SetAttributeAction action1 = new SetAttributeAction(sourceElementId, "class", "closed");
+        SetAttributeAction action1 = new SetAttributeAction(event.getElementId(), "class", "closed");
         
         // Construct the CSS selector identifying the web page part that will be updated :
-        String selector = new StringBuilder("#").append(sourceElementId).append("~").append("div.entryBody").toString();
+        String selector = new StringBuilder("#").append(event.getElementId()).append("~").append("div.entryBody").toString();
         ElementMatcher matcher = new SelectorMatcher(Arrays.asList(selector));
         // Call a client-side javascript function for hiding the entry:
         Map<String, Object> params = new HashMap<String, Object>();
@@ -181,5 +188,15 @@ public class FeedViewerHandler extends AbstractAjaxHandler implements MessageSou
         // Add actions to response:
         response.addAction(action1);
         response.addAction(action2);
+    }
+    
+    private Feed getFeedFromSubscriptionName(String name) throws UserNotExistentException, CannotAccessFeedException {
+        User user = this.userHolder.getUser();
+        FeedSubscription subscription = this.userService.getUserSubscriptionByName(user, name);
+        if (subscription != null) {
+            return subscription.getFeed();
+        } else {
+            return null;
+        }
     }
 }

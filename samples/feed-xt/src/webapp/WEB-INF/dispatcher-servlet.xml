@@ -33,6 +33,7 @@
     <bean id="subscriptionCollectionEditor" class="org.springmodules.feedxt.web.editor.SubscriptionCollectionEditor" scope="prototype">
         <constructor-arg><value>java.util.List</value></constructor-arg>
         <property name="userHolder"><ref bean="userHolder"/></property>
+        <property name="userService"><ref bean="userService"/></property>
     </bean>
     
     <!-- Validators -->

@@ -4,19 +4,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springmodules.feedxt.web.controller.support.UserHolder;
 import org.springmodules.feedxt.web.view.AddFeedSubscriptionView;
 
 /**
  * @author Sergio Bossa
  */
 public class SubscriptionValidator implements Validator { 
-    
-    private UserHolder userHolder;
-
-    public void setUserHolder(UserHolder userHolder) {
-        this.userHolder = userHolder;
-    }
         
     public boolean supports(Class aClass) {
         return AddFeedSubscriptionView.class.isAssignableFrom(aClass);

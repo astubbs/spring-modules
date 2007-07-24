@@ -26,7 +26,7 @@
                     <div class="submenu">
                         <c:if test="${!empty user.subscriptions}">
                             <c:forEach items="${user.subscriptions}" var="subscription">
-                                <a class="feedLink" href="" feedName="${subscription.name}">${subscription.name}</a>	
+                                <a class="feedLink" href="" subscription="${subscription.name}">${subscription.name}</a>	
                             </c:forEach>
                         </c:if>
                         <c:if test="${empty user.subscriptions}">

@@ -1,14 +1,15 @@
 var rules = {
     'a.feedLink' : function(element){
         element.onclick = function() {
-            XT.doAjaxAction('viewFeed', this, {'feed' : this.getAttribute('feedName')});
+            XT.doAjaxAction('viewFeed', this, {'subscription' : this.getAttribute('subscription')});
             return false;
         };
     },
     
     'a[id^="entry"]' : function(element){
         element.onclick = function() {
-            XT.doAjaxAction('toggleEntry', this, {'entryIndex' : this.getAttribute('entryIndex'), 'status' : this.getAttribute('class')});
+            XT.doAjaxAction('toggleEntry', this, 
+            {'subscription' : this.getAttribute('subscription'), 'entryIndex' : this.getAttribute('entryIndex'), 'status' : this.getAttribute('class')});
             return false;
         }
     }
