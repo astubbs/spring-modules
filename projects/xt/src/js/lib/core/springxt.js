@@ -111,7 +111,7 @@ String.prototype.parseJSON = function () {
  Taconite (http://taconite.sourceforge.net/) : Copyright (C) Ryan Asleson.
  */
 
-var springxt_taconite_version=20070526;
+var springxt_taconite_version=20070726;
 
 var isIE=document.uniqueID;
 
@@ -871,7 +871,10 @@ function XhtmlToDOMParser() {
         for (var i = 0; i < scripts.length; i++) {
             var script = scripts[i];
             if (script.getAttribute("type") == "text/javascript") {
-                var js = script.firstChild.nodeValue;
+                var js = "";
+                for (var i = 0; i < script.childNodes.length; i++) {
+                    js = js + script.childNodes[i].nodeValue;
+                }
                 eval(js);
             }
         }
