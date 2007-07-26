@@ -47,7 +47,7 @@ public class ExecuteJavascriptFunctionAction extends AbstractExecuteJavascriptAc
         StringBuilder function = new StringBuilder();
         
         function.append(name).append("(");
-        if (!this.options.isEmpty()) {
+        if (this.options != null && !this.options.isEmpty()) {
             JSONObject json = JSONObject.fromMap(this.options);
             function.append(json.toString());
         }
