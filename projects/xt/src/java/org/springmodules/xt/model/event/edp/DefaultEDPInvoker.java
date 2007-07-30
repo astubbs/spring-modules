@@ -24,15 +24,24 @@ import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationEvent;
-import org.springmodules.xt.model.event.edp.EDPInvoker;
 
 /**
- * Default {@link org.springmodules.xt.model.event.EDPInvoker} implementation.<br>
- * The DefaultEDPInvoker will invoke the configured EDP bean (see {@link #setInvokedBean()}) if the bean has a method
+ * Default {@link org.springmodules.xt.model.event.EDPInvoker} implementation.
+ * <br><br>
+ * The DefaultEDPInvoker will invoke the configured Event Driven Pojo (EDP) bean (see {@link #setInvokedBean(Object )}) if the bean has a method
  * with name equal to the configured one (see {@link #setInvokedMethodName(String )}), and that accepts a single parameter whose type
  * is the same as, or is a super class/interface of, the published event.
  * <br><br>
- * This class is <b>not</b> thread-safe.
+ * I.e., given an event of type <i>FooEvent</i>, and a method name set as <i>onEvent</i>, the corresponding EDP bean will provide a method with the
+ * following signature:
+ * <br>
+ * <i>public void onEvent(FooEvent );</i>
+ * <br><br>
+ * Please note that if the EDP bean provides several overloaded implementations of the invokable method, the DefaultEDPInvoker will invoke
+ * <b>all</b> methods supporting a given published event, that is, all methods accepting a parameter whose type is the same as, or is
+ * a super class/interface of the published event type.
+ * <br><br>
+ * <b>Note</b>: This class is <b>not</b> thread-safe.
  *
  * @author Sergio Bossa
  */
@@ -51,7 +60,7 @@ public class DefaultEDPInvoker implements EDPInvoker {
     
     private Map<Class, List<Method>> methodsCache = new HashMap<Class, List<Method>>();
     
-    public final Object getInvokedBean() {
+    public Object getInvokedBean() {
         return this.invokedBean;
     }
     
@@ -59,11 +68,11 @@ public class DefaultEDPInvoker implements EDPInvoker {
      * Set the bean to invoke upon published events.
      * @param invokedBean The invoked bean.
      */
-    public final void setInvokedBean(Object invokedBean) {
+    public void setInvokedBean(Object invokedBean) {
         this.invokedBean = invokedBean;
     }
     
-    public final String getInvokedMethodName() {
+    public String getInvokedMethodName() {
         return this.invokedMethodName;
     }
     
@@ -72,7 +81,7 @@ public class DefaultEDPInvoker implements EDPInvoker {
      * {@link #DEFAULT_METHOD_NAME}.
      * @param invokedMethodName The invoked bean method name.
      */
-    public final void setInvokedMethodName(String invokedMethodName) {
+    public void setInvokedMethodName(String invokedMethodName) {
         this.invokedMethodName = invokedMethodName;
     }
     

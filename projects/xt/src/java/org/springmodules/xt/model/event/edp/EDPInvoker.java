@@ -44,7 +44,7 @@ public interface EDPInvoker extends ApplicationListener {
     
     /**
      * Get the name of the bean method to invoke.
-     * @return The bean method name,
+     * @return The bean method name.
      */
      public String getInvokedMethodName();
 }
