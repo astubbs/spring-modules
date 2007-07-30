@@ -111,7 +111,7 @@ String.prototype.parseJSON = function () {
  Taconite (http://taconite.sourceforge.net/) : Copyright (C) Ryan Asleson.
  */
 
-var springxt_taconite_version=20070526;
+var springxt_taconite_version=20070727;
 
 var isIE=document.uniqueID;
 
@@ -871,7 +871,10 @@ function XhtmlToDOMParser() {
         for (var i = 0; i < scripts.length; i++) {
             var script = scripts[i];
             if (script.getAttribute("type") == "text/javascript") {
-                var js = script.firstChild.nodeValue;
+                var js = "";
+                for (var i = 0; i < script.childNodes.length; i++) {
+                    js = js + script.childNodes[i].nodeValue;
+                }
                 eval(js);
             }
         }
@@ -886,8 +889,11 @@ function XhtmlToDOMParser() {
         }
         for(var i=0;i<xml.childNodes.length;i++){
             domChildNode=handleNode(xml.childNodes[i]);
-            checkForIEMultipleSelectHack(domNode, domChildNode);
             if(domChildNode!=null) {
+                // Here we have to check xml.childNodes[i].nodeType==1 because of an IE7 bug 
+                if (isIE && xml.childNodes[i].nodeType==1) {
+                    checkForIEMultipleSelectHack(domNode, domChildNode);
+                }
                 domNode.appendChild(domChildNode);
             }
         }              
@@ -977,7 +983,7 @@ function XhtmlToDOMParser() {
             case 4:  //CDATA_SECTION_NODE
                 var textNode = document.createTextNode(xmlNode.nodeValue);
                 if(isIE) {
-                    textNode.nodeValue = textNode.nodeValue.replace(/\n/g, '\r'); 
+                    textNode.nodeValue = textNode.nodeValue.replace(/\n/g, '\r');
                 }
                 return textNode;
         }      

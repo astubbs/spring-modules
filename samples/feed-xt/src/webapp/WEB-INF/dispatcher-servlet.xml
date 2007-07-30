@@ -210,9 +210,15 @@
     
     <bean id="applicationEventMulticaster" class="org.springmodules.xt.model.event.filtering.FilteringApplicationEventMulticaster"/>
     
-    <bean id="accessControlInterceptorInvoker" class="org.springmodules.xt.model.event.edp.DefaultEDPInvoker">
+    <bean id="accessControlInterceptorInvoker" class="org.springmodules.xt.model.event.edp.FilteringEDPInvoker">
         <property name="invokedBean" ref="accessControlInterceptor"/>
         <property name="invokedMethodName" value="onEvent"/>
+        <property name="supportedEventClasses">
+            <list>
+                <value>org.springmodules.feedxt.event.LoginEvent</value>
+                <value>org.springmodules.feedxt.event.LogoutEvent</value>
+            </list>
+        </property>
     </bean>
     
 </beans>
