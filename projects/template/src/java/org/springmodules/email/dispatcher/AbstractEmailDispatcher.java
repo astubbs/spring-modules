@@ -59,7 +59,7 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
     private EmailParser emailParser;
 
     private String encoding = DEFAULT_ENCODING;
-
+    
     /**
      * Sends the email associated with the given name.
      *
@@ -112,11 +112,15 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
      * @throws Exception Thrown if for some reason the wiring of this object is incorrect.
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
-    public void afterPropertiesSet() throws Exception {
+    public final void afterPropertiesSet() throws Exception {
         Assert.notNull(templateResolver, "Property 'templateResolver' must be set");
         Assert.notNull(mailSender, "Property 'mailSender' must be set");
         Assert.notNull(emailParser, "Property 'templateResolver' must be set");
         Assert.notNull(templateResolver, "Property 'templateResolver' must be set");
+        doAfterPropertiesSet();
+    }
+
+    public void doAfterPropertiesSet() throws Exception {
     }
 
     //============================================== Setter/Getter =====================================================

@@ -28,7 +28,7 @@
     <subject>${subject}</subject>
 
     <text-body>
-        This is an email from ${from.name}
+        This is a text email from ${from.name}
     </text-body>
 
     <html-body>

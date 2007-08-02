@@ -16,14 +16,12 @@
 
 package org.springmodules.email.dispatcher;
 
-import java.util.Iterator;
-
 import javax.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.util.Assert;
 import org.springmodules.email.Email;
-import org.springmodules.email.Attachment;
+import org.springmodules.email.dispatcher.emailsender.JavaMailEmailSender;
+import org.springmodules.email.dispatcher.emailsender.EmailSender;
 
 /**
  * A JavaMail implementation of {@link AbstractEmailDispatcher} where a {@link JavaMailSender} is
@@ -34,8 +32,7 @@ import org.springmodules.email.Attachment;
  */
 public class JavaMailEmailDispatcher extends AbstractEmailDispatcher {
 
-    // not supported out of the box by spring in 2.0.3 release.
-    private final static String HEADER_PRIORITY = "X-Priority";
+    private final static EmailSender sender = new JavaMailEmailSender();
 
     /**
      * Sends the given email.
@@ -43,50 +40,10 @@ public class JavaMailEmailDispatcher extends AbstractEmailDispatcher {
      * @param email The email to be sent
      */
     public void send(Email email) {
-        ((JavaMailSender)getMailSender()).send(generateMimeMessagePreparator(email));
+        sender.send(getMailSender(), email, getEncoding());
     }
 
-    /**
-     * Creates a MimeMessagePreparator that can translate the given email to a {@link MimeMessage}.
-     *
-     * @param email The email to be translated.
-     * @return The appropriate MimeMessagePreparator.
-     */
-    protected MimeMessagePreparator generateMimeMessagePreparator(final Email email) {
-        return new MimeMessagePreparator() {
-            public void prepare(MimeMessage mimeMessage) throws Exception {
-                mimeMessage.setHeader(HEADER_PRIORITY, String.valueOf(email.getPriority().getRank()));
-                MimeMessageHelper message =
-                    new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_RELATED, getEncoding());
-                message.setTo(email.getTo());
-                message.setBcc(email.getBcc());
-                message.setCc(email.getCc());
-                message.setFrom(email.getFrom());
-                message.setSubject(email.getSubject());
-                if (email.getTextBody() != null && email.getHtmlBody() != null) {
-                    message.setText(email.getTextBody(), email.getHtmlBody());
-                } else {
-                    if (email.getTextBody() != null) {
-                        message.setText(email.getTextBody(), false);
-                    }
-                    if (email.getHtmlBody() != null) {
-                        message.setText(email.getHtmlBody(), true);
-                    }
-                }
-                if (email.getReplyTo() != null) {
-                    message.setReplyTo(email.getReplyTo());
-                }
-                for (Iterator iter = email.getAttachments().iterator(); iter.hasNext();) {
-                    Attachment attachment = (Attachment) iter.next();
-                    message.addAttachment(attachment.getName(), attachment.getResource());
-                }
-                for (Iterator iter = email.getInlineAttachments().iterator(); iter.hasNext();) {
-                    Attachment attachment = (Attachment) iter.next();
-                    message.addInline(attachment.getName(), attachment.getResource());
-                }
-            }
-        };
+    public void doAfterPropertiesSet() throws Exception {
+        Assert.isInstanceOf(JavaMailSender.class, getMailSender(), "JavaMailEmailDispatcher can only work with JavaMailSender");
     }
-
-
 }

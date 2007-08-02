@@ -17,24 +17,16 @@ package org.springmodules.email.dispatcher;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import com.dumbster.smtp.SimpleSmtpServer;
 import com.dumbster.smtp.SmtpMessage;
-import javax.mail.Address;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springmodules.email.parser.xml.SaxEmailParser;
 import org.springmodules.email.Person;
-import org.springmodules.email.Email;
-import org.springmodules.email.EmailPriority;
+import org.springmodules.email.parser.xml.SaxEmailParser;
 import org.springmodules.template.engine.velocity.VelocityTemplateEngine;
 import org.springmodules.template.resolver.BasicTemplateResolver;
 
@@ -81,51 +73,6 @@ public class JavaMailEmailDispatcherTests extends TestCase {
         assertEquals("Lian <lian@bla.com>", message.getHeaderValue("To"));
         assertEquals("subject", message.getHeaderValue("Subject"));
         assertEquals("No Reply <noreply@bla.org>", message.getHeaderValue("Reply-To"));
-    }
-
-    public void testGenerateMimeMessagePreparator() throws Exception {
-
-        Email email = new Email();
-        email.setFrom("From", "from@bla.com");
-        email.setReplyTo("Reply To", "replyto@bla.com");
-        email.setTo("to@bla.com");
-        email.setCc("cc@bla.com");
-        email.setBcc("bcc@bla.com");
-        email.setPriority(EmailPriority.HIGH);
-        email.setSubject("subject");
-        email.setTextBody("text");
-        
-        MimeMessagePreparator preparator = dispatcher.generateMimeMessagePreparator(email);
-        MimeMessage mimeMessage = createMimeMessage();
-        preparator.prepare(mimeMessage);
-
-        assertEquals(1, mimeMessage.getFrom().length);
-        InternetAddress address = (InternetAddress)mimeMessage.getFrom()[0];
-        assertEquals("From", address.getPersonal());
-        assertEquals("from@bla.com", address.getAddress());
-
-        Address[] addresses = mimeMessage.getRecipients(MimeMessage.RecipientType.TO);
-        assertEquals(1, addresses.length);
-        address = (InternetAddress)addresses[0];
-        assertEquals("to@bla.com", address.getAddress());
-
-        addresses = mimeMessage.getRecipients(MimeMessage.RecipientType.CC);
-        assertEquals(1, addresses.length);
-        address = (InternetAddress)addresses[0];
-        assertEquals("cc@bla.com", address.getAddress());
-
-        addresses = mimeMessage.getRecipients(MimeMessage.RecipientType.BCC);
-        assertEquals(1, addresses.length);
-        address = (InternetAddress)addresses[0];
-        assertEquals("bcc@bla.com", address.getAddress());
-
-        assertEquals("2", mimeMessage.getHeader("X-Priority")[0]);
-        assertEquals("subject", mimeMessage.getSubject());
-    }
-
-    protected MimeMessage createMimeMessage() {
-        Session session = Session.getInstance(new Properties());
-        return new MimeMessage(session);
     }
 
 
