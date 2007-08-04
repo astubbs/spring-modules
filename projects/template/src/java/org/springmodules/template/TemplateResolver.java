@@ -16,6 +16,8 @@
 
 package org.springmodules.template;
 
+import java.util.Locale;
+
 /**
  * A strategy used to resolve templates based on a given name.
  *
@@ -31,6 +33,25 @@ public interface TemplateResolver {
      * @return The resolved template.
      */
     Template resolve(String name, String encoding);
+
+    /**
+     * Resolves the appropriate template based on the given name and locale.
+     *
+     * @param name The name of the template
+     * @param locale The locale of the template
+     * @return The resolved template.
+     */
+    Template resolve(String name, Locale locale);
+
+    /**
+     * Resolves the appropriate template based on the given name, locale, and encoding.
+     *
+     * @param name The name of the template
+     * @param encoding The encoding of the template
+     * @param locale The locale of the template
+     * @return The resolved template.
+     */
+    Template resolve(String name, String encoding, Locale locale);
 
     /**
      * Resolves the appropriate template based on the given name using the default encoding.

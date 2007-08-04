@@ -1,5 +1,7 @@
 package org.springmodules.template.resolver;
 
+import java.util.Locale;
+
 import junit.framework.*;
 import org.easymock.MockControl;
 import org.springmodules.template.TemplateEngine;
@@ -32,14 +34,15 @@ public class SimpleTemplateResolverTests extends TestCase {
         resolver.setEngine(engine);
         resolver.setResourceLoader(loader);
         resolver.setPrefix("prefix/");
-        resolver.setSuffix("/suffix");
+        resolver.setExtension(".ext");
+        resolver.afterPropertiesSet();
     }
 
     public void testResolve() throws Exception {
         String name = "name";
 
         StringResource resource = new StringResource("resource");
-        loaderControl.expectAndReturn(loader.getResource("prefix/name/suffix"), resource);
+        loaderControl.expectAndReturn(loader.getResource("prefix/name.ext"), resource);
 
         Template template = new DummyTemplate();
         engineControl.expectAndReturn(engine.createTemplate(resource, "UTF-8"), template);
@@ -62,7 +65,7 @@ public class SimpleTemplateResolverTests extends TestCase {
         String encoding = "encoding";
 
         StringResource resource = new StringResource("resource");
-        loaderControl.expectAndReturn(loader.getResource("prefix/name/suffix"), resource);
+        loaderControl.expectAndReturn(loader.getResource("prefix/name.ext"), resource);
 
         Template template = new DummyTemplate();
         engineControl.expectAndReturn(engine.createTemplate(resource, encoding), template);
@@ -72,6 +75,31 @@ public class SimpleTemplateResolverTests extends TestCase {
 
         Template result1 = resolver.resolve(name, encoding);
         Template result2 = resolver.resolve(name, encoding);
+
+        assertSame(template, result1);
+        assertSame(result1, result2);
+
+        loaderControl.verify();
+        engineControl.verify();
+    }
+
+    public void testResolve_WithEncodingAndLocale() throws Exception {
+        String name = "name";
+        String encoding = "encoding";
+
+        StringResource resource = new StringResource("resource");
+        loaderControl.expectAndReturn(loader.getResource("prefix/name_en_US.ext"), null);
+        loaderControl.expectAndReturn(loader.getResource("prefix/name_en.ext"), null);
+        loaderControl.expectAndReturn(loader.getResource("prefix/name.ext"), resource);
+
+        Template template = new DummyTemplate();
+        engineControl.expectAndReturn(engine.createTemplate(resource, encoding), template);
+
+        loaderControl.replay();
+        engineControl.replay();
+
+        Template result1 = resolver.resolve(name, encoding, Locale.US);
+        Template result2 = resolver.resolve(name, encoding, Locale.US);
 
         assertSame(template, result1);
         assertSame(result1, result2);

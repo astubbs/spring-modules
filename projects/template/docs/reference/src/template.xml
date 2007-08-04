@@ -77,9 +77,15 @@
 
                         <programlisting>public interface TemplateResolver {
 
+    Template resolve(String name);
+
+    Template resolve(String name, Locale locael);
+
     Template resolve(String name, String encoding);
 
-    Template resolve(String name);
+    Template resolve(String name, String encoding, Locale locale);
+
+
 
 }</programlisting>
                         As we'll see later on, this interface enables defining different strategies by which templates
@@ -241,13 +247,21 @@
                     As the name suggests, this is a very basic implementation of the <emphasis>TemplateResolver</emphasis>
                     interface. It is configured with a template engine and a resource loader. The resource loader is used
                     to load the template resources based on the template name, while the template engine is used to create
-                    the templates from the loaded template resources. In this case, the resolver's <emphasis>resolve(String)</emphasis>
+                    the templates from the loaded template resources. In the simplest case, the resolver's <emphasis>resolve(String)</emphasis>
                     calls the resource loader's <emphasis>getResource(String)</emphasis> with the provided template name.
+                    This resolver can also (recommended) be configured with an extension. The extension is used to help when
+                    resolving using a locale. If no extension is set, the resolver will figure out the extension from
+                    the given template name (basically, taking treating the susbstring from the last '.' in the name as
+                    the extension). Furthermore, it is also possible to tell the resolver to resolve the locale from
+                    the current <emphasis>org.springframework.context.i18n.LocaleContext</emphasis> when the locale is
+                    not supplied by the client (or when the client supplies <emphasis>null</emphasis> as the locale).
                     Here is how this resolver can be defined within an application context:
                 </para>
 
                 <programlisting>&lt;bean id="resolver" class="org.springmodules.template.resolver.BasicTemplateResolver"&gt;
-    &lt;property name="engine" ref="freemarker"/&gt;
+    &lt;property name="engine" ref="velocity"/&gt;
+    &lt;property name="extension" value=".vm"/&gt;
+    &lt;property name="resolveLocalFromContextWhenAbsent" value="true"/&gt;
 &lt;/bean&gt;</programlisting>
 
                 <para>
@@ -296,52 +310,25 @@
                 <para>
                     Again, as its name suggests, this is a simple template resolver that extends the caching resolver.
                     It is very likely that you will use this resolver implementation most of the time. In addition to
-                    all functionality this resolver inherits from the caching and basic resolver, it adds two addition
-                    features. With this resolver it is possible to define a prefix and a suffix that when combined with
-                    the template name, are used to create the template resource path. Here's how this resolver can be
+                    all functionality this resolver inherits from the caching and basic resolver, it one additional
+                    features. With this resolver it is possible to define a prefix that when combined with
+                    the template name, is used to create the template resource path. Here's how this resolver can be
                     configured within an application context:
                 </para>
 
                 <programlisting>&lt;bean id="simpleResolver" class="org.springmodules.template.resolver.SimpleTemplateResolver"&gt;
     &lt;property name="engine" ref="freemarker"/&gt;
     &lt;property name="prefix" value="classpath:/templates/"/&gt;
-    &lt;property name="suffix" value=".ftl"/&gt;
-&lt;/bean&gt;</programlisting>
-
-                <para>
-                    In the example above, when trying to resolve a template named "email", the resolver will try to load
-                    the template resource from the "classpath:/templates/email.ftl" location. This is quite powerful
-                    mechanism as it lets you define all template resources in a well defined and proprietary location,
-                    while still the user only needs to deal with the logical name of the template (i.e. "email").
-                </para>
-
-            </sect3>
-
-            <sect3>
-
-                <title>LocalizedTemplateResolver</title>
-
-                <para>
-                    While the <emphasis>SimpleTemplateResolver</emphasis> can serve you well most of the time, sometimes
-                    you want to support multiple locales and provide the same template in multiple languages. The
-                    <emphasis>LocalizedTemplateResolver</emphasis> enables you to do just that. Again, it inherits
-                    all the functionality from the caching and basic resolvers, while this time, it tries to load
-                    localized versions of the templates based on the resource bundles file naming conventions. For example,
-                    when resolving a template named "email" with an extension ".ftl" and assuming the current locale
-                    context is <emphasis>en_US</emphasis>, it will first try to load the "email_en_US.ftl" resource, when
-                    that fails, it will try loading "email_en.ftl", and if that fails it will fallback and try to load
-                    "email.ftl". Here's how this resolver can be configured within an application context:
-                </para>
-
-                <programlisting>&lt;bean id="localizedResolver" class="org.springmodules.template.resolver.LocalizedTemplateResolver"&gt;
-    &lt;property name="engine" ref="freemarker"/&gt;
-    &lt;property name="prefix" value="classpath:/templates/"/&gt;
     &lt;property name="extension" value=".ftl"/&gt;
 &lt;/bean&gt;</programlisting>
 
                 <para>
-                    As can be seen above, this is fairly similar to the configuration of the <emphasis>SimpleTemplateResolver</emphasis>.
-                    All of the localization extra work is done inside the resolver itself.
+                    In the example above, when trying to resolve a template named "email", the resolver will try to load
+                    the template resource from the "classpath:/templates/email.ftl" location, or when the locale is provided
+                    the resolver will try one of the following first: classpath:/templates/email_en_US.ftl" and
+                    "classpath:/templates/email_en.ftl". This is quite powerful mechanism as it lets you define all
+                    template resources in a well defined and proprietary location, while still the user only needs to
+                    deal with the logical name of the template (i.e. "email").
                 </para>
 
             </sect3>
@@ -545,9 +532,15 @@
 
     void send(String emailName); <co id="name-co" linkends="name"/>
 
+    void send(String emailName, Locale locale); <co id="name-locale-co" linkends="name-locale"/>
+
     void send(String emailName, Map model); <co id="name-model-co" linkends="name-model"/>
 
+    void send(String emailName, Map model, Locale locale); <co id="name-model-locale-co" linkends="name-model-locale"/>
+
     void send(String emailName, Map model, EmailPreparator preparator); <co id="name-model-preparator-co" linkends="name-model-preparator"/>
+
+    void send(String emailName, Map model, Locale locale, EmailPreparator preparator); <co id="name-model-locale-preparator-co" linkends="name-model-locale-preparator"/>
 
 }</programlisting>
 
@@ -560,7 +553,12 @@
                     </callout>
                     <callout arearefs="name-co" id="name">
                         <para>
-                            Resolves the email identified by the given name and sends it.
+                            Resolves and sends the email identified by the given name.
+                        </para>
+                    </callout>
+                    <callout arearefs="name-locale-co" id="name-locale">
+                        <para>
+                            Resolves and sends the email identified by the given name and locale.
                         </para>
                     </callout>
                     <callout arearefs="name-model-co" id="name-model">
@@ -569,10 +567,22 @@
                             sends it.
                         </para>
                     </callout>
+                    <callout arearefs="name-model-locale-co" id="name-model-locale">
+                        <para>
+                            Resolves and sends the email identified by the given name and locale. The resolved email is
+                            populated by the given given model.
+                        </para>
+                    </callout>
                     <callout arearefs="name-model-preparator-co" id="name-model-preparator">
                         <para>
                             Resolves the email identified by the given name, populating it using the given model, preparing
                             it using the given email preparator and sends it.
+                        </para>
+                    </callout>
+                    <callout arearefs="name-model-locale-preparator-co" id="name-model-locale-preparator">
+                        <para>
+                            Resolves and sends the email identified by the given name and locale. The resolved email is
+                            populated by the given model and is prepared by the given preparator prior to dispatch.
                         </para>
                     </callout>
                 </calloutlist>
@@ -581,13 +591,12 @@
             <para>
                 As can be seen, there are essentially two ways of sending an email. A direct way which mean the client
                 of this interface provides the email to be sent. The other way is more implicit way where the client
-                requests the dispatcher to send an email identified by its name.
+                requests the dispatcher to send an email identified by its name and possibly by a specific locale.
             </para>
 
             <para>
-                <emphasis>AbstractEmailDispatcher</emphasis> is a base class for the two concrete implementation of this
-                interface <emphasis>JavaMailEmailDispatcher</emphasis> and <emphasis>SimpleEmailDispatcher</emphasis>. The
-                abstract class takes care of resolving and preparing the emails. It does this by first loading the
+                <emphasis>AbstractEmailDispatcher</emphasis> is a base class for all concrete implementation of this
+                interface. The abstract class takes care of resolving and preparing the emails. It does this by first loading the
                 appropriate template for the given email, generating the output using the given model, The output is expected
                 to be an email descriptor and so an <emphasis>EmailParser</emphasis> is used to parse it to a concrete
                 <emphasis>Email</emphasis> object. And last but not least, if necessary, preparing the result email using an
@@ -596,14 +605,26 @@
             </para>
 
             <para>
-                As mentioned above there are two concrete <emphasis>EmailDispatcher</emphasis> implementations:
+                There are four concrete <emphasis>EmailDispatcher</emphasis> implementations:
             </para>
 
             <itemizedlist>
                 <listitem>
                     <para>
+                        <emphasis>ConfigurableEmailDispatcher</emphasis> - This dispatcher is configured with an
+                        <emphasis>EmailSender</emphasis> which takes care of the email dispatching task. There are two
+                        implmentations of <emphasis>EmailSender</emphasis>: <emphasis>JavaMailEmailSender</emphasis> and
+                        <emphasis>SimpleEmailSender</emphasis>. Most of the time, you won't be using this dispatcher
+                        but instead use one of the following two.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
                         <emphasis>JavaMailEmailDispatcher</emphasis> - This dispatcher should be used when configured with
-                        a <emphasis>JavaMailSender</emphasis> as the underlying <emphasis>MailSender</emphasis>.
+                        a <emphasis>JavaMailSender</emphasis> as the underlying <emphasis>MailSender</emphasis>. It is also
+                        possible to configured the <emphasis>JavaMailSender</emphasis> properties (e.g. "host", "port",
+                        "protocol", etc..) directly on the dispatcher and let it create a new instance of <emphasis>JavaMailSenderImpl</emphasis>
+                        internally.
                     </para>
                 </listitem>
                 <listitem>
@@ -616,6 +637,26 @@
                         ignored since <emphasis>SimpleMailMessage</emphasis> does not support attachments of any kind.
                     </para>
                 </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>AysncEmailDispatcher</emphasis> - Sometimes you would like to send the emails in an
+                        asynchronous fashion. This dispacher enables exactly that by leveraging Spring's <emphasis>TaskExecutor</emphasis>
+                        abstraction. The asynchronous behavior is determined by the configured <emphasis>TaskExecutor</emphasis>.
+                        It is also possible to configure a <emphasis>DispatchingErrorHandler</emphasis> to properly handle any
+                        error that occur during an email dispatch. By default a <emphasis>LoggingDispatchingErrorHandler</emphasis>
+                        is set which will log any error using Apache Commons Logging logger.
+                    </para>
+                    <para>
+                        <note>
+                            <para>
+                                It is possible to still define a synchronous behaviour using the <emphasis>AsyncEmailDispatcher</emphasis>
+                                by configuring a <emphasis>SyncTaskExecutor</emphasis> as the task executor, and for handling the
+                                dispatching errors differently a <emphasis>RethrowingDispatchingErrorHandler</emphasis> can be set (which
+                                will rethrow all occured errors which might make sense when using the <emphasis>SyncTaskExecutor</emphasis>).
+                            </para>
+                        </note>
+                    </para>
+                </listitem>
             </itemizedlist>
 
             <para>
@@ -623,24 +664,17 @@
                 an application context:
             </para>
 
-            <programlisting>&lt;bean id="emailDispatcher"
-                class="org.springmodules.email.dispatcher.JavaMailEmailDispatcher"&gt;
-    &lt;property name="emailParser" ref="emailParser"/&gt;
-    &lt;property name="mailSender" ref="mailSender"/&gt;
+            <programlisting>&lt;bean id="emailDispatcher" class="org.springmodules.email.dispatcher.JavaMailEmailDispatcher"&gt;
     &lt;property name="templateResolver" ref="templateResolver"/&gt;
-&lt;/bean&gt;
-
-&lt;bean id="emailParser" class="org.springmodules.email.parser.xml.SaxEmailParser"/&gt;
-
-&lt;bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"&gt;
     &lt;property name="host" value="${mail.host}"/&gt;
     &lt;property name="port" value="${mai.port}"/&gt;
+
 &lt;/bean&gt;
 
 &lt;bean id="templateResolver" class="org.springmodules.template.resolver.SimpleTemplateResolver"&gt;
     &lt;property name="engine" ref="freemarker"/&gt;
     &lt;property name="prefix" value="classpath:/emails/"/&gt;
-    &lt;property name="suffix" value=".eml"/&gt;
+    &lt;property name="extension" value=".eml"/&gt;
 &lt;/bean&gt;
 
 &lt;bean id="freemarker" class="org.springmodules.template.engine.freemarker.FreemarkerTemplateEngine"/&gt;</programlisting>

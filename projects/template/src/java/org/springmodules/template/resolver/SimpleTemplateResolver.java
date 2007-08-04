@@ -16,6 +16,8 @@
 
 package org.springmodules.template.resolver;
 
+import java.util.Locale;
+
 import org.springframework.core.io.Resource;
 
 /**
@@ -29,24 +31,21 @@ import org.springframework.core.io.Resource;
 public class SimpleTemplateResolver extends CachingTemplateResolver {
 
     private String prefix;
-    private String suffix;
 
     /**
      * Constructs a new SimpleTemplateResolver with no prefix or suffix.
      */
     public SimpleTemplateResolver() {
-        this("", "");
+        this("");
     }
 
     /**
      * Constructs a new SimpleTemplateResolver with given prefix and suffix.
      *
      * @param prefix A prefix to be prepended to the template name prior to resolving process.
-     * @param suffix A suffix to be appended to the template name prior to resolving process.
      */
-    public SimpleTemplateResolver(String prefix, String suffix) {
+    public SimpleTemplateResolver(String prefix) {
         this.prefix = prefix;
-        this.suffix = suffix;
     }
 
     /**
@@ -55,11 +54,12 @@ public class SimpleTemplateResolver extends CachingTemplateResolver {
      *
      * @param name The name of the template.
      * @param encoding The encoding of the loaded template resource.
+     * @param locale The locale of the template.
      * @return The template resource.
-     * @see org.springmodules.template.resolver.BasicTemplateResolver#loadTemplateResource(String, String)
+     * @see org.springmodules.template.resolver.BasicTemplateResolver#loadTemplateResource(String, String, Locale)
      */
-    protected Resource loadTemplateResource(String name, String encoding) {
-        return super.loadTemplateResource(prefix + name + suffix, encoding);
+    protected Resource loadTemplateResource(String name, String encoding, Locale locale) {
+        return super.loadTemplateResource(prefix + name, encoding, locale);
     }
 
 
@@ -81,24 +81,6 @@ public class SimpleTemplateResolver extends CachingTemplateResolver {
      */
     public String getPrefix() {
         return prefix;
-    }
-
-    /**
-     * Sets the suffix to be appended to the template name prior to resolving process.
-     *
-     * @param suffix The suffix to be appended to the template name prior to resolving process.
-     */
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-
-    /**
-     * Returns the suffix to be appended to the template name prior to the resolving process.
-     *
-     * @return The suffix to be appended to the template name prior to the resolving process.
-     */
-    public String getSuffix() {
-        return suffix;
     }
 
 }

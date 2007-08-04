@@ -19,16 +19,20 @@ package org.springmodules.email.dispatcher;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mail.MailSender;
 import org.springframework.util.Assert;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.ResourceLoader;
 import org.springmodules.email.EmailParser;
 import org.springmodules.email.EmailDispatcher;
 import org.springmodules.email.EmailPreparator;
 import org.springmodules.email.Email;
+import org.springmodules.email.parser.xml.SaxEmailParser;
 import org.springmodules.template.Template;
 import org.springmodules.template.TemplateResolver;
 import org.springmodules.util.StringResource;
@@ -41,7 +45,7 @@ import org.springmodules.util.StringResource;
  *
  * @author Uri Boness
  */
-public abstract class AbstractEmailDispatcher implements EmailDispatcher, InitializingBean {
+public abstract class AbstractEmailDispatcher implements EmailDispatcher, InitializingBean, ResourceLoaderAware {
 
     private final static Log logger = LogFactory.getLog(AbstractEmailDispatcher.class);
 
@@ -58,6 +62,8 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
 
     private EmailParser emailParser;
 
+    private ResourceLoader resourceLoader;
+
     private String encoding = DEFAULT_ENCODING;
     
     /**
@@ -66,7 +72,11 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
      * @param emailName The name of the email to send.
      */
     public void send(String emailName) {
-        send(emailName, new HashMap());
+        send(emailName, (Locale)null);
+    }
+
+    public void send(String emailName, Locale locale) {
+        send(emailName, new HashMap(), locale);
     }
 
     /**
@@ -76,11 +86,19 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
      * @param model The model to populate the email prior to sending.
      */
     public void send(String emailName, Map model) {
+        send(emailName, model, (Locale)null);
+    }
+
+    public void send(String emailName, Map model, Locale locale) {
         send(emailName, model, EMPTY_PREPARATOR);
     }
 
     public void send(String emailName, Map model, EmailPreparator emailPreparator) {
-        Email email = resolveEmail(emailName, model);
+        send(emailName, model, null, emailPreparator);
+    }
+
+    public void send(String emailName, Map model, Locale locale, EmailPreparator emailPreparator) {
+        Email email = resolveEmail(emailName, model, locale);
         emailPreparator.prepare(email);
         send(email);
     }
@@ -93,9 +111,9 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
      * @param model The model to populate the email.
      * @return The resolved email.
      */
-    protected Email resolveEmail(String name, Map model) {
+    protected Email resolveEmail(String name, Map model, Locale locale) {
         StringWriter writer = new StringWriter();
-        Template template = templateResolver.resolve(name, getEncoding());
+        Template template = templateResolver.resolve(name, getEncoding(), locale);
         template.generate(writer, model);
 
         if (logger.isDebugEnabled()) {
@@ -113,14 +131,22 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public final void afterPropertiesSet() throws Exception {
+        doAfterPropertiesSet();
+        if (emailParser == null && resourceLoader != null) {
+            emailParser = new SaxEmailParser(resourceLoader);
+        }
         Assert.notNull(templateResolver, "Property 'templateResolver' must be set");
         Assert.notNull(mailSender, "Property 'mailSender' must be set");
-        Assert.notNull(emailParser, "Property 'templateResolver' must be set");
+        Assert.notNull(emailParser, "Property 'templateResolver' must be set. Otherwise please set the " +
+            "'resourceLoader' property to enable using the default email parser (SaxEmailParser)");
         Assert.notNull(templateResolver, "Property 'templateResolver' must be set");
-        doAfterPropertiesSet();
     }
 
     public void doAfterPropertiesSet() throws Exception {
+    }
+
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
     }
 
     //============================================== Setter/Getter =====================================================

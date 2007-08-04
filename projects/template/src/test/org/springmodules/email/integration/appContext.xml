@@ -12,18 +12,11 @@
     <bean id="templateResolver" class="org.springmodules.template.resolver.SimpleTemplateResolver">
         <property name="engine" ref="velocity"/>
         <property name="prefix" value="classpath:/org/springmodules/email/integration/"/>
-        <property name="suffix" value=".eml"/>
+        <property name="extension" value=".eml"/>
     </bean>
 
     <bean id="emailDispatcher" class="org.springmodules.email.dispatcher.JavaMailEmailDispatcher">
-        <property name="emailParser" ref="emailParser"/>
-        <property name="mailSender" ref="mailSender"/>
         <property name="templateResolver" ref="templateResolver"/>
-    </bean>
-
-    <bean id="emailParser" class="org.springmodules.email.parser.xml.SaxEmailParser"/>
-
-    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="${mail.host}"/>
         <property name="port" value="${mail.port}"/>
     </bean>

@@ -24,7 +24,6 @@ import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springmodules.email.Person;
 import org.springmodules.email.parser.xml.SaxEmailParser;
 import org.springmodules.template.engine.velocity.VelocityTemplateEngine;
@@ -44,14 +43,13 @@ public class JavaMailEmailDispatcherTests extends TestCase {
         VelocityTemplateEngine engine = new VelocityTemplateEngine(loader);
         engine.afterPropertiesSet();
         BasicTemplateResolver resolver = new BasicTemplateResolver(engine, loader);
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("localhost");
-        mailSender.setPort(2525);
 
         dispatcher = new JavaMailEmailDispatcher();
-        dispatcher.setEmailParser(new SaxEmailParser(loader));
+        dispatcher.setResourceLoader(loader);
         dispatcher.setTemplateResolver(resolver);
-        dispatcher.setMailSender(mailSender);
+        dispatcher.setHost("localhost");
+        dispatcher.setPort(2525);
+        dispatcher.afterPropertiesSet();
 
         server = SimpleSmtpServer.start(2525);
     }

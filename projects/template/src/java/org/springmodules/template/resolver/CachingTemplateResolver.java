@@ -3,6 +3,7 @@ package org.springmodules.template.resolver;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 
 import org.springmodules.template.Template;
 
@@ -29,12 +30,13 @@ public class CachingTemplateResolver extends BasicTemplateResolver {
      *
      * @param name The name of the template
      * @param encoding The encoding of the template
+     * @param locale The locale of the template
      * @return The resolved template.
      */
-    public Template resolve(String name, String encoding) {
+    public Template resolve(String name, String encoding, Locale locale) {
         Template template = (Template)cache.get(name);
         if (template == null) {
-            template = super.resolve(name, encoding);
+            template = super.resolve(name, encoding, locale);
             cache.put(name, template);
         }
         return template;

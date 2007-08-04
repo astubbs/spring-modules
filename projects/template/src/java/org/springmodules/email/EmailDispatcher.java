@@ -17,6 +17,7 @@
 package org.springmodules.email;
 
 import java.util.Map;
+import java.util.Locale;
 
 /**
  * A general interface for sending {@link Email emails}.
@@ -40,6 +41,14 @@ public interface EmailDispatcher {
     void send(String emailName);
 
     /**
+     * Sends the email identified by the given name and locale.
+     *
+     * @param email The name of the email.
+     * @param locale The locale of the email.
+     */
+    void send(String email, Locale locale);
+
+    /**
      * Sends the email identified by the given name. This method enables dynamic email generation based on a given model.
      *
      * @param emailName The name of the email.
@@ -48,14 +57,36 @@ public interface EmailDispatcher {
     void send(String emailName, Map model);
 
     /**
+     * Sends the email identified by the given name and locale. This method enables dynamic email generation based on
+     * the given model.
+     *
+     * @param emailName The name of the email.
+     * @param model The model by which the email will be generated.
+     * @param locale The locale of the email.
+     */
+    void send(String emailName, Map model, Locale locale);
+
+    /**
      * Sends the email identified by the given name. This method enables dynamic email generation based on a given model.
      * The given email preparator enables to customize and prepare the email before sending. A typical use
-     * of the preparator is to attach runtime generated resources (e.g. reports).
+     * of the preparator is to attach runtime generated resources (e.g. reports, invoices, images, etc...).
      *
      * @param emailName The name of the email
      * @param model The model by which the email will be created.
      * @param emailPreparator The preparator that will prepare and customize the email before sending.
      */
     void send(String emailName, Map model, EmailPreparator emailPreparator);
+
+    /**
+     * Sends the emaild identified by the given name and locale. The method enables dynamic email generation based on the
+     * given model. The given email preparator can be used to customize the email prior to its dispatch. A typical use
+     * of the preparator is to attach runtime generated resources (e.g reports, invoices, images, etc...).
+     *
+     * @param emailName The name of the email.
+     * @param model The model by which the email will be generated.
+     * @param locale The locale of the email.
+     * @param emailPreparator The email preparator to enable runtime email customization.
+     */
+    void send(String emailName, Map model, Locale locale, EmailPreparator emailPreparator);
 
 }

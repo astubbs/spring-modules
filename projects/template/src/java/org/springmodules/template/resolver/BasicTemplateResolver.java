@@ -16,13 +16,19 @@
 
 package org.springmodules.template.resolver;
 
-import org.springmodules.template.TemplateResolver;
-import org.springmodules.template.TemplateEngine;
-import org.springmodules.template.Template;
+import java.util.Locale;
+
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.LocalizedResourceHelper;
+import org.springframework.util.Assert;
+import org.springmodules.template.Template;
+import org.springmodules.template.TemplateEngine;
+import org.springmodules.template.TemplateResolver;
 
 /**
  * A basic implementation of {@link org.springmodules.template.TemplateResolver} which uses a {@link ResourceLoader} to
@@ -32,7 +38,9 @@ import org.springframework.core.io.Resource;
  *
  * @author Uri Boness
  */
-public class BasicTemplateResolver implements TemplateResolver, ResourceLoaderAware {
+public class BasicTemplateResolver implements TemplateResolver, ResourceLoaderAware, InitializingBean {
+
+    private final static String EXTENSION_SEPARATOR = ".";
 
     /**
      * The default encoding that will be used (UTF-8)
@@ -42,6 +50,12 @@ public class BasicTemplateResolver implements TemplateResolver, ResourceLoaderAw
     private TemplateEngine engine;
 
     private ResourceLoader resourceLoader;
+
+    private LocalizedResourceHelper localizedResourceHelper;
+
+    private boolean resolveLocalFromContextWhenAbsent;
+
+    private String extension;
 
     /**
      * Constructs a new BasicTemplateResolver with no template engine and the {@link DefaultResourceLoader} as the
@@ -83,6 +97,10 @@ public class BasicTemplateResolver implements TemplateResolver, ResourceLoaderAw
         return resolve(name, DEFAULT_ENCODING);
     }
 
+    public Template resolve(String name, Locale locale) {
+        return resolve(name, DEFAULT_ENCODING, locale);
+    }
+
     /**
      * Resolves the template based on the given template name and encoding.
      *
@@ -91,8 +109,25 @@ public class BasicTemplateResolver implements TemplateResolver, ResourceLoaderAw
      * @return The resolved template.
      */
     public Template resolve(String name, String encoding) {
-        Resource resource = loadTemplateResource(name, encoding);
+        return resolve(name, encoding, null);
+    }
+
+    public Template resolve(String name, String encoding, Locale locale) {
+        Resource resource = loadTemplateResource(name, encoding, locale);
         return engine.createTemplate(resource, encoding);
+    }
+
+    public final void afterPropertiesSet() throws Exception {
+        doAfterPropertiesSet();
+        Assert.notNull(resourceLoader, "Property 'resourceLoader' is required");
+        Assert.notNull(engine, "Property 'engine' is required");
+        localizedResourceHelper = new LocalizedResourceHelper(resourceLoader);
+    }
+
+    /**
+     * Can be overriden by sub-classes for initialization actions.
+     */
+    protected void doAfterPropertiesSet() {
     }
 
     /**
@@ -102,8 +137,28 @@ public class BasicTemplateResolver implements TemplateResolver, ResourceLoaderAw
      * @param encoding The encoding of the template.
      * @return The loaded template resource.
      */
-    protected Resource loadTemplateResource(String name, String encoding) {
-        return resourceLoader.getResource(name);
+    protected Resource loadTemplateResource(String name, String encoding, Locale locale) {
+        String ext = extension;
+        if (ext == null) {
+            String[] nameAndExtension = parseNameWithExtension(name);
+            name = nameAndExtension[0];
+            ext = nameAndExtension[1];
+        }
+        if (locale == null && resolveLocalFromContextWhenAbsent) {
+            locale = LocaleContextHolder.getLocale();
+        }
+        if (locale == null) {
+            return resourceLoader.getResource(name + ext);
+        }
+        return localizedResourceHelper.findLocalizedResource(name, ext, locale);
+    }
+
+    protected String[] parseNameWithExtension(String name) {
+        int pos = name.lastIndexOf(EXTENSION_SEPARATOR);
+        return new String[] {
+            name.substring(0, pos),
+            name.substring(pos)
+        };
     }
 
 
@@ -144,6 +199,53 @@ public class BasicTemplateResolver implements TemplateResolver, ResourceLoaderAw
      */
     protected ResourceLoader getResourceLoader() {
         return resourceLoader;
+    }
+
+    /**
+     * Sets the extension of the template. The extension is requied for localization support. Basically, when
+     * one of the <code>resolve(...)</code> method is called, the passed in name will be apppended with the set
+     * extension (if one is set, otherwise the name will remain as is). When resolving with locale, the locale suffixes
+     * will be appended to the name and only then the extesion will be appended. For example, if the resolved template
+     * name is "name", the locale is "US", and the extension is ".ext", then the resolver will try resolving the follwoing
+     * three names: "name_en_US.ext", "name_en.ext", and "name.ext". NOTE, if no extension is set, the resolver will try
+     * to figure out the extension from the name (basically treating the substring starting at the last index of the '.'
+     * in the name as the extension).
+     *
+     * @return The extension of the template.
+     */
+    public String getExtension() {
+        return extension;
+    }
+
+    /**
+     * Returns the extension of the template.
+     *
+     * @param extension The extension of the template
+     */
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+
+    /**
+     * Returns whether this resolver should use the locale from the locale context when absent.
+     *
+     * @return Whether this resolver should use the locale from the locale context when absent.
+     * @see #setResolveLocalFromContextWhenAbsent(boolean)
+     */
+    public boolean isResolveLocalFromContextWhenAbsent() {
+        return resolveLocalFromContextWhenAbsent;
+    }
+
+    /**
+     * Sets whether this resolver should use the locale from the {@link org.springframework.context.i18n.LocaleContext}
+     * when not specified or when specified locale is <code>null</code>. By default this is set to <code>false</code>
+     * meaning this resolver will try to load the template resource without considering any locale.
+     *
+     * @param resolveLocalFromContextWhenAbsent Determines whether this resolver should use the locale from the locale
+     *        context with it is absent.
+     */
+    public void setResolveLocalFromContextWhenAbsent(boolean resolveLocalFromContextWhenAbsent) {
+        this.resolveLocalFromContextWhenAbsent = resolveLocalFromContextWhenAbsent;
     }
 
 }
