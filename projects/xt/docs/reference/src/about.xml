@@ -15,15 +15,15 @@
   domain model becomes the core of your application and the main focus of your
   development. It concentrates all business logic, rules and constraints,
   being <emphasis role="bold">totally independent</emphasis> from other
-  application parts. In particular, considering a well-known layered
+  application parts. In particular, considering a standard layered
   architecture, domain models are designed to be independent from the so
   called <emphasis>presentation layer</emphasis> and
   <emphasis>infrastructure/data access layer</emphasis>. Unfortunately,
   practically speaking, this causes a sort of <emphasis>impedence
   mismatch</emphasis> among layers, causing code duplication, domain model
-  corruption, or the shy <ulink
+  corruption, or the infamous <ulink
   url="http://www.martinfowler.com/bliki/AnemicDomainModel.html"><citetitle>anemic
-  domain model</citetitle></ulink>.</para>
+  domain model</citetitle></ulink> phenomenon.</para>
 
   <para>The XT Framework aims at solving this mismatch providing the so called
   <emphasis role="bold">XT Modeling Framework</emphasis> for developing
@@ -94,7 +94,7 @@
           interface for implementing <ulink
           url="http://www.martinfowler.com/apsupp/spec.pdf"><citetitle>Specifications</citetitle></ulink>
           capable of collecting messages of different types into notification
-          objects.</para>
+          objects</para>
         </listitem>
 
         <listitem>
@@ -103,6 +103,13 @@
           logical operators, using a <ulink
           url="http://www.martinfowler.com/bliki/FluentInterface.html"><citetitle>fluent
           interface</citetitle></ulink>.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Events</emphasis> : Additional
+          facilities for implementing event-based architectures built on the
+          standard Spring events system: events filtering, events collection
+          and Event Driven POJOs.</para>
         </listitem>
       </itemizedlist></para>
 

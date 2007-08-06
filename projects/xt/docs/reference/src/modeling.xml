@@ -758,7 +758,7 @@ public class FullOfficeSpecification implements BaseSpecification&lt;IOffice&gt;
         <para>You can powerfully compose them in a composite specification by
         simply writing the following:</para>
 
-        <programlisting>
+        <programlisting id="events">
 // <emphasis role="bold">Create your business-specific specifications:</emphasis>
 OfficeIdSpecification idSpecification = new OfficeIdSpecification();
 FullOfficeSpecification fullOfficeSpecification = new FullOfficeSpecification();
@@ -786,6 +786,321 @@ compositeSpecification.compose(idSpecification).withMessage(wrongIdMessage, fals
 
         <para>This will compose a specification matching an office that has a
         correct id and is not full.</para>
+      </sect4>
+    </sect3>
+
+    <sect3 id="events">
+      <title id="events-title">Events</title>
+
+      <para>Introducing events into your application architecture is proven to
+      be an effective technique for:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Decoupling otherwise intricated application modules, letting
+          them communicate through proper events.</para>
+        </listitem>
+
+        <listitem>
+          <para>Enabling, in a typical layered application architecture, lower
+          layers communication towards higher layers; i.e., the communication
+          from the domain layer to the presentation one.</para>
+        </listitem>
+
+        <listitem>
+          <para>Multicasting system changes to an unknown number of interested
+          listeners.</para>
+        </listitem>
+
+        <listitem>
+          <para>Recording system changes in order to track/undo/correct
+          them.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The XT Modeling Framework provides several facilities for
+      implementing an event-based architecture in your application. It is
+      built on the standard <ulink
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#context-functionality-events">Spring
+      events system</ulink>, which provides the following base
+      components:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><emphasis>org.springframework.context.event.ApplicationEventMulticaster</emphasis>.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis>org.springframework.context.ApplicationListener</emphasis>.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis>org.springframework.context.ApplicationEvent</emphasis>.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>ApplicationListeners configured into the Spring context will be
+      automatically notified of ApplicationEvents published through an
+      ApplicationEventMulticaster.</para>
+
+      <para>The XT Modeling Framework extends those components by providing
+      the following additional features:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><emphasis role="bold">Events filtering</emphasis>.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Events collection</emphasis>.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Event Driven POJOs</emphasis>.</para>
+        </listitem>
+      </itemizedlist>
+
+      <sect4 id="filtering-events">
+        <title id="filtering-events-title">Filtering Events</title>
+
+        <para>Filtering events is important when your application generates a
+        great number of different events and you want your listeners to be
+        notified only of those events they are interested to. </para>
+
+        <para>The XT Modeling Framework provides two key classes for enabling
+        events filtering capabilities:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>The <emphasis
+            role="bold">FilteringApplicationEventMulticaster</emphasis> (see
+            <emphasis>org.springmodules.xt.model.event.filtering.FilteringApplicationEventMulticaster</emphasis>
+            javadoc).</para>
+          </listitem>
+
+          <listitem>
+            <para>The <emphasis
+            role="bold">FilteringApplicationListener</emphasis> (see
+            <emphasis>org.springmodules.xt.model.event.filtering.FilteringApplicationListener</emphasis>
+            javadoc).</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>The FilteringApplicationEventMulticaster is an <ulink
+        url="http://www.springframework.org/docs/api/org/springframework/context/event/ApplicationEventMulticaster.html">ApplicationEventMulticaster</ulink>
+        implementation that used in conjunction with
+        FilteringApplicationListener implementations permits to efficiently
+        filter published events, in order to avoid notifying
+        <emphasis>every</emphasis> listener of <emphasis>every</emphasis>
+        published event.</para>
+
+        <para>The FilteringApplicationListener interface defines supported
+        events, providing a clear separation between event processing and
+        event filtering logic: </para>
+
+        <programlisting>public interface FilteringApplicationListener extends ApplicationListener {
+    
+    public Class[] getSupportedEventClasses();
+    
+    public boolean accepts(ApplicationEvent event);
+}</programlisting>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis>public Class[]
+            getSupportedEventClasses()</emphasis> : defines supported event
+            classes.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis>public boolean accepts(ApplicationEvent
+            event)</emphasis> : defines the actual filtering logic, often
+            based on event state.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Concrete FilteringApplicationListener implementations must then
+        be registered to a FilteringApplicationEventMulticaster.</para>
+
+        <para>Once events gets published through the
+        FilteringApplicationEventMulticaster, it will notify each registered
+        FilteringApplicationListener implementation only of those events whose
+        class is supported by the given listener, and that are accepted by the
+        listener itself.</para>
+
+        <note>
+          <para>The FilteringApplicationEventMulticaster filters events only
+          for registered FilteringApplicationListener implementations;
+          however, it is possible to register other <ulink
+          url="http://www.springframework.org/docs/api/org/springframework/context/ApplicationListener.html">ApplicationListener</ulink>
+          implementations, losing filtering capabilities: those
+          ApplicationListeners will be notified (as always) of every published
+          event.</para>
+        </note>
+      </sect4>
+
+      <sect4 id="collecting-events">
+        <title id="filtering-events-title">Collecting Events</title>
+
+        <para>While standard <ulink
+        url="http://www.springframework.org/docs/api/org/springframework/context/ApplicationListener.html">ApplicationListener</ulink>
+        implementations directly process events once they get notified,
+        <emphasis>event collectors</emphasis> are special ApplicationListeners
+        that collect and store published events, in order to provide FIFO
+        (First In First Out) access to external, interested, objects.</para>
+
+        <para>Event collectors all share the following interface: </para>
+
+        <programlisting>public interface ApplicationCollector extends ApplicationListener {
+    
+    public ApplicationEvent pollEvent();
+    
+    public List&lt;ApplicationEvent&gt; getEvents();
+    
+    public void clear();
+}</programlisting>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis>public ApplicationEvent pollEvent()</emphasis> :
+            poll the first collected event, removing it from the queue of
+            collected events.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis>public List&lt;ApplicationEvent&gt;
+            getEvents()</emphasis> : get all collected events, without
+            removing them from the queue of collected events.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis>public void clear()</emphasis> : clear all
+            collected events.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Once registered into an ApplicationEventMulticaster as with any
+        other ApplicationListener, ApplicationCollector implementations will
+        start to collect notified events.</para>
+
+        <para> The XT Modeling Framework provides several, ready to use,
+        ApplicationCollector implementations:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis role="bold">SimpleCollector</emphasis> (see
+            <emphasis>org.springmodules.xt.model.event.collector.SimpleCollector</emphasis>
+            javadoc) : simple, non thread safe, ApplicationCollector
+            implementation that simply collect events in a queue.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="bold">ThreadLocalCollector</emphasis> (see
+            <emphasis>org.springmodules.xt.model.event.collector.ThreadLocalCollector</emphasis>
+            javadoc) : thread safe ApplicationCollector implementation storing
+            collected events with per-thread scope.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="bold">BlockingCollector</emphasis> (see
+            <emphasis>org.springmodules.xt.model.event.collector.BlockingCollector</emphasis>
+            javadoc) : thread safe, synchronous, ApplicationCollector
+            implementation that blocks when polling for events if no event is
+            actually available.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="bold">ConcurrentCollector</emphasis> (see
+            <emphasis>org.springmodules.xt.model.event.collector.ConcurrentCollector</emphasis>
+            javadoc) : synchronized ApplicationCollector implementation that
+            wraps another non thread safe collector, in order to make it
+            possible to safely share it among threads. </para>
+          </listitem>
+        </itemizedlist>
+      </sect4>
+
+      <sect4 id="edp">
+        <title id="edp-title">Event Driven POJOs</title>
+
+        <para><emphasis role="bold">Event Driven POJO</emphasis>s (<emphasis
+        role="bold">EDPs</emphasis>) are a powerful XT Modeling Framework
+        feature that makes whatever application-specific object capable of
+        processing events published through a Spring
+        ApplicationEventMulticaster in a completely <emphasis
+        role="bold">transparent non-invasive way</emphasis> , without having
+        to implement any Spring specific interface. </para>
+
+        <para>So, an EDP is a plain old (framework agnostic) Java object with
+        methods invoked on event publishing.</para>
+
+        <para>For enabling EDPs in your application, you have to configure an
+        <emphasis role="bold">EDPInvoker</emphasis> (see
+        <emphasis>org.springmodules.xt.model.event.edp.EDPInvoker</emphasis>
+        javadoc) for every bean you want to make an EDP.</para>
+
+        <para>The EDPInvoker defines:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>The invoked EDP bean.</para>
+          </listitem>
+
+          <listitem>
+            <para>The name of the method to invoke on published events.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>More specifically, the XT Modeling Framework provides the
+        <emphasis role="bold">DefaultEDPInvoker</emphasis> (see
+        <emphasis>org.springmodules.xt.model.event.edp.DefaultEDPInvoker</emphasis>
+        javadoc), which, once configured the EDP bean to use and the name of
+        the method to invoke, will actually invoke the EDP if the bean has a
+        method with name equal to the configured one, and that accepts a
+        single parameter whose type is the same as, or is a super
+        class/interface of, the published event. </para>
+
+        <note>
+          <para>Please note that if the EDP bean provides several overloaded
+          implementations of the invokable method, the DefaultEDPInvoker will
+          invoke <emphasis role="bold">all</emphasis> methods supporting a
+          given published event, that is, all methods accepting a parameter
+          whose type is the same as, or is a super class/interface of the
+          published event type.</para>
+        </note>
+
+        <para>So, given the following POJO:</para>
+
+        <programlisting>public class SimpleBean {
+    
+    // <emphasis role="bold">This is the method that will be invoked</emphasis>
+    public void onEvent(CustomEvent event) {
+        // ...
+    }
+}</programlisting>
+
+        <para>Here is how to configure a DefaultEDPInvoker for invoking the
+        SimpleBean on publishing of CustomEvent events:</para>
+
+        <programlisting>&lt;!-- <emphasis role="bold">The EDP to invoke</emphasis> --&gt;
+&lt;bean id="simpleBean" class="org.example.SimpleBean"&gt;
+
+&lt;!-- <emphasis role="bold">The EDP invoker</emphasis> --&gt;
+&lt;bean id="edpInvoker" class="org.springmodules.xt.model.event.edp.DefaultEDPInvoker"&gt;
+    &lt;!-- <emphasis role="bold">The bean configuration</emphasis> --&gt;
+    &lt;property name="invokedBean" ref="simpleBean"/&gt;
+    &lt;!-- <emphasis role="bold">The method name configuration</emphasis> --&gt;
+    &lt;property name="invokedMethodName" value="onEvent"/&gt;
+&lt;/bean&gt;
+
+</programlisting>
+
+        <tip>
+          <para>If you want an EDPInvoker with filtering capabilities, to use
+          with a FilteringApplicationEventMulticaster, you can pick the
+          FilteringEDPInvoker: see the
+          <emphasis>org.springmodules.xt.model.event.edp.FilteringEDPInvoker</emphasis>
+          javadoc for more information.</para>
+        </tip>
       </sect4>
     </sect3>
   </sect2>
