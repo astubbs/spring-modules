@@ -276,9 +276,6 @@ public class AnnotationBeanValidationConfigurationLoader implements BeanValidati
      */
     protected void handleProprtyAnnotations(Annotation[] annotations, Class validatedClass, PropertyDescriptor descriptor, MutableBeanValidationConfiguration configuration) {
         for (Annotation annotation : annotations) {
-            if (!isValidationAnnotation(annotation)) {
-                continue;
-            }
             PropertyValidationAnnotationHandler handler = handlerRegistry.findPropertyHanlder(annotation, validatedClass, descriptor);
             if (handler != null) {
                 handler.handleAnnotation(annotation, validatedClass, descriptor, configuration);

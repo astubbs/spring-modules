@@ -16,11 +16,7 @@
 
 package org.springmodules.samples.validation.bean.web;
 
-import org.springmodules.validation.bean.conf.loader.annotation.handler.Email;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.Expression;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.Length;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.NotBlank;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidationMethod;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.*;
 
 /**
  *
@@ -42,7 +38,7 @@ public class PersonData {
     @NotBlank
     private String password;
 
-    @Expression("verifyPassword == password")
+    @Expression(value = "verifyPassword == password")
     private String verifyPassword;
 
     private int luckyNumber;

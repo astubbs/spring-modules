@@ -215,6 +215,38 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
             // expected
         }
     }
+
+    public void test_Jpa() throws Exception {
+
+        SimpleEntity entity = new SimpleEntity();
+        entity.setName(null); // invalid - cannot be null
+        entity.setText("abcdefghijk"); // invalid - too long (max 10 chars)
+        entity.setOneToOne(null); // invalid - cannot be null
+        entity.setManyToOne(null); // invalid - cannot be null
+
+        AnnotationBeanValidationConfigurationLoader loader = new AnnotationBeanValidationConfigurationLoader();
+        BeanValidator validator = new BeanValidator(loader);
+
+        BindException errors = new BindException(entity, "entity");
+
+        validator.validate(entity, errors);
+
+        assertTrue(errors.hasFieldErrors());
+        assertTrue(errors.hasFieldErrors("name"));
+        assertTrue(errors.hasFieldErrors("text"));
+        assertTrue(errors.hasFieldErrors("oneToOne"));
+        assertTrue(errors.hasFieldErrors("manyToOne"));
+        assertEquals(1, errors.getFieldErrorCount("name"));
+        assertEquals(1, errors.getFieldErrorCount("text"));
+        assertEquals(1, errors.getFieldErrorCount("oneToOne"));
+        assertEquals(1, errors.getFieldErrorCount("manyToOne"));
+        assertEquals("SimpleEntity.name[not.null]", errors.getFieldError("name").getCode());
+        assertEquals("SimpleEntity.text[max.length]", errors.getFieldError("text").getCode());
+        assertEquals("SimpleEntity.oneToOne[not.null]", errors.getFieldError("oneToOne").getCode());
+        assertEquals("SimpleEntity.manyToOne[not.null]", errors.getFieldError("manyToOne").getCode());
+
+    }
+
     
     protected void setContext(String context) {
         ValidationContextHolder.setValidationContext(new DefaultValidationContext(context));

@@ -230,7 +230,9 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
      */
     public void addCascadeValidations(CascadeValidation[] cascadeValidations) {
         for (int i = 0; i < cascadeValidations.length; i++) {
-            this.cascadeValidations.add(cascadeValidations[i]);
+            if (!this.cascadeValidations.contains(cascadeValidations[i])) {
+                this.cascadeValidations.add(cascadeValidations[i]);
+            }
         }
     }
 

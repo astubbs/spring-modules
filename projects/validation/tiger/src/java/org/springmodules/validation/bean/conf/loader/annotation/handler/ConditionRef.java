@@ -18,7 +18,7 @@ package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
 import java.lang.annotation.*;
 
-import org.springmodules.validation.bean.rule.MaxValidationRule;
+import org.springmodules.validation.bean.rule.ConditionReferenceValidationRule;
 
 /**
  * Represents a validation rule that applies a condition that is defined in spring application context in order to
@@ -40,12 +40,12 @@ public @interface ConditionRef {
     /**
      * Returns the error code that represents the error when the validation fails.
      */
-    String errorCode() default MaxValidationRule.DEFAULT_ERROR_CODE;
+    String errorCode() default ConditionReferenceValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Returns the default message that represents the error when the validation fails.
      */
-    String message() default MaxValidationRule.DEFAULT_ERROR_CODE;
+    String message() default ConditionReferenceValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Comma-delimited list of arguments to be attached to the error code

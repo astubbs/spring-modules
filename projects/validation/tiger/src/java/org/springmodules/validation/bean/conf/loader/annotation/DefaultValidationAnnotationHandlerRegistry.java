@@ -17,6 +17,10 @@
 package org.springmodules.validation.bean.conf.loader.annotation;
 
 import org.springmodules.validation.bean.conf.loader.annotation.handler.*;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.jpa.JpaBasicAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.jpa.JpaManyToOneAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.jpa.JpaOneToOneAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.jpa.JpaColumnAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.hibernate.HibernatePropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.jodatime.InstantInTheFutureValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.jodatime.InstantInThePastValidationAnnotationHandler;
@@ -32,9 +36,16 @@ import org.springmodules.validation.util.LibraryUtils;
  * <li>{@link ExpressionsClassValidationAnnotationHandler}</li>
  * <li>{@link ValidatorClassValidationAnnotationHandler}</li>
  * <li>{@link ValidatorsClassValidationAnnotationHandler}</li>
+ * <li>{@link ValidatorReferenceClassValidationAnnotationHandler}</li>
  * </ul>
  * <p/>
+ *
+ * Method annotation handlers:
+ * <ul>
+ * <li>{@link ValidationMethodAnnotationHandler}</li>
+ * </ul>
  * <p/>
+ *
  * Property annotation handlers:
  * <ul>
  * <li>{@link CascadeValidationAnnotationHandler}</li>
@@ -50,9 +61,20 @@ import org.springmodules.validation.util.LibraryUtils;
  * <li>{@link SizeValidationAnnotationHandler}</li>
  * <li>{@link ExpressionPropertyValidationAnnotationHandler}</li>
  * <li>{@link ExpressionsPropertyValidationAnnotationHandler}</li>
+ * <li>{@link ConditionReferenceValidationAnnotationHandler}</li>
+ * </ul>
+ * <ul>
  * <li>{@link InstantInTheFutureValidationAnnotationHandler} (only if joda-time is in the classpath)</li>
  * <li>{@link InstantInThePastValidationAnnotationHandler} (only if joda-time is in the classpath)</li>
+ * </ul>
+ * <ul>
  * <li>{@link HibernatePropertyValidationAnnotationHandler} (only if hibernate-annotations is in the classpath)</li>
+ * </ul>
+ * <ul>
+ * <li>{@link JpaBasicAnnotationHandler} (only if JPA is in the classpath)</li>
+ * <li>{@link JpaColumnAnnotationHandler} (only if JPA is in the classpath)</li>
+ * <li>{@link JpaOneToOneAnnotationHandler} (only if JPA is in the classpath)</li>
+ * <li>{@link JpaManyToOneAnnotationHandler} (only if JPA is in the classpath)</li>
  * </ul>
  *
  * @author Uri Boness
@@ -99,5 +121,12 @@ public class DefaultValidationAnnotationHandlerRegistry extends SimpleValidation
             registerPropertyHandler(new HibernatePropertyValidationAnnotationHandler());
         }
 
+        if (LibraryUtils.JPA_IN_CLASSPATH) {
+            registerPropertyHandler(new JpaBasicAnnotationHandler());
+            registerPropertyHandler(new JpaManyToOneAnnotationHandler());
+            registerPropertyHandler(new JpaOneToOneAnnotationHandler());
+            registerPropertyHandler(new JpaColumnAnnotationHandler());
+        }
+        
     }
 }

@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class ConditionReferenceValidationRule extends AbstractValidationRule {
 
-    private final static String DEFAULT_ERROR_CODE = "spring.condition";
+    public final static String DEFAULT_ERROR_CODE = "spring.condition";
 
     private final Condition condition;
 
