@@ -415,6 +415,12 @@
 				<exclude name="test/**"/>
 			</fileset>
 		</zip>
+        
+        <zip destfile="${tmp.samples.dir}/spring-modules-feed-xt-src.zip">
+			<fileset dir="${common.build.dir}/../../samples/feed-xt/src">
+				<exclude name="test/**"/>
+			</fileset>
+		</zip>
 		
 		<zip
 			destfile="${tmp.samples.dir}/spring-modules-orm-petclinic-samples-src.zip">
