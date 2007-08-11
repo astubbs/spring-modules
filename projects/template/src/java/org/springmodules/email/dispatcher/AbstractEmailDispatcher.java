@@ -18,20 +18,20 @@ package org.springmodules.email.dispatcher;
 
 import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.mail.MailSender;
-import org.springframework.util.Assert;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
-import org.springmodules.email.EmailParser;
-import org.springmodules.email.EmailDispatcher;
-import org.springmodules.email.EmailPreparator;
+import org.springframework.mail.MailSender;
+import org.springframework.util.Assert;
 import org.springmodules.email.Email;
+import org.springmodules.email.EmailDispatcher;
+import org.springmodules.email.EmailParser;
+import org.springmodules.email.EmailPreparator;
 import org.springmodules.email.parser.xml.SaxEmailParser;
 import org.springmodules.template.Template;
 import org.springmodules.template.TemplateResolver;
@@ -50,7 +50,8 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
     private final static Log logger = LogFactory.getLog(AbstractEmailDispatcher.class);
 
     private final static EmailPreparator EMPTY_PREPARATOR = new EmailPreparator() {
-        public void prepare(Email email) {
+        public Email prepare(Email email) {
+            return email;
         }
     };
 
@@ -99,7 +100,7 @@ public abstract class AbstractEmailDispatcher implements EmailDispatcher, Initia
 
     public void send(String emailName, Map model, Locale locale, EmailPreparator emailPreparator) {
         Email email = resolveEmail(emailName, model, locale);
-        emailPreparator.prepare(email);
+        email = emailPreparator.prepare(email);
         send(email);
     }
 

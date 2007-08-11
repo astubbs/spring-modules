@@ -16,10 +16,7 @@
 
 package org.springmodules.email;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 import javax.mail.internet.InternetAddress;
 import org.springframework.core.io.Resource;
@@ -56,6 +53,9 @@ public class Email {
 
     // Set<Attachment>
     private Set inlineAttachments = new HashSet();
+
+    // Map<String, String>
+    private Map headers = new HashMap();
 
     /**
      * Sets the address from which this email is sent.
@@ -144,12 +144,32 @@ public class Email {
     }
 
     /**
+     * Sets the given address as the addres to which this email is sent.
+     * 
+     * @param name The personal name of the recipient
+     * @param address The email address to which this email should be sent.
+     */
+    public void setTo(String name, String address) {
+        setTo(EmailUtils.createAddress(name, address));
+    }
+
+    /**
      * Adds the given address to the address list to which this email is sent.
      *
      * @param address Additional address to which this email should be sent.
      */
     public void addTo(String address) {
         addTo(new String[] { address });
+    }
+
+    /**
+     * Adds the given address to the addres list to which this email is sent.
+     *
+     * @param name The name of the recipient.
+     * @param address The email address of the reciepient.
+     */
+    public void addTo(String name, String address) {
+        addTo(EmailUtils.createAddress(name, address));
     }
 
     /**
@@ -510,4 +530,71 @@ public class Email {
         return inlineAttachments;
     }
 
+    /**
+     * Return all extra headers associated with this email.
+     *
+     * @return All extra headers associated with this email.
+     */
+    public Map getHeaders() {
+        return headers;
+    }
+
+    /**
+     * Sets extra headers to be associated with this email.
+     *
+     * @param headers The extra header to be associated with this email.
+     */
+    public void setHeaders(Map headers) {
+        this.headers = headers;
+    }
+
+    /**
+     * Sets a header value for this email.
+     *
+     * @param name The name of the header.
+     * @param value The value of the header.
+     */
+    public void setHeader(String name, String value) {
+        headers.put(name, value);
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Email email = (Email) o;
+
+        if (attachments != null ? !attachments.equals(email.attachments) : email.attachments != null) return false;
+        if (bcc != null ? !bcc.equals(email.bcc) : email.bcc != null) return false;
+        if (cc != null ? !cc.equals(email.cc) : email.cc != null) return false;
+        if (from != null ? !from.equals(email.from) : email.from != null) return false;
+        if (headers != null ? !headers.equals(email.headers) : email.headers != null) return false;
+        if (htmlBody != null ? !htmlBody.equals(email.htmlBody) : email.htmlBody != null) return false;
+        if (inlineAttachments != null ? !inlineAttachments.equals(email.inlineAttachments) : email.inlineAttachments != null)
+            return false;
+        if (priority != null ? !priority.equals(email.priority) : email.priority != null) return false;
+        if (replyTo != null ? !replyTo.equals(email.replyTo) : email.replyTo != null) return false;
+        if (subject != null ? !subject.equals(email.subject) : email.subject != null) return false;
+        if (textBody != null ? !textBody.equals(email.textBody) : email.textBody != null) return false;
+        if (to != null ? !to.equals(email.to) : email.to != null) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+        result = (to != null ? to.hashCode() : 0);
+        result = 31 * result + (cc != null ? cc.hashCode() : 0);
+        result = 31 * result + (bcc != null ? bcc.hashCode() : 0);
+        result = 31 * result + (from != null ? from.hashCode() : 0);
+        result = 31 * result + (replyTo != null ? replyTo.hashCode() : 0);
+        result = 31 * result + (priority != null ? priority.hashCode() : 0);
+        result = 31 * result + (subject != null ? subject.hashCode() : 0);
+        result = 31 * result + (htmlBody != null ? htmlBody.hashCode() : 0);
+        result = 31 * result + (textBody != null ? textBody.hashCode() : 0);
+        result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
+        result = 31 * result + (inlineAttachments != null ? inlineAttachments.hashCode() : 0);
+        result = 31 * result + (headers != null ? headers.hashCode() : 0);
+        return result;
+    }
 }

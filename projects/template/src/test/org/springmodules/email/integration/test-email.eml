@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <email xmlns="http://www.springmodules.org/schema/template/email-1.0">
 
+    <headers>
+        <header name="X-Priority">10</header>
+    </headers>
+
     <from name="${from.personal}">${from.address}</from>
 
     <reply-to name="No Reply">noreply@doe.org</reply-to>

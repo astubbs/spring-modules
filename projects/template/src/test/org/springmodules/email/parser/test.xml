@@ -1,6 +1,12 @@
-<email xmlns="http://www.springmodules.org/template/email-1.0">
+<email xmlns="http://www.springmodules.org/schema/template/email-1.0">
+
+    <headers>
+        <header name="test">10</header>
+    </headers>
 
     <from name="From">from@springmodules.org</from>
+
+    <reply-to name="Reply To">replyto@springmodules.org</reply-to>
 
     <to>
         <address name="To">to1@springmodules.org</address>
@@ -18,8 +24,6 @@
     </bcc>
 
     <priority>HIGH</priority>
-
-    <reply-to name="Reply To">replyto@springmodules.org</reply-to>
 
     <subject>subject</subject>
 

@@ -17,18 +17,15 @@
 package org.springmodules.email.parser.xml;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.mail.internet.InternetAddress;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.util.StringUtils;
 import org.springmodules.email.*;
 import org.springmodules.email.parser.EmailParseException;
@@ -102,17 +99,18 @@ public class SaxEmailParser implements EmailParser, ResourceLoaderAware {
         private Email email = new Email();
         private List list = new ArrayList();
         private Set set = new HashSet();
+        private Map map = new HashMap();
         private String name;
         private StringBuffer buffer = new StringBuffer();
 
 
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             String elementName = qName.toLowerCase();
-            if ("from".equals(elementName) || "reply-to".equals(elementName) || "address".equals(elementName)) {
+            if ("from".equals(elementName) || "reply-to".equals(elementName) || "address".equals(elementName) || "header".equals(elementName)) {
                 name = attributes.getValue("name");
                 name = (StringUtils.hasText(name)) ? name : null;
             }
-            if ("attachment".equals(elementName)) {
+            else if ("attachment".equals(elementName)) {
                 name = attributes.getValue("name");
             }
         }
@@ -127,7 +125,7 @@ public class SaxEmailParser implements EmailParser, ResourceLoaderAware {
                 }
                 buffer = new StringBuffer();
             }
-            if ("reply-to".equals(elementName)) {
+            else if ("reply-to".equals(elementName)) {
                 if (name != null) {
                     email.setReplyTo(name, buffer.toString().trim());
                 } else {
@@ -135,7 +133,7 @@ public class SaxEmailParser implements EmailParser, ResourceLoaderAware {
                 }
                 buffer = new StringBuffer();
             }
-            if ("address".equals(elementName)) {
+            else if ("address".equals(elementName)) {
                 if (name != null) {
                     list.add(EmailUtils.createAddress(name, buffer.toString().trim()));
                 } else {
@@ -143,44 +141,52 @@ public class SaxEmailParser implements EmailParser, ResourceLoaderAware {
                 }
                 buffer = new StringBuffer();
             }
-            if ("to".equals(elementName)) {
+            else if ("to".equals(elementName)) {
                 email.setTo((InternetAddress[])list.toArray(new InternetAddress[list.size()]));
                 list = new ArrayList();
             }
-            if ("cc".equals(elementName)) {
+            else if ("cc".equals(elementName)) {
                 email.setCc((InternetAddress[])list.toArray(new InternetAddress[list.size()]));
                 list = new ArrayList();
             }
-            if ("bcc".equals(elementName)) {
+            else if ("bcc".equals(elementName)) {
                 email.setBcc((InternetAddress[])list.toArray(new InternetAddress[list.size()]));
                 list = new ArrayList();
             }
-            if ("attachments".equals(elementName)) {
+            else if ("attachments".equals(elementName)) {
                 email.setAttachments(set);
                 set = new HashSet();
             }
-            if ("inline-attachments".equals(elementName)) {
+            else if ("inline-attachments".equals(elementName)) {
                 email.setInlineAttachments(set);
                 set = new HashSet();
             }
-            if ("attachment".equals(elementName)) {
+            else if ("attachment".equals(elementName)) {
                 set.add(new Attachment(name, resourceLoader.getResource(buffer.toString().trim())));
                 buffer = new StringBuffer();
             }
-            if ("priority".equals(elementName)) {
+            else if ("priority".equals(elementName)) {
                 email.setPriority(EmailPriority.name(buffer.toString().trim()));
                 buffer = new StringBuffer();
             }
-            if ("subject".equals(elementName)) {
+            else if ("subject".equals(elementName)) {
                 email.setSubject(buffer.toString().trim());
                 buffer = new StringBuffer();
             }
-            if ("text-body".equals(elementName)) {
+            else if ("text-body".equals(elementName)) {
                 email.setTextBody(buffer.toString().trim());
                 buffer = new StringBuffer();
             }
-            if ("html-body".equals(elementName)) {
+            else if ("html-body".equals(elementName)) {
                 email.setHtmlBody(buffer.toString().trim());
+                buffer = new StringBuffer();
+            }
+            else if ("headers".equals(elementName)) {
+                email.setHeaders(map);
+                map = new HashMap();
+            }
+            else if ("header".equals(elementName)) {
+                map.put(name, buffer.toString().trim());
                 buffer = new StringBuffer();
             }
         }

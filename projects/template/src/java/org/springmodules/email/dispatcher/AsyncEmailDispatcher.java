@@ -19,11 +19,13 @@ package org.springmodules.email.dispatcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.util.Assert;
 import org.springframework.mail.MailException;
+import org.springframework.util.Assert;
 import org.springmodules.email.Email;
 import org.springmodules.email.dispatcher.errorhandler.DispatchingErrorHandler;
 import org.springmodules.email.dispatcher.errorhandler.LoggingDispatchingErrorHandler;
+import org.springmodules.email.dispatcher.callback.DispatchingCallback;
+import org.springmodules.email.dispatcher.callback.EmptyDispatchingCallback;
 
 /**
  * An asynchronous email dispatcher that uses a {@link TaskExecutor} to dispatch the emails. The concrete task
@@ -40,25 +42,21 @@ public class AsyncEmailDispatcher extends ConfigurableEmailDispatcher {
 
     private final static DispatchingErrorHandler DEFAULT_ERROR_HANDLER = new LoggingDispatchingErrorHandler(logger);
 
+    private final static DispatchingCallback DEFAULT_CALLBACK = new EmptyDispatchingCallback();
+
     private TaskExecutor taskExecutor;
 
     private DispatchingErrorHandler errorHandler = DEFAULT_ERROR_HANDLER;
+
+    private DispatchingCallback dispachingCallback = DEFAULT_CALLBACK;
 
     /**
      * Sends the given email using the configured task executor.
      *
      * @param email The email to be sent.
      */
-    public final void send(final Email email) {
-        taskExecutor.execute(new Runnable() {
-            public void run() {
-                try {
-                    getEmailSender().send(getMailSender(), email, getEncoding());
-                } catch (MailException me) {
-                    errorHandler.handle(me, email);
-                }
-            }
-        });
+    public final void send(Email email) {
+        taskExecutor.execute(new EmailDispatchingTask(email));
     }
 
     public void doAfterPropertiesSet() throws Exception {
@@ -104,5 +102,54 @@ public class AsyncEmailDispatcher extends ConfigurableEmailDispatcher {
      */
     public void setErrorHandler(DispatchingErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
+    }
+
+    /**
+     * Sets the given dispatching callbak to be called after email are dispached.
+     *
+     * @param callback The dispatching callback.
+     */
+    public void setDispachingCallback(DispatchingCallback callback) {
+        this.dispachingCallback = callback;
+    }
+
+    //============================================== Inner Classes =====================================================
+
+    public class EmailDispatchingTask implements Runnable {
+
+        private Email email;
+
+        public EmailDispatchingTask(Email email) {
+            this.email = email;
+        }
+
+        public void run() {
+            try {
+                getEmailSender().send(getMailSender(), email, getEncoding());
+                dispachingCallback.emailDispatched(email, true);
+            } catch (MailException me) {
+                errorHandler.handle(me, email);
+                dispachingCallback.emailDispatched(email, false);
+            }
+        }
+
+        public Email getEmail() {
+            return email;
+        }
+
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            EmailDispatchingTask that = (EmailDispatchingTask) o;
+
+            if (email != null ? !email.equals(that.email) : that.email != null) return false;
+
+            return true;
+        }
+
+        public int hashCode() {
+            return (email != null ? email.hashCode() : 0);
+        }
     }
 }

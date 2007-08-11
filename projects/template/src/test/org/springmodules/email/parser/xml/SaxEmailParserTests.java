@@ -2,6 +2,7 @@ package org.springmodules.email.parser.xml;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 import junit.framework.TestCase;
@@ -28,6 +29,12 @@ public class SaxEmailParserTests extends TestCase {
 
         Email email = parser.parse(resource);
         assertNotNull(email);
+
+        Map headers = email.getHeaders();
+        assertNotNull(headers);
+        assertEquals(1, headers.size());
+        assertTrue(headers.containsKey("test"));
+        assertEquals("10", headers.get("test"));
 
         InternetAddress address = email.getFrom();
         assertNotNull(address);

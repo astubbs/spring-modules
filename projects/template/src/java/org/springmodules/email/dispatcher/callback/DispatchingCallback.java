@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package org.springmodules.email;
+package org.springmodules.email.dispatcher.callback;
+
+import org.springmodules.email.Email;
 
 /**
- * Uses to prepare emails before they're being sent by the {@link EmailDispatcher email dispatcher}.
+ * Called by {@link org.springmodules.email.dispatcher.AsyncEmailDispatcher} when after an email was dispatched.
  *
  * @author Uri Boness
  */
-public interface EmailPreparator {
+public interface DispatchingCallback {
 
     /**
-     * Prepares the given email before sending.
+     * Called by the dispacher indicating the given email was dispatch.
      *
-     * @param email The email to prepare.
-     * @return The prepared email (may be the same as the passed in email)
+     * @param email The dispatched email.
+     * @param success Whether the email was dipatched succesfully or not.
      */
-    Email prepare(Email email);
+    void emailDispatched(Email email, boolean success);
 
 }

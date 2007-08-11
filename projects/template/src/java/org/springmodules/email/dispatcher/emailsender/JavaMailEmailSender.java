@@ -17,6 +17,7 @@
 package org.springmodules.email.dispatcher.emailsender;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
 import org.springframework.mail.MailSender;
@@ -25,7 +26,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springmodules.email.Attachment;
 import org.springmodules.email.Email;
-import org.springmodules.email.dispatcher.emailsender.EmailSender;
 
 /**
  * An email sender that know how to utilize {@link JavaMailSender} to send emails.
@@ -57,6 +57,10 @@ public class JavaMailEmailSender implements EmailSender {
         return new MimeMessagePreparator() {
             public void prepare(MimeMessage mimeMessage) throws Exception {
                 mimeMessage.setHeader(HEADER_PRIORITY, String.valueOf(email.getPriority().getRank()));
+                for (Iterator iter = email.getHeaders().entrySet().iterator(); iter.hasNext();) {
+                    Map.Entry entry = (Map.Entry)iter.next();
+                    mimeMessage.setHeader(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
+                }
                 MimeMessageHelper message =
                     new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_RELATED, encoding);
 

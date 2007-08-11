@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 <xsd:schema xmlns:tns="http://www.springmodules.org/schema/template/email-1.0"
-			xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-			targetNamespace="http://www.springmodules.org/schema/template/email-1.0">
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.springmodules.org/schema/template/email-1.0">
 
     <xsd:element name="email">
         <xsd:annotation>
@@ -12,6 +12,7 @@
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
+                <xsd:element ref="tns:headers" minOccurs="0" maxOccurs="1"/>
                 <xsd:element ref="tns:from" minOccurs="1" maxOccurs="1"/>
                 <xsd:element ref="tns:reply-to" minOccurs="0" maxOccurs="1"/>
                 <xsd:element ref="tns:to" minOccurs="1" maxOccurs="1"/>
@@ -27,6 +28,29 @@
         </xsd:complexType>
     </xsd:element>
 
+    <xsd:element name="headers">
+        <xsd:annotation>
+            <xsd:documentation>
+                Holds a list of headers to be used when the email is sent
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="tns:header" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="header">
+        <xsd:annotation>
+            <xsd:documentation>
+                Defines an email header to be used when the email is sent.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType mixed="true">
+            <xsd:attribute name="name" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
 
     <xsd:element name="from" type="tns:addressType">
         <xsd:annotation>
@@ -85,7 +109,7 @@
         </xsd:annotation>
     </xsd:element>
 
-    <xsd:complexType name="address-list">
+    <xsd:complexType name="address-list" mixed="true">
         <xsd:annotation>
             <xsd:documentation>
                 Represents an address list. This list may hold an unlimited number of addresses but must hold at
@@ -93,7 +117,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element ref="tns:address" minOccurs="1" maxOccurs="unbounded" />
+            <xsd:element ref="tns:address" minOccurs="1" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -166,7 +190,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-                <xsd:element ref="tns:attachment" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element ref="tns:attachment" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -181,7 +205,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexType mixed="true">
-        <xsd:attribute name="name" type="xsd:string" use="required"/>
+            <xsd:attribute name="name" type="xsd:string" use="required"/>
         </xsd:complexType>
     </xsd:element>
 
