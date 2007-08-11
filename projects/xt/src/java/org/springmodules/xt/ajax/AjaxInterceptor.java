@@ -297,7 +297,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     public void setHandlerMappings(Properties mappings) {
         this.handlerMappings = MultiValueMap.decorate(new TreeMap<String, String>(new Comparator() {
             public int compare(Object o1, Object o2) {
-                if (!(o1 instanceof String) && !(o2 instanceof String)) {
+                if (!(o1 instanceof String) || !(o2 instanceof String)) {
                     throw new ClassCastException("You have to map an URL to a comma separated list of handler names.");
                 }
                 if (o1.equals(o2)) {
@@ -313,7 +313,11 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         for (Map.Entry entry : mappings.entrySet()) {
             String[] handlers = ((String) entry.getValue()).split(",");
             for (String handler : handlers) {
-                this.handlerMappings.put((String) entry.getKey(), handler.trim());
+                String url = (String) entry.getKey();
+                if (! url.startsWith("/")) {
+                    url = "/" + url;
+                }
+                this.handlerMappings.put(url.trim(), handler.trim());
             }
         }
     }
