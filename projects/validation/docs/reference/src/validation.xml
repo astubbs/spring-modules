@@ -3663,6 +3663,54 @@
                     </tgroup>
                 </table>
 
+                <sect4>
+
+                    <title>Hibernate Validator &amp; JPA Annotations</title>
+
+                    <bridgehead renderas="sect5">Hibernate Validator Support</bridgehead>
+
+                    The framework will pick up any hibernate validator annotation that is used and register the
+                    validation rules appropariately.
+
+
+                    <bridgehead renderas="sect5">JPA Support</bridgehead>
+
+                    Four JPA annotations are currently supported:
+
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+                                <emphasis>@Column</emphasis> - If the <emphasis>nullable</emphasis> attribute is
+                                <emphasis>false</emphasis>, the framework will treat it as if a <emphasis>@NotNull</emphasis>
+                                annotation was defined. The framework will also extract the value from the <emphasis>length</emphasis>
+                                attribute and treat it as the <emphasis>@MaxLength</emphasis>.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>@Basic</emphasis> - If the <emphasis>optional</emphasis> attribute is
+                                <emphasis>false</emphasis>, the framework will treat it as if <emphasis>@NotNull</emphasis>
+                                annotation was defined.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>@OneToOne</emphasis> - If the <emphasis>optional</emphasis> attribute is
+                                <emphasis>false</emphasis>, the framework will treat it as if <emphasis>@NotNull</emphasis>
+                                annotation was defined.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>@ManyToOne</emphasis> - If the <emphasis>optional</emphasis> attribute is
+                                <emphasis>false</emphasis>, the framework will treat it as if <emphasis>@NotNull</emphasis>
+                                annotation was defined.
+                            </para>
+                        </listitem>
+                    </itemizedlist>                    
+
+                </sect4>
+
             </sect3>
 
             <sect3>
