@@ -16,9 +16,14 @@
 
 package org.springmodules.xt.ajax.validation;
 
+import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.validation.ObjectError;
 import org.springmodules.xt.ajax.AbstractAjaxHandler;
 import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.AjaxResponse;
@@ -29,13 +34,9 @@ import org.springmodules.xt.ajax.action.matcher.WildcardMatcher;
 import org.springmodules.xt.ajax.component.Component;
 import org.springmodules.xt.ajax.action.RemoveContentAction;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springmodules.xt.ajax.validation.support.DefaultErrorRenderingCallback;
 import org.springmodules.xt.ajax.validation.support.DefaultSuccessRenderingCallback;
+import org.springmodules.xt.ajax.validation.support.internal.ErrorsContainer;
 
 /**
  * <p>
@@ -102,15 +103,15 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
     
     private void removeOldErrors(AjaxSubmitEvent event, AjaxResponseImpl response) {
         HttpServletRequest request = event.getHttpRequest();
-        Errors errors = (Errors) request.getSession(true).getAttribute(this.getErrorsAttributeName(request));
-        if (errors != null) {
+        ErrorsContainer errorsContainer = (ErrorsContainer) request.getSession(true).getAttribute(this.getErrorsAttributeName(request));
+        if (errorsContainer != null) {
             logger.debug("Found errors for URL: " + request.getRequestURL().toString());
             logger.debug("Removing old errors.");
             // Remove old errors from session:
             request.getSession(true).removeAttribute(this.getErrorsAttributeName(request));
             // Remove old errors from HTML:
-            for (Object o : errors.getAllErrors()) {
-                ObjectError error = (ObjectError) o;
+            ObjectError[] errors = errorsContainer.getErrors();
+            for (ObjectError error : errors) {
                 ElementMatcher matcher = new WildcardMatcher(error.getCode());
                 RemoveContentAction removeAction = new RemoveContentAction(matcher);
                 response.addAction(removeAction);
@@ -119,15 +120,15 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
     }
     
     private void putNewErrors(AjaxSubmitEvent event, AjaxResponseImpl response) {
-        Errors errors = event.getValidationErrors();
+        List<ObjectError> errors = event.getValidationErrors().getAllErrors();
         HttpServletRequest request = event.getHttpRequest();
         Locale locale = LocaleContextHolder.getLocale(); // <- Get the current Locale, if any ...
         // Put new errors into http session for later retrieval:
         logger.debug("Putting errors in session for URL: " + request.getRequestURL().toString());
-        request.getSession(true).setAttribute(this.getErrorsAttributeName(request), errors);
+        request.getSession(true).setAttribute(this.getErrorsAttributeName(request),
+                new ErrorsContainer(errors.toArray(new ObjectError[errors.size()])));
         // Put new errors into HTML:
-        for (Object o : errors.getAllErrors()) {
-            ObjectError error = (ObjectError) o;
+        for (ObjectError error : errors) {
             ElementMatcher matcher = new WildcardMatcher(error.getCode());
             Component renderingComponent = this.errorRenderingCallback.getErrorComponent(event, error, this.messageSource, locale);
             AppendContentAction appendAction = new AppendContentAction(matcher, renderingComponent);
