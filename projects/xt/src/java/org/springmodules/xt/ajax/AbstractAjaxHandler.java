@@ -113,7 +113,7 @@ public abstract class AbstractAjaxHandler implements AjaxHandler {
      */
     private Method getMatchingMethod(AjaxEvent event) {
         Class eventType = this.getEventType(event);
-        Method[] methods = this.getClass().getDeclaredMethods();
+        Method[] methods = this.getClass().getMethods();
         Method ret = null;
         for (Method method : methods) {
             if (method.getName().equals(event.getEventId()) && method.getParameterTypes()[0].isAssignableFrom(eventType)) {
