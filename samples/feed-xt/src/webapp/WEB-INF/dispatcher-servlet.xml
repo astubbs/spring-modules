@@ -126,7 +126,7 @@
             <props>
                 <prop key="/start.action">defaultAjaxValidationHandler</prop>
                 <prop key="/signup.action">usernameValidationHandler, defaultAjaxValidationHandler</prop>
-                <prop key="/personal/addSubscription.action">successMessageAjaxValidationHandler</prop>
+                <prop key="/personal/addSubscription.action">customAjaxValidationHandler</prop>
                 <prop key="/personal/removeSubscriptions.action">defaultAjaxValidationHandler</prop>
                 <prop key="/personal/viewer.page">feedViewerHandler</prop>
             </props>
@@ -159,7 +159,7 @@
   
     <bean id="defaultAjaxValidationHandler" class="org.springmodules.xt.ajax.validation.DefaultValidationHandler"/>
     
-    <bean id="successMessageAjaxValidationHandler" class="org.springmodules.xt.ajax.validation.DefaultValidationHandler">
+    <bean id="customAjaxValidationHandler" class="org.springmodules.feedxt.web.ajax.handler.CustomValidationHandler">
         <property name="successRenderingCallback">
             <bean class="org.springmodules.feedxt.web.ajax.support.SuccessMessageCallback"/>
         </property>

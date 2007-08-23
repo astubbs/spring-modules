@@ -30,7 +30,12 @@
                         <table>
                             <tr>
                                 <td>
-                                    <div id="message"/>
+                                    <div id="onSuccessMessage"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="onErrorsMessage"/>
                                 </td>
                             </tr>
                             <tr>
