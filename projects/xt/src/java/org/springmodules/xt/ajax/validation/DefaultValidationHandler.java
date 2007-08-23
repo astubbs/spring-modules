@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 the original author or authors.
+ * Copyright 2006-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,8 @@ import org.springmodules.xt.ajax.validation.support.internal.ErrorsContainer;
 /**
  * <p>
  * Ready-to-use Ajax handler for handling validation errors on submit.<br>
- * This handler manages {@link org.springmodules.xt.ajax.AjaxSubmitEvent}s with id equals to "validate": for each validation error, it looks for
- * an HTML element with id equals to the error code, and append error messages to it.<br>
+ * This handler manages {@link org.springmodules.xt.ajax.AjaxSubmitEvent}s with id equals to "validate": for each validation error, 
+ * it looks for an HTML element with id equals to the error code, and append error messages to it.<br>
  * The DefaultValidationHandler has also simple <b>wildcard matching</b> capabilities: if you want to put an error message into more
  * than one HTML element, just put the '_' wildcard at the end of the HTML element id. I.E., an error message with code <i>error.code</i>
  * will match both <i>error.code</i> and <i>error._</i> identifiers.
@@ -55,9 +55,16 @@ import org.springmodules.xt.ajax.validation.support.internal.ErrorsContainer;
  * If the validation succeeds, that is, the fired {@link org.springmodules.xt.ajax.AjaxSubmitEvent} has no validation errors,
  * this handler renders the actions returned by the configurable {@link SuccessRenderingCallback}: by default it uses the
  * {@link org.springmodules.xt.ajax.validation.support.DefaultSuccessRenderingCallback}, which returns no action.<br>
- * If no actions are found, the handler returns a <code>null</code> response.
  * </p>
- *
+ * <p>
+ * To further customize the DefaultValidationHandler, you can use the following template hooks:
+ * <ul>
+ * <li>{@link #rendersError(ObjectError)}</li>
+ * <li>{@link #getElementMatcherForError(ObjectError)}</li>
+ * <li>{@link #afterValidation(AjaxSubmitEvent, AjaxResponse)}</li>
+ * </ul>
+ * </p>
+ * 
  * @author Sergio Bossa
  */
 public class DefaultValidationHandler extends AbstractAjaxHandler implements MessageSourceAware {
@@ -66,9 +73,10 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
     
     private static final String ERRORS_PREFIX = DefaultValidationHandler.class.getName() + " - ";
     
-    private MessageSource messageSource;
     private ErrorRenderingCallback errorRenderingCallback = new DefaultErrorRenderingCallback();
     private SuccessRenderingCallback successRenderingCallback = new DefaultSuccessRenderingCallback();
+    
+    protected MessageSource messageSource;
     
     public AjaxResponse validate(AjaxSubmitEvent event) {
         AjaxResponseImpl response = new AjaxResponseImpl();
@@ -86,6 +94,8 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
             }
         }
         
+        this.afterValidation(event, response);
+        
         return response;
     }
     
@@ -101,6 +111,39 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
         this.successRenderingCallback = successRenderingCallback;
     }
     
+    /*** Template hooks ***/
+    
+    /**
+     * Return true if the given error must be rendered, otherwise it returns false.<br>
+     * By default, all errors are rendered.<br>
+     * Subclasses can override this to provide a different strategy.
+     */
+    protected boolean rendersError(ObjectError error) {
+        return true;
+    }
+    
+    /**
+     * Get the {@link org.springmodules.xt.ajax.ElementMatcher} to use for selecting
+     * web page elements based on the ObjectError state.<br>
+     * By default, it returns a {@link org.springmodules.xt.ajax.action.matcher.WildcardMatcher}
+     * based on the error code.<br>
+     * Subclasses can override this to provide their own ElementMatcher strategy.
+     */
+    protected ElementMatcher getElementMatcherForError(ObjectError error) {
+        return new WildcardMatcher(error.getCode());
+    }
+    
+    /**
+     * Override in subclasses to add additional actions to the AjaxResponse 
+     * after standard validation processing.<br>
+     * The default implementation provided here just does nothing.
+     */
+    protected void afterValidation(AjaxSubmitEvent event, AjaxResponse response) {
+        // Do nothing by default ...
+    }
+    
+    /*** Class internals ***/
+    
     private void removeOldErrors(AjaxSubmitEvent event, AjaxResponseImpl response) {
         HttpServletRequest request = event.getHttpRequest();
         ErrorsContainer errorsContainer = (ErrorsContainer) request.getSession(true).getAttribute(this.getErrorsAttributeName(request));
@@ -112,9 +155,11 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
             // Remove old errors from HTML:
             ObjectError[] errors = errorsContainer.getErrors();
             for (ObjectError error : errors) {
-                ElementMatcher matcher = new WildcardMatcher(error.getCode());
-                RemoveContentAction removeAction = new RemoveContentAction(matcher);
-                response.addAction(removeAction);
+                if (this.rendersError(error)) {
+                    ElementMatcher matcher = this.getElementMatcherForError(error);
+                    RemoveContentAction removeAction = new RemoveContentAction(matcher);
+                    response.addAction(removeAction);
+                }
             }
         }
     }
@@ -129,15 +174,17 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
                 new ErrorsContainer(errors.toArray(new ObjectError[errors.size()])));
         // Put new errors into HTML:
         for (ObjectError error : errors) {
-            ElementMatcher matcher = new WildcardMatcher(error.getCode());
-            Component renderingComponent = this.errorRenderingCallback.getErrorComponent(event, error, this.messageSource, locale);
-            AppendContentAction appendAction = new AppendContentAction(matcher, renderingComponent);
-            response.addAction(appendAction);
-            // Get the actions to execute *after* rendering the component:
-            AjaxAction[] renderingActions = this.errorRenderingCallback.getErrorActions(event, error);
-            if (renderingActions != null) {
-                for (AjaxAction renderingAction : renderingActions) {
-                    response.addAction(renderingAction);
+            if (this.rendersError(error)) {
+                ElementMatcher matcher = this.getElementMatcherForError(error);
+                Component renderingComponent = this.errorRenderingCallback.getErrorComponent(event, error, this.messageSource, locale);
+                AppendContentAction appendAction = new AppendContentAction(matcher, renderingComponent);
+                response.addAction(appendAction);
+                // Get the actions to execute *after* rendering the component:
+                AjaxAction[] renderingActions = this.errorRenderingCallback.getErrorActions(event, error);
+                if (renderingActions != null) {
+                    for (AjaxAction renderingAction : renderingActions) {
+                        response.addAction(renderingAction);
+                    }
                 }
             }
         }
