@@ -118,6 +118,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
             String requestType = request.getParameter(this.ajaxParameter);
             if (requestType != null && requestType.equals(AJAX_ACTION_REQUEST)) {
                 String eventId = request.getParameter(this.eventParameter);
+                
                 if (eventId == null) {
                     throw new IllegalStateException("Event id cannot be null.");
                 }
@@ -125,7 +126,10 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 logger.info(new StringBuilder("Pre-handling ajax request for event: ").append(eventId));
                 
                 List<AjaxHandler> handlers = this.lookupHandlers(request);
-                if (handlers != null) {
+                if (handlers.isEmpty()) {
+                    throw new NoMatchingHandlerException("Cannot find an handler matching the request: " +
+                            this.urlPathHelper.getLookupPathForRequest(request));
+                } else {
                     AjaxActionEvent event = new AjaxActionEventImpl(eventId, request);
                     AjaxResponse ajaxResponse = null;
                     boolean supported = false;
@@ -151,7 +155,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                     if (!supported) {
                         throw new UnsupportedEventException("Cannot handling the given event with id: " + eventId);
                     } else {
-                        if (ajaxResponse != null && ! ajaxResponse.isEmpty()) {
+                        if (ajaxResponse != null && !ajaxResponse.isEmpty()) {
                             logger.info("Sending Ajax response after Ajax action.");
                             AjaxResponseSender.sendResponse(response, ajaxResponse);
                         } else {
@@ -159,9 +163,6 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                         }
                         return false;
                     }
-                } else {
-                    throw new NoMatchingHandlerException("Cannot find an handler matching the request: " +
-                            this.urlPathHelper.getLookupPathForRequest(request));
                 }
             } else {
                 return true;
@@ -206,6 +207,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
             String requestType = request.getParameter(this.ajaxParameter);
             if (requestType != null && requestType.equals(AJAX_SUBMIT_REQUEST)) {
                 String eventId = request.getParameter(this.eventParameter);
+                
                 if (eventId == null) {
                     throw new IllegalStateException("Event id cannot be null.");
                 }
@@ -213,7 +215,10 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 logger.info(new StringBuilder("Post-handling ajax request for event: ").append(eventId));
                 
                 List<AjaxHandler> handlers = this.lookupHandlers(request);
-                if (handlers != null) {
+                if (handlers.isEmpty()) {
+                    throw new NoMatchingHandlerException("Cannot find an handler matching the request: " +
+                            this.urlPathHelper.getLookupPathForRequest(request));
+                } else {
                     AjaxSubmitEvent event = new AjaxSubmitEventImpl(eventId, request);
                     AjaxResponse ajaxResponse = null;
                     boolean supported = false;
@@ -263,9 +268,6 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                             
                         }
                     }
-                } else {
-                    throw new NoMatchingHandlerException("Cannot find an handler matching the request: " +
-                            this.urlPathHelper.getLookupPathForRequest(request));
                 }
             }
         } catch(Exception ex) {
@@ -379,7 +381,8 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
      * <p>Moreover, remember that multiple handlers can be mapped to the same URL.</p>
      *
      * @param request The current http request.
-     * @return A {@link java.util.List} of {@link AjaxHandler}s associated with the URL of the given request, or null if no matching is found.
+     * @return A {@link java.util.List} of {@link AjaxHandler}s associated with the URL of the given request; if no matching is found,
+     * an empty list is returned.
      */
     protected List<AjaxHandler> lookupHandlers(HttpServletRequest request) {
         String urlPath = this.urlPathHelper.getLookupPathForRequest(request);
@@ -398,7 +401,6 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 }
             }
         }
-        
         return handlers;
     }
     
