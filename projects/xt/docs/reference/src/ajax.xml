@@ -106,7 +106,7 @@
 
       <programlisting>
 &lt;input type="button" value="Go" 
-    onclick="<emphasis role="bold">XT.doAjaxAction</emphasis>('eventId', this, {'param1' : 'value1', 'param2' : 'value2'});"&gt; 
+    onclick="<emphasis role="bold">XT.doAjaxAction</emphasis>(event-id, source-element, server-parameters, request-parameters);"&gt; 
 </programlisting>
 
       <para>You have to simply call the <emphasis
@@ -117,20 +117,28 @@
         <listitem>
           <para>The <emphasis role="bold">name</emphasis> (also called
           <emphasis role="bold">id</emphasis>) of the event you want to fire
-          ('eventId' in the snippet above).</para>
+          (<emphasis>event-id</emphasis>, required).</para>
         </listitem>
 
         <listitem>
           <para>The HTML element which fired the event, most of the time
           through the <emphasis role="bold">this</emphasis> objects
-          (optional).</para>
+          (<emphasis>source-element</emphasis>, optional).</para>
         </listitem>
 
         <listitem>
           <para>A <ulink
           url="http://www.json.org/"><citetitle>JSON</citetitle></ulink>
-          string containing extra parameters you want to pass to the server
-          (optional).</para>
+          object containing extra parameters to pass to the server
+          (<emphasis>server-parameters</emphasis>, optional).</para>
+        </listitem>
+
+        <listitem>
+          <para>A <ulink
+          url="http://www.json.org/"><citetitle>JSON</citetitle></ulink>
+          object containing extra parameters for specifying additional
+          properties of the request (<emphasis>request-parameters</emphasis>,
+          optional).</para>
         </listitem>
       </itemizedlist>
 
@@ -208,7 +216,7 @@ public interface AjaxActionEvent extends AjaxEvent {
 
       <programlisting>
 &lt;input type="button" value="Press" 
-    onclick="<emphasis role="bold">XT.doAjaxSubmit</emphasis>('eventId', this {'param1' : 'value1', 'param2' : 'value2'});"&gt; 
+    onclick="<emphasis role="bold">XT.doAjaxSubmit</emphasis>(event-id, source-element, server-parameters, request-parameters);"&gt; 
 </programlisting>
 
       <para>You have to simply call the <emphasis
@@ -887,10 +895,13 @@ XT.defaultLoadingImage = "..."</programlisting>
             the page.</para>
 
             <para>Every Ajax request must specify its own loading element and
-            image:</para>
+            image by putting the following information between
+            <emphasis>request parameters</emphasis>:</para>
 
-            <programlisting>XT.doAjaxAction(id, element, jsonParams, {'loadingElementId' : '...', 'loadingImage' : '...'});
-XT.doAjaxSubmit(id, element, jsonParams, {'loadingElementId' : '...', 'loadingImage' : '...'}); </programlisting>
+            <programlisting>XT.doAjaxAction(event-id, source-element, server-parameters, <emphasis
+                role="bold">{'loadingElementId' : '...', 'loadingImage' : '...'}</emphasis>);
+XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
+                role="bold">{'loadingElementId' : '...', 'loadingImage' : '...'}</emphasis>); </programlisting>
 
             <para>As you can see, you can specify the following
             options:</para>
