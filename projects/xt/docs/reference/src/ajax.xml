@@ -903,8 +903,8 @@ XT.defaultLoadingImage = "..."</programlisting>
 XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
                 role="bold">{'loadingElementId' : '...', 'loadingImage' : '...'}</emphasis>); </programlisting>
 
-            <para>As you can see, you can specify the following
-            options:</para>
+            <para>As you can see, you have to specify the following
+            parameters:</para>
 
             <itemizedlist>
               <listitem>
