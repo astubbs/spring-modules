@@ -105,3 +105,4 @@ String.prototype.parseJSON = function () {
         return false;
     }
 };
+

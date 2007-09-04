@@ -3,7 +3,7 @@
  XT object declaration, with methods for sending Ajax action and submit events.
  **/
 
-var springxt_core_version=20070526;
+var springxt_core_version=20070827;
 
 var XT = {
     
@@ -23,7 +23,7 @@ var XT = {
     
     createSimpleQueryString : function(sourceElement) {
         var qs = "";
-        if (sourceElement != undefined && sourceElement != null) {
+        if (sourceElement) {
             if (sourceElement.name != null) {
                 qs = "&" + this.elementParameter + "=" + sourceElement.name;
             }
@@ -34,12 +34,30 @@ var XT = {
         return qs;
     },
     
-    createJSONQueryString : function(jsonObject) {
+    createJSONQueryString : function(serverParams) {
         var qs = "";
-        if (jsonObject != undefined && jsonObject != null) {
-            qs = "&" + this.jsonParamsParameter + "=" + encodeURIComponent(jsonObject.toJSONString());
+        if (serverParams) {
+            qs = "&" + this.jsonParamsParameter + "=" + encodeURIComponent(serverParams.toJSONString());
         }
         return qs;
+    },
+    
+    createIFrameRequestParamsObject : function(ajaxActionType, eventId, sourceElement, serverParams) {
+        var params = {};
+        params[this.ajaxParameter] = ajaxActionType;
+        params[this.eventParameter] = eventId;
+        if (sourceElement) {
+            if (sourceElement.name != null) {
+                params[this.elementParameter] = sourceElement.name;
+            }
+            if (sourceElement.id != null) {
+                params[this.elementIdParameter] = sourceElement.id;
+            }
+        }
+        if (serverParams) {
+            params[this.jsonParamsParameter] = encodeURIComponent(serverParams.toJSONString());
+        }
+        return params;
     },
     
     configureLoadingInfo : function(loadingInfo, ajaxRequest) {
@@ -72,34 +90,49 @@ var XT = {
         }
     },
     
-    doAjaxAction : function(eventId, sourceElement, jsonObject, loadingInfo) {
+    doAjaxAction : function(eventId, sourceElement, serverParams, requestParams) {
+        var ajaxActionType = "ajax-action";
+        
         var ajaxRequest = new AjaxRequest(document.URL);
         
         ajaxRequest.addFormElements(document.forms[0]);
         ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
-        + "&" + this.ajaxParameter + "=ajax-action" 
+        + "&" + this.ajaxParameter + "=" + ajaxActionType
         + "&" + this.eventParameter + "=" + eventId 
         + this.createSimpleQueryString(sourceElement) 
-        + this.createJSONQueryString(jsonObject));
+        + this.createJSONQueryString(serverParams));
         
-        this.configureLoadingInfo(loadingInfo, ajaxRequest);
+        this.configureLoadingInfo(requestParams, ajaxRequest);
         
         ajaxRequest.sendRequest();
     },
     
-    doAjaxSubmit : function(eventId, sourceElement, jsonObject, loadingInfo) {
-        var ajaxRequest = new AjaxRequest(document.URL);
+    doAjaxSubmit : function(eventId, sourceElement, serverParams, requestParams) {
+        var ajaxActionType = "ajax-submit";
         
-        ajaxRequest.addFormElements(document.forms[0]);
-        ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
-        + "&" + this.ajaxParameter + "=ajax-submit" 
-        + "&" + this.eventParameter + "=" + eventId 
-        + this.createSimpleQueryString(sourceElement) 
-        + this.createJSONQueryString(jsonObject));
-        
-        this.configureLoadingInfo(loadingInfo, ajaxRequest);
-        
-        ajaxRequest.setUsePOST();
-        ajaxRequest.sendRequest();
+        if (requestParams && requestParams.enableUpload && requestParams.enableUpload == true) {
+            var url = document.URL;
+            var parameters = this.createIFrameRequestParamsObject(ajaxActionType, eventId, sourceElement, serverParams);
+            
+            var iframeRequest = new IFrameRequest(document.forms[0], url, parameters);
+            
+            this.configureLoadingInfo(requestParams, iframeRequest);
+            
+            iframeRequest.sendRequest();
+        } else {
+            var ajaxRequest = new AjaxRequest(document.URL);
+            
+            ajaxRequest.addFormElements(document.forms[0]);
+            ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
+            + "&" + this.ajaxParameter + "=" + ajaxActionType
+            + "&" + this.eventParameter + "=" + eventId 
+            + this.createSimpleQueryString(sourceElement) 
+            + this.createJSONQueryString(serverParams));
+            
+            this.configureLoadingInfo(requestParams, ajaxRequest);
+            
+            ajaxRequest.setUsePOST();
+            ajaxRequest.sendRequest();
+        }
     }
 };

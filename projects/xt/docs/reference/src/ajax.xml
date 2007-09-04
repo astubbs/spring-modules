@@ -844,8 +844,9 @@ public interface AjaxExceptionHandler {
       </warning>
     </sect3>
 
-    <sect3>
-      <title>Showing feedback to users : loading sign management</title>
+    <sect3 id="loading-sign">
+      <title id="loading-sign-title">Showing feedback to users : loading sign
+      management</title>
 
       <para>Ajax requests are asynchronous, and while they're processed users
       are free to continue interacting with the web page.</para>
@@ -932,6 +933,23 @@ XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
         can find great loading gif images <ulink
         url="http://www.ajaxload.info/"><citetitle>here.</citetitle></ulink></para>
       </tip>
+    </sect3>
+
+    <sect3 id="file-uploading">
+      <title id="file-uploading-title">Uploading files</title>
+
+      <para>XT Ajax transparently supports file uploading in Ajax enabled
+      forms.</para>
+
+      <para>Uploading a file through Ajax is just a matter of sending an Ajax
+      submit request configured as follows:</para>
+
+      <programlisting>XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
+          role="bold">{'enableUpload' : true}</emphasis>)</programlisting>
+
+      <para>You have to set the <emphasis>enableUpload</emphasis> Ajax request
+      parameter to <emphasis>true</emphasis> ... that's all. XT Ajax will
+      transparently do the rest.</para>
     </sect3>
   </sect2>
 
