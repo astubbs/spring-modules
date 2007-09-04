@@ -60,6 +60,7 @@
                 <prop key="/ajax/ex5.action">ajaxFillOfficeHandler, ajaxValidationHandler</prop>
                 <prop key="/ajax/ex6.action">ajaxFillOfficeWithDraggingHandler, ajaxValidationHandler</prop>
                 <prop key="/ajax/ex7.action">ajaxHandlerWithException</prop>
+                <prop key="/ajax/ex8.action">ajaxValidationHandler</prop>
             </props>
         </property>
     </bean>
@@ -89,6 +90,8 @@
     <bean id="employeeValidator" class="org.springmodules.xt.examples.mvc.EmployeeValidator"/>
     
     <bean id="officeValidator" class="org.springmodules.xt.examples.mvc.OfficeValidator"/>
+    
+    <bean id="fileUploadValidator" class="org.springmodules.xt.examples.mvc.FileUploadValidator"/>
     
     <!-- Controllers -->
     
@@ -194,6 +197,12 @@
         <property name="successView"><value>/start.page</value></property>
     </bean>
     
+    <bean id="fileUploadController" class="org.springmodules.xt.examples.mvc.FileUploadController">
+        <property name="formView"><value>ajax/ex8</value></property>
+        <property name="successView"><value>ajax-redirect:/start.page</value></property>
+        <property name="validator"><ref bean="fileUploadValidator"/></property>
+    </bean>
+    
     <!-- Url Mappings -->
 
     <bean id="urlHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
@@ -213,12 +222,15 @@
                 <prop key="/ajax/ex5.action">fillOfficeController</prop>
                 <prop key="/ajax/ex6.action">fillOfficeWithDraggingController</prop>
                 <prop key="/ajax/ex7.action">exceptionController</prop>
+                <prop key="/ajax/ex8.action">fileUploadController</prop>
             </props>
         </property>
     </bean>
     
     <!-- Resolvers-->
-       
+    
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+    
     <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="suffix"><value>.jsp</value></property>
         <property name="prefix"><value>/WEB-INF/jsp/</value></property>
