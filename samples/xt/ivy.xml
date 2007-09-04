@@ -31,6 +31,9 @@
     <dependency org="jstl" name="jstl" rev="1.1.2" />
 
     <dependency org="taglibs" name="standard" rev="1.1.2" />
+    
+    <dependency org="apache" name="commons-io" rev="1.3" />
+    <dependency org="apache" name="commons-fileupload" rev="1.1" />
 
     <dependency org="springmodules" name="spring-modules-springmvc-extra" rev="latest.integration"/>
     <dependency org="springmodules" name="spring-modules-xt" rev="latest.integration"/>
