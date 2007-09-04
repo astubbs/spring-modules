@@ -16,7 +16,7 @@
     
     <concat destfile="${basedir}/src/js/lib/core/springxt.js" force="no">
       <filelist dir="${basedir}/src/js/" 
-        files="springxt-json.js, springxt-taconite.js, springxt-core.js"/>
+        files="springxt-json.js, springxt-domselector.js, springxt-taconite.js, springxt-core.js"/>
     </concat>
     <java jar="${basedir}/tools/jsmin.jar" fork="true">
       <arg value="${basedir}/src/js/lib/core/springxt.js"/>
