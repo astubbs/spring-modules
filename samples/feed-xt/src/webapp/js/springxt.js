@@ -105,42 +105,326 @@ String.prototype.parseJSON = function () {
         return false;
     }
 };
+
+/**
+ @fileoverview
+ DOMSelector object implementing CSS Selectors.
+ **/
+
+var springxt_domselector_version=20070827;
+
+function DOMSelector() {
+    
+    this.select = function(selector, rootContext) {
+        if (! rootContext) {
+            rootContext = document;
+        }
+        // Remove unwanted spaces between combinators:
+        // > combinator
+        selector = selector.replace(/\s*(?=>)/g, '');
+        selector = selector.replace(/>\s*/g, '>');
+        // + combinator
+        selector = selector.replace(/\s*(?=\+)/g, '');
+        selector = selector.replace(/\+\s*/g, '+');
+        // ~ combinator
+        selector = selector.replace(/\s*(?=~)/g, '');
+        selector = selector.replace(/~\s*/g, '~');
+        // Split selector into tokens
+        var splitter = /\s|>|\+|~/g;
+        var combinators = selector.match(splitter);
+        var tokens = selector.split(splitter);
+        var currentContext = new Array(rootContext);
+        // Prepare regular expressions that will be used later:
+        var attributesRegexp = /^(\w*)\[(\w+)([=~\|\^\$\*]?)=?"?([^\]"]*)"?\]$/;
+        var pseudoClassesRegexp = /^(\w*)\:(\w+-?\w+)/;
+        var regexpResult = null;
+        // Go!
+        for (var i = 0; i < tokens.length; i++) {
+            var combinator = i == 0 ? " " : combinators[i - 1];
+            var token = tokens[i].trim();
+            if (token.indexOf('#') > -1) {
+                // Token is an ID selector
+                var tagName = token.substring(0, token.indexOf('#'));
+                var id = token.substring(token.indexOf('#') + 1, token.length);
+                var filterFunction = function(e) { 
+                    return (e.id == id); 
+                };
+                var found = new Array();
+                for (var h = 0; h < currentContext.length; h++) {
+                    found = selectByFilter(combinator, currentContext[h], tagName, filterFunction);
+                    if (found && found.length == 1) {
+                        break;
+                    }
+                }
+                // Set currentContext to contain just this element
+                currentContext = found;
+                // Skip to next token
+                continue; 
+            }
+            else if ((regexpResult = attributesRegexp.exec(token))) {
+                // Token contains attribute selectors
+                var tagName = regexpResult[1];
+                var attrName = regexpResult[2];
+                var attrOperator = regexpResult[3];
+                var attrValue = regexpResult[4];
+                // Attribute filtering functions:
+                var filterFunction = null; // This function will be used to filter the elements
+                switch (attrOperator) {
+                    case '=': // Equality
+                        filterFunction = function(e) { 
+                            return (e.getAttribute(attrName) && e.getAttribute(attrName) == attrValue); 
+                        };
+                        break;
+                    case '~': // Match one of space seperated words 
+                        filterFunction = function(e) { 
+                            return (e.getAttribute(attrName) && e.getAttribute(attrName).match(new RegExp('(\\s|^)' + attrValue + '(\\s|$)'))); 
+                        };
+                        break;
+                    case '|': // Match start with value followed by optional hyphen
+                        filterFunction = function(e) { 
+                            return (e.getAttribute(attrName) && e.getAttribute(attrName).match(new RegExp('^' + attrValue + '-?'))); 
+                        };
+                        break;
+                    case '^': // Match starts with value
+                        filterFunction = function(e) { 
+                            return (e.getAttribute(attrName) && e.getAttribute(attrName).indexOf(attrValue) == 0); 
+                        };
+                        break;
+                    case '$': // Match ends with value - fails with "Warning" in Opera 7
+                        filterFunction = function(e) { 
+                            return (e.getAttribute(attrName) && (e.getAttribute(attrName).lastIndexOf(attrValue) == e.getAttribute(attrName).length - attrValue.length)); 
+                        };
+                        break;
+                    case '*': // Match contains value
+                        filterFunction = function(e) { 
+                            return (e.getAttribute(attrName) && e.getAttribute(attrName).indexOf(attrValue) > -1); 
+                        };
+                        break;
+                    default :
+                        // Just test for existence of attribute
+                        filterFunction = function(e) { 
+                            return e.getAttribute(attrName); 
+                        };
+                }
+                var found = new Array();
+                var counter = 0;
+                for (var h = 0; h < currentContext.length; h++) {
+                    var elements = selectByFilter(combinator, currentContext[h], tagName, filterFunction);
+                    for (var j = 0; j < elements.length; j++) {
+                        found[counter++] = elements[j];
+                    }
+                }
+                currentContext = found;
+                // Skip to next token
+                continue;
+            } 
+            else if ((regexpResult = pseudoClassesRegexp.exec(token))) {
+                // Token contains pseudo-class selectors
+                var tagName = regexpResult[1];
+                var pseudoClass = regexpResult[2];
+                // Pseudo class filtering functions:
+                var filterFunction = null; // This function will be used to filter the elements
+                switch (pseudoClass) {
+                    case 'first-child': 
+                        filterFunction = function(e) { 
+                            var parent = e.parentNode;
+                            var i = 0;
+                            while (parent.childNodes[i] && parent.childNodes[i].nodeType != 1) i++;
+                            return (parent.childNodes[i] == e); 
+                        };
+                        break;
+                    case 'last-child': 
+                        filterFunction = function(e) { 
+                            var parent = e.parentNode;
+                            var i = parent.childNodes.length - 1;
+                            while (parent.childNodes[i] && parent.childNodes[i].nodeType != 1) i--;
+                            return (parent.childNodes[i] == e); 
+                        };
+                        break;    
+                    case 'empty': 
+                        filterFunction = function(e) { 
+                            return (e.childNodes.length == 0); 
+                        };
+                        break;
+                    default :
+                        filterFunction = function(e) { 
+                            return false; 
+                        };
+                }
+                var found = new Array();
+                var counter = 0;
+                for (var h = 0; h < currentContext.length; h++) {
+                    var elements = selectByFilter(combinator, currentContext[h], tagName, filterFunction);
+                    for (var j = 0; j < elements.length; j++) {
+                        found[counter++] = elements[j];
+                    }
+                }
+                currentContext = found;
+                // Skip to next token
+                continue;
+            } 
+            else if (token.indexOf('.') > -1) {
+                // Token contains a class selector
+                var tagName = token.substring(0, token.indexOf('.'));
+                var className = token.substring(token.indexOf('.') + 1, token.length);
+                var regexp = new RegExp('(\\s|^)' + className + '(\\s|$)');
+                var filterFunction = function(e) { 
+                    return (e.className && e.className.match(regexp)); 
+                };
+                var found = new Array();
+                var counter = 0;
+                for (var h = 0; h < currentContext.length; h++) {
+                    var elements = selectByFilter(combinator, currentContext[h], tagName, filterFunction);
+                    for (var j = 0; j < elements.length; j++) {
+                        found[counter++] = elements[j];
+                    }
+                }
+                currentContext = found;
+                // Skip to next token
+                continue; 
+            }
+            else {
+                // If we get here, token is just an element (not a class or ID selector)
+                tagName = token;
+                var filterFunction = function(e) { 
+                    return true; 
+                };
+                var found = new Array();
+                var counter = 0;
+                for (var h = 0; h < currentContext.length; h++) {
+                    var elements = selectByFilter(combinator, currentContext[h], tagName, filterFunction);
+                    for (var j = 0; j < elements.length; j++) {
+                        found[counter++] = elements[j];
+                    }
+                }
+                currentContext = found;
+            }
+        }
+        return currentContext;
+    }
+    
+    function selectByFilter(combinator, context, tagName, filterFunction) {
+        var result = new Array();
+        var elements = new Array();
+        // Get elements to filter depending on the combinator:
+        if (combinator == " ") {
+            elements = context.all ? context.all : context.getElementsByTagName('*');
+        } else if (combinator == ">") {
+            elements = context.childNodes;
+        } else if (combinator == "+") {
+            var sibling = context.nextSibling;
+            while (sibling && sibling.nodeType != 1) {
+                sibling = sibling.nextSibling;
+            }
+            if (sibling) elements = new Array(sibling);
+            else elements = new Array();
+        } else if (combinator == "~") {
+            var sibling = context.nextSibling;
+            var counter = 0;
+            while (sibling) {
+                if (sibling.nodeType == 1) {
+                    elements[counter] = sibling;
+                    counter++;
+                }
+                sibling = sibling.nextSibling;
+            }
+        }
+        // Actually filter elements by tag name and filter function:
+        var counter = 0;
+        if (!tagName || tagName == '*') {
+            for (var k = 0; k < elements.length; k++) {
+                if (elements[k].nodeType == 1 && filterFunction(elements[k])) {
+                    result[counter] = elements[k];
+                    counter++;
+                }
+            }
+        } else {
+            for (var k = 0; k < elements.length; k++) {
+                if (elements[k].nodeType == 1 && elements[k].nodeName.toLowerCase() == tagName.toLowerCase() && filterFunction(elements[k])) {
+                    result[counter] = elements[k];
+                    counter++;
+                }
+            }
+        }
+        return result;
+    }
+};
 /**
  @fileoverview
  Spring Modules XT Ajax Framework custom version of the Taconite Ajax Framework.
  Taconite (http://taconite.sourceforge.net/) : Copyright (C) Ryan Asleson.
  */
 
-var springxt_taconite_version=20070727;
+var springxt_taconite_version=20070827;
 
 var isIE=document.uniqueID;
 
-var TaconiteDOMUtils = {
-    getAllSubElements : function(element) {
-        // Returns all sub elements. Workaround required for IE5/Windows.
-        return element.all ? element.all : element.getElementsByTagName('*');
-    },
+function BaseRequest() {
     
-    setMultipleSelectOptions : function(selectNodeId) {
-        var selectNode = document.getElementById(selectNodeId);
-        var options = document.getElementById(selectNodeId).getElementsByTagName("option");
-        var option;
-        for(var i = 0; i < options.length; i++) {
-            option = options[i];
-            if (typeof(option.taconiteOptionSelected) != "undefined") {
-                option.selected = true;
-            } 
-            else {
-                option.selected = false;
-            }
-        }
+    /** @private */
+    var preRequest = null;
+    
+    /** @private */
+    var postRequest = null;
+    
+    /** @private errorHandler*/ 
+    var errorHandler = null;
+    
+    /**
+     Set the pre-request function. This function will be called prior to 
+     sending the request. The pre-request function is passed a reference
+     to this object.
+     @param {Function} The function to be called.
+     */
+    this.setPreRequest = function(func) {
+        preRequest = func;
     }
-};
+    
+    /**
+     Set the post-request function. This function will be called after the
+     response has been received and processed. The post-request function is passed 
+     a reference to this object.
+     @param {Function} The function to be called.
+     */
+    this.setPostRequest = function(func) {
+        postRequest = func;
+    }
+    
+    /**
+     Return the pre request function.
+     */
+    this.getPreRequest = function() {
+        return preRequest;
+    }
+    
+    /**
+     Return the post request function.
+     */
+    this.getPostRequest = function() {
+        return postRequest;
+    }
+    
+    /** 
+     @param {Function} Set the error handler function that is called if the 
+     server's HTTP response code is something other than 200.
+     */	
+    this.setErrorHandler = function(func){
+        errorHandler = func;
+    }
+    
+    /**
+     Return the error handler function.
+     */
+    this.getErrorHandler = function() {
+        return errorHandler;
+    }
+}
 
 
 function AjaxRequest(url) {
+    
     /** @private */
-    var self = this;
+    var ajaxRequest = this;
     
     /** @private */
     var xmlHttp = createXMLHttpRequest();
@@ -155,20 +439,7 @@ function AjaxRequest(url) {
     var method = "GET";
     
     /** @private */
-    var preRequest = null;
-    
-    /** @private */
-    var postRequest = null;
-    
-    /** @private */
-    var debugResponse = false;
-    
-    /** @private */
     var async = true;
-    
-    /** @private errorHandler*/ 
-    var errorHandler = null;
-    
     
     /**
      Return the instance of the XMLHttpRequest object wrapped by this object.
@@ -176,36 +447,6 @@ function AjaxRequest(url) {
      */
     this.getXMLHttpRequestObject = function() {
         return xmlHttp;
-    }
-    
-    /**
-     Set the pre-request function. This function will be called prior to 
-     sending the Ajax request. The pre-request function is passed a reference
-     to this object.
-     @param {Function} The function to be called prior to sending the Ajax
-     request. The function is passed a refernce of this object.
-     */
-    this.setPreRequest = function(func) {
-        preRequest = func;
-    }
-    
-    /**
-     Set the post-request function. This function will be called after the
-     response has been received and after eval() has been called using the 
-     XMLHttpRequest object's responseText. The post-request function is passed 
-     a reference to this object.
-     @param {Function} The function to be called after receiving the Ajax
-     response. The function is passed a refernce of this object.
-     */
-    this.setPostRequest = function(func) {
-        postRequest = func;
-    }
-    
-    /**
-     Return the post request function.
-     */
-    this.getPostRequest = function() {
-        return postRequest;
     }
     
     /**
@@ -222,24 +463,6 @@ function AjaxRequest(url) {
      */
     this.setUseGET = function() {
         method = "GET";
-    }
-    
-    /**
-     Enable client-side debugging.  The server's response will be written
-     to a text area appended to the bottom of the page.  If parsing is
-     performed on the client side, then the results of the parsing operations
-     are shown in their own text areas.
-     */
-    this.setEchoDebugInfo = function() {
-        debugResponse = true;
-    }
-    
-    /**
-     Indicate if debugging is enabled.
-     @return boolean
-     */
-    this.isEchoDebugInfo = function() {
-        return debugResponse;
     }
     
     /**
@@ -267,14 +490,6 @@ function AjaxRequest(url) {
      */
     this.setAsync = function(asyncBoolean){
         async = asyncBoolean;
-    }
-    
-    /** 
-     @param {Function} Set the error handler function that is called if the 
-     server's HTTP response code is something other than 200.
-     */	
-    this.setErrorHandler = function(func){
-        errorHandler = func;
     }
     
     /**
@@ -358,7 +573,6 @@ function AjaxRequest(url) {
             
             accumulateQueryString(elementValues);
         }
-        
     }
     
     /**
@@ -390,79 +604,72 @@ function AjaxRequest(url) {
      Send the Ajax request.
      */
     this.sendRequest = function() {
-        if(preRequest) {
-            preRequest(self);
+        
+        if(this.getPreRequest()) {
+            var preRequest = this.getPreRequest();
+            preRequest(this);
         }
         
-        var obj = this;
-        if(async)
-            xmlHttp.onreadystatechange = function () { handleStateChange(self) };
-            
-            if(requestURL.indexOf("?") > 0) {
-                requestURL = requestURL + "&ts=" + new Date().getTime();
+        if(async) {
+            xmlHttp.onreadystatechange = handleStateChange;
+        }
+        
+        if(requestURL.indexOf("?") > 0) {
+            requestURL = requestURL + "&ts=" + new Date().getTime();
+        }
+        else {
+            requestURL = requestURL + "?ts=" + new Date().getTime();
+        }
+        
+        try {
+            if(method == "GET") {
+                if(queryString.length > 0) {
+                    requestURL = requestURL + "&" + queryString;
+                }
+                xmlHttp.open(method, requestURL, async);
+                xmlHttp.send(null);
             }
             else {
-                requestURL = requestURL + "?ts=" + new Date().getTime();
-            }
-            
-            
-            try {
-                if(method == "GET") {
-                    if(queryString.length > 0) {
-                        requestURL = requestURL + "&" + queryString;
-                    }
-                    xmlHttp.open(method, requestURL, async);
-                    xmlHttp.send(null);
+                xmlHttp.open(method, requestURL, async);
+                //Fix a bug in Firefox when posting
+                try {
+                    if (xmlHttp.overrideMimeType) {
+                        xmlHttp.setRequestHeader("Connection", "close");//set header after open
+                    }			
                 }
-                else {
-                    xmlHttp.open(method, requestURL, async);
-                    //Fix a bug in Firefox when posting
-                    try {
-                        if (xmlHttp.overrideMimeType) {
-                            xmlHttp.setRequestHeader("Connection", "close");//set header after open
-                        }			
-                    }
-                    catch(e) {
-                        // Do nothing
-                    }
-                    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
-                    xmlHttp.send(queryString);
+                catch(e) {
+                    // Do nothing
                 }
+                xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
+                xmlHttp.send(queryString);
             }
-            catch(exception) {
-                if(errorHandler) {
-                    errorHandler(self, exception);
-                }
-                else {
-                    throw exception;
-                }
+        }
+        catch(exception) {
+            if(this.getErrorHandler()) {
+                var errorHandler = this.getErrorHandler();
+                errorHandler(this, exception);
             }
-            
-            if(!async) {  //synchronous request, handle the state change
-                handleStateChange(self);
+            else {
+                throw exception;
             }
-            
-            if(self.isEchoDebugInfo()) {
-                echoRequestParams();
-            }
+        }
+        
+        if(!async) {  //synchronous request, handle the state change
+            handleStateChange();
+        }
     }
     
-    
     /** @private */
-    handleStateChange = function(ajaxRequest) {
+    function handleStateChange() {
         if(ajaxRequest.getXMLHttpRequestObject().readyState != 4) {
             return;
         }
         if(ajaxRequest.getXMLHttpRequestObject().status != 200) {
-            errorHandler(self);
+            var errorHandler = ajaxRequest.getErrorHandler();
+            errorHandler(ajaxRequest);
             return;
         }
         try {
-            var debug = ajaxRequest.isEchoDebugInfo();
-            if(debug) {
-                echoResponse(ajaxRequest);
-            }
-            
             //handle null responseXML
             var nodes = null;
             if (ajaxRequest.getXMLHttpRequestObject().responseXML != null) {
@@ -481,8 +688,9 @@ function AjaxRequest(url) {
             }
         }
         catch(exception) {
-            if(errorHandler) {
-                errorHandler(self, exception);
+            if(ajaxRequest.getErrorHandler()) {
+                var errorHandler = ajaxRequest.getErrorHandler();
+                errorHandler(ajaxRequest, exception);
             }
             else {
                 throw exception;
@@ -491,18 +699,18 @@ function AjaxRequest(url) {
         finally {
             try {
                 if(ajaxRequest.getPostRequest()) {
-                    var f = ajaxRequest.getPostRequest();
-                    f(ajaxRequest);
+                    var postRequest = ajaxRequest.getPostRequest();
+                    postRequest(ajaxRequest);
                 }
             }
             catch(exception) {
-                if(errorHandler) {
-                    errorHandler(self, exception);
+                if(ajaxRequest.getErrorHandler()) {
+                    var errorHandler = ajaxRequest.getErrorHandler();
+                    errorHandler(ajaxRequest, exception);
                 }
             }
         }
     }
-    
     
     /**
      Create an instance of the XMLHttpRequest object, using the appropriate
@@ -621,72 +829,159 @@ function AjaxRequest(url) {
         
         return qs;
     }
+};
+
+
+AjaxRequest.prototype = new BaseRequest();
+
+
+function IFrameRequest(form, url, parameters) {
     
     /** @private */
-    function echoResponse(ajaxRequest) {
-        var echoTextArea = document.getElementById("debugResponse");
-        if(echoTextArea == null) {
-            echoTextArea = createDebugTextArea("Server Response:", "debugResponse");
+    var iFrameRequest = this;
+    
+    /** @private */
+    var requestForm = form;
+    
+    /** @private */
+    var requestURL = url;
+    
+    /** @private */
+    var requestParams = parameters;
+    
+    /** @private */
+    var containerId = "CONTAINER-" + Math.floor(Math.random() * 99999);
+    
+    /** @private */
+    var frameId = "FRAME-" + Math.floor(Math.random() * 99999);
+    
+    /** @private */
+    var container = null;
+    
+    /** @private */
+    var frame = null;
+    
+    /** @private */
+    init();
+    /** */
+    
+    /**
+     Send the IFrame request.
+     */
+    this.sendRequest = function() {
+        if (this.getPreRequest()) {
+            var preRequest = this.getPreRequest();
+            preRequest(this);
         }
-        var debugText = ajaxRequest.getXMLHttpRequestObject().status 
-        + " " + ajaxRequest.getXMLHttpRequestObject().statusText + "\n\n\n";
-        echoTextArea.value = debugText + ajaxRequest.getXMLHttpRequestObject().responseText;
-    }
-    
-    /** @private */
-    function echoParsedJavaScript(js) {
-        var echoTextArea = document.getElementById("debugParsedJavaScript");
-        if(echoTextArea == null) {
-            var echoTextArea = createDebugTextArea("Parsed JavaScript (by JavaScript Parser):", "debugParsedJavaScript");
-        }
-        echoTextArea.value = js;
-    }
-    
-    /** @private */
-    function createDebugTextArea(label, id) {
-        echoTextArea = document.createElement("textarea");
-        echoTextArea.setAttribute("id", id);
-        echoTextArea.setAttribute("rows", "15");
-        echoTextArea.setAttribute("style", "width:100%");
-        echoTextArea.style.cssText = "width:100%";
         
-        document.getElementsByTagName("body")[0].appendChild(document.createTextNode(label));
-        document.getElementsByTagName("body")[0].appendChild(echoTextArea);
-        return echoTextArea;
+        try {
+            requestForm.setAttribute("target", frame.getAttribute("id"));
+            requestForm.submit();
+            var interval = window.setInterval(
+            function() {
+                if (frames[frameId].document 
+                && frames[frameId].document.documentElement 
+                && frames[frameId].document.getElementsByTagName("ajax-response").length == 1) {
+                    /* We use frames[frameId].document.getElementsByTagName("ajax-response")
+                     * instead of a more compact form because IE puts the ajax-response tag
+                     * inside a body tag.
+                     */
+                    onComplete();
+                    window.clearInterval(interval);
+                }
+            },
+            250
+            );
+        } catch(ex) {
+            if (this.getErrorHandler()) {
+                var errorHandler = this.getErrorHandler();
+                errorHandler(this, exception);
+            }
+            else {
+                throw ex;
+            }
+        }
+        
+        return true;
     }
     
-    
     /** @private */
-    function echoRequestParams() {
-        var qsTextBox = document.getElementById("qsTextBox");
-        if(qsTextBox == null) {
-            qsTextBox = createDebugTextBox("Query String:", "qsTextBox");
+    function init() { 
+        container = document.createElement("div");
+        container.setAttribute("id", containerId);
+        for (var name in requestParams) {
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", name);
+            input.setAttribute("value", requestParams[name]);
+            container.appendChild(input);
         }
-        qsTextBox.value = queryString;
         
-        var urlTextBox = document.getElementById("urlTextBox");
-        if(urlTextBox == null) {
-            urlTextBox = createDebugTextBox("URL (Includes query string if GET request):", "urlTextBox");
+        frame = document.createElement("iframe");
+        frame.setAttribute("id", frameId);
+        frame.setAttribute("name", frameId);
+        frame.setAttribute("src", "");
+        frame.setAttribute("style", "width:0;height:0;visibility:hidden;");
+        frame.style.cssText = "width:0;height:0;visibility:hidden;";
+        
+        container.appendChild(frame);
+        
+        requestForm.appendChild(container);
+        
+        // IE hack: we need to set id and name if undefined. 
+        if (! frames[frameId].id) {
+            frames[frameId].id = frameId;
         }
-        urlTextBox.value = requestURL;
+        if (! frames[frameId].name) {
+            frames[frameId].name = frameId;
+        }
     }
     
     /** @private */
-    function createDebugTextBox(label, id) {
-        textBox = document.createElement("input");
-        textBox.setAttribute("type", "text");
-        textBox.setAttribute("id", id);
-        textBox.setAttribute("style", "width:100%");
-        textBox.style.cssText = "width:100%";
-        
-        document.getElementsByTagName("body")[0].appendChild(document.createTextNode(label));
-        document.getElementsByTagName("body")[0].appendChild(textBox);
-        return textBox;
+    function onComplete() {
+        try {
+            var nodes = frames[frameId].document.getElementsByTagName("ajax-response")[0].childNodes;
+            var parser = new XhtmlToDOMParser();
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].nodeType != 1) {
+                    continue;
+                }
+                parser.parseXhtml(nodes[i]);
+            }
+        } catch(ex) {
+            if (iFrameRequest.getErrorHandler()) {
+                var errorHandler = iFrameRequest.getErrorHandler();
+                errorHandler(iFrameRequest, exception);
+            }
+            else {
+                throw ex;
+            }
+        } finally {
+            try {
+                // Remove the whole container, with the iframe and all hidden input fields:
+                requestForm.removeChild(container);
+                //
+                if (iFrameRequest.getPostRequest()) {
+                    var postRequest = iFrameRequest.getPostRequest();
+                    postRequest(iFrameRequest);
+                }
+            }
+            catch(exception) {
+                if (iFrameRequest.getErrorHandler()) {
+                    var errorHandler = iFrameRequest.getErrorHandler();
+                    errorHandler(iFrameRequest, exception);
+                }
+            }
+        }
     }
 };
 
 
+IFrameRequest.prototype = new BaseRequest();
+
+
 function XhtmlToDOMParser() {
+    
     this.parseXhtml = function(xml) {
         var xmlTagName=xml.tagName.toLowerCase();
         switch (xmlTagName) {
@@ -961,7 +1256,22 @@ function XhtmlToDOMParser() {
                  */
                 if(isIE) {
                     if(name == "multiple" && domNode.id != "") {
-                        setTimeout("TaconiteDOMUtils.setMultipleSelectOptions('" + domNode.id + "');", 100);
+                        setTimeout(
+                        function() {
+                            var selectNode = document.getElementById(domNode.id);
+                            var options = selectNode.getElementsByTagName("option");
+                            var option;
+                            for(var i = 0; i < options.length; i++) {
+                                option = options[i];
+                                if (typeof(option.taconiteOptionSelected) != "undefined") {
+                                    option.selected = true;
+                                } 
+                                else {
+                                    option.selected = false;
+                                }
+                            }
+                        },
+                        100);
                     }
                     if(name == "selected") {
                         domNode.taconiteOptionSelected = true;
@@ -1147,244 +1457,6 @@ function XhtmlToDOMParser() {
 };
 
 
-function DOMSelector() {
-    
-    this.select = function(selector, rootContext) {
-        if (! rootContext) {
-            rootContext = document;
-        }
-        // Remove unwanted spaces between combinators:
-        // > combinator
-        selector = selector.replace(/\s*(?=>)/g, '');
-        selector = selector.replace(/>\s*/g, '>');
-        // + combinator
-        selector = selector.replace(/\s*(?=\+)/g, '');
-        selector = selector.replace(/\+\s*/g, '+');
-        // ~ combinator
-        selector = selector.replace(/\s*(?=~)/g, '');
-        selector = selector.replace(/~\s*/g, '~');
-        // Split selector into tokens
-        var splitter = /\s|>|\+|~/g;
-        var combinators = selector.match(splitter);
-        var tokens = selector.split(splitter);
-        var currentContext = new Array(rootContext);
-        // Prepare regular expressions that will be used later:
-        var attributesRegexp = /^(\w*)\[(\w+)([=~\|\^\$\*]?)=?"?([^\]"]*)"?\]$/;
-        var pseudoClassesRegexp = /^(\w*)\:(\w+-?\w+)/;
-        var regexpResult = null;
-        // Go!
-        for (var i = 0; i < tokens.length; i++) {
-            var combinator = i == 0 ? " " : combinators[i - 1];
-            var token = tokens[i].trim();
-            if (token.indexOf('#') > -1) {
-                // Token is an ID selector
-                var tagName = token.substring(0, token.indexOf('#'));
-                var id = token.substring(token.indexOf('#') + 1, token.length);
-                var filterFunction = function(e) { 
-                    return (e.id == id); 
-                };
-                var found = new Array();
-                for (var h = 0; h < currentContext.length; h++) {
-                    found = selectByFilter(combinator, currentContext[h], tagName, filterFunction);
-                    if (found && found.length == 1) {
-                        break;
-                    }
-                }
-                // Set currentContext to contain just this element
-                currentContext = found;
-                // Skip to next token
-                continue; 
-            }
-            else if ((regexpResult = attributesRegexp.exec(token))) {
-                // Token contains attribute selectors
-                var tagName = regexpResult[1];
-                var attrName = regexpResult[2];
-                var attrOperator = regexpResult[3];
-                var attrValue = regexpResult[4];
-                // Attribute filtering functions:
-                var filterFunction = null; // This function will be used to filter the elements
-                switch (attrOperator) {
-                    case '=': // Equality
-                        filterFunction = function(e) { 
-                            return (e.getAttribute(attrName) && e.getAttribute(attrName) == attrValue); 
-                        };
-                        break;
-                    case '~': // Match one of space seperated words 
-                        filterFunction = function(e) { 
-                            return (e.getAttribute(attrName) && e.getAttribute(attrName).match(new RegExp('(\\s|^)' + attrValue + '(\\s|$)'))); 
-                        };
-                        break;
-                    case '|': // Match start with value followed by optional hyphen
-                        filterFunction = function(e) { 
-                            return (e.getAttribute(attrName) && e.getAttribute(attrName).match(new RegExp('^' + attrValue + '-?'))); 
-                        };
-                        break;
-                    case '^': // Match starts with value
-                        filterFunction = function(e) { 
-                            return (e.getAttribute(attrName) && e.getAttribute(attrName).indexOf(attrValue) == 0); 
-                        };
-                        break;
-                    case '$': // Match ends with value - fails with "Warning" in Opera 7
-                        filterFunction = function(e) { 
-                            return (e.getAttribute(attrName) && (e.getAttribute(attrName).lastIndexOf(attrValue) == e.getAttribute(attrName).length - attrValue.length)); 
-                        };
-                        break;
-                    case '*': // Match contains value
-                        filterFunction = function(e) { 
-                            return (e.getAttribute(attrName) && e.getAttribute(attrName).indexOf(attrValue) > -1); 
-                        };
-                        break;
-                    default :
-                        // Just test for existence of attribute
-                        filterFunction = function(e) { 
-                            return e.getAttribute(attrName); 
-                        };
-                }
-                var found = new Array();
-                var counter = 0;
-                for (var h = 0; h < currentContext.length; h++) {
-                    var elements = selectByFilter(combinator, currentContext[h], tagName, filterFunction);
-                    for (var j = 0; j < elements.length; j++) {
-                        found[counter++] = elements[j];
-                    }
-                }
-                currentContext = found;
-                // Skip to next token
-                continue;
-            } 
-            else if ((regexpResult = pseudoClassesRegexp.exec(token))) {
-                // Token contains pseudo-class selectors
-                var tagName = regexpResult[1];
-                var pseudoClass = regexpResult[2];
-                // Pseudo class filtering functions:
-                var filterFunction = null; // This function will be used to filter the elements
-                switch (pseudoClass) {
-                    case 'first-child': 
-                        filterFunction = function(e) { 
-                            var parent = e.parentNode;
-                            var i = 0;
-                            while (parent.childNodes[i] && parent.childNodes[i].nodeType != 1) i++;
-                            return (parent.childNodes[i] == e); 
-                        };
-                        break;
-                    case 'last-child': 
-                        filterFunction = function(e) { 
-                            var parent = e.parentNode;
-                            var i = parent.childNodes.length - 1;
-                            while (parent.childNodes[i] && parent.childNodes[i].nodeType != 1) i--;
-                            return (parent.childNodes[i] == e); 
-                        };
-                        break;    
-                    case 'empty': 
-                        filterFunction = function(e) { 
-                            return (e.childNodes.length == 0); 
-                        };
-                        break;
-                    default :
-                        filterFunction = function(e) { 
-                            return false; 
-                        };
-                }
-                var found = new Array();
-                var counter = 0;
-                for (var h = 0; h < currentContext.length; h++) {
-                    var elements = selectByFilter(combinator, currentContext[h], tagName, filterFunction);
-                    for (var j = 0; j < elements.length; j++) {
-                        found[counter++] = elements[j];
-                    }
-                }
-                currentContext = found;
-                // Skip to next token
-                continue;
-            } 
-            else if (token.indexOf('.') > -1) {
-                // Token contains a class selector
-                var tagName = token.substring(0, token.indexOf('.'));
-                var className = token.substring(token.indexOf('.') + 1, token.length);
-                var regexp = new RegExp('(\\s|^)' + className + '(\\s|$)');
-                var filterFunction = function(e) { 
-                    return (e.className && e.className.match(regexp)); 
-                };
-                var found = new Array();
-                var counter = 0;
-                for (var h = 0; h < currentContext.length; h++) {
-                    var elements = selectByFilter(combinator, currentContext[h], tagName, filterFunction);
-                    for (var j = 0; j < elements.length; j++) {
-                        found[counter++] = elements[j];
-                    }
-                }
-                currentContext = found;
-                // Skip to next token
-                continue; 
-            }
-            else {
-                // If we get here, token is just an element (not a class or ID selector)
-                tagName = token;
-                var filterFunction = function(e) { 
-                    return true; 
-                };
-                var found = new Array();
-                var counter = 0;
-                for (var h = 0; h < currentContext.length; h++) {
-                    var elements = selectByFilter(combinator, currentContext[h], tagName, filterFunction);
-                    for (var j = 0; j < elements.length; j++) {
-                        found[counter++] = elements[j];
-                    }
-                }
-                currentContext = found;
-            }
-        }
-        return currentContext;
-    }
-    
-    function selectByFilter(combinator, context, tagName, filterFunction) {
-        var result = new Array();
-        var elements = new Array();
-        // Get elements to filter depending on the combinator:
-        if (combinator == " ") {
-            elements = TaconiteDOMUtils.getAllSubElements(context);
-        } else if (combinator == ">") {
-            elements = context.childNodes;
-        } else if (combinator == "+") {
-            var sibling = context.nextSibling;
-            while (sibling && sibling.nodeType != 1) {
-                sibling = sibling.nextSibling;
-            }
-            if (sibling) elements = new Array(sibling);
-            else elements = new Array();
-        } else if (combinator == "~") {
-            var sibling = context.nextSibling;
-            var counter = 0;
-            while (sibling) {
-                if (sibling.nodeType == 1) {
-                    elements[counter] = sibling;
-                    counter++;
-                }
-                sibling = sibling.nextSibling;
-            }
-        }
-        // Actually filter elements by tag name and filter function:
-        var counter = 0;
-        if (!tagName || tagName == '*') {
-            for (var k = 0; k < elements.length; k++) {
-                if (elements[k].nodeType == 1 && filterFunction(elements[k])) {
-                    result[counter] = elements[k];
-                    counter++;
-                }
-            }
-        } else {
-            for (var k = 0; k < elements.length; k++) {
-                if (elements[k].nodeType == 1 && elements[k].nodeName.toLowerCase() == tagName.toLowerCase() && filterFunction(elements[k])) {
-                    result[counter] = elements[k];
-                    counter++;
-                }
-            }
-        }
-        return result;
-    }
-};
-
-
 String.prototype.trim = function() {
     //skip leading and trailing whitespace
     //and return everything in between
@@ -1395,7 +1467,7 @@ String.prototype.trim = function() {
 };
 
 document.getElementsByMatchingId = function(matchingId) {
-    var allElements = TaconiteDOMUtils.getAllSubElements(document);
+    var allElements = document.all ? document.all : document.getElementsByTagName('*');
     var matchingElements = new Array();
     for (var i = 0; i < allElements.length; i++) {
         var currentElement = allElements[i];
@@ -1421,7 +1493,7 @@ document.getElementsByMatchingId = function(matchingId) {
  XT object declaration, with methods for sending Ajax action and submit events.
  **/
 
-var springxt_core_version=20070526;
+var springxt_core_version=20070827;
 
 var XT = {
     
@@ -1441,7 +1513,7 @@ var XT = {
     
     createSimpleQueryString : function(sourceElement) {
         var qs = "";
-        if (sourceElement != undefined && sourceElement != null) {
+        if (sourceElement) {
             if (sourceElement.name != null) {
                 qs = "&" + this.elementParameter + "=" + sourceElement.name;
             }
@@ -1452,12 +1524,30 @@ var XT = {
         return qs;
     },
     
-    createJSONQueryString : function(jsonObject) {
+    createJSONQueryString : function(serverParams) {
         var qs = "";
-        if (jsonObject != undefined && jsonObject != null) {
-            qs = "&" + this.jsonParamsParameter + "=" + encodeURIComponent(jsonObject.toJSONString());
+        if (serverParams) {
+            qs = "&" + this.jsonParamsParameter + "=" + encodeURIComponent(serverParams.toJSONString());
         }
         return qs;
+    },
+    
+    createIFrameRequestParamsObject : function(ajaxActionType, eventId, sourceElement, serverParams) {
+        var params = {};
+        params[this.ajaxParameter] = ajaxActionType;
+        params[this.eventParameter] = eventId;
+        if (sourceElement) {
+            if (sourceElement.name != null) {
+                params[this.elementParameter] = sourceElement.name;
+            }
+            if (sourceElement.id != null) {
+                params[this.elementIdParameter] = sourceElement.id;
+            }
+        }
+        if (serverParams) {
+            params[this.jsonParamsParameter] = encodeURIComponent(serverParams.toJSONString());
+        }
+        return params;
     },
     
     configureLoadingInfo : function(loadingInfo, ajaxRequest) {
@@ -1490,34 +1580,49 @@ var XT = {
         }
     },
     
-    doAjaxAction : function(eventId, sourceElement, jsonObject, loadingInfo) {
+    doAjaxAction : function(eventId, sourceElement, serverParams, requestParams) {
+        var ajaxActionType = "ajax-action";
+        
         var ajaxRequest = new AjaxRequest(document.URL);
         
         ajaxRequest.addFormElements(document.forms[0]);
         ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
-        + "&" + this.ajaxParameter + "=ajax-action" 
+        + "&" + this.ajaxParameter + "=" + ajaxActionType
         + "&" + this.eventParameter + "=" + eventId 
         + this.createSimpleQueryString(sourceElement) 
-        + this.createJSONQueryString(jsonObject));
+        + this.createJSONQueryString(serverParams));
         
-        this.configureLoadingInfo(loadingInfo, ajaxRequest);
+        this.configureLoadingInfo(requestParams, ajaxRequest);
         
         ajaxRequest.sendRequest();
     },
     
-    doAjaxSubmit : function(eventId, sourceElement, jsonObject, loadingInfo) {
-        var ajaxRequest = new AjaxRequest(document.URL);
+    doAjaxSubmit : function(eventId, sourceElement, serverParams, requestParams) {
+        var ajaxActionType = "ajax-submit";
         
-        ajaxRequest.addFormElements(document.forms[0]);
-        ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
-        + "&" + this.ajaxParameter + "=ajax-submit" 
-        + "&" + this.eventParameter + "=" + eventId 
-        + this.createSimpleQueryString(sourceElement) 
-        + this.createJSONQueryString(jsonObject));
-        
-        this.configureLoadingInfo(loadingInfo, ajaxRequest);
-        
-        ajaxRequest.setUsePOST();
-        ajaxRequest.sendRequest();
+        if (requestParams && requestParams.enableUpload && requestParams.enableUpload == true) {
+            var url = document.URL;
+            var parameters = this.createIFrameRequestParamsObject(ajaxActionType, eventId, sourceElement, serverParams);
+            
+            var iframeRequest = new IFrameRequest(document.forms[0], url, parameters);
+            
+            this.configureLoadingInfo(requestParams, iframeRequest);
+            
+            iframeRequest.sendRequest();
+        } else {
+            var ajaxRequest = new AjaxRequest(document.URL);
+            
+            ajaxRequest.addFormElements(document.forms[0]);
+            ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
+            + "&" + this.ajaxParameter + "=" + ajaxActionType
+            + "&" + this.eventParameter + "=" + eventId 
+            + this.createSimpleQueryString(sourceElement) 
+            + this.createJSONQueryString(serverParams));
+            
+            this.configureLoadingInfo(requestParams, ajaxRequest);
+            
+            ajaxRequest.setUsePOST();
+            ajaxRequest.sendRequest();
+        }
     }
 };
