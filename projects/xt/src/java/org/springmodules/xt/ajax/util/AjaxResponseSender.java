@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 the original author or authors.
+ * Copyright 2006-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.springmodules.xt.ajax.util;
 
 import java.io.IOException;
-import javax.servlet.ServletOutputStream;
+import java.io.PrintWriter;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springmodules.xt.ajax.AjaxResponse;
@@ -38,8 +38,8 @@ public class AjaxResponseSender {
         httpResponse.setContentType("text/xml");
         httpResponse.setCharacterEncoding(ajaxResponse.getEncoding());
         httpResponse.setHeader("Cache-Control", "no-cache");
-        ServletOutputStream out = httpResponse.getOutputStream();
-        out.print(response);
-        out.close();
+        PrintWriter writer = httpResponse.getWriter();
+        writer.print(response);
+        writer.close();
     }
 }
