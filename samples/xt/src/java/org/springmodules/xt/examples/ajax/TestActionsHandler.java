@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import org.springmodules.xt.ajax.AbstractAjaxHandler;
+import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.AjaxActionEvent;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
+import org.springmodules.xt.ajax.action.AbstractExecuteJavascriptAction;
 import org.springmodules.xt.ajax.action.AppendAsFirstContentAction;
 import org.springmodules.xt.ajax.action.AppendContentAction;
 import org.springmodules.xt.ajax.action.ExecuteJavascriptFunctionAction;
@@ -290,6 +292,21 @@ public class TestActionsHandler extends AbstractAjaxHandler {
         SelectorMatcher matcher = new SelectorMatcher(Arrays.asList("#changeColorDataRow li"));
         // Action for changing the style attribute to matching elements:
         SetAttributeAction action = new SetAttributeAction(matcher, "style", "color : red");
+        
+        // Create a concrete ajax response:
+        AjaxResponse response = new AjaxResponseImpl();
+        // Add the actions:
+        response.addAction(action);
+        
+        return response;
+    }
+    
+    public AjaxResponse testErrorHandler(AjaxActionEvent event) {
+        AjaxAction action = new AbstractExecuteJavascriptAction() {
+            protected String getJavascript() {
+                return "throw {'message' : 'This is a javascript error!'};";
+            }
+        };
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();

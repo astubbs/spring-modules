@@ -5,6 +5,7 @@
 <html>
     <head>
         <script type="text/javascript" src='../js/springxt.js'></script>
+        <script type="text/javascript" src='../js/custom.js'></script>
         <script type="text/javascript" src='../js/prototype.js'></script>
         <script type="text/javascript" src='../js/scriptaculous.js?load=effects,dragdrop'></script>
         <script type="text/javascript">
@@ -14,6 +15,10 @@
             
             function showAlertOnDrop(draggable, droppable) {
                 alert(draggable.id + " on " + droppable.id);
+            }
+            
+            function errorHandler(ajaxRequest, exception) {
+                alert('Exception message : ' + exception.message);
             }
         </script>
         <title>XT Ajax Framework : Example 1</title>
@@ -198,6 +203,12 @@
                             <li>Item 3</li>
                         </ul>
                     </td>
+                </tr>
+                
+                <tr>
+                    <td>Handle javascript errors through an error handler function:</td>
+                    <td><input type="button" value="Go" onclick="XT.doAjaxAction('testErrorHandler', this, null, {'loadingElementId' : 'loading16', 'loadingImage' : '../images/loading.gif', 'errorHandler' : errorHandler});"></td>
+                    <td><div id="loading16"></div></td>
                 </tr>
                 
             </table>
