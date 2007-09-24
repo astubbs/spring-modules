@@ -1,11 +1,7 @@
-/**
- @fileoverview
- DOMSelector object implementing CSS Selectors.
- **/
+XT.util = {};
 
-var springxt_domselector_version=20070827;
 
-function DOMSelector() {
+XT.util.DOMSelector = function() {
     
     this.select = function(selector, rootContext) {
         if (! rootContext) {
@@ -193,7 +189,7 @@ function DOMSelector() {
             }
         }
         return currentContext;
-    }
+    };
     
     function selectByFilter(combinator, context, tagName, filterFunction) {
         var result = new Array();
@@ -239,5 +235,141 @@ function DOMSelector() {
             }
         }
         return result;
+    };
+};
+
+
+(function () {
+    var m = {
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"' : '\\"',
+            '\\': '\\\\'
+        },
+        s = {
+            array: function (x) {
+                var a = ['['], b, f, i, l = x.length, v;
+                for (i = 0; i < l; i += 1) {
+                    v = x[i];
+                    f = s[typeof v];
+                    if (f) {
+                        v = f(v);
+                        if (typeof v == 'string') {
+                            if (b) {
+                                a[a.length] = ',';
+                            }
+                            a[a.length] = v;
+                            b = true;
+                        }
+                    }
+                }
+                a[a.length] = ']';
+                return a.join('');
+            },
+            'boolean': function (x) {
+                return String(x);
+            },
+            'null': function (x) {
+                return "null";
+            },
+            number: function (x) {
+                return isFinite(x) ? String(x) : 'null';
+            },
+            object: function (x) {
+                if (x) {
+                    if (x instanceof Array) {
+                        return s.array(x);
+                    }
+                    var a = ['{'], b, f, i, v;
+                    for (i in x) {
+                        v = x[i];
+                        f = s[typeof v];
+                        if (f) {
+                            v = f(v);
+                            if (typeof v == 'string') {
+                                if (b) {
+                                    a[a.length] = ',';
+                                }
+                                a.push(s.string(i), ':', v);
+                                b = true;
+                            }
+                        }
+                    }
+                    a[a.length] = '}';
+                    return a.join('');
+                }
+                return 'null';
+            },
+            string: function (x) {
+                if (/["\\\x00-\x1f]/.test(x)) {
+                    x = x.replace(/([\x00-\x1f\\"])/g, function(a, b) {
+                        var c = m[b];
+                        if (c) {
+                            return c;
+                        }
+                        c = b.charCodeAt();
+                        return '\\u00' +
+                            Math.floor(c / 16).toString(16) +
+                            (c % 16).toString(16);
+                    });
+                }
+                return '"' + x + '"';
+            }
+        };
+
+    Object.prototype.toJSONString = function () {
+        return s.object(this);
+    };
+
+    Array.prototype.toJSONString = function () {
+        return s.array(this);
+    };
+})();
+
+
+String.prototype.parseJSON = function () {
+    try {
+        return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(
+                this.replace(/"(\\.|[^"\\])*"/g, ''))) &&
+            eval('(' + this + ')');
+    } catch (e) {
+        return false;
     }
+};
+
+
+String.prototype.trim = function() {
+    //skip leading and trailing whitespace
+    //and return everything in between
+    var x=this;
+    x=x.replace(/^\s*(.*)/, "$1");
+    x=x.replace(/(.*?)\s*$/, "$1");
+    return x;
+};
+
+
+document.getElementsByMatchingId = function(matchingId) {
+    var allElements = document.all ? document.all : document.getElementsByTagName('*');
+    var matchingElements = new Array();
+    for (var i = 0; i < allElements.length; i++) {
+        var currentElement = allElements[i];
+        if (currentElement.nodeType == 1) {
+            var id = currentElement.getAttribute("id");
+            if (id != null && id != "") {
+                if (id.indexOf("_") == (id.length - 1)) {
+                    var pattern = "^" + id.replace(/_$/, ".*");
+                    var rexp = new RegExp(pattern);
+                    if (rexp.test(matchingId)) {
+                        matchingElements.push(currentElement);
+                    }
+                } else if (id == matchingId) {
+                    matchingElements.push(currentElement);
+                }
+            }
+        }
+    }
+    return matchingElements;
 };

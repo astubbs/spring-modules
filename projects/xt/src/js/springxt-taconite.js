@@ -1,153 +1,81 @@
-/**
- @fileoverview
- Spring Modules XT Ajax Framework custom version of the Taconite Ajax Framework.
- Taconite (http://taconite.sourceforge.net/) : Copyright (C) Ryan Asleson.
- */
+XT.taconite = {};
 
-var springxt_taconite_version=20070827;
 
-var isIE=document.uniqueID;
+XT.taconite.isIE = document.uniqueID;
 
-function BaseRequest() {
+
+XT.taconite.BaseRequest = function() {
     
-    /** @private */
     var preRequest = null;
     
-    /** @private */
     var postRequest = null;
     
-    /** @private errorHandler*/ 
     var errorHandler = null;
     
-    /**
-     Set the pre-request function. This function will be called prior to 
-     sending the request. The pre-request function is passed a reference
-     to this object.
-     @param {Function} The function to be called.
-     */
     this.setPreRequest = function(func) {
         preRequest = func;
-    }
+    };
     
-    /**
-     Set the post-request function. This function will be called after the
-     response has been received and processed. The post-request function is passed 
-     a reference to this object.
-     @param {Function} The function to be called.
-     */
     this.setPostRequest = function(func) {
         postRequest = func;
-    }
+    };
     
-    /**
-     Return the pre request function.
-     */
     this.getPreRequest = function() {
         return preRequest;
-    }
+    };
     
-    /**
-     Return the post request function.
-     */
     this.getPostRequest = function() {
         return postRequest;
-    }
+    };
     
-    /** 
-     @param {Function} Set the error handler function that is called if the 
-     server's HTTP response code is something other than 200.
-     */	
     this.setErrorHandler = function(func){
         errorHandler = func;
-    }
+    };
     
-    /**
-     Return the error handler function.
-     */
     this.getErrorHandler = function() {
         return errorHandler;
-    }
-}
+    };
+};
 
 
-function AjaxRequest(url) {
+XT.taconite.AjaxRequest = function(url) {
     
-    /** @private */
     var ajaxRequest = this;
     
-    /** @private */
     var xmlHttp = createXMLHttpRequest();
     
-    /** @private */
     var queryString = "";
     
-    /** @private */
     var requestURL = url;
     
-    /** @private */
     var method = "GET";
     
-    /** @private */
     var async = true;
     
-    /**
-     Return the instance of the XMLHttpRequest object wrapped by this object.
-     @return XMLHttpRequest
-     */
     this.getXMLHttpRequestObject = function() {
         return xmlHttp;
-    }
+    };
     
-    /**
-     Send the Ajax request using the POST method. Use with caution -- some
-     browsers do not support the POST method with the XMLHttpRequest object.
-     */
     this.setUsePOST = function() {
         method = "POST";
-    }
+    };
     
-    /**
-     Send the Ajax request using the GET method, where parameters are sent
-     as a query string appended to the URL. This is the default behavior.
-     */
     this.setUseGET = function() {
         method = "GET";
-    }
+    };
     
-    /**
-     Set the query string that will be sent to the server. For GET
-     requests, the query string is appended to the URL. For POST
-     requests, the query string is sent in the request body. This 
-     method is useful, for example, if you want to send an XML string
-     or JSON string to the server.
-     @param {String} qa, the new query string value.
-     */
     this.setQueryString = function(qs) {
         queryString = qs;
-    }
+    };
     
-    /**
-     Return the query string.
-     @return The query string.
-     */
     this.getQueryString = function() {
         return queryString;
-    }
+    };
     
-    /** 
-     @param {Boolean} asyncBoolean, set to true if asynchronous request, false synchronous request. 
-     */
     this.setAsync = function(asyncBoolean){
         async = asyncBoolean;
-    }
+    };
     
-    /**
-     Add all of the form elements under the specified form to the query
-     string to be sent to the server as part of the Ajax request. 
-     The values are automatically encoded.
-     @param form, A form DOM element, or the id attribute of the form element from
-     which you wish to accumulate the form values.
-     */
     this.addFormElements = function(form) {
         var formElements = new Array();
         if (form != null) {
@@ -162,25 +90,13 @@ function AjaxRequest(url) {
         }
         var values = toQueryString(formElements);
         accumulateQueryString(values);
-    }
+    };
     
-    /**
-     Add the name/value pair to the query string.
-     @param {String} name
-     @param {String} value
-     */
     this.addNameValuePair = function(name, value) {
         var nameValuePair = name + "=" + encodeURIComponent(value);
         accumulateQueryString(nameValuePair);
-    }
+    };
     
-    /**
-     Same as addNamedFormElements, except it will filter form elements by form's id.
-     For example, these are all valid uses:<br>
-     <br>ajaxRequest.addNamedFormElements("form-id""element-name-1");
-     <br>ajaxRequest.addNamedFormElements("form-id","element-name-1",
-     "element-name-2", "element-name-3");
-     */
     this.addNamedFormElementsByFormID = function() {
         var elementName = "";
         var namedElements = null;
@@ -199,17 +115,8 @@ function AjaxRequest(url) {
                 accumulateQueryString(elementValues);
             }
         }
-    }
+    };
     
-    /**
-     Add the values of the named form elements to the query string to be
-     sent to the server as part of the Ajax request. This method takes any 
-     number of Strings representing the form elements for wish you wish to 
-     accumulate the values. The Strings must be the value of the element's 
-     name attribute.<br><br>For example, these are all valid uses:<br>
-     <br>ajaxRequest.addNamedFormElements("element-name-1");
-     <br>ajaxRequest.addNamedFormElements("element-name-1", "element-name-2", "element-name-3");
-     */
     this.addNamedFormElements = function() {
         var elementName = "";
         var namedElements = null;
@@ -222,17 +129,8 @@ function AjaxRequest(url) {
             
             accumulateQueryString(elementValues);
         }
-    }
+    };
     
-    /**
-     Add the values of the id'd form elements to the query string to be
-     sent to the server as part of the Ajax request. This method takes any 
-     number of Strings representing the ids of the form elements for wish you wish to 
-     accumulate the values. The Strings must be the value of the element's 
-     name attribute.<br><br>For example, these are all valid uses:<br>
-     <br>ajaxRequest.addFormElementsById("element-id-1");
-     <br>ajaxRequest.addFormElementsById("element-id-1", "element-id-2", "element-id-3");
-     */
     this.addFormElementsById = function() {
         var id = "";
         var element = null;
@@ -247,13 +145,9 @@ function AjaxRequest(url) {
         
         elementValues = toQueryString(elements);
         accumulateQueryString(elementValues);
-    }
+    };
     
-    /**
-     Send the Ajax request.
-     */
     this.sendRequest = function() {
-        
         if(this.getPreRequest()) {
             var preRequest = this.getPreRequest();
             preRequest(this);
@@ -306,9 +200,8 @@ function AjaxRequest(url) {
         if(!async) {  //synchronous request, handle the state change
             handleStateChange();
         }
-    }
+    };
     
-    /** @private */
     function handleStateChange() {
         if(ajaxRequest.getXMLHttpRequestObject().readyState != 4) {
             return;
@@ -328,7 +221,7 @@ function AjaxRequest(url) {
                 nodes = new Array();
             }
             
-            var parser = new XhtmlToDOMParser();
+            var parser = new XT.taconite.XhtmlToDOMParser();
             for(var i = 0; i < nodes.length; i++) {
                 if(nodes[i].nodeType != 1) {
                     continue;
@@ -359,16 +252,8 @@ function AjaxRequest(url) {
                 }
             }
         }
-    }
+    };
     
-    /**
-     Create an instance of the XMLHttpRequest object, using the appropriate
-     method for the type of browser in which this script is running. For Internet
-     Explorer, it's an ActiveX object, for all others it's a native JavaScript
-     object.
-     @return an instance of the XMLHttpRequest object.
-     @private
-     */
     function createXMLHttpRequest() {
         var req = false;
         if (window.XMLHttpRequest) {
@@ -388,9 +273,8 @@ function AjaxRequest(url) {
             }
         }
         return req;
-    }
+    };
     
-    /** @private */
     function accumulateQueryString(newValues) {
         if(queryString == "") {
             queryString = newValues; 
@@ -398,9 +282,8 @@ function AjaxRequest(url) {
         else {
             queryString = queryString + "&" +  newValues;
         }
-    }
+    };
     
-    /** @private */
     function toQueryString(elements) {
         var node = null;
         var qs = "";
@@ -449,9 +332,8 @@ function AjaxRequest(url) {
         }
         
         return qs;
-    }
+    };
     
-    /** @private */
     function getSelectedOptions(select) {
         var options = select.options;
         var option = null;
@@ -477,46 +359,33 @@ function AjaxRequest(url) {
         }
         
         return qs;
-    }
+    };
 };
 
 
-AjaxRequest.prototype = new BaseRequest();
+XT.taconite.AjaxRequest.prototype = new XT.taconite.BaseRequest();
 
 
-function IFrameRequest(form, url, parameters) {
+XT.taconite.IFrameRequest = function(form, url, parameters) {
     
-    /** @private */
     var iFrameRequest = this;
     
-    /** @private */
     var requestForm = form;
     
-    /** @private */
     var requestURL = url;
     
-    /** @private */
     var requestParams = parameters;
     
-    /** @private */
     var containerId = "CONTAINER-" + Math.floor(Math.random() * 99999);
     
-    /** @private */
     var frameId = "FRAME-" + Math.floor(Math.random() * 99999);
     
-    /** @private */
     var container = null;
     
-    /** @private */
     var frame = null;
     
-    /** @private */
     init();
-    /** */
     
-    /**
-     Send the IFrame request.
-     */
     this.sendRequest = function() {
         if (this.getPreRequest()) {
             var preRequest = this.getPreRequest();
@@ -552,9 +421,8 @@ function IFrameRequest(form, url, parameters) {
         }
         
         return true;
-    }
+    };
     
-    /** @private */
     function init() { 
         container = document.createElement("div");
         container.setAttribute("id", containerId);
@@ -584,13 +452,12 @@ function IFrameRequest(form, url, parameters) {
         if (! frames[frameId].name) {
             frames[frameId].name = frameId;
         }
-    }
+    };
     
-    /** @private */
     function onComplete() {
         try {
             var nodes = frames[frameId].document.getElementsByTagName("ajax-response")[0].childNodes;
-            var parser = new XhtmlToDOMParser();
+            var parser = new XT.taconite.XhtmlToDOMParser();
             for (var i = 0; i < nodes.length; i++) {
                 if (nodes[i].nodeType != 1) {
                     continue;
@@ -622,14 +489,14 @@ function IFrameRequest(form, url, parameters) {
                 }
             }
         }
-    }
+    };
 };
 
 
-IFrameRequest.prototype = new BaseRequest();
+XT.taconite.IFrameRequest.prototype = new XT.taconite.BaseRequest();
 
 
-function XhtmlToDOMParser() {
+XT.taconite.XhtmlToDOMParser = function() {
     
     this.parseXhtml = function(xml) {
         var xmlTagName=xml.tagName.toLowerCase();
@@ -665,7 +532,7 @@ function XhtmlToDOMParser() {
                 executeAction(xml, executeJavascriptAction);
                 break;
         }
-    }
+    };
     
     function executeAction(xml, action) {
         var context = xml.getElementsByTagName("context")[0];
@@ -679,7 +546,7 @@ function XhtmlToDOMParser() {
         } else {
             action(content);
         }
-    }
+    };
     
     function getContextNodes(context) {
         var matchMode = context.getElementsByTagName("matcher")[0].getAttribute("matchMode");
@@ -700,7 +567,7 @@ function XhtmlToDOMParser() {
             contextNodes = getContextNodesByPlainMatch(context);
         }
         return contextNodes;
-    }
+    };
     
     function getContextNodesByPlainMatch(context) {
         var contextNodeID = context.getElementsByTagName("matcher")[0].getAttribute("contextNodeID");
@@ -714,7 +581,7 @@ function XhtmlToDOMParser() {
             }
         }
         return contextNodes;
-    }
+    };
     
     function getContextNodesByWildcardMatch(context) {
         var contextNodeID = context.getElementsByTagName("matcher")[0].getAttribute("contextNodeID");
@@ -724,10 +591,10 @@ function XhtmlToDOMParser() {
             contextNodes = contextNodes.concat(document.getElementsByMatchingId(contextIDs[i].trim()));
         }
         return contextNodes;
-    }
+    };
     
     function getContextNodesBySelectorMatch(context) {
-        var selector = new DOMSelector();
+        var selector = new XT.util.DOMSelector();
         var contextNodeSelector = context.getElementsByTagName("matcher")[0].getAttribute("contextNodeSelector");
         var contextSelectors = contextNodeSelector.split(',');
         var contextNodes = new Array();
@@ -735,12 +602,12 @@ function XhtmlToDOMParser() {
             contextNodes = contextNodes.concat(selector.select(contextSelectors[i].trim()));
         }
         return contextNodes;
-    }
+    };
     
     function setAttributesAction(domNode,xml){
         var sourceNode = xml.getElementsByTagName("attributes")[0];
         handleAttributes(domNode, sourceNode);
-    }
+    };
     
     function appendAsFirstChildAction(domNode,xml){
         var firstNode=null;
@@ -760,7 +627,7 @@ function XhtmlToDOMParser() {
                 }
             }
         }              
-    }
+    };
     
     function insertAfterAction(domNode,xml){
         var domChildNode=null;
@@ -776,7 +643,7 @@ function XhtmlToDOMParser() {
                 }
             }
         }              
-    }
+    };
     
     function insertBeforeAction(domNode,xml){
         var domChildNode=null;
@@ -786,29 +653,29 @@ function XhtmlToDOMParser() {
                 domNode.parentNode.insertBefore(domChildNode,domNode);
             }
         }              
-    }  
+    };  
     
     function replaceAction(domNode,xml){
         insertAfterAction(domNode,xml);
         domNode.parentNode.removeChild(domNode);
-    }
+    };
     
     function deleteAction(domNode) {
         domNode.parentNode.removeChild(domNode);
-    }
+    };
     
     function appendAsChildrenAction(domNode,xml) {
         internalAppendOrReplaceChildren(domNode, xml, false);
-    }
+    };
     
     function replaceChildrenAction(domNode,xml) {
         internalAppendOrReplaceChildren(domNode, xml, true);
-    }
+    };
     
     function executeRedirectAction(xmlNode) {
         var targetUrl = xmlNode.getElementsByTagName("target")[0].getAttribute("url");
         window.location.href = targetUrl;
-    }
+    };
     
     function executeJavascriptAction(xmlNode) {
         var scripts = xmlNode.getElementsByTagName("script");
@@ -822,7 +689,7 @@ function XhtmlToDOMParser() {
                 eval(js);
             }
         }
-    }
+    };
     
     function internalAppendOrReplaceChildren(domNode,xml,doRemoveChildren) {
         var domChildNode=null;
@@ -835,13 +702,13 @@ function XhtmlToDOMParser() {
             domChildNode=handleNode(xml.childNodes[i]);
             if(domChildNode!=null) {
                 // Here we have to check xml.childNodes[i].nodeType==1 because of an IE7 bug 
-                if (isIE && xml.childNodes[i].nodeType==1) {
+                if (XT.taconite.isIE && xml.childNodes[i].nodeType==1) {
                     checkForIEMultipleSelectHack(domNode, domChildNode);
                 }
                 domNode.appendChild(domChildNode);
             }
         }              
-    }
+    };
     
     function isInlineMode(node) {
         var lowerCaseTag = node.tagName.toLowerCase();
@@ -856,7 +723,7 @@ function XhtmlToDOMParser() {
             return true;
         }
         return false;
-    }  
+    };  
     
     function handleAttributes(domNode, xmlNode, returnAsText) {
         var attr = null;
@@ -876,7 +743,7 @@ function XhtmlToDOMParser() {
                 }
                 else if(name.trim().toLowerCase().substring(0, 2) == "on") {
                     /* IE workaround for event handlers */
-                    if(isIE) { 
+                    if(XT.taconite.isIE) { 
                         eval("domNode." + name.trim().toLowerCase() + "=function(){" + value + "}"); 
                     }
                     else { 
@@ -903,7 +770,7 @@ function XhtmlToDOMParser() {
                 /* This is a workaround for a bug in IE where select elemnts with multiple don't have 
                     all the appropriate options selected.  Only one is selected.  Appears fixed in IE7.
                  */
-                if(isIE) {
+                if(XT.taconite.isIE) {
                     if(name == "multiple" && domNode.id != "") {
                         setTimeout(
                         function() {
@@ -931,7 +798,7 @@ function XhtmlToDOMParser() {
             }
         }
         return attrString;
-    }
+    };
     
     function handleNode(xmlNode){
         var nodeType = xmlNode.nodeType;               
@@ -941,18 +808,18 @@ function XhtmlToDOMParser() {
             case 3:  //TEXT_NODE
             case 4:  //CDATA_SECTION_NODE
                 var textNode = document.createTextNode(xmlNode.nodeValue);
-                if(isIE) {
+                if(XT.taconite.isIE) {
                     textNode.nodeValue = textNode.nodeValue.replace(/\n/g, '\r');
                 }
                 return textNode;
         }      
         return null;
-    }
+    };
     
     function handleElement(xmlNode){
         var domElemNode = null;
         var xmlNodeTagName = xmlNode.tagName.toLowerCase();
-        if(isIE){
+        if(XT.taconite.isIE){
             if(isInlineMode(xmlNode)) {
                 return document.createElement("<" + xmlNodeTagName + " " + handleAttributes(domElemNode, xmlNode, true) + ">");
             }
@@ -987,7 +854,7 @@ function XhtmlToDOMParser() {
             handleAttributes(domElemNode,xmlNode);
             //Fix for IE Script tag: Unexpected call to method or property access error
             //IE don't allow script tag to have child
-            if(isIE && !domElemNode.canHaveChildren){
+            if(XT.taconite.isIE && !domElemNode.canHaveChildren){
                 if(xmlNode.childNodes.length > 0){
                     domElemNode.text=xmlNode.text;
                 }
@@ -1004,13 +871,13 @@ function XhtmlToDOMParser() {
         }      
         
         return domElemNode;
-    }
+    };
     
     function useIEFormElementCreationStrategy(xmlNodeTagName) {
         var useIEStrategy = false;
         
         var nodeName = xmlNodeTagName.toLowerCase();
-        if (isIE && (nodeName == "form" ||
+        if (XT.taconite.isIE && (nodeName == "form" ||
         nodeName == "input" ||
         nodeName == "textarea" ||
         nodeName == "select" ||
@@ -1025,7 +892,7 @@ function XhtmlToDOMParser() {
         }
         
         return useIEStrategy;
-    }
+    };
     
     function createFormElementsForIEStrategy(xmlNode) {
         var attr = null;
@@ -1042,13 +909,13 @@ function XhtmlToDOMParser() {
         domElemNode = document.createElement("<" + xmlNode.tagName + " name='" + value + "' />"); // e.g. document.createElement("<input name='slot2'>");
         
         return domElemNode;
-    }
+    };
     
     function checkForIEMultipleSelectHack(domNode, domChildNode) {
-        if(isIE && domChildNode.nodeType == 1 && domChildNode.tagName.toLowerCase() == "select" && domChildNode.getAttribute("multiple") != null) {
+        if(XT.taconite.isIE && domChildNode.nodeType == 1 && domChildNode.tagName.toLowerCase() == "select" && domChildNode.getAttribute("multiple") != null) {
             createIEMultipleSelectHack(domNode);
         }
-    }
+    };
     
     function createIEMultipleSelectHack(contextNode) {
         //this is a total and complete hack for IE 6's totally broken select
@@ -1067,10 +934,10 @@ function XhtmlToDOMParser() {
         selectBox.style.display = "none";
         
         contextNode.appendChild(selectBox);
-    }
+    };
     
     function cleanAttributeName(name) {
-        if(isIE == false) {
+        if(XT.taconite.isIE == false) {
             return;
         }
         
@@ -1102,38 +969,5 @@ function XhtmlToDOMParser() {
         }
         
         return cleanName;
-    }
-};
-
-
-String.prototype.trim = function() {
-    //skip leading and trailing whitespace
-    //and return everything in between
-    var x=this;
-    x=x.replace(/^\s*(.*)/, "$1");
-    x=x.replace(/(.*?)\s*$/, "$1");
-    return x;
-};
-
-document.getElementsByMatchingId = function(matchingId) {
-    var allElements = document.all ? document.all : document.getElementsByTagName('*');
-    var matchingElements = new Array();
-    for (var i = 0; i < allElements.length; i++) {
-        var currentElement = allElements[i];
-        if (currentElement.nodeType == 1) {
-            var id = currentElement.getAttribute("id");
-            if (id != null && id != "") {
-                if (id.indexOf("_") == (id.length - 1)) {
-                    var pattern = "^" + id.replace(/_$/, ".*");
-                    var rexp = new RegExp(pattern);
-                    if (rexp.test(matchingId)) {
-                        matchingElements.push(currentElement);
-                    }
-                } else if (id == matchingId) {
-                    matchingElements.push(currentElement);
-                }
-            }
-        }
-    }
-    return matchingElements;
+    };
 };

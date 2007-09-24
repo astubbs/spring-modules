@@ -1,6 +1,5 @@
 /*
-   Behaviour v1.1 by Ben Nolan, June 2005. 
-   Modified By Sergio Bossa for relying on the DOMSelector.
+   Custom version of Behaviour v1.1 by Ben Nolan, June 2005. 
  
    Description:
  
@@ -38,7 +37,7 @@
 
 var Behaviour = {
     
-    domSelector : new DOMSelector(),
+    domSelector : new XT.util.DOMSelector(),
     
     list : new Array(),
     
