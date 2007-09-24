@@ -33,9 +33,7 @@ public abstract class AbstractExecuteJavascriptAction implements AjaxAction {
         response.append(OPEN)
         .append("<content>")
         .append("<script type=\"text/javascript\">")
-        .append("try{")
         .append(this.getJavascript())
-        .append("}catch(ex){}")
         .append("</script>")
         .append("</content>")
         .append(CLOSE);

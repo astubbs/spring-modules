@@ -10,6 +10,9 @@ XT.defaultLoadingElementId = null;
 XT.defaultLoadingImage = null;
 
 
+XT.defaultErrorHandler = null;
+
+
 XT.doAjaxAction = function(eventId, sourceElement, serverParams, clientParams) {
     if (! clientParams) {
         clientParams = {};
@@ -17,6 +20,9 @@ XT.doAjaxAction = function(eventId, sourceElement, serverParams, clientParams) {
     if ((! clientParams.loadingElementId) || (! clientParams.loadingImage)) {
         clientParams.loadingElementId = this.defaultLoadingElementId; 
         clientParams.loadingImage = this.defaultLoadingImage;
+    }
+    if (! clientParams.errorHandler) {
+        clientParams.errorHandler = this.defaultErrorHandler;
     }
     
     var ajaxClient = new XT.ajax.Client();
@@ -32,6 +38,9 @@ XT.doAjaxSubmit = function(eventId, sourceElement, serverParams, clientParams) {
     if ((! clientParams.loadingElementId) || (! clientParams.loadingImage)) {
         clientParams.loadingElementId = this.defaultLoadingElementId; 
         clientParams.loadingImage = this.defaultLoadingImage;
+    }
+    if (! clientParams.errorHandler) {
+        clientParams.errorHandler = this.defaultErrorHandler;
     }
     
     var ajaxClient = new XT.ajax.Client();
@@ -141,6 +150,10 @@ XT.ajax.Client = function() {
             request.loadingImage = clientParams.loadingImage;
             request.setPreRequest(showLoadingSign);
             request.setPostRequest(hideLoadingSign);
+        }
+        
+        if (clientParams.errorHandler != null) {
+            request.setErrorHandler(clientParams.errorHandler);
         }
     };
     

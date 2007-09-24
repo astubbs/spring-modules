@@ -531,6 +531,8 @@ XT.taconite.XhtmlToDOMParser = function() {
             case "execute-javascript":
                 executeAction(xml, executeJavascriptAction);
                 break;
+            default :
+                throw {'message' : 'Wrong tag name!'};
         }
     };
     
