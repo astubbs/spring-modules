@@ -106,7 +106,7 @@
 
       <programlisting>
 &lt;input type="button" value="Go" 
-    onclick="<emphasis role="bold">XT.doAjaxAction</emphasis>(event-id, source-element, server-parameters, request-parameters);"&gt; 
+    onclick="<emphasis role="bold">XT.doAjaxAction</emphasis>(event-id, source-element, server-parameters, client-parameters);"&gt; 
 </programlisting>
 
       <para>You have to simply call the <emphasis
@@ -136,8 +136,8 @@
         <listitem>
           <para>A <ulink
           url="http://www.json.org/"><citetitle>JSON</citetitle></ulink>
-          object containing extra parameters for specifying additional
-          properties of the request (<emphasis>request-parameters</emphasis>,
+          object containing extra parameters for configuring the Ajax client
+          and request (c<emphasis>lient-parameters</emphasis>,
           optional).</para>
         </listitem>
       </itemizedlist>
@@ -216,7 +216,7 @@ public interface AjaxActionEvent extends AjaxEvent {
 
       <programlisting>
 &lt;input type="button" value="Press" 
-    onclick="<emphasis role="bold">XT.doAjaxSubmit</emphasis>(event-id, source-element, server-parameters, request-parameters);"&gt; 
+    onclick="<emphasis role="bold">XT.doAjaxSubmit</emphasis>(event-id, source-element, server-parameters, client-parameters);"&gt; 
 </programlisting>
 
       <para>You have to simply call the <emphasis
@@ -897,7 +897,7 @@ XT.defaultLoadingImage = "..."</programlisting>
 
             <para>Every Ajax request must specify its own loading element and
             image by putting the following information between
-            <emphasis>request parameters</emphasis>:</para>
+            <emphasis>client parameters</emphasis>:</para>
 
             <programlisting>XT.doAjaxAction(event-id, source-element, server-parameters, <emphasis
                 role="bold">{'loadingElementId' : '...', 'loadingImage' : '...'}</emphasis>);
@@ -935,6 +935,66 @@ XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
       </tip>
     </sect3>
 
+    <sect3 id="handling-js-errors">
+      <title id="handling-js-errors-title">Handling Javascript errors</title>
+
+      <para>By default, Javascript errors occurring during client-side Ajax
+      request processing doesn't get handled.</para>
+
+      <para>However, you can handle them by configuring a proper <emphasis
+      role="bold">error handler function. </emphasis></para>
+
+      <para>As with the loading sign configuration described in the previous
+      section, you have two different configuration option:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Per Page configuration</term>
+
+          <listitem>
+            <para>By using the per page configuration, every Ajax request will
+            use the same error handler function.</para>
+
+            <para>You have to simply configure the following property of the
+            <emphasis>XT</emphasis> javascript object:</para>
+
+            <programlisting>XT.defaultErrorHandler = <emphasis>your_function_name</emphasis></programlisting>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Per Request Configuration</term>
+
+          <listitem>
+            <para>By using the per request configuration, every Ajax request
+            will use a different error handler function.</para>
+
+            <para>Every Ajax request must specify its own function by putting
+            the following information between <emphasis>client
+            parameters</emphasis>:</para>
+
+            <programlisting>XT.doAjaxAction(event-id, source-element, server-parameters, <emphasis
+                role="bold">{'errorHandler' : your_function_name}</emphasis>);
+XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
+                role="bold"><emphasis role="bold">{'errorHandler' : your_function_name}</emphasis></emphasis>); </programlisting>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>You can use both per page and per request configuration options:
+      the latter will prevail on the former.</para>
+
+      <para>Finally, the error handler function should look like the
+      following:</para>
+
+      <programlisting>function yourFunction(ajaxRequest, exception) {
+    // ...
+}</programlisting>
+
+      <para>As you can see, your function will have to accept two parameters:
+      the ajax request object and the exception object.</para>
+    </sect3>
+
     <sect3 id="file-uploading">
       <title id="file-uploading-title">Uploading files</title>
 
@@ -947,8 +1007,8 @@ XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
       <programlisting>XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
           role="bold">{'enableUpload' : true}</emphasis>)</programlisting>
 
-      <para>You have to set the <emphasis>enableUpload</emphasis> Ajax request
-      parameter to <emphasis>true</emphasis> ... that's all. XT Ajax will
+      <para>You have to set the <emphasis>enableUpload</emphasis> Ajax client
+      parameter to <emphasis>true</emphasis>: that's all. XT Ajax will
       transparently do the rest.</para>
     </sect3>
   </sect2>
