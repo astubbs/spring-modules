@@ -18,7 +18,7 @@ var rules = {
 Behaviour.register(rules);
 
 function showEntryEffect(params) {
-    var selector = new DOMSelector();
+    var selector = new XT.util.DOMSelector();
     var elements = selector.select(params.selector);
     if (elements.length == 1) {
         Effect.BlindDown(elements[0]);
@@ -26,7 +26,7 @@ function showEntryEffect(params) {
 }
 
 function hideEntryEffect(params) {
-    var selector = new DOMSelector();
+    var selector = new XT.util.DOMSelector();
     var elements = selector.select(params.selector);
     if (elements.length == 1) {
         Effect.BlindUp(elements[0]);
