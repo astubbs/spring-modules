@@ -59,7 +59,9 @@ Package org.springmodules.xt.ajax
 * Added several new HTML components.
 * Added loading image support.
 * Added file upload support.
-* Added support for Behaviour javascript library.
+* Added error handler function configuration in the Ajax javascript library.
+* Added form name configuration in the Ajax javascript library.
+* Added support for Behaviour javascript library (http://www.bennolan.com/behaviour/).
 * Improved DefaultValidationHandler reusability.
 * Fixed Ajax response encoding settings.
 * Fixed large javascript actions support.
