@@ -136,9 +136,8 @@
         <listitem>
           <para>A <ulink
           url="http://www.json.org/"><citetitle>JSON</citetitle></ulink>
-          object containing extra parameters for configuring the Ajax client
-          and request (c<emphasis>lient-parameters</emphasis>,
-          optional).</para>
+          object containing extra parameters for configuring the client side
+          Ajax call (c<emphasis>lient-parameters</emphasis>, optional).</para>
         </listitem>
       </itemizedlist>
 
@@ -169,7 +168,8 @@
 
         <listitem>
           <para>A map of string key/value pairs, containing the extra
-          parameters defined above using the JSON string.</para>
+          parameters defined above as
+          <emphasis>server-parameters</emphasis>.</para>
         </listitem>
 
         <listitem>
@@ -286,6 +286,27 @@ public interface AjaxSubmitEvent extends AjaxEvent {
         <emphasis>org.springmodules.xt.ajax.web.servlet.AjaxModelAndView</emphasis>
         javadoc).</para>
       </important>
+
+      <para>Under the hood, Ajax action events are nothing more than
+      asynchronous GET requests, while Ajax submit events are asynchronous PUT
+      requests.</para>
+
+      <para>If there are some web forms in the page, the Ajax request sends by
+      default all values belonging to the first form in the page. If you have
+      just one form in your page, all form values will be automatically sent
+      with the Ajax event, so you have nothing special to do. If you have more
+      than one form, and you want to send values belonging to a specifically
+      named form, you have to specify the form name between client
+      parameters:</para>
+
+      <programlisting>XT.doAjaxAction(event-id, source-element, server-parameters, <emphasis
+          role="bold">{'formName' : 'form_name'}</emphasis>);
+XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
+          role="bold"><emphasis role="bold">{'formName' : 'form_name'}</emphasis></emphasis>); </programlisting>
+
+      <para>Now you have enough information about how to fire events by the
+      client side, and how they are represented by the server side. Let's talk
+      about how to <emphasis role="bold">handle</emphasis> them.</para>
     </sect3>
 
     <sect3 id="ajax-handlers">
