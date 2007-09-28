@@ -1,7 +1,7 @@
 var XT = {};
 
 
-XT.version = 20070924;
+XT.version = 20070928;
 
 
 XT.defaultLoadingElementId = null;
@@ -27,7 +27,11 @@ XT.doAjaxAction = function(eventId, sourceElement, serverParams, clientParams) {
     
     var ajaxClient = new XT.ajax.Client();
     
-    return ajaxClient.doAjaxAction(eventId, sourceElement, serverParams, clientParams);
+    if (clientParams.formName) {
+        return ajaxClient.doAjaxAction(eventId, document.forms[clientParams.formName], sourceElement, serverParams, clientParams);
+    } else {
+        return ajaxClient.doAjaxAction(eventId, document.forms[0], sourceElement, serverParams, clientParams);
+    }
 };
 
 
@@ -45,7 +49,11 @@ XT.doAjaxSubmit = function(eventId, sourceElement, serverParams, clientParams) {
     
     var ajaxClient = new XT.ajax.Client();
     
-    return ajaxClient.doAjaxSubmit(eventId, sourceElement, serverParams, clientParams);
+    if (clientParams.formName) {
+        return ajaxClient.doAjaxSubmit(eventId, document.forms[clientParams.formName], sourceElement, serverParams, clientParams);
+    } else {
+        return ajaxClient.doAjaxSubmit(eventId, document.forms[0], sourceElement, serverParams, clientParams);
+    }
 };
 
 
@@ -60,7 +68,7 @@ XT.ajax.Client = function() {
     var elementIdParameter = "source-element-id";
     var jsonParameters = "json-params";
     
-    this.doAjaxAction = function(eventId, sourceElement, serverParams, clientParams) {
+    this.doAjaxAction = function(eventId, sourceForm, sourceElement, serverParams, clientParams) {
         var ajaxRequestType = "ajax-action";
         var queryString = prepareQueryString(ajaxRequestType, eventId, sourceElement, serverParams);
         
@@ -68,19 +76,19 @@ XT.ajax.Client = function() {
         
         configureRequest(ajaxRequest, clientParams);
         
-        ajaxRequest.addFormElements(document.forms[0]);
+        ajaxRequest.addFormElements(sourceForm);
         ajaxRequest.setQueryString(ajaxRequest.getQueryString() + "&" + queryString);
         
         ajaxRequest.sendRequest();
     };
     
-    this.doAjaxSubmit = function(eventId, sourceElement, serverParams, clientParams) {
+    this.doAjaxSubmit = function(eventId, sourceForm, sourceElement, serverParams, clientParams) {
         var ajaxRequestType = "ajax-submit";
         
         if (clientParams && clientParams.enableUpload && clientParams.enableUpload == true) {
             var queryParameters = prepareQueryParameters(ajaxRequestType, eventId, sourceElement, serverParams);
             
-            var iframeRequest = new XT.taconite.IFrameRequest(document.forms[0], document.URL, queryParameters);
+            var iframeRequest = new XT.taconite.IFrameRequest(sourceForm, document.URL, queryParameters);
             
             configureRequest(iframeRequest, clientParams);
             
@@ -92,7 +100,7 @@ XT.ajax.Client = function() {
             
             configureRequest(ajaxRequest, clientParams);
             
-            ajaxRequest.addFormElements(document.forms[0]);
+            ajaxRequest.addFormElements(sourceForm);
             ajaxRequest.setQueryString(ajaxRequest.getQueryString() + "&" + queryString);
             ajaxRequest.setUsePOST();
             
