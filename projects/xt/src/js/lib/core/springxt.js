@@ -1,7 +1,7 @@
 var XT = {};
 
 
-XT.version = 20070928;
+XT.version = 20071009;
 
 
 XT.defaultLoadingElementId = null;
@@ -29,6 +29,8 @@ XT.doAjaxAction = function(eventId, sourceElement, serverParams, clientParams) {
     
     if (clientParams.formName) {
         return ajaxClient.doAjaxAction(eventId, document.forms[clientParams.formName], sourceElement, serverParams, clientParams);
+    } else if (clientParams.formId) {
+        return ajaxClient.doAjaxAction(eventId, document.getElementById(clientParams.formId), sourceElement, serverParams, clientParams);
     } else {
         return ajaxClient.doAjaxAction(eventId, document.forms[0], sourceElement, serverParams, clientParams);
     }
@@ -51,6 +53,8 @@ XT.doAjaxSubmit = function(eventId, sourceElement, serverParams, clientParams) {
     
     if (clientParams.formName) {
         return ajaxClient.doAjaxSubmit(eventId, document.forms[clientParams.formName], sourceElement, serverParams, clientParams);
+    } else if (clientParams.formId) {
+        return ajaxClient.doAjaxSubmit(eventId, document.getElementById(clientParams.formId), sourceElement, serverParams, clientParams);
     } else {
         return ajaxClient.doAjaxSubmit(eventId, document.forms[0], sourceElement, serverParams, clientParams);
     }

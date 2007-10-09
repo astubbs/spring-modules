@@ -304,6 +304,14 @@ public interface AjaxSubmitEvent extends AjaxEvent {
 XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
           role="bold"><emphasis role="bold">{'formName' : 'form_name'}</emphasis></emphasis>); </programlisting>
 
+      <para>Moreover, in order to be XHTML strict compatible, you can use the
+      form id instead:</para>
+
+      <programlisting>XT.doAjaxAction(event-id, source-element, server-parameters, <emphasis
+          role="bold">{'formId' : 'form_id'}</emphasis>);
+XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
+          role="bold"><emphasis role="bold">{'formId' : 'form_id'}</emphasis></emphasis>); </programlisting>
+
       <para>Now you have enough information about how to fire events by the
       client side, and how they are represented by the server side. Let's talk
       about how to <emphasis role="bold">handle</emphasis> them.</para>
