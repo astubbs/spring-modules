@@ -173,9 +173,8 @@
         </listitem>
 
         <listitem>
-          <para>The command object created by the Spring MVC controller, if
-          this is a <ulink
-          url="http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/web/servlet/mvc/BaseCommandController.html"><citetitle>BaseCommandController</citetitle></ulink>.</para>
+          <para>The command object created by the Spring MVC
+          controller.</para>
         </listitem>
       </itemizedlist>
 
@@ -275,14 +274,30 @@ public interface AjaxSubmitEvent extends AjaxEvent {
       </note>
 
       <important>
+        <para><emphasis>How to access the command object and validation errors
+        outside of Spring MVC environments?</emphasis></para>
+
+        <para>The XT Ajax Framework is by default configured for working with
+        Spring MVC, so for accessing the command object and validation errors
+        the MVC controller must be a <ulink
+        url="http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/web/servlet/mvc/BaseCommandController.html"><citetitle>BaseCommandController</citetitle></ulink>.
+        If you want to use our framework in other environments, like Spring
+        Web Flow, you have to implement a proper
+        <emphasis>org.springmodules.xt.ajax.FormDataAccessor</emphasis> and
+        set it into the
+        <emphasis>org.springmodules.xt.ajax.AjaxInterceptor</emphasis> (see
+        related javadocs for details).</para>
+      </important>
+
+      <important>
         <para><emphasis>Why are the command object and model map contained
         into the AjaxSubmitEvent null?</emphasis></para>
 
-        <para>This is because your Spring MVC Controller submit method missed
-        to return a proper ModelAndView object containing the BindException
-        model; for helping that, you are strongly encouraged to construct and
-        return an <emphasis role="bold">AjaxModelAndView</emphasis> object
-        (see
+        <para>This is probably because your Spring MVC Controller submit
+        method missed to return a proper ModelAndView object containing the
+        BindException model; for helping that, you are strongly encouraged to
+        construct and return an <emphasis
+        role="bold">AjaxModelAndView</emphasis> object (see
         <emphasis>org.springmodules.xt.ajax.web.servlet.AjaxModelAndView</emphasis>
         javadoc).</para>
       </important>
