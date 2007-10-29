@@ -50,7 +50,7 @@ public class AjaxResponseSenderTest extends TestCase {
     
     public void testSendResponseWithI18nCharsFails() throws Exception {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
-        AjaxResponse ajaxResponse = new AjaxResponseImpl();
+        AjaxResponse ajaxResponse = new AjaxResponseImpl("ISO-8859-1");
         
         String text = "questo è un semplice testo";
         
