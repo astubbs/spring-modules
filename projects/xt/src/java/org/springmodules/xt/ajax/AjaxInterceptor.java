@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 the original author or authors.
+ * Copyright 2006 - 2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,10 +39,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
+import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.springframework.web.servlet.mvc.BaseCommandController;
-import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
 import org.springmodules.xt.ajax.support.IllegalViewException;
@@ -95,6 +94,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     private String elementIdParameter = "source-element-id";
     private String jsonParamsParameter = "json-params";
     
+    private FormDataAccessor formDataAccessor = new MVCFormDataAccessor();
     private MultiMap handlerMappings = new MultiValueMap();
     
     private ApplicationContext applicationContext;
@@ -135,18 +135,14 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                     boolean supported = false;
                     for (AjaxHandler ajaxHandler : handlers) {
                         if (ajaxHandler.supports(event)) {
-                            // Set base event properties:
+                            // Set event properties:
                             this.initEvent(event, request);
-                            if (handler instanceof BaseCommandController) {
-                                Map model = this.getModel(request.getSession());
-                                // Get the command name:
-                                String commandName = ((BaseCommandController) handler).getCommandName();
-                                // Set the command object:
-                                if (model != null) {
-                                    event.setCommandObject(model.get(commandName));
-                                }
+                            Map model = this.getModel(request.getSession());
+                            if (model != null) {
+                                Object commandObject = this.formDataAccessor.getCommandObject(request, response, handler, model);
+                                event.setCommandObject(commandObject);
                             }
-                            // Handling event:
+                            // Handle event:
                             ajaxResponse = ajaxHandler.handle(event);
                             supported = true;
                             break;
@@ -224,23 +220,17 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                     boolean supported = false;
                     for (AjaxHandler ajaxHandler : handlers) {
                         if (ajaxHandler.supports(event)) {
-                            // Set base event properties:
+                            // Set event properties:
                             this.initEvent(event, request);
-                            if (handler instanceof BaseCommandController) {
-                                Map model = this.getModel(request.getSession());
-                                // Get the command name:
-                                String commandName = ((BaseCommandController) handler).getCommandName();
-                                // Set validation errors:
-                                RequestContext requestContext = new RequestContext(request, model);
-                                event.setValidationErrors(requestContext.getErrors(commandName));
-                                // Set the command object:
-                                if (model != null) {
-                                    event.setCommandObject(model.get(commandName));
-                                }
+                            Map model = this.getModel(request.getSession());
+                            if (model != null) {
+                                Object commandObject = this.formDataAccessor.getCommandObject(request, response, handler, model);
+                                Errors errors = this.formDataAccessor.getValidationErrors(request, response, handler, model);
+                                event.setCommandObject(commandObject);
+                                event.setValidationErrors(errors);
+                                event.setModel(model);
                             }
-                            // Set the model:
-                            event.setModel(modelAndView.getModel());
-                            // Handling event:
+                            // Handle event:
                             ajaxResponse = ajaxHandler.handle(event);
                             supported = true;
                             break;
@@ -286,6 +276,17 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         } else {
             return false;
         }
+    }
+    
+    /**
+     * Set the {@link FormDataAccessor} to use for getting form data to put in {@link AjaxEvent} objects.<br>
+     * By default it uses a {@link MVCFormDataAccessor}, in order to access form data in Spring MVC environments.<br>
+     * Set another accessor implementation for accessing form data in other environments, like Spring Web Flow.
+     *
+     * @param accessor The {@link FormDataAccessor}.
+     */
+    public void setFormDataAccessor(FormDataAccessor accessor) {
+        this.formDataAccessor = accessor;
     }
     
     /**
