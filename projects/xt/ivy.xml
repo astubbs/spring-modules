@@ -31,7 +31,7 @@
         
         <dependency org="log4j" name="log4j" rev="1.2.13"/>
         
-        <dependency org="json-lib" name="json-lib" rev="1.0.1-jdk15"/>
+        <dependency org="json-lib" name="json-lib" rev="1.0.1-jdk13"/>
         
         <dependency org="ezmorph" name="ezmorph" rev="1.0.1"/>
         
@@ -39,14 +39,14 @@
             <artifact name="cglib-nodep" type="jar"/>
         </dependency>
         
-        <dependency org="springframework" name="springframework" rev="2.0.6">
+        <dependency org="springframework" name="springframework" rev="2.0.7">
             <artifact name="spring" type="jar"/>
             <artifact name="spring-mock" type="jar"/>
         </dependency>
         
         <!-- build time dependencies -->
     
-        <dependency org="javax.servlet" name="servlet-api" rev="2.4" conf="buildtime->default"/>
+        <dependency org="javax.servlet" name="servlet-api" rev="2.3" conf="buildtime->default"/>
         
         <!-- test time only dependencies -->
 
