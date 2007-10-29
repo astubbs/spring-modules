@@ -35,9 +35,12 @@ public class AjaxResponseSender {
     throws IOException {
         String response = ajaxResponse.render();
         logger.debug(new StringBuilder("Sending ajax response: ").append(response));
-        httpResponse.setContentType("text/xml");
-        httpResponse.setCharacterEncoding(ajaxResponse.getEncoding());
+        
+        StringBuilder builder = new StringBuilder();
+        builder.append("text/xml; charset=").append(ajaxResponse.getEncoding());
+        httpResponse.setContentType(builder.toString());
         httpResponse.setHeader("Cache-Control", "no-cache");
+        
         PrintWriter writer = httpResponse.getWriter();
         writer.print(response);
         writer.close();
