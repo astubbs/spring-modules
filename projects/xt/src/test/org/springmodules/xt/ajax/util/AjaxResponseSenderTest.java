@@ -17,11 +17,11 @@ public class AjaxResponseSenderTest extends TestCase {
     public AjaxResponseSenderTest(String testName) {
         super(testName);
     }
-
+    
     protected void setUp() throws Exception {
         this.sender = new AjaxResponseSender();
     }
-
+    
     public void testSendResponse() throws Exception {
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         AjaxResponse ajaxResponse = new AjaxResponseImpl();
@@ -46,18 +46,5 @@ public class AjaxResponseSenderTest extends TestCase {
         this.sender.sendResponse(httpResponse, ajaxResponse);
         
         assertTrue(httpResponse.getContentAsString().contains(text));
-    }
-    
-    public void testSendResponseWithI18nCharsFails() throws Exception {
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
-        AjaxResponse ajaxResponse = new AjaxResponseImpl("ISO-8859-1");
-        
-        String text = "questo è un semplice testo";
-        
-        ajaxResponse.addAction(new ReplaceContentAction("test", new SimpleText(text)));
-        
-        this.sender.sendResponse(httpResponse, ajaxResponse);
-        
-        assertFalse(httpResponse.getContentAsString().contains(text));
     }
 }
