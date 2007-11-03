@@ -12,6 +12,8 @@
   <import file="${common.build.dir}/doc-targets.xml" />
   <import file="${common.build.dir}/m2-targets.xml" />
   
+  <taskdef name="retrotranslator" classname="net.sf.retrotranslator.transformer.RetrotranslatorTask" classpathref="ivy.lib.path"/>
+  
   <target name="compile.post">
     
     <concat destfile="${basedir}/src/js/lib/core/springxt.js" force="no">
@@ -67,6 +69,22 @@
         <include name="org/springmodules/xt/model/**"/>
       </fileset>
     </jar>
+    
+    <retrotranslator 
+        srcjar="${target.lib.dir}/${project.name}-ajax.jar" 
+        destjar="${target.lib.dir}/${project.name}-ajax-jdk14.jar" 
+        embed="org.springmodules.xt.ajax.merlin">
+        <classpath refid="ivy.lib.path"/>
+        <classpath refid="compile.classpath"/>
+    </retrotranslator>
+    
+    <retrotranslator 
+        srcjar="${target.lib.dir}/${project.name}-modeling.jar" 
+        destjar="${target.lib.dir}/${project.name}-modeling-jdk14.jar" 
+        embed="org.springmodules.xt.model.merlin">
+        <classpath refid="ivy.lib.path"/>
+        <classpath refid="compile.classpath"/>
+    </retrotranslator>
     
   </target>
   
