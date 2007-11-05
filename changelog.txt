@@ -62,15 +62,18 @@ Package org.springmodules.xt.ajax
 * Added error handler function configuration in the Ajax javascript library.
 * Added form name configuration in the Ajax javascript library.
 * Added support for Behaviour javascript library (http://www.bennolan.com/behaviour/).
-* Improved DefaultValidationHandler reusability.
+* Improved DefaultValidationHandler configurability and reusability.
 * Fixed Ajax response encoding settings.
 * Fixed large javascript actions support.
 * Fixed several other bugs. 
+* Support for Servlet 2.3 APIs.
+* Support for JDK 1.4 by distributing a new backported jar (see MOD-405 issue).
 
 Package org.springmodules.xt.model
 * New application events system (see org.springmodules.xt.model.event).
 * New DynamicImplementorIntroductor (see org.springmodules.xt.model.introductor.implementor.DynamicImplementorIntroductor).
 * Improved DynamicFactoryGenerator (see MOD-350 and MOD-370 issues).
+* Support for JDK 1.4 by distributing a new backported jar (see MOD-405 issue).
 
 
 Changes in version 0.8 (2007.03.11)
