@@ -73,13 +73,17 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
     
     private static final String ERRORS_PREFIX = DefaultValidationHandler.class.getName() + " - ";
     
+    public static final String DEFAULT_ENCODING = "ISO-8859-1";
+    
+    private String ajaxResponseEncoding = DEFAULT_ENCODING;
+    
     private ErrorRenderingCallback errorRenderingCallback = new DefaultErrorRenderingCallback();
     private SuccessRenderingCallback successRenderingCallback = new DefaultSuccessRenderingCallback();
     
     protected MessageSource messageSource;
     
     public AjaxResponse validate(AjaxSubmitEvent event) {
-        AjaxResponseImpl response = new AjaxResponseImpl();
+        AjaxResponseImpl response = new AjaxResponseImpl(this.ajaxResponseEncoding);
         
         if (event.getValidationErrors() != null && event.getValidationErrors().hasErrors() == true) {
             this.removeOldErrors(event, response);
@@ -109,6 +113,13 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
     
     public void setSuccessRenderingCallback(SuccessRenderingCallback successRenderingCallback) {
         this.successRenderingCallback = successRenderingCallback;
+    }
+    
+    /**
+     * Set the encoding of the response produced by this handler. If not set, it defaults to ISO-8859-1.
+     */
+    public void setAjaxResponseEncoding(String encoding) {
+        this.ajaxResponseEncoding = encoding;
     }
     
     /*** Template hooks ***/

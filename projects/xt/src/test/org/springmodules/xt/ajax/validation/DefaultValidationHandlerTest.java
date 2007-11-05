@@ -116,4 +116,25 @@ public class DefaultValidationHandlerTest extends XMLEnhancedTestCase {
         
         assertXpathEvaluatesTo("Default message", "//replace-children/content", rendering);
     }
+    
+    public void testEncoding() throws Exception {
+        DefaultValidationHandler handler = new DefaultValidationHandler();
+        AjaxResponse response = handler.validate(submitEvent);
+        String rendering = response.render();
+        
+        System.out.println(rendering);
+        
+        assertTrue(rendering.indexOf("encoding=\"ISO-8859-1\"") != -1);
+        
+        handler = new DefaultValidationHandler();
+        
+        handler.setAjaxResponseEncoding("UTF-8");
+        
+        response = handler.validate(submitEvent);
+        rendering = response.render();
+        
+        System.out.println(rendering);
+        
+        assertTrue(rendering.indexOf("encoding=\"UTF-8\"") != -1);
+    }
 }
