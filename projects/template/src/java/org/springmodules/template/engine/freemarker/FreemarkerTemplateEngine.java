@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import freemarker.template.Configuration;
+import freemarker.template.ObjectWrapper;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -45,6 +46,8 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine implements 
     private Properties settings;
 
     private Map sharedVariables;
+
+    private ObjectWrapper objectWrapper;
 
     private Configuration configuration;
 
@@ -97,7 +100,7 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine implements 
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(resourceLoader, "Required properties 'resourceLoader' is not set");
-        configuration = createConfiguration(resourceLoader, settings, sharedVariables);
+        configuration = createConfiguration(resourceLoader, settings, sharedVariables, objectWrapper);
     }
 
     //================================================== Setter/Getter =================================================
@@ -140,6 +143,16 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine implements 
         this.sharedVariables = sharedVariables;
     }
 
+    /**
+     * Sets the object wrapper the freemarker engine will use to access the objects in the model.
+     *
+     * @param objectWrapper The object wrapper the freemarker engine will use to access the objects in the model.
+     */
+    public void setObjectWrapper(ObjectWrapper objectWrapper) {
+        this.objectWrapper = objectWrapper;
+    }
+
+
     //================================================== Helper Methods ================================================
 
     protected static freemarker.template.Template createFreemarkerTemplate(
@@ -162,7 +175,8 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine implements 
     protected static Configuration createConfiguration(
             ResourceLoader resourceLoader,
             Properties settings,
-            Map sharedVariables) throws TemplateException {
+            Map sharedVariables,
+            ObjectWrapper objectWrapper) throws TemplateException {
 
         ResourceLoaderTemplateLoader templateLoader = new ResourceLoaderTemplateLoader(resourceLoader);
         Configuration configuration = new Configuration();
@@ -175,6 +189,10 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine implements 
 
         if (settings != null) {
             configuration.setSettings(settings);
+        }
+
+        if (objectWrapper != null) {
+            configuration.setObjectWrapper(objectWrapper);
         }
 
         return configuration;

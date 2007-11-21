@@ -69,7 +69,7 @@ public class FreemarkerTemplateEngineTests extends TestCase {
         Map vars = new HashMap();
         vars.put("name", "value");
 
-        Configuration conf = FreemarkerTemplateEngine.createConfiguration(loader, settings, vars);
+        Configuration conf = FreemarkerTemplateEngine.createConfiguration(loader, settings, vars, null);
 
         TemplateLoader templateLoader = conf.getTemplateLoader();
         assertTrue(ResourceLoaderTemplateLoader.class.isInstance(templateLoader));
