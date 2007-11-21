@@ -24,6 +24,7 @@ public class CachingTemplateResolver extends BasicTemplateResolver {
      */
     protected CachingTemplateResolver() {
         cache = Collections.synchronizedMap(new HashMap());
+        cacheEnabled = true;
     }
 
     /**

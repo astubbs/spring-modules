@@ -61,6 +61,35 @@ public class CachingTemplateResolverTests extends TestCase {
 
     }
 
+    public void testResolve_WhenCachingDisabled() throws Exception {
+
+        resolver.setCacheEnabled(false);
+
+        String name = "name";
+
+        StringResource resource = new StringResource("resource");
+        loaderControl.expectAndReturn(loader.getResource("name.ext"), resource);
+        loaderControl.expectAndReturn(loader.getResource("name.ext"), resource);
+
+        Template template1 = new DummyTemplate();
+        Template template2 = new DummyTemplate();
+        engineControl.expectAndReturn(engine.createTemplate(resource, "UTF-8"), template1);
+        engineControl.expectAndReturn(engine.createTemplate(resource, "UTF-8"), template2);
+
+        loaderControl.replay();
+        engineControl.replay();
+
+        Template result1 = resolver.resolve(name);
+        Template result2 = resolver.resolve(name);
+
+        assertSame(template1, result1);
+        assertSame(template2, result2);
+
+        loaderControl.verify();
+        engineControl.verify();
+
+    }
+
     public void testResolve_WithEncoding() throws Exception {
 
         String name = "name";
