@@ -31,16 +31,18 @@
 
         <dependency org="org.freemarker" name="freemarker" rev="2.3.10" conf="buildtime->default"/>
 
+        <dependency org="org.apache.velocity" name="velocity" rev="1.5" conf="buildtime->default"/>
+
         <dependency org="groovy" name="groovy" rev="1.0-jsr-06" conf="buildtime->default"/>
 
-        <dependency org="org.apache.velocity" name="velocity" rev="1.5" conf="buildtime->default"/>
+        <!-- for groovy -->
+        <dependency org="antlr" name="antlr" rev="2.7.5" conf="buildtime->default"/>
 
         <dependency org="commons-collections" name="commons-collections" rev="3.2" conf="buildtime->default"/>
 
         <dependency org="javax.mail" name="mail" rev="1.4" conf="buildtime->default"/>
 
         <dependency org="javax.activation" name="activation" rev="1.1" conf="buildtime->default"/>
-
 
         <!-- test time only dependencies -->
 

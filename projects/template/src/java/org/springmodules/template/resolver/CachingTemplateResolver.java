@@ -49,6 +49,13 @@ public class CachingTemplateResolver extends BasicTemplateResolver {
     }
 
     /**
+     * Clears up the internal template cache.
+     */
+    public void clearCache() {
+        cache.clear();
+    }
+
+    /**
      * Determines whether the given template (identified by the name, encoding and locale) should be cached or not.
      * By defaut all template are cached if the <code>cacheEnabled</code> property is set to true (which is also the
      * default setting). This method can be overriden by sub-classes to provide a more sofistciated caching strategy.

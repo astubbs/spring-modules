@@ -1,5 +1,7 @@
 <ivyconf>
     <resolvers>
-        <chain name="custom"/>
+        <chain name="custom">
+            <ibiblio name="ibiblio-repo1" m2compatible="true" root="http://repo1.maven.org/maven2"/>
+        </chain>
     </resolvers>
 </ivyconf>
