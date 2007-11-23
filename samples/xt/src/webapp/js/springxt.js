@@ -1,7 +1,7 @@
 var XT = {};
 
 
-XT.version = 20071009;
+XT.version = 20071123;
 
 
 XT.defaultLoadingElementId = null;
@@ -129,7 +129,7 @@ XT.ajax.Client = function() {
             }
         }
         if (serverParams) {
-            qs = qs + "&" + jsonParameters + "=" + encodeURIComponent(serverParams.toJSONString());
+            qs = qs + "&" + jsonParameters + "=" + encodeURIComponent(JSON.stringify(serverParams));
         }
         return qs;
     };
@@ -147,7 +147,7 @@ XT.ajax.Client = function() {
             }
         }
         if (serverParams) {
-            params[jsonParameters] = encodeURIComponent(serverParams.toJSONString());
+            params[jsonParameters] = encodeURIComponent(JSON.stringify(serverParams));
         }
         return params;
     };
@@ -1400,9 +1400,30 @@ XT.util.DOMSelector = function() {
     };
 };
 
+//--- JSON stuff ---/
 
-(function () {
-    var m = {
+if (!this.JSON) {
+    
+    JSON = function () {
+        
+        function f(n) {    // Format integers to have at least two digits.
+            return n < 10 ? '0' + n : n;
+        }
+        
+        Date.prototype.toJSON = function () {
+            
+            // Eventually, this method will be based on the date.toISOString method.
+            
+            return this.getUTCFullYear()   + '-' +
+            f(this.getUTCMonth() + 1) + '-' +
+            f(this.getUTCDate())      + 'T' +
+            f(this.getUTCHours())     + ':' +
+            f(this.getUTCMinutes())   + ':' +
+            f(this.getUTCSeconds())   + 'Z';
+        };
+        
+        
+        var m = {    // table of character substitutions
             '\b': '\\b',
             '\t': '\\t',
             '\n': '\\n',
@@ -1410,98 +1431,171 @@ XT.util.DOMSelector = function() {
             '\r': '\\r',
             '"' : '\\"',
             '\\': '\\\\'
-        },
-        s = {
-            array: function (x) {
-                var a = ['['], b, f, i, l = x.length, v;
-                for (i = 0; i < l; i += 1) {
-                    v = x[i];
-                    f = s[typeof v];
-                    if (f) {
-                        v = f(v);
-                        if (typeof v == 'string') {
-                            if (b) {
-                                a[a.length] = ',';
+        };
+        
+        function stringify(value, whitelist) {
+            var a,          // The array holding the partial texts.
+            i,          // The loop counter.
+            k,          // The member key.
+            l,          // Length.
+            r = /["\\\x00-\x1f\x7f-\x9f]/g,
+            v;          // The member value.
+            
+            switch (typeof value) {
+                case 'string':
+                    
+                    // If the string contains no control characters, no quote characters, and no
+                    // backslash characters, then we can safely slap some quotes around it.
+                    // Otherwise we must also replace the offending characters with safe sequences.
+                    
+                    return r.test(value) ?
+                        '"' + value.replace(r, function (a) {
+                            var c = m[a];
+                            if (c) {
+                                return c;
                             }
-                            a[a.length] = v;
-                            b = true;
-                        }
-                    }
-                }
-                a[a.length] = ']';
-                return a.join('');
-            },
-            'boolean': function (x) {
-                return String(x);
-            },
-            'null': function (x) {
-                return "null";
-            },
-            number: function (x) {
-                return isFinite(x) ? String(x) : 'null';
-            },
-            object: function (x) {
-                if (x) {
-                    if (x instanceof Array) {
-                        return s.array(x);
-                    }
-                    var a = ['{'], b, f, i, v;
-                    for (i in x) {
-                        v = x[i];
-                        f = s[typeof v];
-                        if (f) {
-                            v = f(v);
-                            if (typeof v == 'string') {
-                                if (b) {
-                                    a[a.length] = ',';
-                                }
-                                a.push(s.string(i), ':', v);
-                                b = true;
-                            }
-                        }
-                    }
-                    a[a.length] = '}';
-                    return a.join('');
-                }
-                return 'null';
-            },
-            string: function (x) {
-                if (/["\\\x00-\x1f]/.test(x)) {
-                    x = x.replace(/([\x00-\x1f\\"])/g, function(a, b) {
-                        var c = m[b];
-                        if (c) {
-                            return c;
-                        }
-                        c = b.charCodeAt();
-                        return '\\u00' +
-                            Math.floor(c / 16).toString(16) +
+                            c = a.charCodeAt();
+                            return '\\u00' + Math.floor(c / 16).toString(16) +
                             (c % 16).toString(16);
-                    });
+                    }) + '"' :
+                        '"' + value + '"';
+                        
+                case 'number':
+                    
+                    // JSON numbers must be finite. Encode non-finite numbers as null.
+                    
+                    return isFinite(value) ? String(value) : 'null';
+                    
+                case 'boolean':
+                case 'null':
+                    return String(value);
+                    
+                case 'object':
+                    
+                    // Due to a specification blunder in ECMAScript,
+                    // typeof null is 'object', so watch out for that case.
+                    
+                    if (!value) {
+                        return 'null';
+                    }
+                    
+                    // If the object has a toJSON method, call it, and stringify the result.
+                    
+                    if (typeof value.toJSON === 'function') {
+                        return stringify(value.toJSON());
+                    }
+                    a = [];
+                    if (typeof value.length === 'number' &&
+                    !(value.propertyIsEnumerable('length'))) {
+                        
+                        // The object is an array. Stringify every element. Use null as a placeholder
+                        // for non-JSON values.
+                        
+                        l = value.length;
+                        for (i = 0; i < l; i += 1) {
+                            a.push(stringify(value[i], whitelist) || 'null');
+                        }
+                        
+                        // Join all of the elements together and wrap them in brackets.
+                        
+                        return '[' + a.join(',') + ']';
+                    }
+                    if (whitelist) {
+                        
+                        // If a whitelist (array of keys) is provided, use it to select the components
+                        // of the object.
+                        
+                        l = whitelist.length;
+                        for (i = 0; i < l; i += 1) {
+                            k = whitelist[i];
+                            if (typeof k === 'string') {
+                                v = stringify(value[k], whitelist);
+                                if (v) {
+                                    a.push(stringify(k) + ':' + v);
+                                }
+                            }
+                        }
+                    } else {
+                        
+                        // Otherwise, iterate through all of the keys in the object.
+                        
+                        for (k in value) {
+                            if (typeof k === 'string') {
+                                v = stringify(value[k], whitelist);
+                                if (v) {
+                                    a.push(stringify(k) + ':' + v);
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Join all of the member texts together and wrap them in braces.
+                    
+                    return '{' + a.join(',') + '}';
+            }
+        }
+        
+        return {
+            stringify: stringify,
+            parse: function (text, filter) {
+                var j;
+                
+                function walk(k, v) {
+                    var i, n;
+                    if (v && typeof v === 'object') {
+                        for (i in v) {
+                            if (Object.prototype.hasOwnProperty.apply(v, [i])) {
+                                n = walk(i, v[i]);
+                                if (n !== undefined) {
+                                    v[i] = n;
+                                }
+                            }
+                        }
+                    }
+                    return filter(k, v);
                 }
-                return '"' + x + '"';
+                
+                
+                // Parsing happens in three stages. In the first stage, we run the text against
+                // regular expressions that look for non-JSON patterns. We are especially
+                // concerned with '()' and 'new' because they can cause invocation, and '='
+                // because it can cause mutation. But just to be safe, we want to reject all
+                // unexpected forms.
+                
+                // We split the first stage into 4 regexp operations in order to work around
+                // crippling inefficiencies in IE's and Safari's regexp engines. First we
+                // replace all backslash pairs with '@' (a non-JSON character). Second, we
+                // replace all simple value tokens with ']' characters. Third, we delete all
+                // open brackets that follow a colon or comma or that begin the text. Finally,
+                // we look to see that the remaining characters are only whitespace or ']' or
+                // ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
+                
+                if (/^[\],:{}\s]*$/.test(text.replace(/\\./g, '@').
+                replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(:?[eE][+\-]?\d+)?/g, ']').
+                replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+                    
+                    // In the second stage we use the eval function to compile the text into a
+                    // JavaScript structure. The '{' operator is subject to a syntactic ambiguity
+                    // in JavaScript: it can begin a block or an object literal. We wrap the text
+                    // in parens to eliminate the ambiguity.
+                    
+                    j = eval('(' + text + ')');
+                    
+                    // In the optional third stage, we recursively walk the new structure, passing
+                    // each name/value pair to a filter function for possible transformation.
+                    
+                    return typeof filter === 'function' ? walk('', j) : j;
+                }
+                
+                // If the text is not JSON parseable, then a SyntaxError is thrown.
+                
+                throw new SyntaxError('parseJSON');
             }
         };
+    }();
+}
 
-    Object.prototype.toJSONString = function () {
-        return s.object(this);
-    };
-
-    Array.prototype.toJSONString = function () {
-        return s.array(this);
-    };
-})();
-
-
-String.prototype.parseJSON = function () {
-    try {
-        return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(
-                this.replace(/"(\\.|[^"\\])*"/g, ''))) &&
-            eval('(' + this + ')');
-    } catch (e) {
-        return false;
-    }
-};
-
+//--- Extensions ---//
 
 String.prototype.trim = function() {
     //skip leading and trailing whitespace
