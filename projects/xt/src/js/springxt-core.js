@@ -1,7 +1,7 @@
 var XT = {};
 
 
-XT.version = 20071009;
+XT.version = 20071123;
 
 
 XT.defaultLoadingElementId = null;
@@ -129,7 +129,7 @@ XT.ajax.Client = function() {
             }
         }
         if (serverParams) {
-            qs = qs + "&" + jsonParameters + "=" + encodeURIComponent(serverParams.toJSONString());
+            qs = qs + "&" + jsonParameters + "=" + encodeURIComponent(JSON.stringify(serverParams));
         }
         return qs;
     };
@@ -147,7 +147,7 @@ XT.ajax.Client = function() {
             }
         }
         if (serverParams) {
-            params[jsonParameters] = encodeURIComponent(serverParams.toJSONString());
+            params[jsonParameters] = encodeURIComponent(JSON.stringify(serverParams));
         }
         return params;
     };
