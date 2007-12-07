@@ -278,15 +278,16 @@ public interface AjaxSubmitEvent extends AjaxEvent {
         outside of Spring MVC environments?</emphasis></para>
 
         <para>The XT Ajax Framework is by default configured for working with
-        Spring MVC, so for accessing the command object and validation errors
-        the MVC controller must be a <ulink
-        url="http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/web/servlet/mvc/BaseCommandController.html"><citetitle>BaseCommandController</citetitle></ulink>.
-        If you want to use our framework in other environments, like Spring
-        Web Flow, you have to implement a proper
+        Spring MVC, so in order to access the command object and validation
+        errors the MVC controller must adhere to the requirements provided by
+        the <emphasis>org.springmodules.xt.ajax.MVCFormDataAccessor</emphasis>
+        class (see related javadocs for details). If you want to use our
+        framework in other environments, like Spring Web Flow, you have to
+        implement a proper
         <emphasis>org.springmodules.xt.ajax.FormDataAccessor</emphasis> and
         set it into the
-        <emphasis>org.springmodules.xt.ajax.AjaxInterceptor</emphasis> (see
-        related javadocs for details).</para>
+        <emphasis>org.springmodules.xt.ajax.AjaxInterceptor</emphasis> (again,
+        see related javadocs for details).</para>
       </important>
 
       <important>
