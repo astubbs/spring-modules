@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 the original author or authors.
+ * Copyright 2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ import org.springmodules.xt.ajax.component.Component;
 
 
 /**
- * Component that uses generic template pages to build dynamic XHTML content.<br>
+ * Component that uses a generic template to build dynamic XHTML content.<br>
  * It uses the Spring Modules Template project: refer to <a href="https://springmodules.dev.java.net/">Spring Modules docs</a>
- * for more information about it and for a list of supported templates.
+ * for more information about it and for a list of supported templating technologies.
  *
  * @author Sergio Bossa
  */
