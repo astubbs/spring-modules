@@ -26,7 +26,9 @@
         </property>
     </bean>
     
-    <bean id="ajaxTestActionsHandler" class="org.springmodules.xt.examples.ajax.TestActionsHandler"/>
+    <bean id="ajaxTestActionsHandler" class="org.springmodules.xt.examples.ajax.TestActionsHandler">
+        <property name="velocityViewResolver" ref="velocityViewResolver"/>
+    </bean>
     
     <bean id="ajaxLoadOfficesHandler" class="org.springmodules.xt.examples.ajax.LoadOfficesHandler">
         <property name="store" ref="store"/>
@@ -235,6 +237,14 @@
         <property name="suffix"><value>.jsp</value></property>
         <property name="prefix"><value>/WEB-INF/jsp/</value></property>
         <property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
+    </bean>
+    
+    <bean id="velocityViewResolver" class="org.springmodules.template.resolver.SimpleTemplateResolver">
+        <property name="engine">
+            <bean id="engine" class="org.springmodules.template.engine.velocity.VelocityTemplateEngine"/>
+        </property>
+        <property name="prefix" value="classpath:/templates/"/>
+        <property name="extension" value=".vtl"/>
     </bean>
     
     <bean id="ajaxExceptionResolver" class="org.springmodules.xt.ajax.AjaxExceptionHandlerResolver">

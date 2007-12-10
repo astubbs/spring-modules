@@ -1,10 +1,10 @@
 package org.springmodules.xt.examples.ajax;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import org.springmodules.template.TemplateResolver;
 import org.springmodules.xt.ajax.AbstractAjaxHandler;
 import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.AjaxActionEvent;
@@ -31,6 +31,7 @@ import org.springmodules.xt.ajax.component.InputField;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.component.TaggedText;
 import org.springmodules.xt.ajax.component.dynamic.JspComponent;
+import org.springmodules.xt.ajax.component.dynamic.TemplateComponent;
 
 /**
  * Ajax handler for testing actions.
@@ -38,6 +39,8 @@ import org.springmodules.xt.ajax.component.dynamic.JspComponent;
  * @author Sergio Bossa
  */
 public class TestActionsHandler extends AbstractAjaxHandler {
+    
+    private TemplateResolver velocityViewResolver;
     
     public AjaxResponse appendNumber(AjaxActionEvent event) {
         String number = new Integer((new Random()).nextInt()).toString();
@@ -156,11 +159,27 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     
     public AjaxResponse includeJsp(AjaxActionEvent event) {
         // Create the component for including jsp content:
-        event.getHttpRequest().setAttribute("date", new Date());
-        event.getHttpRequest().setAttribute("msg", event.getParameters().get("msg"));
+        event.getHttpRequest().setAttribute("jspVar2", event.getParameters().get("jspVar2"));
         JspComponent jsp = new JspComponent(event.getHttpRequest(), "/includes/include.jsp");
         // Create an ajax action for appending it: 
         AppendContentAction action = new AppendContentAction("jsp", jsp);
+        
+        // Create a concrete ajax response:
+        AjaxResponse response = new AjaxResponseImpl();
+        // Add the action:
+        response.addAction(action);
+        
+        return response;
+    }
+    
+    public AjaxResponse includeVelocity(AjaxActionEvent event) {
+        // Create the component for including velocity content:
+        TemplateComponent velocity = new TemplateComponent(this.velocityViewResolver, "include");
+        Map model = new HashMap();
+        model.put("velocity", "Velocity");
+        velocity.setTemplateModel(model);
+        // Create an ajax action for appending it: 
+        AppendContentAction action = new AppendContentAction("velocity", velocity);
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();
@@ -314,5 +333,9 @@ public class TestActionsHandler extends AbstractAjaxHandler {
         response.addAction(action);
         
         return response;
+    }
+
+    public void setVelocityViewResolver(TemplateResolver velocityViewResolver) {
+        this.velocityViewResolver = velocityViewResolver;
     }
 }

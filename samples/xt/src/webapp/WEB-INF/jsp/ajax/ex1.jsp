@@ -109,13 +109,25 @@
                 </tr>
                 
                 <tr>
-                    <td>Press to include external dynamic content through a Jsp:</td>
-                    <td><input id="includeJsp" type="button" value="Press" onclick="XT.doAjaxAction('includeJsp', this, {'msg' : 'Javascript'}, {'loadingElementId' : 'loading9', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td>Press to include dynamic content through an external Jsp:</td>
+                    <td><input id="includeJsp" type="button" value="Press" onclick="XT.doAjaxAction('includeJsp', this, {'jspVar2' : 'JSP'}, {'loadingElementId' : 'loading9', 'loadingImage' : '../images/loading.gif'});"></td>
                     <td><div id="loading9"></div></td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <div id="jsp">
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Press to include dynamic content through an external Velocity template:</td>
+                    <td><input id="includeVelocity" type="button" value="Press" onclick="XT.doAjaxAction('includeVelocity', this, null, {'loadingElementId' : 'loading9_1', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading9_1"></div></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="velocity">
                         </div>
                     </td>
                 </tr>

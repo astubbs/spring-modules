@@ -3,13 +3,10 @@
 
 <%-- Dynamic content: --%> 
 <div>
-    <c:out value="${param.msg}!"/>
-</div>
-<div>
-    Today date : <fmt:formatDate value="${requestScope.date}"/>
+    This is a <c:out value="${param.jspVar}"/> generated HTML!
 </div>
 
 <%-- Dynamic Javascript: --%>
 <script type="text/javascript">
-    alert("This is ${requestScope.msg}!");
+    alert("This is a ${requestScope.jspVar2} generated Javascript!");
 </script>
