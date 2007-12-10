@@ -44,6 +44,8 @@
             <artifact name="spring-mock" type="jar"/>
         </dependency>
         
+        <dependency org="springmodules" name="spring-modules-template" rev="latest.integration"/>
+        
         <!-- build time dependencies -->
     
         <dependency org="javax.servlet" name="servlet-api" rev="2.3" conf="buildtime->default"/>
