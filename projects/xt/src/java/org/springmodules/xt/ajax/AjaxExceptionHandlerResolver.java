@@ -67,6 +67,9 @@ public class AjaxExceptionHandlerResolver implements ApplicationContextAware, Ha
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         try {
             if (this.isAjaxRequest(request)) {
+                // Important : log the exception
+                logger.error(ex.getMessage(), ex);
+                // !!!
                 AjaxExceptionHandler exceptionHandler = this.lookupExceptionHandler(ex);
                 if (exceptionHandler != null) {
                     logger.info(new StringBuilder("Resolving exception of type : ").append(ex.getClass()));
