@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="src/etc/test-resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/global/aopalliance.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-base.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-core.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-io.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-java.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-jsr94.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-smf.jar"/>
+	<classpathentry kind="lib" path="lib/global/jsr94.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-aop.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-dao.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-support.jar"/>
+	<classpathentry kind="lib" path="lib/test/antlr.jar"/>
+	<classpathentry kind="lib" path="lib/test/cglib-nodep.jar"/>
+	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
+	<classpathentry kind="lib" path="lib/test/janino.jar"/>
+	<classpathentry kind="lib" path="lib/test/junit.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

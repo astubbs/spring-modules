@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="tiger/src/java"/>
+	<classpathentry kind="src" path="tiger/src/test"/>
+	<classpathentry kind="src" path="src/etc/resources"/>
+	<classpathentry kind="src" path="src/etc/test-resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/buildtime/acegi-security.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/joda-time.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/ognl.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/persistence-api.jar"/>
+	<classpathentry kind="lib" path="lib/global/antlr.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-digester.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-lang.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-validator.jar"/>
+	<classpathentry kind="lib" path="lib/global/js.jar"/>
+	<classpathentry kind="lib" path="lib/global/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-mock.jar"/>
+	<classpathentry kind="lib" path="lib/test/clover.jar"/>
+	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
+	<classpathentry kind="lib" path="lib/test/junit.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

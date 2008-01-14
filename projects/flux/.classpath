@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/buildtime/flux-for-spring.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-beans.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-context.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/global/flux-for-spring.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/test/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/test/flux-for-spring.jar"/>
+	<classpathentry kind="lib" path="lib/test/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/test/junit.jar"/>
+	<classpathentry kind="lib" path="lib/test/spring-beans.jar"/>
+	<classpathentry kind="lib" path="lib/test/spring-context.jar"/>
+	<classpathentry kind="lib" path="lib/test/spring-core.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

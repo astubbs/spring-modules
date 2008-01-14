@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="src/etc/test-resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/global/bsf.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-fileupload.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/global/hivemind.jar"/>
+	<classpathentry kind="lib" path="lib/global/hivemind-lib.jar"/>
+	<classpathentry kind="lib" path="lib/global/javassist.jar"/>
+	<classpathentry kind="lib" path="lib/global/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
+	<classpathentry kind="lib" path="lib/global/oro.jar"/>
+	<classpathentry kind="lib" path="lib/global/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring.jar"/>
+	<classpathentry kind="lib" path="lib/global/tapestry.jar"/>
+	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
+	<classpathentry kind="lib" path="lib/test/junit.jar"/>
+	<classpathentry kind="lib" path="lib/test/spring-mock.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

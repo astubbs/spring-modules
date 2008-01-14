@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="src/etc/test-resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/global/antlr.jar"/>
+	<classpathentry kind="lib" path="lib/global/bsh.jar"/>
+	<classpathentry kind="lib" path="lib/global/cglib-nodep.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/global/dom4j.jar"/>
+	<classpathentry kind="lib" path="lib/global/ehcache.jar"/>
+	<classpathentry kind="lib" path="lib/global/geronimo-spec-jta-1.0.1B.jar"/>
+	<classpathentry kind="lib" path="lib/global/hibernate.jar"/>
+	<classpathentry kind="lib" path="lib/global/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/global/jbpm.jar"/>
+	<classpathentry kind="lib" path="lib/global/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-aop.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-dao.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-jdbc.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-support.jar"/>
+	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
+	<classpathentry kind="lib" path="lib/test/easymockclassextension.jar"/>
+	<classpathentry kind="lib" path="lib/test/junit.jar"/>
+	<classpathentry kind="lib" path="lib/test/spring-mock.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
