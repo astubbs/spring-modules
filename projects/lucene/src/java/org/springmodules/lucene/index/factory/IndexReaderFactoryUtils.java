@@ -44,7 +44,7 @@ public abstract class IndexReaderFactoryUtils {
 	private static final Log logger = LogFactory.getLog(IndexReaderFactoryUtils.class);
 
 	/**
-	 * Get a IndexReasder from the given IndexFactory. Changes any Lucene io exception
+	 * Get an IndexReader from the given IndexFactory. Changes any Lucene IO exception
 	 * into the Spring hierarchy of unchecked lucene index access exceptions, simplifying
 	 * calling code and making any exception that is thrown more meaningful.
 	 * <p>Is aware of a corresponding IndexReader bound to the current thread, for example
@@ -63,7 +63,7 @@ public abstract class IndexReaderFactoryUtils {
 	}
 
 	/**
-	 * Get a IndexReasder from the given IndexFactory. Changes any Lucene io exception
+	 * Get a IndexReader from the given IndexFactory. Changes any Lucene IO exception
 	 * into the Spring hierarchy of unchecked lucene index access exceptions, simplifying
 	 * calling code and making any exception that is thrown more meaningful.
 	 * <p>Is aware of a corresponding IndexReader bound to the current thread, for example

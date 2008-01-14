@@ -27,7 +27,7 @@ import org.springmodules.lucene.index.document.handler.AbstractDocumentHandler;
  * Default abstract class of the DocumentHandler interface dedicated to create
  * Lucene document basing on an input stream. This class implements supports
  * method in order to specify that all the sub classes must use an InputStream
- * instance to crerate a Lucene document.
+ * instance to create a Lucene document.
  * 
  * To use this abstract, you need to implement a sub class which defines the
  * doGetDocumentWithInputStream method.

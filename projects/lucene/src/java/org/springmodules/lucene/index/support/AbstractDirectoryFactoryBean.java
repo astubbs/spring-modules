@@ -38,14 +38,14 @@ public abstract class AbstractDirectoryFactoryBean implements FactoryBean, Initi
     }
 
     /**
-     * Specify that directory factory beans allways create singleton.
+     * Specify that directory factory beans always create singleton.
      */
     public boolean isSingleton() {
         return true;
     }
 
     /**
-     * This method constructs a filesystem Lucene directory.
+     * This method constructs a file system Lucene directory.
      *  
      * <p>The location property must be set, and be a directory
      */
@@ -69,7 +69,7 @@ public abstract class AbstractDirectoryFactoryBean implements FactoryBean, Initi
     protected abstract Directory initializeDirectory() throws IOException;
     
     /**
-     * This method close a filesystem Lucene directory.
+     * This method close a file system Lucene directory.
      */
 	public final void destroy() throws Exception {
 		if( directory!=null ) {

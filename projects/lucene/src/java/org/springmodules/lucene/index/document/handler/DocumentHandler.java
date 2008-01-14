@@ -24,7 +24,7 @@ import org.springmodules.lucene.index.document.handler.object.ReflectiveDocument
 
 /**
  * This is the base interface to define different implementations
- * in order to index different objects or ressources.
+ * in order to index different objects or resources.
  * 
  * @author Thierry Templier
  * @see AbstractDocumentHandler

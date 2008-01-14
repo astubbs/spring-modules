@@ -25,7 +25,7 @@ import org.springmodules.lucene.index.factory.IndexFactory;
  * to automatically bind resources to the thread local.
  * 
  * Sub classes must implement the doInitializeResources method in order
- * to acually initialize and release resources.
+ * to actually initialize and release resources.
  * 
  * @author Thierry Templier
  */

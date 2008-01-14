@@ -71,7 +71,7 @@ public abstract class SqlDocumentHandler extends AbstractDocumentHandler {
 	 * @param request SqlRequest executed
 	 * @param rs ResultSet corresponding to the request execution. It represents
 	 * a database row
-	 * @return the document to index constructed with the row datas
+	 * @return the document to index constructed with the row data
 	 * @throws SQLException if there's an error extracting data.
 	 * Subclasses can simply not catch SQLExceptions, relying on the
 	 * framework to clean up.

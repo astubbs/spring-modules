@@ -30,7 +30,7 @@ import org.apache.lucene.document.Document;
  * <code>addDocument</code> methods directly but the application must manage
  * the opening/closing of the InputStream.
  *
- * <p><b>Caution</b>: You cannot use the DocumentCreator if you want to index datas
+ * <p><b>Caution</b>: You cannot use the DocumentCreator if you want to index data
  * from an InputStream. If you use an InputStream with a DocumentCreator, you
  * need to manage the stream outside the template and don't close it in the
  * createDocument method because the stream must be still opened when the

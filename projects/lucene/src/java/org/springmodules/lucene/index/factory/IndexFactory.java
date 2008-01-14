@@ -33,7 +33,7 @@ package org.springmodules.lucene.index.factory;
 public interface IndexFactory {
 
 	/**
-	 * Contruct an IndexReader instance. This instance will be used by the
+	 * Construct an IndexReader instance. This instance will be used by the
 	 * LuceneIndexTemplate to get informations about the index and make delete
 	 * operations on the index. 
 	 * @return the IndexReader instance
@@ -41,7 +41,7 @@ public interface IndexFactory {
 	LuceneIndexReader getIndexReader();
 
 	/**
-	 * Contruct an IndexWriter instance. This instance will be used by both
+	 * Construct an IndexWriter instance. This instance will be used by both
 	 * the LuceneIndexTemplate and every indexers to add documents and
 	 * optimize it.
 	 * @return the IndexWriter instance

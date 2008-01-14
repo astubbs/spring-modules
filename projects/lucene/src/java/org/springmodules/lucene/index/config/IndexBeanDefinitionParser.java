@@ -178,14 +178,14 @@ class IndexBeanDefinitionParser extends AbstractLuceneBeanDefinitionParser imple
 	}
 
 	private void configureAnalyzerRef(MutablePropertyValues propertyValues, String analyzerRef) {
-		//Compute the bean reference of the anaylzer
+		//Compute the bean reference of the analyzer
 		propertyValues.addPropertyValue(ANALYZER_ATTRIBUTE, new RuntimeBeanReference(analyzerRef));
 	}
 
 	private BeanDefinitionHolder handlerAnalyzerDefinition(Element element, RootBeanDefinition definition, ParserContext parserContext) {
 		Element beanElement = DomUtils.getChildElementByTagName(element, BEAN_ELEMENT);
 		if( beanElement!=null ) {
-			//Compute the inner bean of the anaylzer
+			//Compute the inner bean of the analyzer
 			BeanDefinitionParserDelegate delegate = parserContext.getDelegate();
 			BeanDefinitionHolder holder = delegate.parseBeanDefinitionElement(beanElement, definition);
 			if( holder!=null ) {

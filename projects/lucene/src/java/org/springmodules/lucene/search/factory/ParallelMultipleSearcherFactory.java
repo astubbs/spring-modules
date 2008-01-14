@@ -27,7 +27,7 @@ import org.apache.lucene.store.Directory;
 import org.springmodules.lucene.index.factory.IndexFactory;
 
 /**
- * This is the simplier factory to get searcher instances to make parallel
+ * This is the simpler factory to get searcher instances to make parallel
  * search of informations on several Lucene indexes. 
  * 
  * @author Thierry Templier
@@ -75,7 +75,7 @@ public class ParallelMultipleSearcherFactory extends AbstractMultipleSearcherFac
 	}
 
 	/**
-	 * This method creates a new intance of a parallel Searcher on the
+	 * This method creates a new instance of a parallel Searcher on the
 	 * configured indexes.
 	 * 
 	 * @return a Searcher instance

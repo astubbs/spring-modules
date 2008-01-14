@@ -40,7 +40,7 @@ import org.springmodules.lucene.util.IOUtils;
 
 /**
  * <b>This is the central class in the lucene directory indexing package.</b>
- * It simplifies the use of lucene to index a directory specifiying the base
+ * It simplifies the use of lucene to index a directory specifying the base
  * directory and the way to index every files contained in this directory and
  * its sub directories.
  * It helps to avoid common errors and to manage these resource in a flexible
@@ -56,7 +56,7 @@ import org.springmodules.lucene.util.IOUtils;
  *
  * <p>This class is based on the IndexFactory abstraction which is a
  * factory to create IndexWriter for the configured Directory. For the
- * execution and the indexation of the corresponding datas, the indexer
+ * execution and the indexation of the corresponding data, the indexer
  * uses the same IndexWriter. It calls the IndexWriterFactoryUtils
  * class to eventually release it. So the indexer doesn't need to always
  * hold resources during the indexation of every requests and
@@ -124,7 +124,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	}
 
 	/**
-	 * This method is used to remove a specifed listener.
+	 * This method is used to remove a specified listener.
 	 * 
 	 * @param listener the listener to remove
 	 */
@@ -386,7 +386,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * class and release it at the end if necessary. 
 	 * 
 	 * @param dirToParse the base directory to index recursively
-	 * @param optimizeIndex if the index must be optmized after
+	 * @param optimizeIndex if the index must be optimized after
 	 * the request indexing
 	 * @see #indexDirectory(IndexWriter, File)
 	 * @see #indexFile(IndexWriter, File)

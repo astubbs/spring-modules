@@ -32,8 +32,8 @@ public interface DatabaseIndexer {
 	 * 
 	 * <p>The request is specify with an instance of the SqlRequest class
 	 * which contains the sql requests, the parameter types and values.
-	 * The implementation of the SqlDocumentHandler class definies a callback
-	 * method which will be called for every row to index its datas.
+	 * The implementation of the SqlDocumentHandler class defines a callback
+	 * method which will be called for every row to index its data.
 	 * 
 	 * @param sqlRequest the request to execute
 	 * @param handler the handler to index the rows
@@ -56,7 +56,7 @@ public interface DatabaseIndexer {
 	void addListener(DatabaseIndexingListener listener);
 
 	/**
-	 * This method is used to remove a specifed listener.
+	 * This method is used to remove a specified listener.
 	 * 
 	 * @param listener the listener to remove
 	 */
@@ -84,7 +84,7 @@ public interface DatabaseIndexer {
 	 * specified listeners.
 	 *  
 	 * @param dataSource the datasource to use
-	 * @param optimizeIndex if the index must be optmized after
+	 * @param optimizeIndex if the index must be optimized after
 	 * the request indexing
 	 */
 	void index(DataSource dataSource, boolean optimizeIndex);

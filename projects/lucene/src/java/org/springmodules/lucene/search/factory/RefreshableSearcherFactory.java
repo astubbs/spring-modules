@@ -18,7 +18,7 @@ package org.springmodules.lucene.search.factory;
 
 /**
  * <p>This is the searcher factory abstraction to allow to refresh
- * its internal state. It is useful for facories which cache index
+ * its internal state. It is useful for factories which cache index
  * instances.
  * 
  * @author Thierry Templier

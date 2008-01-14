@@ -27,7 +27,7 @@ import org.springmodules.lucene.index.factory.LuceneIndexReader;
 import org.springmodules.lucene.search.LuceneSearchException;
 
 /**
- * This is the simplier factory to get searcher instances to search
+ * This is the simpler factory to get searcher instances to search
  * informations in a single Lucene index. 
  * 
  * @author Thierry Templier
@@ -64,7 +64,7 @@ public class SimpleSearcherFactory extends AbstractSingleSearcherFactory impleme
 	}
 
 	/**
-	 * This method creates a new intance of a Searcher on the configured
+	 * This method creates a new instance of a Searcher on the configured
 	 * index (from a Directory or an IndexReader).
 	 * 
 	 * @return a Searcher instance

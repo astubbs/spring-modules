@@ -31,7 +31,7 @@ import org.apache.lucene.search.Sort;
  * It helps to avoid common errors and to manage these resource in a
  * flexible manner.
  * It executes core Lucene workflow, leaving application code to focus on
- * the way to create Lucene queries and extract datas from results.
+ * the way to create Lucene queries and extract data from results.
  *
  * <p>This class is based on the SearcherFactory abstraction which is a
  * factory to create Searcher for a or several configured Directories.

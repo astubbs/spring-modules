@@ -33,7 +33,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * applications which need to make concurrent access on an index. The
  * <code>concurrent</code> attribute allows to specify the kind of strategy
  * to use. The values lock and channel are possible in order to specify
- * respectively a concurrency management based on a lock and on a chanel.
+ * respectively a concurrency management based on a lock and on a channel.
  * For more information, see the javadocs of classes
  * {@link org.springmodules.lucene.index.factory.concurrent.LockIndexFactory}
  * and {@link org.springmodules.lucene.index.factory.concurrent.ChannelIndexFactory}.
@@ -53,8 +53,8 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * The &lt;document-handler&gt; allows to easily configure a
  * {@link org.springmodules.lucene.index.document.handler.DocumentHandlerManager.DocumentHandlerManager}
  * based on identity or file extensions. The selection of the strategy is based on the
- * value of the <code>type</code> attribut, identity or extension. All the default document
- * handler are automatically registred with this configuration. 
+ * value of the <code>type</code> attribute, identity or extension. All the default document
+ * handlers are automatically registered with this configuration. 
  *  
  * The following code shows a sample of use of the &lt;index&gt; tag:
  * 

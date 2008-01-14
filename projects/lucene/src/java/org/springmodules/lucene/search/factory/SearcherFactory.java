@@ -20,7 +20,7 @@ import java.io.IOException;
 
 /**
  * <p>This is the searcher factory abstraction to get searcher
- * instances to make searchs on a Lucene index. These instances can be used
+ * instances to make searches on a Lucene index. These instances can be used
  * with the LuceneSearchTemplate class or with the different query classes.
  * 
  * @author Thierry Templier
@@ -32,8 +32,8 @@ import java.io.IOException;
 public interface SearcherFactory {
 
 	/**
-	 * Contruct a Searcher instance. This instance will be used by both
-	 * the LuceneSearcherTemplate and every query classes to make searchs
+	 * Construct a Searcher instance. This instance will be used by both
+	 * the LuceneSearcherTemplate and every query classes to make searches
 	 * on the index.
 	 * @return the Searcher instance
 	 */

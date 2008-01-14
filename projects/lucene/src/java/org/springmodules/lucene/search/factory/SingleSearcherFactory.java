@@ -30,7 +30,7 @@ import org.springmodules.lucene.search.LuceneSearchException;
 
 /**
  * This is the factory to use a single instance of a searcher to
- * make searchs in a single Lucene index. 
+ * make searches in a single Lucene index. 
  * 
  * @author Thierry Templier
  * @see org.springmodules.lucene.search.factory.SearcherFactory
@@ -95,7 +95,7 @@ public class SingleSearcherFactory extends AbstractSingleSearcherFactory impleme
 	}
 
 	/**
-	 * This method creates a new intance of a Searcher on the configured
+	 * This method creates a new instance of a Searcher on the configured
 	 * index (from a Directory or an IndexReader).
 	 * 
 	 * @return a Searcher instance

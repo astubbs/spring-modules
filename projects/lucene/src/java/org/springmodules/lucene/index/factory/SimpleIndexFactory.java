@@ -25,7 +25,7 @@ import org.apache.lucene.store.Directory;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 
 /**
- * <p>This is the simplier factory to get reader and writer instances
+ * <p>This is the simpler factory to get reader and writer instances
  * to work on a Lucene index. 
  * 
  * <p>This factory only constructs IndexReader and IndexWriter instances.
@@ -63,7 +63,7 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	 * Construct a new SimpleIndexFactory, given a Directory and an Analyzer to
 	 * obtain both IndexReader and IndexWriter.
 	 * 
-	 * @param directory Lucene directoy which represents an index
+	 * @param directory Lucene directory which represents an index
 	 * @param analyzer Lucene analyzer to construct an IndexWriter
 	 */
 	public SimpleIndexFactory(Directory directory, Analyzer analyzer) {
@@ -147,7 +147,7 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	}
 
 	/**
-	 * Contruct a new IndexReader instance based on the directory property. This
+	 * Construct a new IndexReader instance based on the directory property. This
 	 * instance will be used by the IndexTemplate to get informations about the
 	 * index and make delete operations on the index.
 	 * 
@@ -174,7 +174,7 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	}
 
 	/**
-	 * Contruct a new IndexWriter instance based on the directory and analyzer
+	 * Construct a new IndexWriter instance based on the directory and analyzer
 	 * properties. This instance will be used by both the IndexTemplate and
 	 * every indexers to add documents and optimize it.
 	 * <p>Before creating an IndexWriter, this implementation checks if the

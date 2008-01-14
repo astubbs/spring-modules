@@ -41,7 +41,7 @@ import org.springmodules.lucene.util.IOUtils;
 
 /**
  * <b>This is the central class in the lucene indexing core package.</b>
- * It simplifies the use of lucene to index documents or datas using
+ * It simplifies the use of lucene to index documents or data using
  * index reader and writer. It helps to avoid common errors and to
  * manage these resource in a flexible manner.
  * It executes core Lucene workflow, leaving application code to focus on
@@ -408,7 +408,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	//-------------------------------------------------------------------------
-	// Methods dealing with index optmization
+	// Methods dealing with index optimization
 	//-------------------------------------------------------------------------
 
 	public void optimize() {

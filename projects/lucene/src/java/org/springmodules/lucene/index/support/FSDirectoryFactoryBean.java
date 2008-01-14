@@ -25,7 +25,7 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.core.io.Resource;
 
 /**
- * This Spring factory bean configures a Lucene filesystem
+ * This Spring factory bean configures a Lucene file system
  * directory using its location.
  * 
  * <p>The create property can be set to force the index to
@@ -48,7 +48,7 @@ public class FSDirectoryFactoryBean extends AbstractDirectoryFactoryBean {
     }
 
     /**
-     * This method constructs a filesystem Lucene directory.
+     * This method constructs a file system Lucene directory.
      *  
      * <p>The location property must be set, and be a directory
      */
@@ -60,7 +60,7 @@ public class FSDirectoryFactoryBean extends AbstractDirectoryFactoryBean {
     }
 
     /**
-     * This method constructs a filesystem Lucene directory.
+     * This method constructs a file system Lucene directory.
      *  
      * <p>The location property must be set, and be a directory
      */
@@ -78,7 +78,7 @@ public class FSDirectoryFactoryBean extends AbstractDirectoryFactoryBean {
     }
 
     /**
-     * Specify the path on the filesystem to use for this directory storage
+     * Specify the path on the file system to use for this directory storage
      */
     public void setLocation(Resource location) {
         this.location = location;

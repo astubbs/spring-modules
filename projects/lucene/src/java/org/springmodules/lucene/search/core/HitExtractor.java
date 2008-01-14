@@ -19,7 +19,7 @@ package org.springmodules.lucene.search.core;
 import org.apache.lucene.document.Document;
 
 /**
- * Callback interface for extracting datas from hits of search
+ * Callback interface for extracting data from hits of search
  * result.
  * 
  * <p>Used for output search results in the LuceneSearchTemplate. Alternatively,

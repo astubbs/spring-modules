@@ -52,7 +52,7 @@ public interface DirectoryIndexer {
 	void addListener(FileDocumentIndexingListener listener);
 
 	/**
-	 * This method is used to remove a specifed listener.
+	 * This method is used to remove a specified listener.
 	 * 
 	 * @param listener the listener to remove
 	 */
@@ -82,7 +82,7 @@ public interface DirectoryIndexer {
 	 * class and release it at the end if necessary. 
 	 * 
 	 * @param dirToParse the directory to index recursively
-	 * @param optimizeIndex if the index must be optmized after
+	 * @param optimizeIndex if the index must be optimized after
 	 * the request indexing
 	 */
 	void index(String dirToParse, boolean optimizeIndex);

@@ -38,7 +38,7 @@ import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
  * It helps to avoid common errors and to manage these resource in a
  * flexible manner.
  * It executes core Lucene workflow, leaving application code to focus on
- * the way to create Lucene queries and extract datas from results.
+ * the way to create Lucene queries and extract data from results.
  *
  * <p>This class is based on the SearcherFactory abstraction which is a
  * factory to create Searcher for a or several configured Directories.
@@ -124,14 +124,14 @@ public class DefaultLuceneSearchTemplate implements LuceneSearchTemplate {
 	}
 
 	/**
-	 * Method used to extract datas from hits. These datas are
+	 * Method used to extract data from hits. These data are
 	 * the Lucene internal document identifier, the document
 	 * itself and the score.
 	 * 
 	 * @param hits the hits corresponding to the search
 	 * @param extractor the extractor specified in the search method
 	 * @return the search results extracted
-	 * @throws IOException exception occuring when accessing documents
+	 * @throws IOException exception occurring when accessing documents
 	 */
 	private List extractHits(LuceneHits hits, HitExtractor extractor) throws IOException {
 		List list = new ArrayList();
@@ -192,7 +192,7 @@ public class DefaultLuceneSearchTemplate implements LuceneSearchTemplate {
 	 * thanks to a callback method defined in the QueryCreator interface.
 	 * In this case, the exceptions during the query creation are managed
 	 * by the template.
-	 * This method uses sort and/or filter paramaters as Searcher search
+	 * This method uses sort and/or filter parameters as Searcher search
 	 * method parameters if they are not null. 
 	 * @param query the query used
 	 * @param extractor the extractor of hit informations

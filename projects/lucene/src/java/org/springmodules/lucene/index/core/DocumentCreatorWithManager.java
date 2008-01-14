@@ -76,11 +76,11 @@ public class DocumentCreatorWithManager implements DocumentCreator {
 	}
 
 	/**
-	 * This method implementes the mechanism to index a resource basing
+	 * This method implements the mechanism to index a resource basing
 	 * a DocumentHandlerManager instance.
 	 * 
-	 * <p>Firsly, it will try to get an available DocumentHandler corresponding
-	 * to the class name . Then it calls the getDocument method of the DocumentHandler
+	 * <p>First, it will try to get an available DocumentHandler corresponding
+	 * to the class name. Then it calls the getDocument method of the DocumentHandler
 	 * instance with the null description resource and the object in order to index
 	 * the resource.
 	 * 

@@ -56,7 +56,7 @@ public class DefaultDocumentHandlerManager implements DocumentHandlerManager {
 
 	/**
 	 * The method determines which document handler must be used
-	 * for a name. It implicitely uses the document matching
+	 * for a name. It implicitly uses the document matching
 	 * associated with the document handlers.
 	 * 
 	 * @param name the name associated with an object or a resource to index

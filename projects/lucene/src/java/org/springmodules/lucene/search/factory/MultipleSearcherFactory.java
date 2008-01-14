@@ -75,7 +75,7 @@ public class MultipleSearcherFactory extends AbstractMultipleSearcherFactory imp
 	}
 
 	/**
-	 * This method creates a new intance of a Searcher on the configured
+	 * This method creates a new instance of a Searcher on the configured
 	 * indexes.
 	 * 
 	 * @return a Searcher instance

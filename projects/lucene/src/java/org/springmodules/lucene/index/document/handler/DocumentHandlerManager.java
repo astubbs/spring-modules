@@ -30,7 +30,7 @@ public interface DocumentHandlerManager {
 
 	/**
 	 * The method determines which document handler must be used
-	 * for a name. It implicitely uses the document matching
+	 * for a name. It implicitly uses the document matching
 	 * associated with the document handlers.
 	 * 
 	 * @param name the name associated with a resource to index
@@ -49,7 +49,7 @@ public interface DocumentHandlerManager {
 	 * This method registers a document handler associated with a
 	 * document matching.
 	 * 
-	 * <p>The document matching paramter is used to determine when
+	 * <p>The document matching parameter is used to determine when
 	 * the handler must be used to index a document.
 	 * 
 	 * @param matching the associated document matching

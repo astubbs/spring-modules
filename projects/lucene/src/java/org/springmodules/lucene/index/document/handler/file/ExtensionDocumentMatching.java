@@ -56,7 +56,7 @@ public class ExtensionDocumentMatching implements DocumentMatching {
 	}
 
 	/**
-	 * This method determines if the extension parameter matchs
+	 * This method determines if the extension parameter matches
 	 * with the extension instance attribute.
 	 * 
 	 * @param extension the extension to test

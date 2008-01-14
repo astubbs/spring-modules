@@ -45,7 +45,7 @@ import org.springmodules.lucene.index.object.AbstractIndexer;
 
 /**
  * <b>This is the central class in the lucene database indexing package.</b>
- * It simplifies the use of lucene to index a database specifiying the requests
+ * It simplifies the use of lucene to index a database specifying the requests
  * to execute and how to index the corresponding rows.
  * It helps to avoid common errors and to manage these resource in a flexible
  * manner.
@@ -55,7 +55,7 @@ import org.springmodules.lucene.index.object.AbstractIndexer;
  * <p>This class is based on the IndexFactory abstraction which is a
  * factory to create IndexWriter for the configured
  * Directory. For the execution and the indexation of the corresponding
- * datas, the indexer uses the same IndexWriter. It calls the IndexWriterFactoryUtils
+ * data, the indexer uses the same IndexWriter. It calls the IndexWriterFactoryUtils
  * class to eventually release it. So the indexer doesn't need to always
  * hold resources during the indexation of every requests and
  * this avoids some locking problems on the index. You can too apply
@@ -93,7 +93,7 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 
 	/**
 	 * This method specifies the default handlers to automatically
-	 * register when the indexer is instanciated.
+	 * register when the indexer is instantiated.
 	 * 
 	 * <p>This method is empty but you can overwrite it to specify
 	 * your default handlers.
@@ -107,8 +107,8 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 	 * 
 	 * <p>The request is specify with an instance of the SqlRequest class
 	 * which contains the sql requests, the parameter types and values.
-	 * The implementation of the SqlDocumentHandler class definies a callback
-	 * method which will be called for every row to index its datas.
+	 * The implementation of the SqlDocumentHandler class defines a callback
+	 * method which will be called for every row to index its data.
 	 * 
 	 * @param sqlRequest the request to execute
 	 * @param handler the handler to index the rows
@@ -169,7 +169,7 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 	}
 
 	/**
-	 * This method is used to remove a specifed listener.
+	 * This method is used to remove a specified listener.
 	 * 
 	 * @param listener the listener to remove
 	 */
@@ -283,13 +283,13 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 	 * too both exceptions thrown during the request execution and the
 	 * indexing of rows. 
 	 * 
-	 * <p>Before the return of the method, it optmizes too the index
+	 * <p>Before the return of the method, it optimizes too the index
 	 * if the value of the optimizeIndex parameter is true.
 	 * 
 	 * @param dataSource the datasource to use
 	 * @param request the request to execute
 	 * @param handler the handler to use to index the rows
-	 * @param optimizeIndex if the index must be optmized after
+	 * @param optimizeIndex if the index must be optimized after
 	 * the request indexing
 	 * @see IndexWriterFactoryUtils#getIndexWriter(IndexFactory)
 	 * @see IndexWriterFactoryUtils#releaseIndexWriter(IndexFactory, IndexWriter)
@@ -340,7 +340,7 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 	 * specified listeners.
 	 *  
 	 * @param dataSource the datasource to use
-	 * @param optimizeIndex if the index must be optmized after
+	 * @param optimizeIndex if the index must be optimized after
 	 * the request indexing
 	 * @see #doHandleRequest(DataSource, SqlRequest, SqlDocumentHandler, boolean)
 	 */

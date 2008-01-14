@@ -32,7 +32,7 @@ import org.springmodules.lucene.search.factory.SearcherFactory;
  * <p>Concrete subclasses must implement the abstract
  * <code>configureSearchQuery(String)</code> and
  * <code>extractResultHit(int , Document , float)</code> methods, to
- * configure an query and extracts datas from the results, respectively.
+ * configure an query and extracts data from the results, respectively.
  *
  * @author Thierry Templier
  * @see #configureSearchQuery(String)
@@ -61,7 +61,7 @@ public abstract class ParsedLuceneSearchQuery extends LuceneSearchQuery {
 	protected abstract QueryParams configureSearchQuery(String textToSearch);
 
 	/**
-	 * Subclasses must implement this method to extract datas from the search
+	 * Subclasses must implement this method to extract data from the search
 	 * results into a result object which will be added to the result list for
 	 * the <code>execute</code> method.
 	 * @param id the internal document identifier
@@ -76,7 +76,7 @@ public abstract class ParsedLuceneSearchQuery extends LuceneSearchQuery {
 	 * Execute the search encapsulated by this query object.
 	 * @param textToSearch the text to search, to be used to configure a Query constructed
 	 * with a QueryParser with the <code>configureSearchQuery</code> method
-	 * @return the result datas extracted with the <code>extractResultHit</code> method
+	 * @return the result data extracted with the <code>extractResultHit</code> method
 	 * @throws LuceneSearchException if there is any problem
 	 * @see #constructSearchQuery(String)
 	 * @see #extractResultHit(int, Document, float)

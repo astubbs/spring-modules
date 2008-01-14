@@ -25,7 +25,7 @@ import java.util.Map;
  * 
  * <p>This is used with the DatabaseIndexer to specify the request to
  * execute. So these requests are associated with a SqlDocumentHandler
- * to specify how to index the datas contained by the returned ResultSet.
+ * to specify how to index the data contained by the returned ResultSet.
  * 
  * @author Thierry Templier
  * @see org.springmodules.lucene.index.object.database.DatabaseIndexer
