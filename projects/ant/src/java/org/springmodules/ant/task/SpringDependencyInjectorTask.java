@@ -19,12 +19,12 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 public class SpringDependencyInjectorTask extends AbstractSpringBeanFactoryTask {
 
 	/**
-	 * Legal value of autorwire attribute for autowire by name.
+	 * Legal value of autowire attribute for autowire by name.
 	 */
 	public static final String AUTOWIRE_BY_NAME = "byName";
 
 	/**
-	 * Legal value of autorwire attribute for autowire by type.
+	 * Legal value of autowire attribute for autowire by type.
 	 */
 	public static final String AUTOWIRE_BY_TYPE = "byType";
 
