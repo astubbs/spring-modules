@@ -60,7 +60,6 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 	/**
 	 * The class for which the {@link #objectClass} will be defined.
 	 */
-	@SuppressWarnings("unchecked")
 	private Class clazz;
 
 	/**
@@ -149,10 +148,10 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 			this.objectClass.indexed(this.indexed.booleanValue());
 		}
 		if (this.maximumActivationDepth != null) {
-			this.objectClass.maximumActivationDepth(this.maximumActivationDepth);
+			this.objectClass.maximumActivationDepth(this.maximumActivationDepth.intValue());
 		}
 		if (this.minimumActivationDepth != null) {
-			this.objectClass.minimumActivationDepth(this.minimumActivationDepth);
+			this.objectClass.minimumActivationDepth(this.minimumActivationDepth.intValue());
 		}
 		if (Boolean.TRUE.equals(this.persistStaticFieldValues)) {
 			this.objectClass.persistStaticFieldValues();
@@ -161,7 +160,7 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 			this.objectClass.storeTransientFields(this.storeTransientFields.booleanValue());
 		}
 		if (this.updateDepth != null) {
-			this.objectClass.updateDepth(this.updateDepth);
+			this.objectClass.updateDepth(this.updateDepth.intValue());
 		}
 
 		// post process the objectClass
@@ -173,13 +172,10 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 		}
 	}
 
-	@Override
 	public Object getObject() throws Exception {
 		return this.objectClass;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
 	public Class getObjectType() {
 		return this.clazz;
 	}
@@ -192,7 +188,6 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 	 * {@link com.db4o.config.ObjectClass} with the same configuration are
 	 * equivalent, however they may be configured separately by the receiver.
 	 */
-	@Override
 	public boolean isSingleton() {
 		return false;
 	}
@@ -203,7 +198,6 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 	 *
 	 * @param clazz the clazz. May not be <code>null</code>.
 	 */
-	@SuppressWarnings("unchecked")
 	public void setClazz(Class clazz) {
 		this.clazz = clazz;
 	}

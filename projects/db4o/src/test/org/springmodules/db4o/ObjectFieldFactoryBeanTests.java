@@ -53,7 +53,6 @@ public class ObjectFieldFactoryBeanTests extends TestCase {
 	 * them to be <code>null</code> otherwise {@link #tearDown()} will throw
 	 * an exception.
 	 */
-	@Override
 	public void setUp() throws Exception {
 		this.objectClassControl = MockControl.createNiceControl(ObjectClass.class);
 		this.objectClass = (ObjectClass) objectClassControl.getMock();
@@ -162,7 +161,7 @@ public class ObjectFieldFactoryBeanTests extends TestCase {
 
 	public void testCascadeOnActivate() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectField.cascadeOnActivate(value);
+		this.objectField.cascadeOnActivate(value.booleanValue());
 		this.objectFieldControl.replay();
 
 		this.offb.setCascadeOnActivate(value);
@@ -171,7 +170,7 @@ public class ObjectFieldFactoryBeanTests extends TestCase {
 
 	public void testCascadeOnDelete() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectField.cascadeOnDelete(value);
+		this.objectField.cascadeOnDelete(value.booleanValue());
 		this.objectFieldControl.replay();
 
 		this.offb.setCascadeOnDelete(value);
@@ -180,7 +179,7 @@ public class ObjectFieldFactoryBeanTests extends TestCase {
 
 	public void testCascadeOnUpdate() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectField.cascadeOnUpdate(value);
+		this.objectField.cascadeOnUpdate(value.booleanValue());
 		this.objectFieldControl.replay();
 
 		this.offb.setCascadeOnUpdate(value);
@@ -190,7 +189,7 @@ public class ObjectFieldFactoryBeanTests extends TestCase {
 
 	public void testIndexed() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectField.indexed(value);
+		this.objectField.indexed(value.booleanValue());
 		this.objectFieldControl.replay();
 
 		this.offb.setIndexed(value);
@@ -199,7 +198,7 @@ public class ObjectFieldFactoryBeanTests extends TestCase {
 
 	public void testQueryEvaluation() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectField.queryEvaluation(value);
+		this.objectField.queryEvaluation(value.booleanValue());
 		this.objectFieldControl.replay();
 
 		this.offb.setQueryEvaluation(value);

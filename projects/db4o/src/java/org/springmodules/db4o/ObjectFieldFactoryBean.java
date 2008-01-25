@@ -122,13 +122,10 @@ public class ObjectFieldFactoryBean implements InitializingBean, FactoryBean {
 		}
 	}
 
-	@Override
 	public Object getObject() throws Exception {
 		return this.objectField;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
 	public Class getObjectType() {
 		return this.objectField.getClass();
 	}
@@ -141,7 +138,6 @@ public class ObjectFieldFactoryBean implements InitializingBean, FactoryBean {
 	 * {@link com.db4o.config.ObjectField} with the same configuration are
 	 * equivalent, however they may be configured separately by the receiver.
 	 */
-	@Override
 	public boolean isSingleton() {
 		return false;
 	}
@@ -152,7 +148,6 @@ public class ObjectFieldFactoryBean implements InitializingBean, FactoryBean {
 	 *
 	 * @param objectClass the <code>ObjectClass</code>. May not be <code>null</code>.
 	 */
-	@SuppressWarnings("unchecked")
 	public void setObjectClass(ObjectClass objectClass) {
 		this.objectClass = objectClass;
 	}

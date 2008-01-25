@@ -33,7 +33,6 @@ import com.db4o.config.ObjectTranslator;
  */
 public class ObjectClassFactoryBeanTests extends TestCase {
 
-	@SuppressWarnings("unchecked")
 	private Class clazz = String.class;
 
 	private MockControl objectClassControl;
@@ -57,7 +56,6 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 	 * them to be <code>null</code> otherwise {@link #tearDown()} will throw
 	 * an exception.
 	 */
-	@Override
 	public void setUp() throws Exception {
 		this.objectClassControl = MockControl.createNiceControl(ObjectClass.class);
 		this.objectClass = (ObjectClass) this.objectClassControl.getMock();
@@ -167,7 +165,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testCallConstructor() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectClass.callConstructor(value);
+		this.objectClass.callConstructor(value.booleanValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setCallConstructor(value);
@@ -176,7 +174,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testCascadeOnActivate() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectClass.cascadeOnActivate(value);
+		this.objectClass.cascadeOnActivate(value.booleanValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setCascadeOnActivate(value);
@@ -185,7 +183,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testCascadeOnDelete() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectClass.cascadeOnDelete(value);
+		this.objectClass.cascadeOnDelete(value.booleanValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setCascadeOnDelete(value);
@@ -194,7 +192,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testCascadeOnUpdate() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectClass.cascadeOnUpdate(value);
+		this.objectClass.cascadeOnUpdate(value.booleanValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setCascadeOnUpdate(value);
@@ -203,7 +201,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testEnableReplication() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectClass.enableReplication(value);
+		this.objectClass.enableReplication(value.booleanValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setEnableReplication(value);
@@ -212,7 +210,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testGenerateUUIDs() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectClass.generateUUIDs(value);
+		this.objectClass.generateUUIDs(value.booleanValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setGenerateUUIDs(value);
@@ -221,7 +219,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testGenerateVersionNumbers() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectClass.generateVersionNumbers(value);
+		this.objectClass.generateVersionNumbers(value.booleanValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setGenerateVersionNumbers(value);
@@ -230,7 +228,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testIndexed() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectClass.indexed(value);
+		this.objectClass.indexed(value.booleanValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setIndexed(value);
@@ -239,7 +237,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testMaximumActivationDepth() throws Exception {
 		Integer value = Integer.valueOf(10);
-		this.objectClass.maximumActivationDepth(value);
+		this.objectClass.maximumActivationDepth(value.intValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setMaximumActivationDepth(value);
@@ -248,7 +246,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testMinimumActivationDepth() throws Exception {
 		Integer value = Integer.valueOf(10);
-		this.objectClass.minimumActivationDepth(value);
+		this.objectClass.minimumActivationDepth(value.intValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setMinimumActivationDepth(value);
@@ -259,7 +257,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 		this.objectClass.persistStaticFieldValues();
 		this.objectClassControl.replay();
 
-		this.ocfb.setPersistStaticFieldValues(true);
+		this.ocfb.setPersistStaticFieldValues(Boolean.TRUE);
 		this.ocfb.afterPropertiesSet();
 	}
 
@@ -274,10 +272,10 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testStoreTransientFields() throws Exception {
 		Boolean value = Boolean.TRUE;
-		this.objectClass.storeTransientFields(value);
+		this.objectClass.storeTransientFields(value.booleanValue());
 		this.objectClassControl.replay();
 
-		this.ocfb.setStoreTransientFields(true);
+		this.ocfb.setStoreTransientFields(value);
 		this.ocfb.afterPropertiesSet();
 	}
 
@@ -294,7 +292,7 @@ public class ObjectClassFactoryBeanTests extends TestCase {
 
 	public void testUpdateDepth() throws Exception {
 		Integer value = Integer.valueOf(10);
-		this.objectClass.updateDepth(value);
+		this.objectClass.updateDepth(value.intValue());
 		this.objectClassControl.replay();
 
 		this.ocfb.setUpdateDepth(value);
