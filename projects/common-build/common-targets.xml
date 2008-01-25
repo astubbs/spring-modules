@@ -759,7 +759,7 @@
       <classpath>
         <pathelement location="${target.classes.dir}" />
         <pathelement location="${target.testclasses.dir}" />
-        <pathelement path="${compile.classpath}" />
+        <path refid="compile.classpath" />
       </classpath>
       <sourcepath>
         <pathelement location="${src.java.main.dir}" />
