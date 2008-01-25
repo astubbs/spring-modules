@@ -28,27 +28,28 @@ import com.db4o.config.ObjectTranslator;
 /**
  * {@link org.springframework.beans.factory.FactoryBean} used for constructing
  * db4o {@link com.db4o.config.ObjectClass}.
- *
+ * 
  * <p>
  * By default, this <code>FactoryBean</code> will return new instances of
- * <code>ObjectClass</code> (i.e. is isn't a {@link #isSingleton() singleton}.
+ * <code>ObjectClass</code> (i.e. this <code>FactoryBean</code> isn't a
+ * {@link #isSingleton() singleton}).
  * </p>
- *
+ * 
  * <p>
  * This class is needed as db4o configuration doesn't respect JavaBeans
  * conventions and thus Spring can't inject the properties.
  * </p>
- *
+ * 
  * <p>
  * If an explicit {@link com.db4o.config.Configuration} is
  * {@link #setConfiguration provided} then that will be used, otherwise a
  * {@link com.db4o.Db4o#configure() default configuration} will be used.
  * </p>
- *
+ * 
  * @see org.springmodules.db4o.ConfigurationFactoryBean
- *
+ * 
  * @since 0.9
- *
+ * 
  */
 public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 
@@ -88,7 +89,7 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 
 	/**
 	 * {@inheritDoc}
-	 *
+	 * 
 	 * Create the {@link #objectClass}.
 	 */
 	public void afterPropertiesSet() throws Exception {
@@ -107,7 +108,7 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 
 	/**
 	 * Determine the {@link com.db4o.config.Configuration} to use.
-	 *
+	 * 
 	 * <p>
 	 * If the {@link #configuration} is explicitly set, that will be used,
 	 * otherwise a {@link Db4o#configure() default configuration} will be used.
@@ -124,40 +125,49 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 	private void createObjectClass() {
 		this.objectClass = this.configuration.objectClass(this.clazz);
 		if (this.callConstructor != null) {
-			this.objectClass.callConstructor(this.callConstructor.booleanValue());
+			this.objectClass.callConstructor(this.callConstructor
+					.booleanValue());
 		}
 		if (this.cascadeOnActivate != null) {
-			this.objectClass.cascadeOnActivate(this.cascadeOnActivate.booleanValue());
+			this.objectClass.cascadeOnActivate(this.cascadeOnActivate
+					.booleanValue());
 		}
 		if (this.cascadeOnDelete != null) {
-			this.objectClass.cascadeOnDelete(this.cascadeOnDelete.booleanValue());
+			this.objectClass.cascadeOnDelete(this.cascadeOnDelete
+					.booleanValue());
 		}
 		if (this.cascadeOnUpdate != null) {
-			this.objectClass.cascadeOnUpdate(this.cascadeOnUpdate.booleanValue());
+			this.objectClass.cascadeOnUpdate(this.cascadeOnUpdate
+					.booleanValue());
 		}
 		if (this.enableReplication != null) {
-			this.objectClass.enableReplication(this.enableReplication.booleanValue());
+			this.objectClass.enableReplication(this.enableReplication
+					.booleanValue());
 		}
 		if (this.generateUUIDs != null) {
 			this.objectClass.generateUUIDs(this.generateUUIDs.booleanValue());
 		}
 		if (this.generateVersionNumbers != null) {
-			this.objectClass.generateVersionNumbers(this.generateVersionNumbers.booleanValue());
+			this.objectClass.generateVersionNumbers(this.generateVersionNumbers
+					.booleanValue());
 		}
 		if (this.indexed != null) {
 			this.objectClass.indexed(this.indexed.booleanValue());
 		}
 		if (this.maximumActivationDepth != null) {
-			this.objectClass.maximumActivationDepth(this.maximumActivationDepth.intValue());
+			this.objectClass.maximumActivationDepth(this.maximumActivationDepth
+					.intValue());
 		}
 		if (this.minimumActivationDepth != null) {
-			this.objectClass.minimumActivationDepth(this.minimumActivationDepth.intValue());
+			this.objectClass.minimumActivationDepth(this.minimumActivationDepth
+					.intValue());
 		}
 		if (Boolean.TRUE.equals(this.persistStaticFieldValues)) {
 			this.objectClass.persistStaticFieldValues();
 		}
 		if (this.storeTransientFields != null) {
-			this.objectClass.storeTransientFields(this.storeTransientFields.booleanValue());
+			this.objectClass.storeTransientFields(this.storeTransientFields
+					.booleanValue());
 		}
 		if (this.updateDepth != null) {
 			this.objectClass.updateDepth(this.updateDepth.intValue());
@@ -182,7 +192,7 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 
 	/**
 	 * {@inheritDoc}
-	 *
+	 * 
 	 * <p>
 	 * This is set to <code>false</code> as multiple instances of an
 	 * {@link com.db4o.config.ObjectClass} with the same configuration are
@@ -195,8 +205,9 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 	/**
 	 * Set the {@link Class class} for which this factory should construct an
 	 * {@link com.db4o.config.ObjectClass}.
-	 *
-	 * @param clazz the clazz. May not be <code>null</code>.
+	 * 
+	 * @param clazz
+	 *            the clazz. May not be <code>null</code>.
 	 */
 	public void setClazz(Class clazz) {
 		this.clazz = clazz;
@@ -206,12 +217,13 @@ public class ObjectClassFactoryBean implements InitializingBean, FactoryBean {
 	 * Set the {@link com.db4o.config.Configuration configuration} to be used to
 	 * {@link com.db4o.config.Configuration#objectClass(Object) construct} the
 	 * {@link com.db4o.config.ObjectClass}.
-	 *
+	 * 
 	 * <p>
 	 * If this is never explicitly called, the
 	 * {@link com.db4o.Db4o#configure() default configuration} will be used.
-	 *
-	 * @param configuration the <code>configuration</code> to use.
+	 * 
+	 * @param configuration
+	 *            the <code>configuration</code> to use.
 	 */
 	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;

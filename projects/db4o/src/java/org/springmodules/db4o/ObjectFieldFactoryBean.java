@@ -25,11 +25,18 @@ import com.db4o.config.ObjectField;
 
 /**
  * {@link org.springframework.beans.factory.FactoryBean} used for constructing
- * db4o {@link com.db4o.config.ObjectField}.
- *
+ * an db4o {@link com.db4o.config.ObjectField}.
+ * 
+ * <p>
+ * This <code>FactoryBean</code> will construct a <code>ObjectField</code> for
+ * the {@link #setFieldName(String) specified field name} on the 
+ * {@link #setObjectClass(ObjectClass) specified ObjectClass}.
+ * </p>
+ * 
  * <p>
  * By default, this <code>FactoryBean</code> will return new instances of
- * <code>ObjectField</code> (i.e. is isn't a {@link #isSingleton() singleton}.
+ * <code>ObjectField</code> (i.e. this <code>FactoryBean</code>  isn't a
+ * {@link #isSingleton() singleton}).
  * </p>
  *
  * <p>
@@ -37,16 +44,9 @@ import com.db4o.config.ObjectField;
  * conventions and thus Spring can't inject the properties.
  * </p>
  *
- * <p>
- * If an explicit {@link com.db4o.config.Configuration} is
- * {@link #setConfiguration provided} then that will be used, otherwise a
- * {@link com.db4o.Db4o#configure() default configuration} will be used.
- * </p>
- *
- * @see org.springmodules.db4o.ObjectFieldFactoryBean
+ * @see org.springmodules.db4o.ObjectClassFactoryBean
  *
  * @since 0.9
- *
  */
 public class ObjectFieldFactoryBean implements InitializingBean, FactoryBean {
 
@@ -79,7 +79,7 @@ public class ObjectFieldFactoryBean implements InitializingBean, FactoryBean {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * Create the {@link #ObjectField}.
+	 * Create the {@link #objectField}.
 	 */
 	public void afterPropertiesSet() throws Exception {
 		performAssertions();
