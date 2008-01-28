@@ -17,8 +17,6 @@
 	<classpathentry kind="lib" path="lib/test/spring-beans.jar"/>
 	<classpathentry kind="lib" path="lib/test/spring-context.jar"/>
 	<classpathentry kind="lib" path="lib/test/spring-core.jar"/>
-	<classpathentry kind="lib" path="target/artifacts/lib/spring-modules-ant.jar"/>
-	<classpathentry kind="lib" path="target/dist/jars/spring-modules-ant-0.9-dev-20080114143051.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="target/test-classes"/>
 </classpath>
