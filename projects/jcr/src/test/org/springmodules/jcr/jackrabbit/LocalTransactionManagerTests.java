@@ -10,7 +10,7 @@ import javax.transaction.xa.Xid;
 
 import junit.framework.TestCase;
 
-import org.apache.jackrabbit.core.XASession;
+import org.apache.jackrabbit.api.XASession;
 import org.easymock.MockControl;
 import org.springframework.transaction.InvalidIsolationLevelException;
 import org.springframework.transaction.PlatformTransactionManager;

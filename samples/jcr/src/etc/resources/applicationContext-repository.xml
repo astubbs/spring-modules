@@ -31,7 +31,6 @@
 			</props>
 		</property>
 		-->
-		<property name="keepNamespaces" value="true"/>
 		<!-- register a simple listener 
 		<property name="eventListeners">
 			<list>

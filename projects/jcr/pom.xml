@@ -16,7 +16,9 @@
     <scm>
         <url>https://springmodules.dev.java.net/source/browse/springmodules/projects/jcr</url>
     </scm>
-    <dependencies>
+    
+    
+     <dependencies>
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -39,10 +41,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>jsr170</groupId>
-            <artifactId>jsr170</artifactId>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
             <version>1.0</version>
-        </dependency>
+        </dependency>       
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -71,22 +73,27 @@
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-core</artifactId>
-            <version>1.2.2</version>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-api</artifactId>
+            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-jcr-commons</artifactId>
-            <version>1.2.2</version>
+            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-jca</artifactId>
-            <version>1.0</version>
+            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-jcr-rmi</artifactId>
-            <version>1.2.2</version>
+            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>concurrent</groupId>
@@ -96,7 +103,7 @@
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <version>2.0.0</version>
+            <version>2.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -114,24 +121,25 @@
             <version>2.6.2</version>
         </dependency>
         <dependency>
-            <groupId>jeceira</groupId>
+            <groupId>net.sf.jeceira</groupId>
             <artifactId>jeceira</artifactId>
             <version>0.1.4</version>
         </dependency>	
         <dependency>
-            <groupId>aparzev</groupId>
+            <groupId>com.aparzev</groupId>
             <artifactId>doka</artifactId>
             <version>0.1</version>
         </dependency>		
         <dependency>
-            <groupId>aparzev</groupId>
+            <groupId>com.aparzev</groupId>
             <artifactId>commons</artifactId>
             <version>0.2</version>
         </dependency>	
         <dependency>
-            <groupId>jug</groupId>
-            <artifactId>jug-asl</artifactId>
+            <groupId>org.safehaus.jug</groupId>
+            <artifactId>jug</artifactId>
             <version>2.0.0</version>
+	    <classifier>asl</classifier>
         </dependency>
         <dependency>
             <groupId>hsqldb</groupId>

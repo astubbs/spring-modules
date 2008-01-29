@@ -3,7 +3,7 @@ package org.springmodules.jcr.jackrabbit;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.core.XASession;
+import org.apache.jackrabbit.api.XASession;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.InvalidIsolationLevelException;

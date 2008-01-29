@@ -11,11 +11,7 @@
 	<classpathentry kind="lib" path="lib/buildtime/jackrabbit-core.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/jackrabbit-jcr-commons.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/jackrabbit-jcr-rmi.jar"/>
-	<classpathentry kind="lib" path="lib/buildtime/jcr.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/jeceira.jar"/>
-	<classpathentry kind="lib" path="lib/buildtime/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/buildtime/slf4j-log4j12.jar"/>
-	<classpathentry kind="lib" path="lib/buildtime/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/global/jcr.jar"/>
 	<classpathentry kind="lib" path="lib/global/log4j.jar"/>
@@ -29,36 +25,26 @@
 	<classpathentry kind="lib" path="lib/test/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/test/commons-collections.jar"/>
 	<classpathentry kind="lib" path="lib/test/commons-lang.jar"/>
-	<classpathentry kind="lib" path="lib/test/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/test/concurrent.jar"/>
 	<classpathentry kind="lib" path="lib/test/doka.jar"/>
 	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
 	<classpathentry kind="lib" path="lib/test/easymockclassextension.jar"/>
 	<classpathentry kind="lib" path="lib/test/ehcache.jar"/>
-	<classpathentry kind="lib" path="lib/test/geronimo-spec-j2ee-connector-1.5.jar"/>
-	<classpathentry kind="lib" path="lib/test/geronimo-spec-jta-1.0.1B.jar"/>
 	<classpathentry kind="lib" path="lib/test/hsqldb.jar"/>
-	<classpathentry kind="lib" path="lib/test/jackrabbit-api.jar"/>
-	<classpathentry kind="lib" path="lib/test/jackrabbit-core.jar"/>
 	<classpathentry kind="lib" path="lib/test/jackrabbit-jca.jar"/>
-	<classpathentry kind="lib" path="lib/test/jackrabbit-jcr-commons.jar"/>
-	<classpathentry kind="lib" path="lib/test/jackrabbit-jcr-rmi.jar"/>
-	<classpathentry kind="lib" path="lib/test/jcr.jar"/>
-	<classpathentry kind="lib" path="lib/test/jeceira.jar"/>
 	<classpathentry kind="lib" path="lib/test/jsp-api.jar"/>
 	<classpathentry kind="lib" path="lib/test/jug-asl.jar"/>
 	<classpathentry kind="lib" path="lib/test/junit.jar"/>
-	<classpathentry kind="lib" path="lib/test/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/test/lucene-core.jar"/>
 	<classpathentry kind="lib" path="lib/test/oro.jar"/>
-	<classpathentry kind="lib" path="lib/test/servletapi.jar"/>
-	<classpathentry kind="lib" path="lib/test/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/test/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="lib/test/slf4j-log4j12.jar"/>
-	<classpathentry kind="lib" path="lib/test/spring.jar"/>
 	<classpathentry kind="lib" path="lib/test/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/test/standard.jar"/>
 	<classpathentry kind="lib" path="lib/test/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/test/xmlParserAPIs.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/jackrabbit-spi.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/jackrabbit-spi-commons.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/jackrabbit-text-extractors.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

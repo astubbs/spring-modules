@@ -8,7 +8,7 @@ import javax.transaction.xa.XAResource;
 
 import junit.framework.TestCase;
 
-import org.apache.jackrabbit.core.XASession;
+import org.apache.jackrabbit.api.XASession;
 import org.easymock.MockControl;
 import org.springmodules.jcr.JcrInterceptor;
 import org.springmodules.jcr.SessionFactory;

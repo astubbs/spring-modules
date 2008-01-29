@@ -1,8 +1,8 @@
 /**
  * Created on Nov 11, 2005
  *
- * $Id: TransactionAwareRepository.java,v 1.3 2006/03/07 13:09:29 costin Exp $
- * $Revision: 1.3 $
+ * $Id: TransactionAwareRepository.java,v 1.4 2008/01/29 12:28:24 coliny Exp $
+ * $Revision: 1.4 $
  */
 package org.springmodules.jcr;
 
@@ -50,7 +50,7 @@ import org.springframework.util.ObjectUtils;
  * <p/>It is usually preferable to write your JCR-based DAOs with Spring Modules's
  * JcrTemplate, offering benefits such as consistent data access exceptions
  * instead of RepositoryExceptions at the DAO layer. However, Spring's resource and
- * transaction management (and Dependency	Injection) will work for DAOs
+ * transaction management (and Dependency Injection) will work for DAOs
  * written against the plain JCR API too.
  *
  * <p/>Of course, you can still access the target Repository

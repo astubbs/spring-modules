@@ -15,56 +15,22 @@
  */
 package org.springmodules.jcr.jackrabbit;
 
-import java.lang.reflect.Field;
-
 import javax.jcr.Repository;
 
-import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.TransientRepository;
-import org.apache.jackrabbit.core.TransientRepository.RepositoryFactory;
 
 /**
  * FactoryBean for creating Jackrabbit's TransientRepository (i.e. repository are initialized for the
  * first session and closed once the last session is closed.
  * 
  * @author Costin Leau
+ * @author Colin Yates
  * @since 0.5
  */
 public class TransientRepositoryFactoryBean extends RepositoryFactoryBean {
-	private RepositoryFactory repositoryFactory;
 
-	/**
-	 * @return Returns the repositoryFactory.
-	 */
-	public RepositoryFactory getRepositoryFactory() {
-		return repositoryFactory;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springmodules.jcr.jackrabbit.RepositoryFactoryBean#createRepository()
-	 */
 	protected Repository createRepository() throws Exception {
-		// use given factory
-		if (repositoryFactory != null)
-			return new TransientRepository(repositoryFactory);
-
-		// fallback to discovered repository configuration
 		return new TransientRepository(getRepositoryConfig());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springmodules.jcr.jackrabbit.RepositoryFactoryBean#destroy()
-	 */
-	public void destroy() throws Exception {
-		// use introspection to call shutdown on the repo
-		Field repositoryField = TransientRepository.class.getDeclaredField("repository");
-		repositoryField.setAccessible(true);
-		JackrabbitRepository repo = (JackrabbitRepository) repositoryField.get(repository);
-		repo.shutdown();
 	}
 
 }

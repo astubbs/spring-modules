@@ -1,8 +1,8 @@
 /**
  * Created on Sep 8, 2005
  *
- * $Id: JackRabbitUserTransaction.java,v 1.2 2007/03/06 21:45:55 costin Exp $
- * $Revision: 1.2 $
+ * $Id: JackRabbitUserTransaction.java,v 1.3 2008/01/29 12:28:22 coliny Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr.jackrabbit.support;
 
@@ -16,7 +16,7 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.apache.jackrabbit.core.XASession;
+import org.apache.jackrabbit.api.XASession;
 
 /**
  * JackRabbit User transaction (based on the XA Resource returned by JackRabbit).

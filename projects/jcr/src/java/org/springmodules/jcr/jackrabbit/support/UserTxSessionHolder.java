@@ -1,15 +1,15 @@
 /**
  * Created on Sep 8, 2005
  *
- * $Id: UserTxSessionHolder.java,v 1.2 2006/03/23 14:24:27 costin Exp $
- * $Revision: 1.2 $
+ * $Id: UserTxSessionHolder.java,v 1.3 2008/01/29 12:28:22 coliny Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr.jackrabbit.support;
 
 import javax.jcr.Session;
 import javax.transaction.UserTransaction;
 
-import org.apache.jackrabbit.core.XASession;
+import org.apache.jackrabbit.api.XASession;
 import org.springmodules.jcr.SessionHolder;
 
 /**
