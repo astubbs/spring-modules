@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="springmodules-db4o-sample-pilot" default="run">
+<project name="spring-modules-db4o-sample-pilot" default="run">
     <property file="build.properties" />
     <property file="project.properties" />
     <property file="${common.build.dir}/build.properties" />
