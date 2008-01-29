@@ -9,25 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.opensymphony.workflow.query.Expression;
-import com.opensymphony.workflow.query.FieldExpression;
-import com.opensymphony.workflow.query.NestedExpression;
-import com.opensymphony.workflow.query.WorkflowExpressionQuery;
-import com.opensymphony.workflow.spi.Step;
-import com.opensymphony.workflow.spi.WorkflowEntry;
-import com.opensymphony.module.propertyset.PropertySet;
-import org.springmodules.workflow.osworkflow.OsWorkflowTemplate;
-
-import org.springmodules.workflow.osworkflow.OsWorkflowContextHolder;
-import org.springmodules.examples.workflow.osworkflow.service.DocumentApprovalWorkflow;
-
-import org.springmodules.examples.workflow.osworkflow.model.Document;
-
+import org.acegisecurity.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
-
-import net.sf.acegisecurity.context.ContextHolder;
+import org.springmodules.examples.workflow.osworkflow.model.Document;
+import org.springmodules.examples.workflow.osworkflow.service.DocumentApprovalWorkflow;
 
 /**
  * @author robh
@@ -76,7 +63,7 @@ public class DocumentApprovalController extends MultiActionController {
 	public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		session.invalidate();
-		ContextHolder.setContext(null);
+		SecurityContextHolder.setContext(null);
 		return new ModelAndView(new RedirectView("/index.jsp", true));
 	}
 }
