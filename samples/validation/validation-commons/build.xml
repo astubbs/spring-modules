@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="springmodules-validator-sample" default="war">
+<project name="spring-modules-validator-sample" default="war">
     <property file="build.properties" />
     <property file="project.properties" />
     <property file="${common.build.dir}/build.properties" />

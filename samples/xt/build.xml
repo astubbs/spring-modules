@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="springmodules-xt-sample" default="war">
+<project name="spring-modules-xt-sample" default="war">
   
   <property file="build.properties" />
   <property file="project.properties" />

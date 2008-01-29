@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="springmodules-jcr-sample" default="run">
+<project name="spring-modules-jcr-sample" default="run">
     <property file="build.properties" />
     <property file="project.properties" />
     <property file="${common.build.dir}/build.properties" />

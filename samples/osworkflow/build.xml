@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="springmodules-osworkflow-sample" default="war">
+<project name="spring-modules-osworkflow-sample" default="war">
     <property file="build.properties" />
     <property file="project.properties" />
     <property file="${common.build.dir}/build.properties" />
