@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-20085 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.BaseCommandController;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.validation.Validator;
 import org.springmodules.validation.valang.ValangValidator;
 
@@ -34,12 +36,16 @@ import org.springmodules.validation.valang.ValangValidator;
  * the the ModelAndView so that they are accessible to the custom tag
  * <code>ValangValidateTag</code>.
  * <p/>
- * <p>Does nothing if the intercepted handler is not an instance of
- * <code>BaseCommandController</code> or if the handler did not export a command object into the model. Obviously
- * the rules will only be picked up from all validators of type {@link ValangValidator}.
+ * <p>Does nothing if the intercepted handler is neither an instance of
+ * <code>BaseCommandController</code>, nor a proxied <code>BaseCommandController</code>.
+ * </p>
+ * <p>This will also do nothing if the handler did not export a command object
+ * into the model. Obviously the rules will only be picked up from all validators of type {@link ValangValidator}.
  *
  * @author Oliver Hutchison
  * @author Uri Boness
+ * @author Colin Yates
+ * 
  * @see ValangValidateTag
  * @see ValangValidator
  */
@@ -52,16 +58,14 @@ public class ValangRulesExportInterceptor extends HandlerInterceptorAdapter {
                            Object handler,
                            ModelAndView modelAndView) throws Exception {
 
-        if (!BaseCommandController.class.isInstance(handler)) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Handler '" + handler +
-                    "' is not an instance of BaseCommandController; no rules added to model");
-            }
-            return;
+        BaseCommandController controller = retrieveBaseCommandControllerIfPossible(handler);
+        if (controller == null) {
+        	if (logger.isDebugEnabled()) {
+        		logger.debug("Controller is of type " + controller.getClass() + " so ignoring");
+        	}
+        	return;
         }
-
-
-        BaseCommandController controller = (BaseCommandController) handler;
+        
         Map model = modelAndView.getModel();
         String commandName = controller.getCommandName();
         if (model == null || !model.containsKey(commandName)) {
@@ -87,4 +91,46 @@ public class ValangRulesExportInterceptor extends HandlerInterceptorAdapter {
         }
 
     }
+
+    /**
+     * Convert the specified <code>handler</code> to a {@link BaseCommandController} if possible.
+     * 
+     * <p>If the <code>handler</code> is type compatible with a <code>BaseCommandController</code>
+     * then it will simply be cast.
+     * </p>
+     * <p>If the <code>handler</code> is a Spring JDK (or CGLIB) proxy, then it will unravelled
+     * and returned (assuming the target is a <code>BaseCommandController</code>.
+     * </p>If neither of the above strategies work, <code>null</code> will be returned.
+     *   
+     * @param handler the handler to convert to a <code>BaseCommandController</code>.
+     * @return a <code>BaseCommandController</code> or <code>null</code> if <code>handler</code>
+     * 		   cannot be converted.
+     * @throws Exception 
+     */
+	private BaseCommandController retrieveBaseCommandControllerIfPossible(Object handler) throws Exception {
+		BaseCommandController baseCommandController = null;
+		
+		if (BaseCommandController.class.isAssignableFrom(handler.getClass())) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("handler is type compatible, simply cast");
+			}
+			baseCommandController = (BaseCommandController) handler;
+		} else if (AopUtils.isAopProxy(handler)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("handler is AOP proxy");
+			}
+			
+			Advised advisedObject = (Advised) handler;
+			Class proxiedClass = advisedObject.getTargetClass();
+			Object target = advisedObject.getTargetSource().getTarget();
+			
+			// convert (if possible) the target.
+			baseCommandController = retrieveBaseCommandControllerIfPossible(target);
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Cannot convert handler to BaseCommandController");
+		}
+		return baseCommandController;
+	}
 }
