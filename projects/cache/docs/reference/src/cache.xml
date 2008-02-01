@@ -631,7 +631,7 @@
       &lt;bean class=&quot;org.springmodules.cache.provider.jcs.JcsFlushingModel&quot;&gt;
         &lt;property name=&quot;cacheStructs&quot;&gt;
           &lt;list&gt;
-            &lt;bean class=&quot;org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct&quot;&gt;
+            &lt;bean class=&quot;org.springmodules.cache.provider.jcs.JcsFlushingModel$CacheStruct&quot;&gt;
               &lt;property name=&quot;cacheName&quot; value=&quot;someCache&quot; /&gt;
               &lt;property name=&quot;groups&quot; value=&quot;group1,group2&quot; /&gt;
             &lt;/bean&gt;
