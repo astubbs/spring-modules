@@ -208,7 +208,9 @@ XT.taconite.AjaxRequest = function(url) {
         }
         if(ajaxRequest.getXMLHttpRequestObject().status != 200) {
             var errorHandler = ajaxRequest.getErrorHandler();
-            errorHandler(ajaxRequest);
+            if (errorHandler) {
+                errorHandler(ajaxRequest);
+            }
             return;
         }
         try {

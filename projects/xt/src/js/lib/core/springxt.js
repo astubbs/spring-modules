@@ -1,7 +1,7 @@
 var XT = {};
 
 
-XT.version = 20071123;
+XT.version = 20080202;
 
 
 XT.defaultLoadingElementId = null;
@@ -395,7 +395,9 @@ XT.taconite.AjaxRequest = function(url) {
         }
         if(ajaxRequest.getXMLHttpRequestObject().status != 200) {
             var errorHandler = ajaxRequest.getErrorHandler();
-            errorHandler(ajaxRequest);
+            if (errorHandler) {
+                errorHandler(ajaxRequest);
+            }
             return;
         }
         try {

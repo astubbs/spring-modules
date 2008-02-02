@@ -1,5 +1,5 @@
 
-var XT={};XT.version=20071123;XT.defaultLoadingElementId=null;XT.defaultLoadingImage=null;XT.defaultErrorHandler=null;XT.doAjaxAction=function(eventId,sourceElement,serverParams,clientParams){if(!clientParams){clientParams={};}
+var XT={};XT.version=20080202;XT.defaultLoadingElementId=null;XT.defaultLoadingImage=null;XT.defaultErrorHandler=null;XT.doAjaxAction=function(eventId,sourceElement,serverParams,clientParams){if(!clientParams){clientParams={};}
 if((!clientParams.loadingElementId)||(!clientParams.loadingImage)){clientParams.loadingElementId=this.defaultLoadingElementId;clientParams.loadingImage=this.defaultLoadingImage;}
 if(!clientParams.errorHandler){clientParams.errorHandler=this.defaultErrorHandler;}
 var ajaxClient=new XT.ajax.Client();if(clientParams.formName){return ajaxClient.doAjaxAction(eventId,document.forms[clientParams.formName],sourceElement,serverParams,clientParams);}else if(clientParams.formId){return ajaxClient.doAjaxAction(eventId,document.getElementById(clientParams.formId),sourceElement,serverParams,clientParams);}else{return ajaxClient.doAjaxAction(eventId,document.forms[0],sourceElement,serverParams,clientParams);}};XT.doAjaxSubmit=function(eventId,sourceElement,serverParams,clientParams){if(!clientParams){clientParams={};}
@@ -30,7 +30,8 @@ xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");xml
 catch(exception){if(this.getErrorHandler()){var errorHandler=this.getErrorHandler();errorHandler(this,exception);}
 else{throw exception;}}
 if(!async){handleStateChange();}};function handleStateChange(){if(ajaxRequest.getXMLHttpRequestObject().readyState!=4){return;}
-if(ajaxRequest.getXMLHttpRequestObject().status!=200){var errorHandler=ajaxRequest.getErrorHandler();errorHandler(ajaxRequest);return;}
+if(ajaxRequest.getXMLHttpRequestObject().status!=200){var errorHandler=ajaxRequest.getErrorHandler();if(errorHandler){errorHandler(ajaxRequest);}
+return;}
 try{var nodes=null;if(ajaxRequest.getXMLHttpRequestObject().responseXML!=null){nodes=ajaxRequest.getXMLHttpRequestObject().responseXML.documentElement.childNodes;}
 else{nodes=new Array();}
 var parser=new XT.taconite.XhtmlToDOMParser();for(var i=0;i<nodes.length;i++){if(nodes[i].nodeType!=1){continue;}
