@@ -16,7 +16,7 @@
   
   <target name="compile.post">
     
-    <concat destfile="${basedir}/src/js/lib/core/springxt.js" force="no">
+    <concat destfile="${basedir}/src/js/lib/core/springxt.js" force="yes">
       <filelist dir="${basedir}/src/js/" 
         files="springxt-core.js, springxt-taconite.js, springxt-util.js"/>
     </concat>
