@@ -2,14 +2,14 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
     "http://www.springframework.org/dtd/spring-beans.dtd">
 <!--
-    $Id: applicationContext-db4o.xml,v 1.1 2007/02/27 16:42:14 costin Exp $
+    $Id: applicationContext-db4o.xml,v 1.2 2008/02/05 10:50:27 coliny Exp $
     -->    
 <beans>
 
 	<!-- not used -->
 	<bean id="server" class="org.springmodules.db4o.ObjectServerFactoryBean">
 		<property name="userAccessLocation" value="user-access.properties"/>
-		<property name="databaseFile" value="file://./db4o.db"/>
+		<property name="databaseFile" value="db4o.db"/>
 		<property name="port" value="0"/>
 	</bean>
 	
