@@ -23,7 +23,6 @@
 	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-dao.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-jdbc.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-modules-jsr94.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-support.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jsr94"/>
 	<classpathentry kind="output" path="bin"/>
