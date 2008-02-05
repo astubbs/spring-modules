@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/etc/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/global/antlr.jar"/>
+	<classpathentry kind="lib" path="lib/global/aopalliance.jar"/>
+	<classpathentry kind="lib" path="lib/global/cglib-nodep.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-base.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-core.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-io.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-java.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-jsr94.jar"/>
+	<classpathentry kind="lib" path="lib/global/drools-smf.jar"/>
+	<classpathentry kind="lib" path="lib/global/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/global/janino.jar"/>
+	<classpathentry kind="lib" path="lib/global/jsr94.jar"/>
+	<classpathentry kind="lib" path="lib/global/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-aop.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-dao.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-jdbc.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-modules-jsr94.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-support.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jsr94"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
