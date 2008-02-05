@@ -34,7 +34,7 @@ import org.springmodules.cache.FlushingModel;
  * 
  * @author Alex Ruiz
  */
-public interface CacheProviderFacade extends InitializingBean {
+public interface CacheProviderFacade {
 
   /**
    * Cancels the update being made to the cache.

@@ -20,6 +20,7 @@ package org.springmodules.cache.provider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.CacheException;
@@ -37,7 +38,7 @@ import java.io.Serializable;
  * @author Alex Ruiz
  */
 public abstract class AbstractCacheProviderFacade implements
-		CacheProviderFacade {
+		CacheProviderFacade, InitializingBean  {
 
 	/**
 	 * Logger available to subclasses
