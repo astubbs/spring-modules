@@ -36,3 +36,5 @@ Feed-XT uses the Apache Ant and Ivy combo build system, featuring automatic depe
 To build Feed-XT, just type "ant" in your console under the Feed-XT home directory; you'll need an active internet connection, because Ivy will automatically download and install Feed-XT dependencies.
 To deploy it, just start your Apach Tomcat server, go under the Feed-XT home directory and type "ant tomcat-redeploy".
 To enjoy it .. point your browser to "http://your_host:your_port/feed-xt" ... and that's all!
+
+WARNING : the Feed-XT build and deployment procedure described above doesn't work under Apache Tomcat 6.X.
