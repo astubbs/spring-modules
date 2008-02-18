@@ -3,7 +3,8 @@
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="src" path="src/etc/test-resources"/>
-	<classpathentry kind="lib" path="tools/jsmin.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/global/cglib-nodep.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-collections.jar"/>
@@ -15,11 +16,10 @@
 	<classpathentry kind="lib" path="lib/global/spring.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-modules-template.jar"/>
-	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/test/jmock.jar"/>
 	<classpathentry kind="lib" path="lib/test/jmock-cglib.jar"/>
 	<classpathentry kind="lib" path="lib/test/junit.jar"/>
 	<classpathentry kind="lib" path="lib/test/xmlunit.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
