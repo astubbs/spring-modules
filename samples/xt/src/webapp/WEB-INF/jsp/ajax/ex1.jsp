@@ -36,7 +36,7 @@
                 
                 <tr>
                     <td>Press to append a random number :</td>
-                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('appendNumber', this, null, {'loadingElementId' : 'loading1', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('appendNumber', this, null, {'clearQueryString' : true, 'loadingElementId' : 'loading1', 'loadingImage' : '../images/loading.gif'});"></td>
                     <td><div id="loading1"></div></td>
                 </tr>
                 <tr>

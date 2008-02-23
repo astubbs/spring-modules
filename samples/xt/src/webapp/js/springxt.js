@@ -1,7 +1,7 @@
 var XT = {};
 
 
-XT.version = 20071123;
+XT.version = 20080223;
 
 
 XT.defaultLoadingElementId = null;
@@ -25,7 +25,13 @@ XT.doAjaxAction = function(eventId, sourceElement, serverParams, clientParams) {
         clientParams.errorHandler = this.defaultErrorHandler;
     }
     
-    var ajaxClient = new XT.ajax.Client();
+    var ajaxClient = null;
+    
+    if (clientParams.clearQueryString && clientParams.clearQueryString == true && document.URL.indexOf("?") != -1) {
+        ajaxClient = new XT.ajax.Client(document.URL.substring(0, document.URL.indexOf("?")));
+    } else {
+        ajaxClient = new XT.ajax.Client(document.URL);
+    }
     
     if (clientParams.formName) {
         return ajaxClient.doAjaxAction(eventId, document.forms[clientParams.formName], sourceElement, serverParams, clientParams);
@@ -49,7 +55,13 @@ XT.doAjaxSubmit = function(eventId, sourceElement, serverParams, clientParams) {
         clientParams.errorHandler = this.defaultErrorHandler;
     }
     
-    var ajaxClient = new XT.ajax.Client();
+    var ajaxClient = null;
+    
+    if (clientParams.clearQueryString && clientParams.clearQueryString == true && document.URL.indexOf("?") != -1) {
+        ajaxClient = new XT.ajax.Client(document.URL.substring(0, document.URL.indexOf("?")));
+    } else {
+        ajaxClient = new XT.ajax.Client(document.URL);
+    }
     
     if (clientParams.formName) {
         return ajaxClient.doAjaxSubmit(eventId, document.forms[clientParams.formName], sourceElement, serverParams, clientParams);
@@ -64,7 +76,9 @@ XT.doAjaxSubmit = function(eventId, sourceElement, serverParams, clientParams) {
 XT.ajax = {};
 
 
-XT.ajax.Client = function() {
+XT.ajax.Client = function(url) {
+    
+    var requestUrl = url
     
     var ajaxParameter = "ajax-request";
     var eventParameter = "event-id";
@@ -76,7 +90,7 @@ XT.ajax.Client = function() {
         var ajaxRequestType = "ajax-action";
         var queryString = prepareQueryString(ajaxRequestType, eventId, sourceElement, serverParams);
         
-        var ajaxRequest = new XT.taconite.AjaxRequest(document.URL);
+        var ajaxRequest = new XT.taconite.AjaxRequest(requestUrl);
         
         configureRequest(ajaxRequest, clientParams);
         
@@ -92,7 +106,7 @@ XT.ajax.Client = function() {
         if (clientParams && clientParams.enableUpload && clientParams.enableUpload == true) {
             var queryParameters = prepareQueryParameters(ajaxRequestType, eventId, sourceElement, serverParams);
             
-            var iframeRequest = new XT.taconite.IFrameRequest(sourceForm, document.URL, queryParameters);
+            var iframeRequest = new XT.taconite.IFrameRequest(sourceForm, requestUrl, queryParameters);
             
             configureRequest(iframeRequest, clientParams);
             
@@ -100,7 +114,7 @@ XT.ajax.Client = function() {
         } else {
             var queryString = prepareQueryString(ajaxRequestType, eventId, sourceElement, serverParams);
             
-            var ajaxRequest = new XT.taconite.AjaxRequest(document.URL);
+            var ajaxRequest = new XT.taconite.AjaxRequest(requestUrl);
             
             configureRequest(ajaxRequest, clientParams);
             
@@ -395,7 +409,9 @@ XT.taconite.AjaxRequest = function(url) {
         }
         if(ajaxRequest.getXMLHttpRequestObject().status != 200) {
             var errorHandler = ajaxRequest.getErrorHandler();
-            errorHandler(ajaxRequest);
+            if (errorHandler) {
+                errorHandler(ajaxRequest);
+            }
             return;
         }
         try {
