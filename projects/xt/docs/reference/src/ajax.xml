@@ -137,7 +137,8 @@
           <para>A <ulink
           url="http://www.json.org/"><citetitle>JSON</citetitle></ulink>
           object containing extra parameters for configuring the client side
-          Ajax call (c<emphasis>lient-parameters</emphasis>, optional).</para>
+          Ajax request (c<emphasis>lient-parameters</emphasis>,
+          optional).</para>
         </listitem>
       </itemizedlist>
 
@@ -984,7 +985,7 @@ XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
       <title id="handling-js-errors-title">Handling Javascript errors</title>
 
       <para>By default, Javascript errors occurring during client-side Ajax
-      request processing doesn't get handled.</para>
+      request processing don't get handled.</para>
 
       <para>However, you can handle them by configuring a proper <emphasis
       role="bold">error handler function. </emphasis></para>
@@ -1053,8 +1054,9 @@ XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
           role="bold">{'enableUpload' : true}</emphasis>)</programlisting>
 
       <para>You have to set the <emphasis>enableUpload</emphasis> Ajax client
-      parameter to <emphasis>true</emphasis>: that's all. XT Ajax will
-      transparently do the rest.</para>
+      parameter to <emphasis>true<emphasis> (as a boolean
+      value)</emphasis></emphasis>: that's all. XT Ajax will transparently do
+      the rest.</para>
     </sect3>
   </sect2>
 
@@ -1123,6 +1125,27 @@ XT.doAjaxSubmit(event-id, source-element, server-parameters, <emphasis
           classes.</para>
         </listitem>
       </itemizedlist>
+    </sect3>
+
+    <sect3>
+      <title>Tweaking your Ajax request</title>
+
+      <para>In previous sections you've seen how to enable several XT Ajax
+      features by setting the proper client parameter when sending the Ajax
+      request. Here is a list of additional client parameters to set for
+      adding more tweaks to your request.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>clearQueryString</term>
+
+          <listitem>
+            <para>Set this parameter to <emphasis>true</emphasis> (as a
+            boolean value) to remove all current GET parameters from the
+            request query string. </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
     </sect3>
   </sect2>
 
