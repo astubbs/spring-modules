@@ -345,9 +345,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 
 	public void updateDocument(Term identifierTerm, DocumentModifier documentModifier, Analyzer analyzer) {
 		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		//TODO: à revoir
 		LuceneSearcher searcher = null;
-		Document document = null;
 		Document updatedDocument = null;
 		try {
 			searcher = reader.createSearcher();
