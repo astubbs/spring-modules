@@ -11,6 +11,7 @@
 	-->
 
 	<definition name="baseLayout" path="/jsp/layout/baseLayout.jsp">
+		<put name="title" value="/jsp/layout/title.jsp" />
 		<put name="menu" value="/jsp/layout/menu.jsp" />
 	</definition>
 
@@ -20,59 +21,53 @@
 
 	<!-- index definition -->
 	<definition name="welcome" extends="baseLayout">
-		<put name="title" value="Welcome" />
 		<put name="body" value="/jsp/welcome.jsp" />
 	</definition>
 
 	<!-- exception -->
 	<definition name="error" extends="baseLayout">
-		<put name="title" value="Error" />
 		<put name="body" value="/jsp/error.jsp" />
 	</definition>
 
 	<!-- indexing -->
 
 	<definition name="indexing/documentAdded" extends="baseLayout">
-		<put name="title" value="Document added" />
 		<put name="body" value="/jsp/indexing/documentAdded.jsp" />
 	</definition>
 
 	<definition name="indexing/documentNotAdded" extends="baseLayout">
-		<put name="title" value="Document not added" />
 		<put name="body" value="/jsp/indexing/documentNotAdded.jsp" />
 	</definition>
 
+	<definition name="indexing/documentAdded" extends="baseLayout">
+		<put name="body" value="/jsp/indexing/documentAdded.jsp" />
+	</definition>
+
 	<definition name="indexing/indexInfos" extends="baseLayout">
-		<put name="title" value="Index informations" />
 		<put name="body" value="/jsp/indexing/indexInfos.jsp" />
 	</definition>
 
 	<!-- search -->
 
 	<definition name="search/documentInformations" extends="baseLayout">
-		<put name="title" value="Document informations" />
 		<put name="body" value="/jsp/search/documentInformations.jsp" />
 	</definition>
 
 	<definition name="search/searchForm" extends="baseLayout">
-		<put name="title" value="Search in the index" />
 		<put name="body" value="/jsp/search/searchForm.jsp" />
 	</definition>
 
 	<definition name="search/results" extends="baseLayout">
-		<put name="title" value="Results of the search" />
 		<put name="body" value="/jsp/search/results.jsp" />
 	</definition>
 
 	<!-- categories -->
 
 	<definition name="category/categories" extends="baseLayout">
-		<put name="title" value="Categories" />
 		<put name="body" value="/jsp/category/categories.jsp" />
 	</definition>
 
 	<definition name="category/category" extends="baseLayout">
-		<put name="title" value="Category informations" />
 		<put name="body" value="/jsp/category/category.jsp" />
 	</definition>
 

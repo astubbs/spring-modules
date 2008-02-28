@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       				http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	           http://www.springframework.org/schema/aop
+           			http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+	           http://www.springframework.org/schema/tx
+           			http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+           	   http://www.springframework.org/schema/jee
+           			http://www.springframework.org/schema/jee/spring-jee-2.5.xsd">
+
+	<!--
+	     DATASOURCES
+	-->
+
+	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/documents"/>
+
+    <!-- bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+		<property name="url" value="jdbc:hsqldb:hsql://localhost:9001"/>
+		<property name="username" value="sa"/>
+		<property name="password" value=""/>
+    </bean -->
+
+	<!--
+	     INDEXES
+	-->
+
+    <bean id="fsDirectory" class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean">
+    	<property name="location" value="file:///home/templth/tmp/lucene"/>
+    	<property name="create" value="true"/>
+    </bean>
+
+	<bean id="targetIndexFactory" class="org.springmodules.lucene.index.support.SimpleIndexFactoryBean">
+        <property name="directory" ref="fsDirectory"/>
+        <property name="analyzer">
+            <bean class="org.apache.lucene.analysis.SimpleAnalyzer"/>
+        </property>
+        <property name="resolveLock" value="true"/>
+		<property name="create" value="true"/>
+	</bean>
+
+	<bean id="indexFactory" class="org.springmodules.lucene.index.factory.concurrent.LockIndexFactory">
+		<property name="targetIndexFactory" ref="targetIndexFactory"/>
+	</bean>
+
+	<!--
+	     INDEXING
+	-->
+
+	<bean id="documentHandlerManager" class="org.springmodules.lucene.index.document.handler.DocumentHandlerManagerFactoryBean">
+		<property name="documentHandlerManagerClass" value="org.springmodules.lucene.index.document.handler.file.ExtensionDocumentHandlerManager"/>
+		<property name="documentMatchingClass" value="org.springmodules.lucene.index.document.handler.file.ExtensionDocumentMatching"/>
+	</bean>
+
+	<bean id="indexAccessorDao" class="org.springmodules.samples.lucene.dao.indexing.IndexAccessorDaoImpl">
+    	<property name="indexFactory" ref="indexFactory"/>
+    	<property name="documentHandlerManager" ref="documentHandlerManager"/>
+	</bean>
+
+	<bean id="documentIdDao" class="org.springmodules.samples.lucene.dao.indexing.DocumentIdDaoImpl">
+    	<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<bean id="indexAccessorService" class="org.springmodules.samples.lucene.service.indexing.IndexAccessorServiceImpl">
+    	<property name="documentIdDao" ref="documentIdDao"/>
+    	<property name="indexAccessorDao" ref="indexAccessorDao"/>
+	</bean>
+
+	<!--
+	     SEARCHING
+	-->
+
+    <!-- bean id="searcherFactory" class="org.springmodules.lucene.search.factory.SimpleSearcherFactory">
+        <property name="directory" ref="fsDirectory"/>
+    </bean -->
+    
+    <bean id="searcherFactory" class="org.springmodules.lucene.search.factory.SingleSearcherFactory">
+        <property name="directory" ref="fsDirectory"/>
+    </bean>
+
+    <!--bean id="multiSearcherFactory" class="org.springmodules.lucene.search.support.MultipleSearcherFactory">
+    	<property name="directories">
+    		<list>
+	    	    <ref local="ramDirectory"/>
+    		    <ref local="fsDirectory"/>
+    		</list>
+    	</property>
+    </bean-->
+
+	<bean id="searchService" class="org.springmodules.samples.lucene.service.search.SearchServiceImpl">
+        <!--property name="searcherFactory" ref="multiSearcherFactory" /-->
+        <property name="searcherFactory" ref="searcherFactory"/>
+        <property name="analyzer">
+            <bean class="org.apache.lucene.analysis.SimpleAnalyzer"/>
+        </property>
+	</bean>
+
+	<!--
+	     CATEGORIES
+	-->
+
+	<bean id="categoryDao" class="org.springmodules.samples.lucene.dao.category.CategoryDaoImpl">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<bean id="categoryService" class="org.springmodules.samples.lucene.service.category.CategoryServiceImpl">
+		<property name="categoryDao" ref="categoryDao"/>
+	</bean>
+
+	<!--
+	     TRANSACTIONS
+	-->
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<aop:config>
+        <aop:advisor pointcut="execution(* *..*ServiceImpl.*(..))" advice-ref="txAdvice"/>
+    </aop:config>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="addDocument*"/>
+            <tx:method name="*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+</beans>
