@@ -40,12 +40,15 @@ import org.springmodules.samples.lucene.bean.search.SearchResult;
  */
 public class SearchServiceImpl extends LuceneSearchSupport implements SearchService {
 
+	/**
+	 * 
+	 */
 	public List search(final String fieldName,final String textToSearch) {
-		List results = getLuceneSearcherTemplate().search(new ParsedQueryCreator() {
+		return getLuceneSearcherTemplate().search(new ParsedQueryCreator() {
 			public QueryParams configureQuery() {
 				return new QueryParams(fieldName, textToSearch);
 			}
-		},new HitExtractor() {
+		}, new HitExtractor() {
 			public Object mapHit(int id, Document document, float score) {
 				if( document.get("request")!=null ) {
 					return new SearchResult(document.get("id"), document.get("request"),
@@ -56,19 +59,17 @@ public class SearchServiceImpl extends LuceneSearchSupport implements SearchServ
 				}
 			}
 		});
-		for(Iterator i = results.iterator(); i.hasNext(); ) {
-			SearchResult result = (SearchResult)i.next();
-			System.out.println(result.getId()+": "+result.getSource());
-		}
-		return results;
 	}
 
+	/**
+	 * 
+	 */
 	public List getDocumentFields(final String fieldIdentifier,final String fieldValue) {
 		List fieldsDocuments = getLuceneSearcherTemplate().search(new QueryCreator() {
 			public Query createQuery(Analyzer analyzer) throws ParseException {
 				return new TermQuery(new Term(fieldIdentifier, fieldValue));
 			}
-		},new HitExtractor() {
+		}, new HitExtractor() {
 			public Object mapHit(int id, Document document, float score) {
 				List fields = new ArrayList();
 				for(Enumeration e = document.fields(); e.hasMoreElements();) {
