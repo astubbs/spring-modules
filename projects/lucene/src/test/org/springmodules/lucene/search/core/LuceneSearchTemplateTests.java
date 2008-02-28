@@ -16,6 +16,7 @@
 
 package org.springmodules.lucene.search.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -70,7 +71,6 @@ public class LuceneSearchTemplateTests extends AbstractLuceneTestCase {
 		searcherFactoryControl.setReturnValue(searcher, 1);
 		
 		queryCreator.createQuery(analyzer);
-		System.out.println("query = "+query);
 		queryCreatorControl.setReturnValue(query, 1);
 		
 		searcher.search(query);
@@ -119,7 +119,7 @@ public class LuceneSearchTemplateTests extends AbstractLuceneTestCase {
 	}
 
 	/*
-	 * Test for List search(QueryCreator, HitExtractor)
+	 * Test for List search(QueryCreator, HitExtractor) with ParsedQuery
 	 */
 	final public void testSearchParsedQueryCreatorHitExtractor() throws Exception {
 		Analyzer analyzer = new SimpleAnalyzer();
@@ -196,6 +196,74 @@ public class LuceneSearchTemplateTests extends AbstractLuceneTestCase {
 	}
 
 	/*
+	 * Test for List search(QueryCreator, HitExtractor, QueryResultCreator)
+	 */
+	final public void testSearchQueryCreatorHitExtractorQueryResultCreator() throws Exception {
+		Analyzer analyzer = new SimpleAnalyzer();
+		MockControl searcherFactoryControl = MockControl.createStrictControl(SearcherFactory.class);
+		SearcherFactory searcherFactory = (SearcherFactory)searcherFactoryControl.getMock();
+		MockControl searcherControl = MockControl.createStrictControl(LuceneSearcher.class);
+		LuceneSearcher searcher = (LuceneSearcher)searcherControl.getMock();
+		MockControl queryCreatorControl = MockControl.createStrictControl(QueryCreator.class);
+		QueryCreator queryCreator = (QueryCreator)queryCreatorControl.getMock();
+		MockControl hitsControl = MockControl.createStrictControl(LuceneHits.class);
+		LuceneHits hits = (LuceneHits)hitsControl.getMock();
+		MockControl hitExtractorControl = MockControl.createStrictControl(HitExtractor.class);
+		HitExtractor hitExtractor = (HitExtractor)hitExtractorControl.getMock();
+		MockControl queryResultCreatorControl = MockControl.createStrictControl(QueryResultCreator.class);
+		QueryResultCreator queryResultCreator = (QueryResultCreator)queryResultCreatorControl.getMock();
+
+		//query
+		Query query = new TermQuery(new Term("field", "sample"));
+		
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
+		Object obj = new Object();
+
+		searcherFactory.getSearcher();
+		searcherFactoryControl.setReturnValue(searcher, 1);
+		
+		queryCreator.createQuery(analyzer);
+		queryCreatorControl.setReturnValue(query, 1);
+		
+		searcher.search(query);
+		searcherControl.setReturnValue(hits, 1);
+		
+		queryResultCreator.createResult(hits, hitExtractor);
+		List ret = new ArrayList();
+		ret.add(obj);
+		queryResultCreatorControl.setReturnValue(ret);
+
+		searcher.close();
+		searcherControl.setVoidCallable(1);
+
+		searcherFactoryControl.replay();
+		searcherControl.replay();
+		queryCreatorControl.replay();
+		hitExtractorControl.replay();
+		hitsControl.replay();
+		queryResultCreatorControl.replay();
+		
+		//Lucene template
+		LuceneSearchTemplate template = new DefaultLuceneSearchTemplate(searcherFactory, analyzer);
+		List results = template.search(queryCreator, hitExtractor, queryResultCreator);
+
+		searcherFactoryControl.verify();
+		searcherControl.verify();
+		queryCreatorControl.verify();
+		hitExtractorControl.verify();
+		hitsControl.verify();
+		queryResultCreatorControl.verify();
+		
+		assertEquals(results.size(), 1);
+		assertEquals(results.get(0), obj);
+		
+	}
+
+	/*
 	 * Test for List search(QueryCreator, HitExtractor, Filter)
 	 */
 	final public void testSearchQueryCreatorHitExtractorFilter() throws Exception {
@@ -229,7 +297,6 @@ public class LuceneSearchTemplateTests extends AbstractLuceneTestCase {
 		searcherFactoryControl.setReturnValue(searcher, 1);
 		
 		queryCreator.createQuery(analyzer);
-		System.out.println("query = "+query);
 		queryCreatorControl.setReturnValue(query, 1);
 		
 		searcher.search(query, filter);
@@ -277,6 +344,77 @@ public class LuceneSearchTemplateTests extends AbstractLuceneTestCase {
 	}
 
 	/*
+	 * Test for List search(QueryCreator, HitExtractor, QueryResultCreator, Filter)
+	 */
+	final public void testSearchQueryCreatorHitExtractorQueryResultCreatorFilter() throws Exception {
+		Analyzer analyzer = new SimpleAnalyzer();
+		MockControl searcherFactoryControl = MockControl.createStrictControl(SearcherFactory.class);
+		SearcherFactory searcherFactory = (SearcherFactory)searcherFactoryControl.getMock();
+		MockControl searcherControl = MockControl.createStrictControl(LuceneSearcher.class);
+		LuceneSearcher searcher = (LuceneSearcher)searcherControl.getMock();
+		MockControl queryCreatorControl = MockControl.createStrictControl(QueryCreator.class);
+		QueryCreator queryCreator = (QueryCreator)queryCreatorControl.getMock();
+		MockControl hitsControl = MockControl.createStrictControl(LuceneHits.class);
+		LuceneHits hits = (LuceneHits)hitsControl.getMock();
+		MockControl hitExtractorControl = MockControl.createStrictControl(HitExtractor.class);
+		HitExtractor hitExtractor = (HitExtractor)hitExtractorControl.getMock();
+		MockControl queryResultCreatorControl = MockControl.createStrictControl(QueryResultCreator.class);
+		QueryResultCreator queryResultCreator = (QueryResultCreator)queryResultCreatorControl.getMock();
+
+		//query
+		Query query = new TermQuery(new Term("field", "sample"));
+		
+		//filter
+		TermQuery filterQuery = new TermQuery(new Term("filter", "another"));
+		Filter filter = new QueryFilter(filterQuery);
+		
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
+		Object obj = new Object();
+
+		searcherFactory.getSearcher();
+		searcherFactoryControl.setReturnValue(searcher, 1);
+		
+		queryCreator.createQuery(analyzer);
+		queryCreatorControl.setReturnValue(query, 1);
+		
+		searcher.search(query, filter);
+		searcherControl.setReturnValue(hits, 1);
+
+		queryResultCreator.createResult(hits, hitExtractor);
+		List ret = new ArrayList();
+		ret.add(obj);
+		queryResultCreatorControl.setReturnValue(ret);
+
+		searcher.close();
+		searcherControl.setVoidCallable(1);
+
+		searcherFactoryControl.replay();
+		searcherControl.replay();
+		queryCreatorControl.replay();
+		hitExtractorControl.replay();
+		hitsControl.replay();
+		queryResultCreatorControl.replay();
+		
+		//Lucene template
+		LuceneSearchTemplate template = new DefaultLuceneSearchTemplate(searcherFactory, analyzer);
+		List results = template.search(queryCreator, hitExtractor, queryResultCreator, filter);
+
+		searcherFactoryControl.verify();
+		searcherControl.verify();
+		queryCreatorControl.verify();
+		hitExtractorControl.verify();
+		hitsControl.verify();
+		queryResultCreatorControl.verify();
+		
+		assertEquals(results.size(), 1);
+		assertEquals(results.get(0), obj);
+	}
+
+	/*
 	 * Test for List search(QueryCreator, HitExtractor, Sort)
 	 */
 	final public void testSearchQueryCreatorHitExtractorSort() throws Exception {
@@ -309,7 +447,6 @@ public class LuceneSearchTemplateTests extends AbstractLuceneTestCase {
 		searcherFactoryControl.setReturnValue(searcher, 1);
 		
 		queryCreator.createQuery(analyzer);
-		System.out.println("query = "+query);
 		queryCreatorControl.setReturnValue(query, 1);
 		
 		searcher.search(query, sort);
@@ -357,6 +494,76 @@ public class LuceneSearchTemplateTests extends AbstractLuceneTestCase {
 	}
 
 	/*
+	 * Test for List search(QueryCreator, HitExtractor, QueryResultCreator, Sort)
+	 */
+	final public void testSearchQueryCreatorHitExtractorQueryResultCreatorSort() throws Exception {
+		Analyzer analyzer = new SimpleAnalyzer();
+		MockControl searcherFactoryControl = MockControl.createStrictControl(SearcherFactory.class);
+		SearcherFactory searcherFactory = (SearcherFactory)searcherFactoryControl.getMock();
+		MockControl searcherControl = MockControl.createStrictControl(LuceneSearcher.class);
+		LuceneSearcher searcher = (LuceneSearcher)searcherControl.getMock();
+		MockControl queryCreatorControl = MockControl.createStrictControl(QueryCreator.class);
+		QueryCreator queryCreator = (QueryCreator)queryCreatorControl.getMock();
+		MockControl hitsControl = MockControl.createStrictControl(LuceneHits.class);
+		LuceneHits hits = (LuceneHits)hitsControl.getMock();
+		MockControl hitExtractorControl = MockControl.createControl(HitExtractor.class);
+		HitExtractor hitExtractor = (HitExtractor)hitExtractorControl.getMock();
+		MockControl queryResultCreatorControl = MockControl.createStrictControl(QueryResultCreator.class);
+		QueryResultCreator queryResultCreator = (QueryResultCreator)queryResultCreatorControl.getMock();
+
+		//query
+		Query query = new TermQuery(new Term("field", "sample"));
+		
+		//sort
+		Sort sort = new Sort("sort");
+		
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
+		Object obj = new Object();
+
+		searcherFactory.getSearcher();
+		searcherFactoryControl.setReturnValue(searcher, 1);
+		
+		queryCreator.createQuery(analyzer);
+		queryCreatorControl.setReturnValue(query, 1);
+		
+		searcher.search(query, sort);
+		searcherControl.setReturnValue(hits, 1);
+
+		queryResultCreator.createResult(hits, hitExtractor);
+		List ret = new ArrayList();
+		ret.add(obj);
+		queryResultCreatorControl.setReturnValue(ret);
+
+		searcher.close();
+		searcherControl.setVoidCallable(1);
+
+		searcherFactoryControl.replay();
+		searcherControl.replay();
+		queryCreatorControl.replay();
+		hitExtractorControl.replay();
+		hitsControl.replay();
+		queryResultCreatorControl.replay();
+		
+		//Lucene template
+		LuceneSearchTemplate template = new DefaultLuceneSearchTemplate(searcherFactory, analyzer);
+		List results = template.search(queryCreator, hitExtractor, queryResultCreator, sort);
+
+		searcherFactoryControl.verify();
+		searcherControl.verify();
+		queryCreatorControl.verify();
+		hitExtractorControl.verify();
+		hitsControl.verify();
+		queryResultCreatorControl.verify();
+		
+		assertEquals(results.size(), 1);
+		assertEquals(results.get(0), obj);
+	}
+
+	/*
 	 * Test for List search(QueryCreator, HitExtractor, Filter, Sort)
 	 */
 	final public void testSearchQueryCreatorHitExtractorFilterSort() throws Exception {
@@ -393,7 +600,6 @@ public class LuceneSearchTemplateTests extends AbstractLuceneTestCase {
 		searcherFactoryControl.setReturnValue(searcher, 1);
 		
 		queryCreator.createQuery(analyzer);
-		System.out.println("query = "+query);
 		queryCreatorControl.setReturnValue(query, 1);
 		
 		searcher.search(query, filter, sort);
@@ -435,6 +641,80 @@ public class LuceneSearchTemplateTests extends AbstractLuceneTestCase {
 		queryCreatorControl.verify();
 		hitExtractorControl.verify();
 		hitsControl.verify();
+		
+		assertEquals(results.size(), 1);
+		assertEquals(results.get(0), obj);
+	}
+
+	/*
+	 * Test for List search(QueryCreator, HitExtractor, QueryResultCreator, Filter, Sort)
+	 */
+	final public void testSearchQueryCreatorHitExtractorQueryResultCreatorFilterSort() throws Exception {
+		Analyzer analyzer = new SimpleAnalyzer();
+		MockControl searcherFactoryControl = MockControl.createStrictControl(SearcherFactory.class);
+		SearcherFactory searcherFactory = (SearcherFactory)searcherFactoryControl.getMock();
+		MockControl searcherControl = MockControl.createStrictControl(LuceneSearcher.class);
+		LuceneSearcher searcher = (LuceneSearcher)searcherControl.getMock();
+		MockControl queryCreatorControl = MockControl.createStrictControl(QueryCreator.class);
+		QueryCreator queryCreator = (QueryCreator)queryCreatorControl.getMock();
+		MockControl hitsControl = MockControl.createStrictControl(LuceneHits.class);
+		LuceneHits hits = (LuceneHits)hitsControl.getMock();
+		MockControl hitExtractorControl = MockControl.createStrictControl(HitExtractor.class);
+		HitExtractor hitExtractor = (HitExtractor)hitExtractorControl.getMock();
+		MockControl queryResultCreatorControl = MockControl.createStrictControl(QueryResultCreator.class);
+		QueryResultCreator queryResultCreator = (QueryResultCreator)queryResultCreatorControl.getMock();
+
+		//query
+		Query query = new TermQuery(new Term("field", "sample"));
+		
+		//filter
+		TermQuery filterQuery = new TermQuery(new Term("filter", "another"));
+		Filter filter = new QueryFilter(filterQuery);
+
+		//sort
+		Sort sort = new Sort("sort");
+		
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
+		Object obj = new Object();
+
+		searcherFactory.getSearcher();
+		searcherFactoryControl.setReturnValue(searcher, 1);
+		
+		queryCreator.createQuery(analyzer);
+		queryCreatorControl.setReturnValue(query, 1);
+		
+		searcher.search(query, filter, sort);
+		searcherControl.setReturnValue(hits, 1);
+
+		queryResultCreator.createResult(hits, hitExtractor);
+		List ret = new ArrayList();
+		ret.add(obj);
+		queryResultCreatorControl.setReturnValue(ret);
+
+		searcher.close();
+		searcherControl.setVoidCallable(1);
+
+		searcherFactoryControl.replay();
+		searcherControl.replay();
+		queryCreatorControl.replay();
+		hitExtractorControl.replay();
+		hitsControl.replay();
+		queryResultCreatorControl.replay();
+		
+		//Lucene template
+		LuceneSearchTemplate template = new DefaultLuceneSearchTemplate(searcherFactory, analyzer);
+		List results = template.search(queryCreator, hitExtractor, queryResultCreator, filter, sort);
+
+		searcherFactoryControl.verify();
+		searcherControl.verify();
+		queryCreatorControl.verify();
+		hitExtractorControl.verify();
+		hitsControl.verify();
+		queryResultCreatorControl.verify();
 		
 		assertEquals(results.size(), 1);
 		assertEquals(results.get(0), obj);
