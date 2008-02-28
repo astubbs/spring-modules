@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -257,6 +259,18 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	private void indexDirectory(LuceneIndexWriter writer, File dirToParse) throws IOException {
 		fireListenersOnBeforeDirectory(dirToParse);
 		File[] files = dirToParse.listFiles();
+		if( files==null ) {
+			return;
+		}
+
+		Arrays.sort(files, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				File f1 = (File) o1;
+				File f2 = (File) o2;
+				return f1.getName().compareTo(f2.getName());
+			}
+		});
+
 		for(int cpt=0; cpt<files.length; cpt++) {
 			File currentFile = files[cpt];
 			if (currentFile.isDirectory()) {
@@ -414,6 +428,8 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 		} catch(IOException ex) {
 			logger.error("Error during indexing the directory : "+dirToParse, ex);
 			throw new LuceneIndexAccessException("Error during indexing the directory : "+dirToParse, ex);
+		} catch(Exception ex) {
+			ex.printStackTrace();
 		} finally {
 			IndexWriterFactoryUtils.releaseIndexWriter(getIndexFactory(), writer);
 		}
