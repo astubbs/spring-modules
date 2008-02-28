@@ -17,10 +17,7 @@
 package org.springmodules.samples.lucene.bean.indexing;
 
 /**
- * @author ttemplier
- *
- * Pour changer le modèle de ce commentaire de type généré, allez à :
- * Fenêtre&gt;Préférences&gt;Java&gt;Génération de code&gt;Code et commentaires
+ * @author Thierry Templier
  */
 public class DocumentField {
 	private String name;
