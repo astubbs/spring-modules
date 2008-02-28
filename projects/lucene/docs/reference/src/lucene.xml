@@ -309,14 +309,57 @@
       <sect3>
         <title>Dedicated namespace</title>
 
-        <para>The Lucene support provides a dedicated namespace which make
-        easier the configuration of an index and its associated
-        <emphasis>IndexFactory</emphasis>.</para>
+        <para>The Lucene support provides a dedicated namespace
+        <emphasis>lucene</emphasis> which make easier the configuration of an
+        index and its associated <emphasis>IndexFactory</emphasis> based on
+        the <emphasis>index</emphasis> tag. The configuration of the namespace
+        is similar to those of the standard namespaces of Spring and is shown
+        in the following code:</para>
 
-        <para>//TODO: finish to implement to namespace and describe it</para>
+        <programlisting>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:lucene="http://www.springmodules.org/schema/lucene"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+             http://www.springmodules.org/schema/lucene
+                 http://www.springmodules.org/schema/lucene/lucene-index.xsd"&gt;
+    (...)
+&lt;/beans&gt;</programlisting>
+
+        <para>An IndexFactory bean is configured with the
+        <emphasis>index</emphasis> tag of this namespace. This tag supports
+        both file system and ram directory thanks to the
+        <emphasis>location</emphasis> attribute. This attribute allows to
+        configure the location of an filesystem index. The following code
+        describes the configuration of ram and filesystem
+        <emphasis>IndexFactory</emphasis>:</para>
 
         <programlisting>&lt;beans&gt;
-    &lt;lucene:index dir="c:/..." analyzer-ref=""/&gt;
+    &lt;!-- Configuration of the ram directory --&gt;
+    &lt;lucene:index/&gt;
+
+    &lt;!-- Configuration of the filesystem directory --&gt;
+    &lt;lucene:index location="/temp/lucene"/&gt;
+&lt;/beans&gt;</programlisting>
+
+        <para>In addition, an analyzer can be configured for the index tag.
+        Two approaches are possible: the firts allows to reference a
+        previously configured analyzer bean with the
+        <emphasis>analyzer-ref</emphasis> attribute and the second to
+        configure an analyzer as inner bean. The following code describes how
+        to configure these approaches:</para>
+
+        <programlisting>&lt;beans&gt;
+    &lt;!-- Configuration of an analyzer with the analyzer-ref attribute --&gt;
+    &lt;bean id="analyzer" class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
+    &lt;lucene:index id="fsDirectory1" location="/temp/lucene" analyzer-ref="analyzer"/&gt;
+
+    &lt;!-- Configuration of the filesystem directory --&gt;
+    &lt;lucene:index id="fsDirectory2" location="/temp/lucene"&gt;
+        &lt;lucene:analyzer&gt;
+            &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
+        &lt;/lucene:analyzer&gt;
+    &lt;/lucene:index&gt;
 &lt;/beans&gt;</programlisting>
       </sect3>
     </sect2>
@@ -582,7 +625,20 @@
 &lt;/bean&gt;</programlisting>
 
       <para>We will see later that all these entities can be use directly or
-      internally by templates.</para>
+      internally by templates. Moreover, by default, all the document handler
+      implementations seen above are automatically registred.</para>
+
+      <para>The lucene dedicated namespace previously described provides too a
+      support to easily configure a document handler manager thanks to a
+      <emphasis>document-handler</emphasis> tag. Its supports the matching of
+      documents with both identity and extension and can be configured as
+      shown below:</para>
+
+      <programlisting>&lt;!-- Document handler manager using an extension matching --&gt;
+&lt;lucene:document-handler id="documentHandlerManager1" type="extension"/&gt;
+
+&lt;!-- Document handler manager using an identity matching --&gt;
+&lt;lucene:document-handler id="documentHandlerManager2" type="identity"/&gt;</programlisting>
     </sect2>
 
     <sect2>
