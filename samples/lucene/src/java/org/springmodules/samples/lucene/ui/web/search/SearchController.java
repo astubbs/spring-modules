@@ -36,7 +36,7 @@ public class SearchController extends SimpleFormController {
 		List results = null;
 		if( command instanceof WebQuery ) {
 			WebQuery query = (WebQuery)command;
-			results  =searchService.search(query.getFieldName(),query.getString());
+			results = searchService.search(query.getFieldName(),query.getString());
 		} else {
 			results = new ArrayList();
 		}
