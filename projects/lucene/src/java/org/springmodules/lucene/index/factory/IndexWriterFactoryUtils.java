@@ -21,11 +21,9 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.resource.ResourceBindingManager;
 import org.springmodules.lucene.index.resource.ResourceHolder;
-import org.springmodules.lucene.index.transaction.IndexHolder;
 
 /**
  * Helper class that provides static methods to obtain Lucene IndexWriter from
@@ -101,12 +99,12 @@ public abstract class IndexWriterFactoryUtils {
 	 * @throws IOException if thrown by Lucene API methods
 	 */
 	public static LuceneIndexWriter doGetIndexWriter(IndexFactory indexFactory, boolean transaction) throws IOException {
-		if( transaction ) {
+		/*if( transaction ) {
 			IndexHolder indexHolder = (IndexHolder) TransactionSynchronizationManager.getResource(indexFactory);
 			if (indexHolder != null) {
 				return indexHolder.getIndexWriter();
 			}
-		}
+		}*/
 		
 		ResourceHolder resourceHolder = (ResourceHolder) ResourceBindingManager.getResource(indexFactory);
 		if (resourceHolder!= null ) {
@@ -161,9 +159,9 @@ public abstract class IndexWriterFactoryUtils {
 	 */
 	public static void doReleaseIndexWriter(IndexFactory indexFactory,
 					LuceneIndexWriter indexWriter, boolean transaction) throws IOException {
-		if( transaction && TransactionSynchronizationManager.hasResource(indexFactory) ) {
+		/*if( transaction && TransactionSynchronizationManager.hasResource(indexFactory) ) {
 			return;
-		}
+		}*/
 
 		if( ResourceBindingManager.hasResource(indexFactory) ) {
 			return;

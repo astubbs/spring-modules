@@ -21,11 +21,9 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.resource.ResourceBindingManager;
 import org.springmodules.lucene.index.resource.ResourceHolder;
-import org.springmodules.lucene.index.transaction.IndexHolder;
 
 /**
  * Helper class that provides static methods to obtain Lucene IndexReader from
@@ -100,12 +98,12 @@ public abstract class IndexReaderFactoryUtils {
 	 * @throws IOException if thrown by Lucene API methods
 	 */
 	public static LuceneIndexReader doGetIndexReader(IndexFactory indexFactory, boolean transaction) throws IOException {
-		if( transaction ) {
+		/*if( transaction ) {
 			IndexHolder indexHolder = (IndexHolder) TransactionSynchronizationManager.getResource(indexFactory);
 			if (indexHolder != null) {
 				return indexHolder.getIndexReader();
 			}
-		}
+		}*/
 		
 		ResourceHolder resourceHolder = (ResourceHolder) ResourceBindingManager.getResource(indexFactory);
 		if (resourceHolder!= null ) {
@@ -160,9 +158,9 @@ public abstract class IndexReaderFactoryUtils {
 	 */
 	public static void doReleaseIndexReader(IndexFactory indexFactory,
 				LuceneIndexReader indexReader, boolean transaction) throws IOException {
-		if( transaction && TransactionSynchronizationManager.hasResource(indexFactory) ) {
+		/*if( transaction && TransactionSynchronizationManager.hasResource(indexFactory) ) {
 			return;
-		}
+		}*/
 
 		if( ResourceBindingManager.hasResource(indexFactory) ) {
 			return;
