@@ -63,6 +63,8 @@ public interface LuceneSearchTemplate {
 	 */
 	List search(QueryCreator queryCreator, HitExtractor extractor);
 
+	List search(QueryCreator queryCreator, HitExtractor extractor, QueryResultCreator resultCreator);
+
 	/**
 	 * Search the index basing a Lucene query created outside the template.
 	 * In this case, the application needs to manage exceptions.
@@ -71,6 +73,8 @@ public interface LuceneSearchTemplate {
 	 * @return the search results
 	 */
 	List search(Query query, HitExtractor extractor);
+
+	List search(Query query, HitExtractor extractor, QueryResultCreator resultCreator);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -84,6 +88,9 @@ public interface LuceneSearchTemplate {
 	 */
 	List search(QueryCreator queryCreator, HitExtractor extractor, Filter filter);
 
+	List search(QueryCreator queryCreator, HitExtractor extractor,
+						QueryResultCreator result, Filter filter);
+
 	/**
 	 * Search the index basing a Lucene query created outside the template using
 	 * a Lucene filter. In this case, the application needs to manage exceptions.
@@ -92,6 +99,9 @@ public interface LuceneSearchTemplate {
 	 * @return the search results
 	 */
 	List search(Query query, HitExtractor extractor, Filter filter);
+
+	List search(Query query, HitExtractor extractor,
+					QueryResultCreator resultCreator, Filter filter);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -105,6 +115,9 @@ public interface LuceneSearchTemplate {
 	 */
 	List search(QueryCreator queryCreator, HitExtractor extractor, Sort sort);
 
+	List search(QueryCreator queryCreator, HitExtractor extractor,
+								QueryResultCreator resultCreator, Sort sort);
+
 	/**
 	 * Search the index basing a Lucene query created outside the template using
 	 * a Lucene sort. In this case, the application needs to manage exceptions.
@@ -114,6 +127,7 @@ public interface LuceneSearchTemplate {
 	 */
 	List search(Query query, HitExtractor extractor, Sort sort);
 
+	List search(Query query, HitExtractor extractor, QueryResultCreator resultCreator, Sort sort);
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
 	 * method defined in the QueryCreator interface and using a Lucene
@@ -126,6 +140,9 @@ public interface LuceneSearchTemplate {
 	 */
 	List search(QueryCreator queryCreator, HitExtractor extractor, Filter filter, Sort sort);
 
+	List search(QueryCreator queryCreator, HitExtractor extractor,
+				QueryResultCreator resultCreator, Filter filter, Sort sort);
+
 	/**
 	 * Search the index basing a Lucene query created outside the template using
 	 * a Lucene filter and sort. In this case, the application needs to manage
@@ -135,6 +152,9 @@ public interface LuceneSearchTemplate {
 	 * @return the search results
 	 */
 	List search(Query query, HitExtractor extractor, Filter filter, Sort sort);
+
+	List search(Query query, HitExtractor extractor,
+					QueryResultCreator resultCreator, Filter filter, Sort sort);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback

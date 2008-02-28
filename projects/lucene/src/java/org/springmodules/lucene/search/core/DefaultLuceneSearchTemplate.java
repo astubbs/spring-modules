@@ -17,6 +17,7 @@
 package org.springmodules.lucene.search.core;
 
 import java.io.IOException;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,7 @@ import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
  * 
  * @author Brian McCallister
  * @author Thierry Templier
+ * @author Alex Burgel
  * @see org.springmodules.lucene.search.query.QueryCreator
  * @see org.springmodules.lucene.search.factory
  */
@@ -124,24 +126,6 @@ public class DefaultLuceneSearchTemplate implements LuceneSearchTemplate {
 	}
 
 	/**
-	 * Method used to extract data from hits. These data are
-	 * the Lucene internal document identifier, the document
-	 * itself and the score.
-	 * 
-	 * @param hits the hits corresponding to the search
-	 * @param extractor the extractor specified in the search method
-	 * @return the search results extracted
-	 * @throws IOException exception occurring when accessing documents
-	 */
-	private List extractHits(LuceneHits hits, HitExtractor extractor) throws IOException {
-		List list = new ArrayList();
-		for(int cpt=0; cpt<hits.length(); cpt++) {
-			list.add(extractor.mapHit(hits.id(cpt), hits.doc(cpt), hits.score(cpt)));
-		}
-		return list;
-	}
-
-	/**
 	 * Invoke the given QueryCreator, constructing Lucene query.
 	 * @param queryCreator the QueryCreator to invoke
 	 * @return the constructed Query
@@ -155,36 +139,98 @@ public class DefaultLuceneSearchTemplate implements LuceneSearchTemplate {
 		}
 	}
 
+	/**
+	 * Build the default HitsExtractor. Used when an HitsExtractor is not provided.
+	 * @return the default HitsExtractor 
+	 */
+	protected QueryResultCreator createDefaultQueryResultCreator() {
+		return new QueryResultCreator() {
+			public List createResult(LuceneHits hits, HitExtractor hitExtractor) throws IOException {
+				List result = new ArrayList();
+				for(int cpt=0; cpt<hits.length(); cpt++) {
+					result.add(hitExtractor.mapHit(hits.id(cpt), hits.doc(cpt), hits.score(cpt)));
+				}
+				return result;
+			}
+		};
+	}
+	
 	public List search(QueryCreator queryCreator, HitExtractor extractor) {
-		return doSearch(createQuery(queryCreator), extractor, null, null);
+		return doSearch(createQuery(queryCreator), extractor,
+				createDefaultQueryResultCreator(), null, null);
+	}
+
+	public List search(QueryCreator queryCreator, HitExtractor extractor, QueryResultCreator resultCreator) {
+		return doSearch(createQuery(queryCreator), extractor, resultCreator, null, null);
 	}
 
 	public List search(Query query, HitExtractor extractor) {
-		return doSearch(query, extractor, null, null);
+		return doSearch(query, extractor, createDefaultQueryResultCreator(), null, null);
+	}
+
+	public List search(Query query, HitExtractor extractor, QueryResultCreator resultCreator) {
+		return doSearch(query, extractor, resultCreator, null, null);
 	}
 
 	public List search(QueryCreator queryCreator, HitExtractor extractor, Filter filter) {
-		return doSearch(createQuery(queryCreator), extractor, filter, null);
+		return doSearch(createQuery(queryCreator), extractor,
+				createDefaultQueryResultCreator(), filter, null);
+	}
+
+	public List search(QueryCreator queryCreator, HitExtractor extractor,
+						QueryResultCreator resultCreator, Filter filter) {
+		return doSearch(createQuery(queryCreator), extractor,
+									resultCreator, filter, null);
 	}
 
 	public List search(Query query, HitExtractor extractor, Filter filter) {
-		return doSearch(query, extractor, filter, null);
+		return doSearch(query, extractor,
+				createDefaultQueryResultCreator(), filter, null);
+	}
+
+	public List search(Query query, HitExtractor extractor,
+						QueryResultCreator resultCreator, Filter filter) {
+		return doSearch(query, extractor, resultCreator, filter, null);
 	}
 
 	public List search(QueryCreator queryCreator, HitExtractor extractor, Sort sort) {
-		return doSearch(createQuery(queryCreator), extractor, null, sort);
+		return doSearch(createQuery(queryCreator), extractor,
+				createDefaultQueryResultCreator(), null, sort);
+	}
+
+	public List search(QueryCreator queryCreator, HitExtractor extractor,
+										QueryResultCreator resultCreator, Sort sort) {
+		return doSearch(createQuery(queryCreator), extractor, resultCreator, null, sort);
 	}
 
 	public List search(Query query, HitExtractor extractor, Sort sort) {
-		return doSearch(query, extractor, null, sort);
+		return doSearch(query, extractor,
+				createDefaultQueryResultCreator(), null, sort);
+	}
+
+	public List search(Query query, HitExtractor extractor,
+						QueryResultCreator resultCreator, Sort sort) {
+		return doSearch(query, extractor, resultCreator, null, sort);
 	}
 
 	public List search(QueryCreator queryCreator, HitExtractor extractor, Filter filter, Sort sort) {
-		return doSearch(createQuery(queryCreator), extractor, filter, sort);
+		return doSearch(createQuery(queryCreator), extractor,
+				createDefaultQueryResultCreator(), filter, sort);
+	}
+
+	public List search(QueryCreator queryCreator, HitExtractor extractor,
+						QueryResultCreator resultCreator, Filter filter, Sort sort) {
+		return doSearch(createQuery(queryCreator), extractor, resultCreator, filter, sort);
 	}
 
 	public List search(Query query, HitExtractor extractor, Filter filter, Sort sort) {
-		return doSearch(query, extractor, filter, sort);
+		return doSearch(query, extractor,
+				createDefaultQueryResultCreator(), filter, sort);
+	}
+
+	public List search(Query query, HitExtractor extractor,
+						QueryResultCreator resultCreator, Filter filter, Sort sort) {
+		return doSearch(query, extractor, resultCreator, filter, sort);
 	}
 
 	/**
@@ -200,7 +246,8 @@ public class DefaultLuceneSearchTemplate implements LuceneSearchTemplate {
 	 * @param sort the query sorter
 	 * @return the search results
 	 */
-	private List doSearch(Query query, HitExtractor extractor, Filter filter, Sort sort) {
+	private List doSearch(Query query, HitExtractor hitExtractor,
+					QueryResultCreator queryResultCreator, Filter filter, Sort sort) {
 		LuceneSearcher searcher = SearcherFactoryUtils.getSearcher(getSearcherFactory());
 		try {
 			LuceneHits hits = null;
@@ -213,7 +260,8 @@ public class DefaultLuceneSearchTemplate implements LuceneSearchTemplate {
 			} else { 
 				hits = searcher.search(query);
 			}
-			return extractHits(hits, extractor);
+			//return extractHits(hits, extractor);
+			return queryResultCreator.createResult(hits, hitExtractor);
 		} catch (IOException ex) {
 			throw new LuceneSearchException("Error during the search", ex);
 		} finally {
