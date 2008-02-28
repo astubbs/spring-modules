@@ -146,7 +146,7 @@ public abstract class AbstractAttributeObjectDocumentHandler extends AbstractObj
 		Method[] methods=clazz.getDeclaredMethods();
 
 		Document document = new Document();
-		document.add(new Field("class", clazz.getCanonicalName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+		document.add(new Field("class", clazz.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
 		for(int cpt=0;cpt<methods.length;cpt++) {
 			String name=methods[cpt].getName();
 			IndexAttribute indexAtt=computeIndexAttribute(methods[cpt], clazz);

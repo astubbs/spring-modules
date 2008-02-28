@@ -72,7 +72,7 @@ public class PropertiesDocumentHandler extends AbstractAttributeObjectDocumentHa
 			if( fieldName.startsWith(PREFIX_ACCESSOR) ) {
 				fieldName=constructFieldName(fieldName);
 			}
-			if( key.startsWith(method.getDeclaringClass().getCanonicalName()) 
+			if( key.startsWith(method.getDeclaringClass().getName()) 
 					&& key.indexOf(ELEMENT_SEPARATOR+fieldName+ELEMENT_SEPARATOR)!=-1 ) {
 				String value=(String)properties.get(key);
 				attributes.add(new AttributeData(key,value));
@@ -90,7 +90,7 @@ public class PropertiesDocumentHandler extends AbstractAttributeObjectDocumentHa
 		Set keys=properties.keySet();
 		for(Iterator i=keys.iterator();i.hasNext();) {
 			String key=(String)i.next();
-			if( key.startsWith(clazz.getCanonicalName())
+			if( key.startsWith(clazz.getName())
 					&& key.indexOf(FIELD_ELEMENT_SEPARATOR)==-1 ) {
 				String value=(String)properties.get(key);
 				attributes.add(new AttributeData(key,value));
@@ -146,7 +146,7 @@ public class PropertiesDocumentHandler extends AbstractAttributeObjectDocumentHa
 
 	protected Object findIndexClassProperty(Class clazz) {
 		loadPropertiesIfNecessary();
-		String value=(String)properties.get(clazz.getCanonicalName()+".indexable");
+		String value=(String)properties.get(clazz.getName()+".indexable");
 		if( value!=null && "true".equals(value) ) {
 			return INDEXABLE_CLASS;
 		} else {

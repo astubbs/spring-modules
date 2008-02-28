@@ -58,7 +58,7 @@ public class DocumentCreatorWithManager implements DocumentCreator {
 	 * @param object the object to use to create a Lucene document
 	 */
 	public DocumentCreatorWithManager(DocumentHandlerManager documentHandlerManager, Object object) {
-		this(documentHandlerManager, object.getClass().getCanonicalName(), object);
+		this(documentHandlerManager, object.getClass().getName(), object);
 	}
 
 	/**
