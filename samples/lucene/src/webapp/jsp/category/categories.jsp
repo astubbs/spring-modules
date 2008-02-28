@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
 
+<b>Welcome to Spring Lucene category page.</b><br/><br/>
+
 <br/><br/>
 <b>List of categories</b><br/><br/>
 <table cellpadding="0" cellspacing="0" border="0">

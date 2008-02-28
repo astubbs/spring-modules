@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
 
-<br/><br>
+<b>Document informations</b><br/><br>
 Document identified by the following term : <c:out value="${identifierName}"/>=<c:out value="${identifierValue}"/><br/><br/>
 
 <table border="1">

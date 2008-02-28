@@ -1,7 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
 
-<br/>
+Menu<br/><br/>
+
+
 <br/>
 <a href="<c:url value="/welcome.html"/>">Welcome</a>
 <br/>

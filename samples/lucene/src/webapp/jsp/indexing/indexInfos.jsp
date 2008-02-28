@@ -3,7 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
 
-<br/><br/>
+<c:set var="ctx" value="${rc.contextPath}"/>
+
+<b>Welcome to Spring Lucene indexing page.</b><br/><br/>
 
 <b>Index informations</b><br/><br>
 number of indexed documents: <c:out value="${infos.numDocs}"/>

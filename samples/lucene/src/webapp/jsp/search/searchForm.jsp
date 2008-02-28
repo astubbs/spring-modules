@@ -4,6 +4,8 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
 
 
+<b>Welcome to Spring Lucene search page.</b><br/><br/>
+
 <br/><br/>
 -------------------------------------------------
 <br/><br/>
