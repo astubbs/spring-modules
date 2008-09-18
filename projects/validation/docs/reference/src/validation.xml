@@ -3669,11 +3669,17 @@
 
                     <bridgehead renderas="sect5">Hibernate Validator Support</bridgehead>
 
-                    The framework will pick up any hibernate validator annotation that is used and register the
-                    validation rules appropariately.
-
+                    The framework can pick up any hibernate validator annotation that is used and register the
+                    validation rules appropariately. For this, you'll need to configure the
+                    <emphasis>org.springmodules.validation.bean.conf.loader.annotation.handler.hibernate.HibernatePropertyValidationAnnotationHandler</emphasis>
+                    (see <emphasis>Application Context Configuration</emphasis> section below).
 
                     <bridgehead renderas="sect5">JPA Support</bridgehead>
+
+                    The framework can pick up several JPA annotation (listed below) and register the appropriate
+                    validation rules. For this, you'll need to configure the
+                    <emphasis>org.springmodules.validation.bean.conf.loader.annotation.handler.jpa.JpaAnnotationHandlersSource</emphasis>
+                    as a handler source (see <emphasis>Application Context Configuration</emphasis> section below).
 
                     Four JPA annotations are currently supported:
 
@@ -4186,6 +4192,51 @@
                 </para>
 
                 <para>
+                    Of course it is also possible to configure the annotation based validator using a dedicated tag:
+                </para>
+
+                <programlisting>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:vld="http://www.springmodules.org/validation/bean/validator"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator.xsd"&gt;
+
+    &lt;vld:annotation-based-validator id="beanValidator"&gt;
+        &lt;vld:annotation-handlers&gt;
+            &lt;vld:handler class="handlerClassName"/&gt;
+        &lt;/vld:annotation-handlers&gt;
+    &lt;/vld:annotation-based-validator&gt;
+
+&lt;/beans&gt;</programlisting>
+
+                <para>
+                    Note the <emphasis>&lt;vld:handler .../&gt;</emphasis> element which enables you to configure
+                    custom/extra annotation handlers. In fact, the <emphasis>class</emphasis> attribute accets one of
+                    three types:
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+                                <emphasis>org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler</emphasis>
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler</emphasis>
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                <emphasis>org.springmodules.validation.bean.conf.loader.annotation.handler.ValidationAnnotationHandlersBundle</emphasis> -
+                                This class enables you to bundle several handlers together, thus simplify the configuration and
+                                make it more compact. The <emphasis>org.springmodules.validation.bean.conf.loader.annotation.handler.jpa.JpaAnnotationHandlersBundle</emphasis>
+                                is an example for such class.
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+
+                <para>
                     As you can see, this xml is much clearer than the generic spring one. It is very easy to read and
                     understand it as a configuration. It is also much easier to write, especially when using schema
                     supported editor/IDE's. The use of xml schema practically leads the developer in how the validator
@@ -4364,6 +4415,46 @@ private String bla;</programlisting>
 &lt;/property&gt;</programlisting>
 
             </sect3>
+
+        </sect2>
+
+        <sect2>
+
+            <title>Using the Framwork with SpringMVC</title>
+
+            <para>
+                Using the bean validation framework with SpringMVC is as easy as defining a bean validator in the
+                application context and setting it to all controllers. One thing to note though, in order to support
+                default error messages fallbacks, you will also need to set a custom <emphasis>MessageCodeResolver</emphasis>
+                on the controllers, namely the <emphasis>org.springmodules.validation.bean.converter.ModelAwareMessageCodesResolver</emphasis>.
+                Not setting this resolver will result in failing to fall back to default error code messages. Here's an
+                example configuration:
+
+                <programlisting>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:vld="http://www.springmodules.org/validation/bean/validator"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator.xsd"&gt;
+
+    &lt;bean id="controller" abstract="true"&gt;
+        &lt;property name="messageCodesResolver"&gt;
+            &lt;bean class="org.springmodules.validation.bean.converter.ModelAwareMessageCodesResolver"/&gt;
+        &lt;/property&gt;
+        &lt;property name="validator" ref="beanValidator"/&gt;
+    &lt;/bean&gt;
+
+    &lt;bean name="/person.html" class="org.springmodules.samples.validation.bean.web.PersonFormController" parent="controller"&gt;
+		&lt;property name="formView" value="person"/&gt;
+        &lt;property name="successView" value="redirect:/success.html"/&gt;
+        &lt;property name="commandName" value="person"/&gt;
+        &lt;property name="commandClass" value="org.springmodules.samples.validation.bean.web.PersonData"/&gt;
+    &lt;/bean&gt;
+
+    &lt;vld:annotation-based-validator id="beanValidator"/&gt;
+
+&lt;/beans&gt;</programlisting>
+            </para>
 
         </sect2>
 

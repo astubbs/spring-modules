@@ -31,6 +31,7 @@ import org.springmodules.validation.bean.conf.loader.annotation.AnnotationBeanVa
 import org.springmodules.validation.bean.conf.loader.annotation.DefaultValidationAnnotationHandlerRegistry;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidationAnnotationHandlersBundle;
 import org.springmodules.validation.util.xml.DomUtils;
 import org.springmodules.validation.util.xml.SubElementsIterator;
 import org.w3c.dom.Element;
@@ -62,7 +63,6 @@ public class AnnotationBasedValidatorBeanDefinitionParser extends AbstractBeanDe
         String validatorId = resolveId(element, beanDefinition, parserContext);
         String registryId = HANDLER_REGISTRY_PREFIX + validatorId;
         parserContext.getRegistry().registerBeanDefinition(registryId, beanDefinition);
-
 
         BeanDefinitionBuilder loaderBuilder = BeanDefinitionBuilder.rootBeanDefinition(AnnotationBeanValidationConfigurationLoader.class);
         loaderBuilder.addPropertyReference("handlerRegistry", registryId);
@@ -107,17 +107,21 @@ public class AnnotationBasedValidatorBeanDefinitionParser extends AbstractBeanDe
                 propertyHandlers.add(handler);
             } else if (ClassValidationAnnotationHandler.class.isInstance(handler)) {
                 classHandlers.add(handler);
+            } else if (ValidationAnnotationHandlersBundle.class.isInstance(handler)) {
+                ValidationAnnotationHandlersBundle source = (ValidationAnnotationHandlersBundle) handler;
+                propertyHandlers.addAll(source.getPropertyHandlers());
+                classHandlers.addAll(source.getClassHandlers());
             } else {
                 throw new ValidationConfigurationException("class '" + className + "' is not a property hanlder nor a class handler");
             }
         }
         registryBuilder.addPropertyValue(
-            "extraPropertyHandlers",
-            propertyHandlers.toArray(new PropertyValidationAnnotationHandler[propertyHandlers.size()])
+                "extraPropertyHandlers",
+                propertyHandlers.toArray(new PropertyValidationAnnotationHandler[propertyHandlers.size()])
         );
         registryBuilder.addPropertyValue(
-            "extraClassHandlers",
-            classHandlers.toArray(new ClassValidationAnnotationHandler[classHandlers.size()])
+                "extraClassHandlers",
+                classHandlers.toArray(new ClassValidationAnnotationHandler[classHandlers.size()])
         );
     }
 
