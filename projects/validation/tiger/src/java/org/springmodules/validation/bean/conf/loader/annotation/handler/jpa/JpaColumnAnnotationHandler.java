@@ -43,8 +43,8 @@ public class JpaColumnAnnotationHandler extends AbstractJpaAnnotationHandler {
 
         Set<Annotation> annotations = getAllPropertyAnnotations(clazz, descriptor);
 
-        // handling max length only if other explicit validation annotations do not exist.
-        if (!contains(annotations, Length.class) &&
+        // handling max length only if other explicit validation annotations do not exist and if the property is a string.
+        if (String.class == descriptor.getPropertyType() &&
             (!LibraryUtils.HIBERNATE_VALIDATOR_IN_CLASSPATH || !contains(annotations, org.hibernate.validator.Length.class))) {
             int length = column.length();
             PropertyValidationRule propertyRule = new PropertyValidationRule(descriptor.getName(), new MaxLengthValidationRule(length));

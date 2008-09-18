@@ -32,6 +32,10 @@ public class SimpleEntity {
     @Column(nullable = false, length = 10)
     private String text;
 
+    // making sure that the length constraint is not picked up for non-stirng properties.
+    @Column(length = 30)
+    private int number;
+
     @OneToOne(optional = false)
     private SimpleEntity oneToOne;
 
@@ -44,6 +48,14 @@ public class SimpleEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public String getText() {

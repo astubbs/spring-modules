@@ -117,16 +117,5 @@ public class DefaultValidationAnnotationHandlerRegistry extends SimpleValidation
             registerPropertyHandler(new InstantInThePastValidationAnnotationHandler());
         }
 
-        if (LibraryUtils.HIBERNATE_VALIDATOR_IN_CLASSPATH) {
-            registerPropertyHandler(new HibernatePropertyValidationAnnotationHandler());
-        }
-
-        if (LibraryUtils.JPA_IN_CLASSPATH) {
-            registerPropertyHandler(new JpaBasicAnnotationHandler());
-            registerPropertyHandler(new JpaManyToOneAnnotationHandler());
-            registerPropertyHandler(new JpaOneToOneAnnotationHandler());
-            registerPropertyHandler(new JpaColumnAnnotationHandler());
-        }
-        
     }
 }

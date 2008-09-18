@@ -24,6 +24,10 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.Validator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springmodules.validation.bean.BeanValidator;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.jpa.JpaBasicAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.jpa.JpaColumnAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.jpa.JpaManyToOneAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.jpa.JpaOneToOneAnnotationHandler;
 import org.springmodules.validation.bean.context.ValidationContextHolder;
 import org.springmodules.validation.bean.context.DefaultValidationContext;
 
@@ -224,7 +228,14 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
         entity.setOneToOne(null); // invalid - cannot be null
         entity.setManyToOne(null); // invalid - cannot be null
 
+        DefaultValidationAnnotationHandlerRegistry registry = new DefaultValidationAnnotationHandlerRegistry();
+        registry.registerPropertyHandler(new JpaBasicAnnotationHandler());
+        registry.registerPropertyHandler(new JpaColumnAnnotationHandler());
+        registry.registerPropertyHandler(new JpaManyToOneAnnotationHandler());
+        registry.registerPropertyHandler(new JpaOneToOneAnnotationHandler());
+
         AnnotationBeanValidationConfigurationLoader loader = new AnnotationBeanValidationConfigurationLoader();
+        loader.setHandlerRegistry(registry);
         BeanValidator validator = new BeanValidator(loader);
 
         BindException errors = new BindException(entity, "entity");
