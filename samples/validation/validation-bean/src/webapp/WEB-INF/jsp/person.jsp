@@ -81,6 +81,15 @@
                         </spring:bind>
                     </td>
                 </tr>
+                <tr>
+                    <td><fmt:message key="person.unlucky.number"/></td>
+                    <td>
+                        <spring:bind path="person.unluckyNumber">
+                            <input type="text" name="${status.expression}" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
+                            <font color="red"><c:out value="${status.errorMessage}"/></font>
+                        </spring:bind>
+                    </td>
+                </tr>
             </table>
 
             <br/>

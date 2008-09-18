@@ -29,10 +29,6 @@ import org.springmodules.validation.bean.converter.ModelAwareMessageCodesResolve
  */
 public class PersonFormController extends SimpleFormController {
 
-    public PersonFormController() {
-        setMessageCodesResolver(new ModelAwareMessageCodesResolver());
-    }
-
     protected ModelAndView onSubmit(
         HttpServletRequest request,
         HttpServletResponse response,

@@ -43,6 +43,8 @@ public class PersonData {
 
     private int luckyNumber;
 
+    private int unluckyNumber;
+
     public String getEmail() {
         return email;
     }
@@ -91,6 +93,14 @@ public class PersonData {
         this.luckyNumber = luckyNumber;
     }
 
+    public int getUnluckyNumber() {
+        return unluckyNumber;
+    }
+
+    public void setUnluckyNumber(int unluckyNumber) {
+        this.unluckyNumber = unluckyNumber;
+    }
+
     //============================================= Validation Methods =================================================
 
     @ValidationMethod(forProperty = "luckyNumber", args = "0,10")
@@ -98,4 +108,8 @@ public class PersonData {
         return luckyNumber >= 0 && luckyNumber <= 10;
     }
 
+    @ValidationMethod(args = "100,200")
+    private boolean validateUnluckyNumber() {
+        return unluckyNumber >= 100 && unluckyNumber <= 200;
+    }
 }
