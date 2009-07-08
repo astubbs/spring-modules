@@ -7,11 +7,16 @@
     <version>0.9</version>
     <packaging>pom</packaging>
 
+	<properties>
+		<version.spring>2.5.6</version.spring>
+		<version.easymock>2.4</version.easymock>
+	</properties>
+
     <modules>
-        <module>spring-modules-ant</module>
-        <module>spring-modules-aop</module>
+        <!-- <module>spring-modules-ant</module>
+        <module>spring-modules-aop</module> -->
         <module>spring-modules-cache</module>
-        <module>spring-modules-db4o</module>
+        <!-- <module>spring-modules-db4o</module>
         <module>spring-modules-flux</module>
         <module>spring-modules-hivemind</module>
         <module>spring-modules-jakarta-commons</module>
@@ -30,14 +35,32 @@
         <module>spring-modules-validation</module>
         <module>spring-modules-xt</module>
         <module>spring-modules-xt-js</module>
+-->
     </modules>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
-            <version>2.0.5</version>
+            <version>${version.spring}</version>
         </dependency>
+        <dependency>
+        	<groupId>junit</groupId>
+        	<artifactId>junit</artifactId>
+        	<version>4.6</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.easymock</groupId>
+        	<artifactId>easymock</artifactId>
+        	<version>${version.easymock}</version>
+        	<scope>test</scope>
+        </dependency>
+		<dependency>
+		    <groupId>org.easymock</groupId>
+		    <artifactId>easymockclassextension</artifactId>
+        	<version>${version.easymock}</version>
+        	<scope>test</scope>
+        </dependency>        
     </dependencies>
 
     <dependencyManagement>
@@ -45,22 +68,28 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>2.0.5</version>
+                <version>${version.spring}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>2.0.5</version>
+                <version>${version.spring}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>2.0.5</version>
+                <version>${version.spring}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aop</artifactId>
-                <version>2.0.5</version>
+                <version>${version.spring}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${version.spring}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
