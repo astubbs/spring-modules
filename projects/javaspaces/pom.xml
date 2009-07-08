@@ -1,145 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-javaspaces</artifactId>
+    <version>0.9</version>
     <packaging>jar</packaging>
-    <version>0.8</version>
-    <name>spring-modules-javaspaces</name>
-    <url>https://springmodules.dev.java.net/</url>
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-        </license>
-    </licenses>
-    <scm>
-        <url>https://springmodules.dev.java.net/source/browse/springmodules/projects/javaspaces</url>
-    </scm>
+
+    <parent>
+        <groupId>org.springmodules</groupId>
+        <artifactId>spring-modules</artifactId>
+        <version>0.9</version>
+    </parent>
+
     <dependencies>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.13</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-            <version>2.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-mock</artifactId>
-            <version>2.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>2.1_3</version>
-        </dependency>
-        <dependency>
-            <groupId>blitz</groupId>
-            <artifactId>blitz</artifactId>
-            <version>1.29</version>
-        </dependency>
         <dependency>
             <groupId>gigaspaces</groupId>
             <artifactId>gigaspaces-ce</artifactId>
             <version>5.2-1706</version>
         </dependency>
+
         <dependency>
-            <groupId>jini</groupId>
-            <artifactId>jsk-lib</artifactId>
+            <groupId>net.jini</groupId>
+            <artifactId>jini-core</artifactId>
             <version>2.1</version>
         </dependency>
+
         <dependency>
-            <groupId>jini</groupId>
-            <artifactId>jsk-platform</artifactId>
-            <version>2.1</version>
+            <groupId>blitz</groupId>
+            <artifactId>blitz</artifactId>
+            <version>1.29</version>
         </dependency>
-        <dependency>
-            <groupId>jini</groupId>
-            <artifactId>mahalo</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>jini</groupId>
-            <artifactId>reggie</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>jini</groupId>
-            <artifactId>start</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-jta</artifactId>
-            <version>1.0.1B-rc4</version>
-        </dependency>
-        <dependency>
-            <groupId>jug</groupId>
-            <artifactId>jug-asl</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>activescript</groupId>
-            <artifactId>jguid</artifactId>
-            <version>1.0</version>
-        </dependency>
+
         <dependency>
             <groupId>commons-id</groupId>
             <artifactId>commons-id</artifactId>
             <version>0.1-dev</version>
         </dependency>
+
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.1_3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jug</groupId>
+            <artifactId>jug</artifactId>
+            <version>2.0.0</version>
+            <classifier>asl</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>jini</groupId>
+            <artifactId>jini-core</artifactId>
+            <version>2.1</version>
         </dependency>
         <dependency>
-            <groupId>easymock</groupId>
-            <artifactId>easymock</artifactId>
+            <groupId>jini</groupId>
+            <artifactId>jini-ext</artifactId>
+            <version>2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
             <version>1.1</version>
         </dependency>
+
         <dependency>
-            <groupId>easymock</groupId>
-            <artifactId>easymockclassextension</artifactId>
-            <version>1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>berkeleydb</groupId>
-            <artifactId>je</artifactId>
-            <version>2.1.30</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jini</groupId>
-            <artifactId>outrigger</artifactId>
-            <version>2.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jini</groupId>
-            <artifactId>boot</artifactId>
-            <version>20060125</version>
-        </dependency>
-        <dependency>
-            <groupId>jini</groupId>
-            <artifactId>webster</artifactId>
-            <version>20060125</version>
-        </dependency>
-        <dependency>
-            <groupId>backport-util-concurrent</groupId>
-            <artifactId>backport-util-concurrent</artifactId>
-            <version>2.1</version>
-            <scope>test</scope>
+            <groupId>activescript</groupId>
+            <artifactId>jguid</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 </project>
