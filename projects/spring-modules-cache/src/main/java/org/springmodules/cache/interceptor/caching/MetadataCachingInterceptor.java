@@ -86,7 +86,7 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
   /**
    * @see AbstractCachingInterceptor#model(MethodInvocation)
    */
-  protected final CachingModel model(MethodInvocation methodInvocation) {
+  protected CachingModel model(MethodInvocation methodInvocation) {
     Cached attribute = getCachingAttribute(methodInvocation);
     if (attribute == null) return null;
     String modelId = attribute.getModelId();

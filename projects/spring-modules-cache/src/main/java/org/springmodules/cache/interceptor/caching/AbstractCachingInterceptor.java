@@ -17,6 +17,14 @@
  */
 package org.springmodules.cache.interceptor.caching;
 
+import java.beans.PropertyEditor;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
@@ -32,14 +40,6 @@ import org.springmodules.cache.key.HashCodeCacheKeyGenerator;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.CacheProviderFacade;
 
-import java.beans.PropertyEditor;
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-
 /**
  * Template for advices that store in a cache the return value of intercepted
  * methods.
@@ -54,9 +54,9 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
 
 	public static final NullObject NULL_ENTRY = new NullObject();
 
-	private CacheProviderFacade cache;
+	protected CacheProviderFacade cache;
 
-	private CacheKeyGenerator keyGenerator;
+	protected CacheKeyGenerator keyGenerator;
 
 	private CachingListener[] listeners;
 
@@ -75,7 +75,7 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
 		return keyGenerator;
 	}
 
-	public final Object invoke(MethodInvocation mi) throws Throwable {
+	public Object invoke(MethodInvocation mi) throws Throwable {
 		Method method = mi.getMethod();
 		if (!CachingUtils.isCacheable(method))
 			return methodNotCacheable(mi, method);
@@ -116,7 +116,7 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
 		// no implementation.
 	}
 
-	private Object cachedValueFromSource(MethodInvocation mi, Serializable key,
+	protected Object cachedValueFromSource(MethodInvocation mi, Serializable key,
 										 CachingModel m) throws Throwable {
 		boolean successful = true;
 		try {
@@ -146,13 +146,13 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
 		return o != null ? o : NULL_ENTRY;
 	}
 
-	private Object methodNotCacheable(MethodInvocation mi, Method m)
+	protected Object methodNotCacheable(MethodInvocation mi, Method m)
 			throws Throwable {
 		return logAndProceed("Unable to perform caching. Intercepted method <"
 				+ m + "> does not return a value", mi);
 	}
 
-	private Object noModelFound(MethodInvocation mi, Method m) throws Throwable {
+	protected Object noModelFound(MethodInvocation mi, Method m) throws Throwable {
 		return logAndProceed("Unable to perform caching. "
 				+ "No model is associated to the method <" + m + ">", mi);
 	}
@@ -177,12 +177,12 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
 		return m;
 	}
 
-	private void putInCache(Serializable key, CachingModel m, Object o) {
+	protected void putInCache(Serializable key, CachingModel m, Object o) {
 		cache.putInCache(key, m, maskNull(o));
 		notifyListeners(key, o, m);
 	}
 
-	private Object unmaskNull(Object obj) {
+	protected Object unmaskNull(Object obj) {
 		return NULL_ENTRY.equals(obj) ? null : obj;
 	}
 
