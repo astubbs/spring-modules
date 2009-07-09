@@ -10,8 +10,8 @@ Package org.springmodules.cache
 
 All
 * Migrated parent and 'projects dir' to Maven, including moving directories to Maven standard
-* all pom’s applied from the patch under MOD-463 with some fixes, but not all are included in projects build
-* jar’s and generated documentation removed from project history
+* all pom's applied from the patch under MOD-463 with some fixes, but not all are included in projects build
+* jar's and generated documentation removed from project history
 * upgraded to Spring 2.5
 
 Changes in version 0.9
