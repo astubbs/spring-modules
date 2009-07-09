@@ -1,8 +1,20 @@
 SPRING MODULES CHANGELOG
 ========================
-http://springmodules.dev.java.net
+http://wiki.github.com/astubbs/spring-modules
 
-Changes in version 0.9 (in progress)
+Changes in version 0.10 (in progress)
+------------------------------------
+
+Package org.springmodules.cache
+* Migrated to Maven
+
+All
+* Migrated parent and 'projects dir' to Maven, including moving directories to Maven standard
+* all pom’s applied from the patch under MOD-463 with some fixes, but not all are included in projects build
+* jar’s and generated documentation removed from project history
+* upgraded to Spring 2.5
+
+Changes in version 0.9
 ------------------------------------
 
 Package org.springmodules.cache
