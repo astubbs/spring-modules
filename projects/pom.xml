@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springmodules</groupId>
+        <artifactId>spring-modules</artifactId>
+        <version>0.10-SNAPSHOT</version>
+    </parent>
     <groupId>org.springmodules</groupId>
-    <artifactId>spring-modules</artifactId>
-    <version>0.9</version>
+    <artifactId>projects</artifactId>
+    <version>0.10-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-	<properties>
-		<version.spring>2.5.6</version.spring>
-		<version.easymock>2.4</version.easymock>
-	</properties>
 
     <modules>
         <!-- <module>spring-modules-ant</module>
@@ -63,56 +63,11 @@
         </dependency>        
     </dependencies>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${version.spring}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${version.spring}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${version.spring}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-                <version>${version.spring}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${version.spring}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.5</source>
-                        <target>1.5</target>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-
-    <repositories>
+	<!-- use only on a per module project that needs it -->
+    <!-- <repositories>
         <repository>
             <id>repository.jboss.com</id>
             <url>http://repository.jboss.com/maven2</url>
         </repository>
-    </repositories>
+    </repositories> -->
 </project>

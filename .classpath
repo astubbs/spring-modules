@@ -1,53 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="projects/commons/src/java"/>
-	<classpathentry kind="src" path="projects/jbpm31/src/test"/>
-	<classpathentry kind="src" path="projects/jbpm31/src/java"/>
-	<classpathentry kind="src" path="projects/commons/src/test"/>
-	<classpathentry kind="src" path="projects/javaspaces/src/java"/>
-	<classpathentry kind="src" path="projects/javaspaces/src/test"/>
-	<classpathentry kind="src" path="projects/jcr/src/java"/>
-	<classpathentry kind="src" path="projects/jcr/src/test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/buildtime/geronimo-spec-jta-1.0.1B.jar"/>
-	<classpathentry sourcepath="D:/work/study/jcr/jackrabbit/1.0.1/jackrabbit-core-1.0.1/src/main/java" kind="lib" path="projects/jcr/lib/buildtime/jackrabbit-core.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/buildtime/jackrabbit-jcr-commons.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/buildtime/jeceira.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/global/commons-logging.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/global/jcr.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/global/log4j.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/global/servlet-api.jar"/>
-	<classpathentry sourcepath="D:/work/study/spring-framework-2.0-rc1/src" kind="lib" path="projects/jcr/lib/global/spring.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/cglib-nodep.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/clover.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/commons.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/commons-collections.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/commons-lang.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/commons-logging.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/concurrent.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/doka.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/easymock.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/easymockclassextension.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/geronimo-spec-jta-1.0.1B.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/hsqldb.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/jackrabbit-core.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/jackrabbit-jca.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/jackrabbit-jcr-commons.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/jcr.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/jeceira.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/jug-asl.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/junit.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/log4j.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/lucene.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/servlet-api.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/slf4j-log4j12.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/spring.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/spring-mock.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="projects/jcr/lib/test/xmlParserAPIs.jar"/>
-	<classpathentry sourcepath="D:/work/study/acegi/acegi-security-1.0.1/src" kind="lib" path="D:/work/study/acegi/acegi-security-1.0.1/acegi-security-1.0.1.jar"/>
-	<classpathentry kind="lib" path="D:/work/study/commons-chain-1.1/commons-chain-1.1.jar"/>
-	<classpathentry sourcepath="D:/work/study/jbpm/jbpm-3.1.1/src/java.jbpm" kind="lib" path="projects/jbpm31/lib/global/jbpm.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/hibernate"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
