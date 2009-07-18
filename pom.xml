@@ -119,4 +119,12 @@
 		</pluginManagement>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>sharca.com.repo</id>
+			<name>SharcaConsulting Repository</name>
+			<url>scp://sharca.com/var/repository</url>
+		</repository>
+    </repositories>
+
 </project>
