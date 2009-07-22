@@ -7,6 +7,7 @@ Changes in version 0.10 (in progress)
 
 Package org.springmodules.cache
 * Migrated to Maven
+* Upgraded ehcache to version 1.6.0
 
 All
 * Migrated parent and 'projects dir' to Maven, including moving directories to Maven standard
@@ -77,7 +78,7 @@ Package org.springmodules.xt.ajax
 * Improved DefaultValidationHandler configurability and reusability.
 * Fixed Ajax response encoding settings.
 * Fixed large javascript actions support.
-* Fixed several other bugs. 
+* Fixed several other bugs.
 * Support for Servlet 2.3 APIs.
 * Support for JDK 1.4 by distributing a new backported jar (see MOD-405 issue).
 
