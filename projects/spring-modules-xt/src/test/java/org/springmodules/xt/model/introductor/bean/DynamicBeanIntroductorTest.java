@@ -22,7 +22,7 @@ import org.jmock.integration.junit3.MockObjectTestCase;
  *
  * @author Sergio Bossa
  */
-public class DynamicBeanIntroductorTest extends MockObjectTestCase {
+public abstract class DynamicBeanIntroductorTest extends MockObjectTestCase {
     /*
     private DynamicBeanIntroductor introductor;
     

@@ -21,7 +21,7 @@ import org.jmock.integration.junit3.MockObjectTestCase;
 /**
  * @author Sergio Bossa
  */
-public class FilteringApplicationEventMulticasterTest extends MockObjectTestCase {
+public abstract class FilteringApplicationEventMulticasterTest extends MockObjectTestCase {
    /*
     private FilteringApplicationEventMulticaster multicaster;
     

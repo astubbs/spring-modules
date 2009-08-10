@@ -21,7 +21,7 @@ import org.jmock.integration.junit3.MockObjectTestCase;
 /**
  * @author Sergio Bossa
  */
-public class DefaultEDPInvokerTest extends MockObjectTestCase {
+public abstract class DefaultEDPInvokerTest extends MockObjectTestCase {
     /*
     private DefaultEDPInvoker edpInvoker;
     private Mock edpMock;

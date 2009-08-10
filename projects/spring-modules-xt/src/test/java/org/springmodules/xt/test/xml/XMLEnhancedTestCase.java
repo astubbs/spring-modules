@@ -38,4 +38,8 @@ public class XMLEnhancedTestCase extends XMLTestCase {
                    .append("</root>");
         return builder.toString();
     }
+
+    public void testNull() {
+    	// Bet it passes
+    }
 }

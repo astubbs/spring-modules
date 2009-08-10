@@ -26,7 +26,7 @@ import org.springmodules.xt.test.domain.IOffice;
  *
  * @author Sergio Bossa
  */
-public class DynamicImplementorIntroductorTest extends MockObjectTestCase {
+public abstract class DynamicImplementorIntroductorTest extends MockObjectTestCase {
     
     public DynamicImplementorIntroductorTest(String testName) {
         super(testName);
