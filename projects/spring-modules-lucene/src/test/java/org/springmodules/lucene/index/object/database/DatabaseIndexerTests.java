@@ -57,6 +57,9 @@ public class DatabaseIndexerTests extends TestCase {
 
 		//Creation of the schema
 		StringBuffer requestCreate = new StringBuffer();
+		requestCreate.append("DROP TABLE TEST IF EXISTS" );
+		this.template.execute(requestCreate.toString());
+		requestCreate = new StringBuffer();
 		requestCreate.append("create table TEST ( TEST_ID INT not null,");
 		requestCreate.append(" TEST_NAME VARCHAR(255) not null,");
 		requestCreate.append(" constraint PK_TEST primary key (TEST_ID) )");
