@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-modules id="moduleCoreId" project-version="1.5.0">
 <wb-module deploy-name="xt">
-<wb-resource deploy-path="/" source-path="/src/java"/>
 <wb-resource deploy-path="/" source-path="/src/test"/>
-<wb-resource deploy-path="/" source-path="/src/etc/test-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/etc/test-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/" source-path="/src/test/java"/>
 </wb-module>
 </project-modules>

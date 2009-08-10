@@ -16,23 +16,13 @@
 
 package org.springmodules.xt.model.event.edp;
 
-import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
-import org.springmodules.xt.test.domain.Employee;
-import org.springmodules.xt.test.domain.IDomainService;
-import org.springmodules.xt.test.domain.IEmployee;
-import org.springmodules.xt.test.domain.IOffice;
-import org.springmodules.xt.test.domain.Office;
-import org.springmodules.xt.test.event.ApplicationEmployeeUpdateEvent;
-import org.springmodules.xt.test.event.ApplicationOfficeUpdateEvent;
-import org.springmodules.xt.test.event.ApplicationUpdateEvent;
-import org.springmodules.xt.test.event.TestEvent;
+import org.jmock.integration.junit3.MockObjectTestCase;
 
 /**
  * @author Sergio Bossa
  */
 public class DefaultEDPInvokerTest extends MockObjectTestCase {
-    
+    /*
     private DefaultEDPInvoker edpInvoker;
     private Mock edpMock;
     private IDomainService edp;
@@ -87,5 +77,5 @@ public class DefaultEDPInvokerTest extends MockObjectTestCase {
         this.edpMock.expects(never()).method("onEvent");
         
         this.edpInvoker.onApplicationEvent(event);
-    }
+    }*/
 }
