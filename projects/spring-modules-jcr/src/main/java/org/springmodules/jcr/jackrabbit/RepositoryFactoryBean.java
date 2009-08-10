@@ -17,9 +17,8 @@ import org.springframework.core.io.Resource;
 import org.xml.sax.InputSource;
 
 /**
- * FactoryBean for creating a JackRabbit (JCR-170) repository through Spring
- * configuration files. Use this factory bean when you have to manually
- * configure the repository; for retrieving the repository from JNDI use the
+ * FactoryBean for creating a JackRabbit (JCR-170) repository through Spring configuration files. Use this factory bean
+ * when you have to manually configure the repository; for retrieving the repository from JNDI use the
  * JndiObjectFactoryBean {@link org.springframework.jndi.JndiObjectFactoryBean}
  * 
  * 
@@ -52,6 +51,7 @@ public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFacto
 	/**
 	 * @see org.springmodules.jcr.RepositoryFactoryBean#createRepository()
 	 */
+	@Override
 	protected Repository createRepository() throws Exception {
 		// return JackRabbit repository.
 		return RepositoryImpl.create(repositoryConfig);
@@ -60,35 +60,41 @@ public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFacto
 	/**
 	 * @see org.springmodules.jcr.RepositoryFactoryBean#resolveConfigurationResource()
 	 */
+	@Override
 	protected void resolveConfigurationResource() throws Exception {
 		// read the configuration object
-		if (repositoryConfig != null)
+		if (repositoryConfig != null) {
 			return;
+		}
 
 		if (this.configuration == null) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				log.debug("no configuration resource specified, using the default one:" + DEFAULT_CONF_FILE);
+			}
 			configuration = new ClassPathResource(DEFAULT_CONF_FILE);
 		}
 
 		if (homeDir == null) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				log.debug("no repository home dir specified, using the default one:" + DEFAULT_REP_DIR);
+			}
 			homeDir = new FileSystemResource(DEFAULT_REP_DIR);
 		}
 
-		repositoryConfig = RepositoryConfig.create(new InputSource(configuration.getInputStream()),
-				homeDir.getFile().getAbsolutePath());
+		repositoryConfig = RepositoryConfig.create(new InputSource(configuration.getInputStream()), homeDir.getFile()
+				.getAbsolutePath());
 	}
 
 	/**
 	 * Shutdown method.
 	 * 
 	 */
+	@Override
 	public void destroy() throws Exception {
 		// force cast (but use only the interface)
-		if (repository instanceof JackrabbitRepository)
+		if (repository instanceof JackrabbitRepository) {
 			((JackrabbitRepository) repository).shutdown();
+		}
 	}
 
 	/**
@@ -99,9 +105,10 @@ public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFacto
 	}
 
 	/**
-	 * @param defaultRepDir The defaultRepDir to set.
+	 * @param defaultRepDir
+	 *            The defaultRepDir to set.
 	 */
-	public void setHomeDir(Resource defaultRepDir) {
+	public void setHomeDir(final Resource defaultRepDir) {
 		this.homeDir = defaultRepDir;
 	}
 
@@ -113,9 +120,10 @@ public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFacto
 	}
 
 	/**
-	 * @param repositoryConfig The repositryConfig to set.
+	 * @param repositoryConfig
+	 *            The repositryConfig to set.
 	 */
-	public void setRepositoryConfig(RepositoryConfig repositoryConfig) {
+	public void setRepositoryConfig(final RepositoryConfig repositoryConfig) {
 		this.repositoryConfig = repositoryConfig;
 	}
 }

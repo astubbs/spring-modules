@@ -13,25 +13,26 @@ import org.springframework.transaction.support.ResourceHolderSupport;
  */
 public class SessionHolder extends ResourceHolderSupport {
 
-    private Session session;
+	private Session session;
 
-    public SessionHolder(Session session) {
-        setSession(session);
-    }
+	public SessionHolder(final Session session) {
+		setSession(session);
+	}
 
-    protected void setSession(Session session) {
-        this.session = session;
-    }
+	protected void setSession(final Session session) {
+		this.session = session;
+	}
 
-    public Session getSession() {
-        return session;
-    }
+	public Session getSession() {
+		return session;
+	}
 
-    /**
-     * @see org.springframework.transaction.support.ResourceHolderSupport#clear()
-     */
-    public void clear() {
-        super.clear();
-        session = null;
-    }
+	/**
+	 * @see org.springframework.transaction.support.ResourceHolderSupport#clear()
+	 */
+	@Override
+	public void clear() {
+		super.clear();
+		session = null;
+	}
 }

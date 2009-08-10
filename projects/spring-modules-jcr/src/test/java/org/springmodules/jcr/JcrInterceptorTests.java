@@ -27,124 +27,123 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 public class JcrInterceptorTests extends TestCase {
 
-    public void testInterceptor() throws RepositoryException {
-        MockControl sfControl = MockControl.createControl(SessionFactory.class);
-        SessionFactory sf = (SessionFactory) sfControl.getMock();
-        MockControl sessionControl = MockControl.createControl(Session.class);
-        Session session = (Session) sessionControl.getMock();
-       
-        sfControl.expectAndReturn(sf.getSession(), session);
-        session.logout();
-        sessionControl.setVoidCallable(1);
-        sfControl.expectAndReturn(sf.getSessionHolder(session), new SessionHolder(session));
-        sfControl.replay();
-        sessionControl.replay();
+	public void testInterceptor() throws RepositoryException {
+		final MockControl sfControl = MockControl.createControl(SessionFactory.class);
+		final SessionFactory sf = (SessionFactory) sfControl.getMock();
+		final MockControl sessionControl = MockControl.createControl(Session.class);
+		final Session session = (Session) sessionControl.getMock();
 
-        JcrInterceptor interceptor = new JcrInterceptor();
-        interceptor.setSessionFactory(sf);
-        interceptor.afterPropertiesSet();
-        try {
-            interceptor.invoke(new TestInvocation(sf));
-        } catch (Throwable t) {
-            fail("Should not have thrown Throwable: " + t);
-        }
+		sfControl.expectAndReturn(sf.getSession(), session);
+		session.logout();
+		sessionControl.setVoidCallable(1);
+		sfControl.expectAndReturn(sf.getSessionHolder(session), new SessionHolder(session));
+		sfControl.replay();
+		sessionControl.replay();
 
-        sfControl.verify();
-        sessionControl.verify();
-    }
+		final JcrInterceptor interceptor = new JcrInterceptor();
+		interceptor.setSessionFactory(sf);
+		interceptor.afterPropertiesSet();
+		try {
+			interceptor.invoke(new TestInvocation(sf));
+		} catch (final Throwable t) {
+			fail("Should not have thrown Throwable: " + t);
+		}
 
-    public void testInterceptorWithPrebound() {
-        MockControl sfControl = MockControl.createControl(SessionFactory.class);
-        SessionFactory sf = (SessionFactory) sfControl.getMock();
-        MockControl sessionControl = MockControl.createControl(Session.class);
-        Session session = (Session) sessionControl.getMock();
-        MockControl repoControl = MockControl.createNiceControl(Repository.class);
-        
-        
-        sfControl.replay();
-        sessionControl.replay();
-        repoControl.replay();
+		sfControl.verify();
+		sessionControl.verify();
+	}
 
-        TransactionSynchronizationManager.bindResource(sf, new SessionHolder(session));
-        JcrInterceptor interceptor = new JcrInterceptor();
-        interceptor.setSessionFactory(sf);
-        interceptor.afterPropertiesSet();
-        try {
-            interceptor.invoke(new TestInvocation(sf));
-        } catch (Throwable t) {
-            fail("Should not have thrown Throwable: " + t.getMessage());
-        } finally {
-            TransactionSynchronizationManager.unbindResource(sf);
-        }
+	public void testInterceptorWithPrebound() {
+		final MockControl sfControl = MockControl.createControl(SessionFactory.class);
+		final SessionFactory sf = (SessionFactory) sfControl.getMock();
+		final MockControl sessionControl = MockControl.createControl(Session.class);
+		final Session session = (Session) sessionControl.getMock();
+		final MockControl repoControl = MockControl.createNiceControl(Repository.class);
 
-        sfControl.verify();
-        sessionControl.verify();
-    }
+		sfControl.replay();
+		sessionControl.replay();
+		repoControl.replay();
 
-    private static class TestInvocation implements MethodInvocation {
+		TransactionSynchronizationManager.bindResource(sf, new SessionHolder(session));
+		final JcrInterceptor interceptor = new JcrInterceptor();
+		interceptor.setSessionFactory(sf);
+		interceptor.afterPropertiesSet();
+		try {
+			interceptor.invoke(new TestInvocation(sf));
+		} catch (final Throwable t) {
+			fail("Should not have thrown Throwable: " + t.getMessage());
+		} finally {
+			TransactionSynchronizationManager.unbindResource(sf);
+		}
 
-        private SessionFactory sessionFactory;
+		sfControl.verify();
+		sessionControl.verify();
+	}
 
-        public TestInvocation(SessionFactory sessionFactory) {
-            this.sessionFactory = sessionFactory;
-        }
+	private static class TestInvocation implements MethodInvocation {
 
-        public Object proceed() throws Throwable {
-            if (!TransactionSynchronizationManager.hasResource(this.sessionFactory)) {
-                throw new IllegalStateException("Session not bound");
-            }
-            return null;
-        }
+		private SessionFactory sessionFactory;
 
-        public Object[] getArguments() {
-            return null;
-        }
+		public TestInvocation(final SessionFactory sessionFactory) {
+			this.sessionFactory = sessionFactory;
+		}
 
-        public int getCurrentInterceptorIndex() {
-            return 0;
-        }
+		public Object proceed() throws Throwable {
+			if (!TransactionSynchronizationManager.hasResource(this.sessionFactory)) {
+				throw new IllegalStateException("Session not bound");
+			}
+			return null;
+		}
 
-        public int getNumberOfInterceptors() {
-            return 0;
-        }
+		public Object[] getArguments() {
+			return null;
+		}
 
-        public Interceptor getInterceptor(int i) {
-            return null;
-        }
+		public int getCurrentInterceptorIndex() {
+			return 0;
+		}
 
-        public Method getMethod() {
-            return null;
-        }
+		public int getNumberOfInterceptors() {
+			return 0;
+		}
 
-        public AccessibleObject getStaticPart() {
-            return getMethod();
-        }
+		public Interceptor getInterceptor(final int i) {
+			return null;
+		}
 
-        public Object getArgument(int i) {
-            return null;
-        }
+		public Method getMethod() {
+			return null;
+		}
 
-        public void setArgument(int i, Object handler) {
-        }
+		public AccessibleObject getStaticPart() {
+			return getMethod();
+		}
 
-        public int getArgumentCount() {
-            return 0;
-        }
+		public Object getArgument(final int i) {
+			return null;
+		}
 
-        public Object getThis() {
-            return null;
-        }
+		public void setArgument(final int i, final Object handler) {
+		}
 
-        public Object getProxy() {
-            return null;
-        }
+		public int getArgumentCount() {
+			return 0;
+		}
 
-        public Invocation cloneInstance() {
-            return null;
-        }
+		public Object getThis() {
+			return null;
+		}
 
-        public void release() {
-        }
-    }
+		public Object getProxy() {
+			return null;
+		}
+
+		public Invocation cloneInstance() {
+			return null;
+		}
+
+		public void release() {
+		}
+	}
 
 }

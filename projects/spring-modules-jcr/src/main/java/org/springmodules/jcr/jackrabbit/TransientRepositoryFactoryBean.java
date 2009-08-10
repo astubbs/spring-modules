@@ -20,8 +20,8 @@ import javax.jcr.Repository;
 import org.apache.jackrabbit.core.TransientRepository;
 
 /**
- * FactoryBean for creating Jackrabbit's TransientRepository (i.e. repository are initialized for the
- * first session and closed once the last session is closed.
+ * FactoryBean for creating Jackrabbit's TransientRepository (i.e. repository are initialized for the first session and
+ * closed once the last session is closed.
  * 
  * @author Costin Leau
  * @author Colin Yates
@@ -29,6 +29,7 @@ import org.apache.jackrabbit.core.TransientRepository;
  */
 public class TransientRepositoryFactoryBean extends RepositoryFactoryBean {
 
+	@Override
 	protected Repository createRepository() throws Exception {
 		return new TransientRepository(getRepositoryConfig());
 	}

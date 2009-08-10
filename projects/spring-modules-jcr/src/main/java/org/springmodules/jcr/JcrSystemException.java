@@ -9,19 +9,19 @@ import org.springframework.dao.UncategorizedDataAccessException;
  * 
  * @author Guillaume Bort <guillaume.bort@zenexity.fr>
  * @author Costin Leau
- *
+ * 
  */
 public class JcrSystemException extends UncategorizedDataAccessException {
 
-    public JcrSystemException(String message, Throwable ex) {
-        super(message, ex);
-    }
-    
-    /**
-     * 
-     * @param ex
-     */
-    public JcrSystemException(Throwable ex) {
-        super("Repository access exception", ex);
-    }
+	public JcrSystemException(final String message, final Throwable ex) {
+		super(message, ex);
+	}
+
+	/**
+	 * 
+	 * @param ex
+	 */
+	public JcrSystemException(final Throwable ex) {
+		super("Repository access exception", ex);
+	}
 }

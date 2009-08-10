@@ -19,33 +19,27 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springmodules.jcr.support.GenericSessionHolderProvider;
 
 /**
- * Jcr Session Factory. This class is just a simple wrapper around the
- * repository which facilitates session retrieval through a central point. No
- * exception conversion from Jcr Repository exceptions to Spring DAO exceptions
- * is done.
+ * Jcr Session Factory. This class is just a simple wrapper around the repository which facilitates session retrieval
+ * through a central point. No exception conversion from Jcr Repository exceptions to Spring DAO exceptions is done.
  * 
- * <p/> The session factory is able to add event listener definitions for each
- * session and some utility methods.<br/> Note that for added functionality
- * (like JackRabbit SessionListener) you can use the decorators package
- * (available from JackRabbit).
+ * <p/>
+ * The session factory is able to add event listener definitions for each session and some utility methods.<br/>
+ * Note that for added functionality (like JackRabbit SessionListener) you can use the decorators package (available
+ * from JackRabbit).
  * 
- * <p/> This factory beans allows registration for namespaces. By default, newly
- * registered namespaces will <strong>not</strong> be unregistered once the
- * FactoryBean is destroyed and existing namespaces registered under the same
- * suffix will <strong>not</strong> be overwritten since most JCR
- * implementations do not support these features.
+ * <p/>
+ * This factory beans allows registration for namespaces. By default, newly registered namespaces will
+ * <strong>not</strong> be unregistered once the FactoryBean is destroyed and existing namespaces registered under the
+ * same suffix will <strong>not</strong> be overwritten since most JCR implementations do not support these features.
  * 
- * One can change this behavior using the
- * {@link #setForceNamespacesRegistration(boolean)},
- * {@link #setKeepNewNamespaces(boolean) and
- * {@link #skipRegisteredNamespace(boolean)} methods.
+ * One can change this behavior using the {@link #setForceNamespacesRegistration(boolean)},
+ * {@link #setKeepNewNamespaces(boolean) and {@link #skipRegisteredNamespace(boolean)} methods.
  * 
- * If 'forceNamespacesRegistration' is true and 'keepNewNamespaces' false, the
- * overwritten namespaces are registered back when the factory is destroyed.
+ * If 'forceNamespacesRegistration' is true and 'keepNewNamespaces' false, the overwritten namespaces are registered
+ * back when the factory is destroyed.
  * 
  * @author Costin Leau
  * @author Brian Moseley <bcm@osafoundation.org>
@@ -90,7 +84,7 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 * @param workspaceName
 	 * @param credentials
 	 */
-	public JcrSessionFactory(Repository repository, String workspaceName, Credentials credentials) {
+	public JcrSessionFactory(final Repository repository, final String workspaceName, final Credentials credentials) {
 		this(repository, workspaceName, credentials, null);
 	}
 
@@ -102,8 +96,8 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 * @param credentials
 	 * @param sessionHolderProviderManager
 	 */
-	public JcrSessionFactory(Repository repository, String workspaceName, Credentials credentials,
-			SessionHolderProviderManager sessionHolderProviderManager) {
+	public JcrSessionFactory(final Repository repository, final String workspaceName, final Credentials credentials,
+			final SessionHolderProviderManager sessionHolderProviderManager) {
 		this.repository = repository;
 		this.workspaceName = workspaceName;
 		this.credentials = credentials;
@@ -119,27 +113,28 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(getRepository(), "repository is required");
 
-		if (eventListeners != null && eventListeners.length > 0 && !JcrUtils.supportsObservation(getRepository()))
+		if (eventListeners != null && eventListeners.length > 0 && !JcrUtils.supportsObservation(getRepository())) {
 			throw new IllegalArgumentException("repository " + getRepositoryInfo()
 					+ " does NOT support Observation; remove Listener definitions");
+		}
 
 		registerNodeTypes();
 		registerNamespaces();
 
 		// determine the session holder provider
 		if (sessionHolderProviderManager == null) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				log.debug("no session holder provider manager set; using the default one");
+			}
 			sessionHolderProvider = new GenericSessionHolderProvider();
-		}
-		else
+		} else {
 			sessionHolderProvider = sessionHolderProviderManager.getSessionProvider(getRepository());
+		}
 	}
 
 	/**
-	 * Hook for registering node types on the underlying repository. Since this
-	 * process is not covered by the spec, each implementation requires its own
-	 * subclass.
+	 * Hook for registering node types on the underlying repository. Since this process is not covered by the spec, each
+	 * implementation requires its own subclass.
 	 * 
 	 * By default, this method doesn't do anything.
 	 */
@@ -148,9 +143,8 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	}
 
 	/**
-	 * Hook for un-registering node types on the underlying repository. Since
-	 * this process is not covered by the spec, each implementation requires its
-	 * own subclass.
+	 * Hook for un-registering node types on the underlying repository. Since this process is not covered by the spec,
+	 * each implementation requires its own subclass.
 	 * 
 	 * By default, this method doesn't do anything.
 	 */
@@ -166,16 +160,18 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 */
 	protected void registerNamespaces() throws Exception {
 
-		if (namespaces == null || namespaces.isEmpty())
+		if (namespaces == null || namespaces.isEmpty()) {
 			return;
+		}
 
-		if (log.isDebugEnabled())
+		if (log.isDebugEnabled()) {
 			log.debug("registering custom namespaces " + namespaces);
+		}
 
-		NamespaceRegistry registry = getSession().getWorkspace().getNamespaceRegistry();
+		final NamespaceRegistry registry = getSession().getWorkspace().getNamespaceRegistry();
 
 		// do the lookup, so we avoid exceptions
-		String[] prefixes = registry.getPrefixes();
+		final String[] prefixes = registry.getPrefixes();
 		// sort the array
 		Arrays.sort(prefixes);
 
@@ -183,13 +179,14 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 		if (forceNamespacesRegistration) {
 
 			// save the old namespace only if it makes sense
-			if (!keepNewNamespaces)
+			if (!keepNewNamespaces) {
 				overwrittenNamespaces = new HashMap(namespaces.size());
+			}
 
 			// search occurences
-			for (Iterator iter = namespaces.keySet().iterator(); iter.hasNext();) {
-				String prefix = (String) iter.next();
-				int position = Arrays.binarySearch(prefixes, prefix);
+			for (final Object element : namespaces.keySet()) {
+				final String prefix = (String) element;
+				final int position = Arrays.binarySearch(prefixes, prefix);
 				if (position >= 0) {
 					if (log.isDebugEnabled()) {
 						log.debug("prefix " + prefix + " was already registered; unregistering it");
@@ -205,17 +202,16 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 		}
 
 		// do the registration
-		for (Iterator iter = namespaces.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry namespace = (Map.Entry) iter.next();
-			String prefix = (String) namespace.getKey();
-			String ns = (String) namespace.getValue();
+		for (final Object element : namespaces.entrySet()) {
+			final Map.Entry namespace = (Map.Entry) element;
+			final String prefix = (String) namespace.getKey();
+			final String ns = (String) namespace.getValue();
 
-			int position = Arrays.binarySearch(prefixes, prefix);
+			final int position = Arrays.binarySearch(prefixes, prefix);
 
 			if (skipExistingNamespaces && position >= 0) {
 				log.debug("namespace already registered under [" + prefix + "]; skipping registration");
-			}
-			else {
+			} else {
 				log.debug("registering namespace [" + ns + "] under [" + prefix + "]");
 				registry.registerNamespace(prefix, ns);
 			}
@@ -237,27 +233,31 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 */
 	protected void unregisterNamespaces() throws Exception {
 
-		if (namespaces == null || namespaces.isEmpty() || keepNewNamespaces)
+		if (namespaces == null || namespaces.isEmpty() || keepNewNamespaces) {
 			return;
+		}
 
-		if (log.isDebugEnabled())
+		if (log.isDebugEnabled()) {
 			log.debug("unregistering custom namespaces " + namespaces);
+		}
 
-		NamespaceRegistry registry = getSession().getWorkspace().getNamespaceRegistry();
+		final NamespaceRegistry registry = getSession().getWorkspace().getNamespaceRegistry();
 
-		for (Iterator iter = namespaces.keySet().iterator(); iter.hasNext();) {
-			String prefix = (String) iter.next();
+		for (final Object element : namespaces.keySet()) {
+			final String prefix = (String) element;
 			registry.unregisterNamespace(prefix);
 		}
 
 		if (forceNamespacesRegistration) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				log.debug("reverting back overwritten namespaces " + overwrittenNamespaces);
-			if (overwrittenNamespaces != null)
-				for (Iterator iter = overwrittenNamespaces.entrySet().iterator(); iter.hasNext();) {
-					Map.Entry entry = (Map.Entry) iter.next();
+			}
+			if (overwrittenNamespaces != null) {
+				for (final Iterator iter = overwrittenNamespaces.entrySet().iterator(); iter.hasNext();) {
+					final Map.Entry entry = (Map.Entry) iter.next();
 					registry.registerNamespace((String) entry.getKey(), (String) entry.getValue());
 				}
+			}
 		}
 	}
 
@@ -271,28 +271,30 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	/**
 	 * @see org.springmodules.jcr.SessionFactory#getSessionHolder(javax.jcr.Session)
 	 */
-	public SessionHolder getSessionHolder(Session session) {
+	public SessionHolder getSessionHolder(final Session session) {
 		return sessionHolderProvider.createSessionHolder(session);
 	}
 
 	/**
-	 * Hook for adding listeners to the newly returned session. We have to treat
-	 * exceptions manually and can't reply on the template.
+	 * Hook for adding listeners to the newly returned session. We have to treat exceptions manually and can't reply on
+	 * the template.
 	 * 
-	 * @param session JCR session
+	 * @param session
+	 *            JCR session
 	 * @return the listened session
 	 */
-	protected Session addListeners(Session session) throws RepositoryException {
+	protected Session addListeners(final Session session) throws RepositoryException {
 		if (eventListeners != null && eventListeners.length > 0) {
-			Workspace ws = session.getWorkspace();
-			ObservationManager manager = ws.getObservationManager();
-			if (log.isDebugEnabled())
+			final Workspace ws = session.getWorkspace();
+			final ObservationManager manager = ws.getObservationManager();
+			if (log.isDebugEnabled()) {
 				log.debug("adding listeners " + Arrays.asList(eventListeners).toString() + " for session " + session);
+			}
 
-			for (int i = 0; i < eventListeners.length; i++) {
-				manager.addEventListener(eventListeners[i].getListener(), eventListeners[i].getEventTypes(),
-						eventListeners[i].getAbsPath(), eventListeners[i].isDeep(), eventListeners[i].getUuid(),
-						eventListeners[i].getNodeTypeName(), eventListeners[i].isNoLocal());
+			for (final EventListenerDefinition eventListener : eventListeners) {
+				manager.addEventListener(eventListener.getListener(), eventListener.getEventTypes(), eventListener
+						.getAbsPath(), eventListener.isDeep(), eventListener.getUuid(),
+						eventListener.getNodeTypeName(), eventListener.isNoLocal());
 			}
 		}
 		return session;
@@ -306,34 +308,40 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	}
 
 	/**
-	 * @param repository The repository to set.
+	 * @param repository
+	 *            The repository to set.
 	 */
-	public void setRepository(Repository repository) {
+	public void setRepository(final Repository repository) {
 		this.repository = repository;
 	}
 
 	/**
-	 * @param workspaceName The workspaceName to set.
+	 * @param workspaceName
+	 *            The workspaceName to set.
 	 */
-	public void setWorkspaceName(String workspaceName) {
+	public void setWorkspaceName(final String workspaceName) {
 		this.workspaceName = workspaceName;
 	}
 
 	/**
-	 * @param credentials The credentials to set.
+	 * @param credentials
+	 *            The credentials to set.
 	 */
-	public void setCredentials(Credentials credentials) {
+	public void setCredentials(final Credentials credentials) {
 		this.credentials = credentials;
 	}
 
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public boolean equals(Object obj) {
-		if (this == obj)
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj instanceof JcrSessionFactory)
+		}
+		if (obj instanceof JcrSessionFactory) {
 			return (this.hashCode() == obj.hashCode());
+		}
 		return false;
 
 	}
@@ -341,14 +349,17 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int result = 17;
 		result = 37 * result + repository.hashCode();
 		// add the optional params (can be null)
-		if (credentials != null)
+		if (credentials != null) {
 			result = 37 * result + credentials.hashCode();
-		if (workspaceName != null)
+		}
+		if (workspaceName != null) {
 			result = 37 * result + workspaceName.hashCode();
+		}
 
 		return result;
 	}
@@ -356,8 +367,9 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		final StringBuffer buffer = new StringBuffer();
 		buffer.append("SessionFactory for ");
 		buffer.append(getRepositoryInfo());
 		buffer.append("|workspace=");
@@ -373,9 +385,10 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	}
 
 	/**
-	 * @param eventListenerDefinitions The eventListenerDefinitions to set.
+	 * @param eventListenerDefinitions
+	 *            The eventListenerDefinitions to set.
 	 */
-	public void setEventListeners(EventListenerDefinition[] eventListenerDefinitions) {
+	public void setEventListeners(final EventListenerDefinition[] eventListenerDefinitions) {
 		this.eventListeners = eventListenerDefinitions;
 	}
 
@@ -386,10 +399,11 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 */
 	private String getRepositoryInfo() {
 		// in case toString() is called before afterPropertiesSet()
-		if (getRepository() == null)
+		if (getRepository() == null) {
 			return "<N/A>";
+		}
 
-		StringBuffer buffer = new StringBuffer();
+		final StringBuffer buffer = new StringBuffer();
 		buffer.append(getRepository().getDescriptor(Repository.REP_NAME_DESC));
 		buffer.append(" ");
 		buffer.append(getRepository().getDescriptor(Repository.REP_VERSION_DESC));
@@ -404,9 +418,10 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	}
 
 	/**
-	 * @param namespaces The namespaces to set.
+	 * @param namespaces
+	 *            The namespaces to set.
 	 */
-	public void setNamespaces(Properties namespaces) {
+	public void setNamespaces(final Properties namespaces) {
 		this.namespaces = namespaces;
 	}
 
@@ -422,9 +437,10 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	/**
 	 * Used internally.
 	 * 
-	 * @param sessionHolderProvider The sessionHolderProvider to set.
+	 * @param sessionHolderProvider
+	 *            The sessionHolderProvider to set.
 	 */
-	protected void setSessionHolderProvider(SessionHolderProvider sessionHolderProvider) {
+	protected void setSessionHolderProvider(final SessionHolderProvider sessionHolderProvider) {
 		this.sessionHolderProvider = sessionHolderProvider;
 	}
 
@@ -436,60 +452,57 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	}
 
 	/**
-	 * @param sessionHolderProviderManager The sessionHolderProviderManager to
-	 * set.
+	 * @param sessionHolderProviderManager
+	 *            The sessionHolderProviderManager to set.
 	 */
-	public void setSessionHolderProviderManager(SessionHolderProviderManager sessionHolderProviderManager) {
+	public void setSessionHolderProviderManager(final SessionHolderProviderManager sessionHolderProviderManager) {
 		this.sessionHolderProviderManager = sessionHolderProviderManager;
 	}
 
 	/**
-	 * Indicate if the given namespace registrations will be kept (the default)
-	 * when the application context closes down or if they will be unregistered.
+	 * Indicate if the given namespace registrations will be kept (the default) when the application context closes down
+	 * or if they will be unregistered.
 	 * 
-	 * If unregistered, the namespace mappings that were overriden are
-	 * registered back to the repository.
+	 * If unregistered, the namespace mappings that were overriden are registered back to the repository.
 	 * 
 	 * @see #forceNamespacesRegistration
-	 * @param keepNamespaces The keepNamespaces to set.
+	 * @param keepNamespaces
+	 *            The keepNamespaces to set.
 	 */
-	public void setKeepNewNamespaces(boolean keepNamespaces) {
+	public void setKeepNewNamespaces(final boolean keepNamespaces) {
 		this.keepNewNamespaces = keepNamespaces;
 	}
 
 	/**
-	 * Indicate if the given namespace registrations will override the namespace
-	 * already registered in the repository under the same prefix. This will
-	 * cause unregistration for the namespaces that will be modified.
+	 * Indicate if the given namespace registrations will override the namespace already registered in the repository
+	 * under the same prefix. This will cause unregistration for the namespaces that will be modified.
 	 * 
-	 * <p/> However, depending on the {@link #setKeepNewNamespaces(boolean)}
-	 * setting, the old namespaces can be registered back once the application
-	 * context is destroyed.
+	 * <p/>
+	 * However, depending on the {@link #setKeepNewNamespaces(boolean)} setting, the old namespaces can be registered
+	 * back once the application context is destroyed.
 	 * 
 	 * False by default.
 	 * 
-	 * @param forceNamespacesRegistration The forceNamespacesRegistration to
-	 * set.
+	 * @param forceNamespacesRegistration
+	 *            The forceNamespacesRegistration to set.
 	 */
-	public void setForceNamespacesRegistration(boolean forceNamespacesRegistration) {
+	public void setForceNamespacesRegistration(final boolean forceNamespacesRegistration) {
 		this.forceNamespacesRegistration = forceNamespacesRegistration;
 	}
 
 	/**
-	 * Indicate if the given namespace registrations will skip already
-	 * registered namespaces or not. If true (default), the new namespace will
-	 * not be registered and the old namespace kept in place. If not skipped,
-	 * registration of new namespaces will fail if there are already namespace
-	 * registered under the same prefix.
+	 * Indicate if the given namespace registrations will skip already registered namespaces or not. If true (default),
+	 * the new namespace will not be registered and the old namespace kept in place. If not skipped, registration of new
+	 * namespaces will fail if there are already namespace registered under the same prefix.
 	 * 
-	 * <p/> This flag is required for JCR implementations which do not support
-	 * namespace unregistration which render the
-	 * {@link #setForceNamespacesRegistration(boolean)} method useless (as
-	 * namespace registration cannot be forced).
+	 * <p/>
+	 * This flag is required for JCR implementations which do not support namespace unregistration which render the
+	 * {@link #setForceNamespacesRegistration(boolean)} method useless (as namespace registration cannot be forced).
 	 * 
-	 * @param skipRegisteredNamespace The skipRegisteredNamespace to set.
+	 * @param skipRegisteredNamespace
+	 *            The skipRegisteredNamespace to set.
 	 */
-	public void setSkipExistingNamespaces(boolean skipRegisteredNamespace) {
+	public void setSkipExistingNamespaces(final boolean skipRegisteredNamespace) {
 		this.skipExistingNamespaces = skipRegisteredNamespace;
 	}
 

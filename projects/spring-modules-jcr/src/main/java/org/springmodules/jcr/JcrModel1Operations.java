@@ -11,12 +11,13 @@ import javax.jcr.query.QueryResult;
 import org.xml.sax.ContentHandler;
 
 /**
- * Interface used for delimiting Jcr operations based on what the underlying repository supports 
- * (in this case model 1 operations).
+ * Interface used for delimiting Jcr operations based on what the underlying repository supports (in this case model 1
+ * operations).
  * 
- * Normally not used but useful for casting to restrict access in some situations. 
+ * Normally not used but useful for casting to restrict access in some situations.
+ * 
  * @author Costin Leau
- *
+ * 
  */
 public interface JcrModel1Operations {
 
@@ -61,7 +62,7 @@ public interface JcrModel1Operations {
 	public Node getNodeByUUID(String uuid);
 
 	/**
-	 * @see javax.jcr.Session#getRootNode(); 
+	 * @see javax.jcr.Session#getRootNode();
 	 */
 	public Node getRootNode();
 
@@ -89,17 +90,19 @@ public interface JcrModel1Operations {
 	 * Execute a persistent query from the given node.
 	 * 
 	 * @see javax.jcr.query.QueryManager#getQuery(javax.jcr.Node)
-	 * @param node node to be dumped
+	 * @param node
+	 *            node to be dumped
 	 * @return query result
 	 */
 	public QueryResult query(Node node);
 
 	/**
-	 * Execute a query with the given strings with XPATH as default language.
-	 * It's the same as #query(java.lang.String, java.lang.String)
+	 * Execute a query with the given strings with XPATH as default language. It's the same as #query(java.lang.String,
+	 * java.lang.String)
 	 * 
 	 * @see javax.jcr.query.QueryManager#createQuery(java.lang.String, java.lang.String)
-	 * @param statement query statement
+	 * @param statement
+	 *            query statement
 	 * @return query result
 	 */
 	public QueryResult query(String statement);
@@ -108,35 +111,39 @@ public interface JcrModel1Operations {
 	 * Execute a query with the given strings.
 	 * 
 	 * @see javax.jcr.query.QueryManager#createQuery(java.lang.String, java.lang.String)
-	 * @param statement query statement
-	 * @param language language statement
+	 * @param statement
+	 *            query statement
+	 * @param language
+	 *            language statement
 	 * @return query result
 	 */
 	public QueryResult query(String statement, String language);
 
 	/**
-	 * Default method for doing multiple queries. It assumes the language is
-	 * XPATH and that errors will not be ignored.
+	 * Default method for doing multiple queries. It assumes the language is XPATH and that errors will not be ignored.
 	 * 
-	 * @param list a list of queries that will be executed against the
-	 *            repository
+	 * @param list
+	 *            a list of queries that will be executed against the repository
 	 * @return a map containing the queries as keys and results as values
 	 */
 	public Map query(final List list);
 
 	/**
-	 * Utility method for executing a list of queries against the repository.
-	 * Reads the queries given and returns the results in a map.
+	 * Utility method for executing a list of queries against the repository. Reads the queries given and returns the
+	 * results in a map.
 	 * 
-	 * <p/> If possible the map will be a LinkedHashSet on JDK 1.4+, otherwise
-	 * LinkedHashSet from Commons collections 3.1 if the package is found. If
-	 * the above fails a HashMap will be returned.
+	 * <p/>
+	 * If possible the map will be a LinkedHashSet on JDK 1.4+, otherwise LinkedHashSet from Commons collections 3.1 if
+	 * the package is found. If the above fails a HashMap will be returned.
 	 * 
 	 * @see org.springframework.core.CollectionFactory
 	 * 
-	 * @param list list of queries
-	 * @param language language of the queries. If null XPATH is assumed.
-	 * @param ignoreErrors if true it will populate unfound nodes with null
+	 * @param list
+	 *            list of queries
+	 * @param language
+	 *            language of the queries. If null XPATH is assumed.
+	 * @param ignoreErrors
+	 *            if true it will populate unfound nodes with null
 	 * @return a map containing the queries as keys and results as values
 	 */
 	public Map query(final List list, final String language, final boolean ignoreErrors);

@@ -13,11 +13,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
- * This class contains the some of the item names predefined by the JCR spec 1.0 (like
- * 'jcr', 'nt', 'mix'). The class is namespace aware (that's why it's not static)
- * and will return the correct name if the namespace prefixes are changed (from 'jcr' to 'foo' for
- * example). If the cache is enabled, it will be populated in lazy manner (once a certain property is looked up). 
- *  
+ * This class contains the some of the item names predefined by the JCR spec 1.0 (like 'jcr', 'nt', 'mix'). The class is
+ * namespace aware (that's why it's not static) and will return the correct name if the namespace prefixes are changed
+ * (from 'jcr' to 'foo' for example). If the cache is enabled, it will be populated in lazy manner (once a certain
+ * property is looked up).
+ * 
  * <p/>
  * The class can work in two modes:
  * <ol>
@@ -29,7 +29,7 @@ import javax.jcr.Session;
  * <strong>Note</strong> This class was inspired by JackRabbit's JcrConstants.
  * 
  * @author Costin Leau
- *
+ * 
  */
 public class JcrConstants {
 
@@ -324,7 +324,7 @@ public class JcrConstants {
 	 * Cache for jcr items.
 	 */
 	protected final Map jcrCacheMap = new HashMap();
-	
+
 	/**
 	 * Cache for nt and mix items. (to avoid String classes and to balance the maps).
 	 */
@@ -333,14 +333,15 @@ public class JcrConstants {
 	/**
 	 * Constructor.
 	 * 
-	 * @param cache true to cache resolved names, false otherwise.
+	 * @param cache
+	 *            true to cache resolved names, false otherwise.
 	 */
-	public JcrConstants(Session session, boolean cache) {
+	public JcrConstants(final Session session, final boolean cache) {
 		this.cache = cache;
 		this.session = session;
 	}
 
-	public JcrConstants(Session session) {
+	public JcrConstants(final Session session) {
 		this(session, true);
 	}
 
@@ -351,24 +352,26 @@ public class JcrConstants {
 	 * @param property
 	 * @return
 	 */
-	protected String resolveName(String namespace, String property) {
-		// search cache 
+	protected String resolveName(final String namespace, final String property) {
+		// search cache
 		if (cache) {
 			Map map;
-			
+
 			// jcr namespace
-			if (JCR_NS.hashCode() == namespace.hashCode())
+			if (JCR_NS.hashCode() == namespace.hashCode()) {
 				map = jcrCacheMap;
-			// mix and nt namespace
-			else
+				// mix and nt namespace
+			} else {
 				map = ntCacheMap;
-			
+			}
+
 			String result = (String) map.get(new Integer(property.hashCode()));
 			// cache miss
-			if (result == null)
+			if (result == null) {
 				result = computeName(namespace, property);
+			}
 			map.put(new Integer(property.hashCode()), result);
-			
+
 			return result;
 		}
 		// dynamic resolve
@@ -382,22 +385,21 @@ public class JcrConstants {
 	 * @param property
 	 * @return
 	 */
-	protected String computeName(String namespace, String property) {
+	protected String computeName(final String namespace, final String property) {
 		try {
-			StringBuffer buffer = new StringBuffer();
+			final StringBuffer buffer = new StringBuffer();
 			buffer.append(session.getNamespacePrefix(namespace));
 			buffer.append(':');
 			buffer.append(property);
 			return buffer.toString();
-		}
-		catch (RepositoryException e) {
+		} catch (final RepositoryException e) {
 			throw SessionFactoryUtils.translateException(e);
 		}
 	}
 
 	/**
 	 * Creates the actual cache.
-	 *
+	 * 
 	 */
 	protected void createCache() {
 		// String hashcode is used as key for fast look-ups.
@@ -406,23 +408,20 @@ public class JcrConstants {
 		// madness coming
 		//
 
-		// JCR 
+		// JCR
 		jcrCacheMap.put(new Integer(JCR_AUTOCREATED.hashCode()), computeName(JCR_NS, JCR_AUTOCREATED));
 		jcrCacheMap.put(new Integer(JCR_BASEVERSION.hashCode()), computeName(JCR_NS, JCR_BASEVERSION));
 		jcrCacheMap.put(new Integer(JCR_CHILD.hashCode()), computeName(JCR_NS, JCR_CHILD));
-		jcrCacheMap.put(new Integer(JCR_CHILDNODEDEFINITION.hashCode()), computeName(JCR_NS,
-				JCR_CHILDNODEDEFINITION));
+		jcrCacheMap.put(new Integer(JCR_CHILDNODEDEFINITION.hashCode()), computeName(JCR_NS, JCR_CHILDNODEDEFINITION));
 		jcrCacheMap.put(new Integer(JCR_CONTENT.hashCode()), computeName(JCR_NS, JCR_CONTENT));
 		jcrCacheMap.put(new Integer(JCR_CREATED.hashCode()), computeName(JCR_NS, JCR_CREATED));
 		jcrCacheMap.put(new Integer(JCR_DATA.hashCode()), computeName(JCR_NS, JCR_DATA));
-		jcrCacheMap.put(new Integer(JCR_DEFAULTPRIMARYTYPE.hashCode()), computeName(JCR_NS,
-				JCR_DEFAULTPRIMARYTYPE));
+		jcrCacheMap.put(new Integer(JCR_DEFAULTPRIMARYTYPE.hashCode()), computeName(JCR_NS, JCR_DEFAULTPRIMARYTYPE));
 		jcrCacheMap.put(new Integer(JCR_DEFAULTVALUES.hashCode()), computeName(JCR_NS, JCR_DEFAULTVALUES));
 		jcrCacheMap.put(new Integer(JCR_ENCODING.hashCode()), computeName(JCR_NS, JCR_ENCODING));
 		jcrCacheMap.put(new Integer(JCR_FROZENMIXINTYPES.hashCode()), computeName(JCR_NS, JCR_FROZENMIXINTYPES));
 		jcrCacheMap.put(new Integer(JCR_FROZENNODE.hashCode()), computeName(JCR_NS, JCR_FROZENNODE));
-		jcrCacheMap.put(new Integer(JCR_FROZENPRIMARYTYPE.hashCode()),
-				computeName(JCR_NS, JCR_FROZENPRIMARYTYPE));
+		jcrCacheMap.put(new Integer(JCR_FROZENPRIMARYTYPE.hashCode()), computeName(JCR_NS, JCR_FROZENPRIMARYTYPE));
 		jcrCacheMap.put(new Integer(JCR_FROZENUUID.hashCode()), computeName(JCR_NS, JCR_FROZENUUID));
 		jcrCacheMap.put(new Integer(JCR_HASORDERABLECHILDNODES.hashCode()), computeName(JCR_NS,
 				JCR_HASORDERABLECHILDNODES));
@@ -445,11 +444,10 @@ public class JcrConstants {
 		jcrCacheMap.put(new Integer(JCR_PRIMARYITEMNAME.hashCode()), computeName(JCR_NS, JCR_PRIMARYITEMNAME));
 		jcrCacheMap.put(new Integer(JCR_PRIMARYTYPE.hashCode()), computeName(JCR_NS, JCR_PRIMARYTYPE));
 		jcrCacheMap.put(new Integer(JCR_PRIMARYITEMNAME.hashCode()), computeName(JCR_NS, JCR_PRIMARYITEMNAME));
-		jcrCacheMap.put(new Integer(JCR_PROPERTYDEFINITION.hashCode()), computeName(JCR_NS,
-				JCR_PROPERTYDEFINITION));
+		jcrCacheMap.put(new Integer(JCR_PROPERTYDEFINITION.hashCode()), computeName(JCR_NS, JCR_PROPERTYDEFINITION));
 		jcrCacheMap.put(new Integer(JCR_PROTECTED.hashCode()), computeName(JCR_NS, JCR_PROTECTED));
-		jcrCacheMap.put(new Integer(JCR_REQUIREDPRIMARYTYPES.hashCode()), computeName(JCR_NS,
-				JCR_REQUIREDPRIMARYTYPES));
+		jcrCacheMap
+				.put(new Integer(JCR_REQUIREDPRIMARYTYPES.hashCode()), computeName(JCR_NS, JCR_REQUIREDPRIMARYTYPES));
 		jcrCacheMap.put(new Integer(JCR_REQUIREDTYPE.hashCode()), computeName(JCR_NS, JCR_REQUIREDTYPE));
 		jcrCacheMap.put(new Integer(JCR_ROOTVERSION.hashCode()), computeName(JCR_NS, JCR_ROOTVERSION));
 		jcrCacheMap.put(new Integer(JCR_SAMENAMESIBLINGS.hashCode()), computeName(JCR_NS, JCR_SAMENAMESIBLINGS));
@@ -472,8 +470,7 @@ public class JcrConstants {
 
 		// NT
 		jcrCacheMap.put(new Integer(NT_BASE.hashCode()), computeName(NT_NS, NT_BASE));
-		jcrCacheMap.put(new Integer(NT_CHILDNODEDEFINITION.hashCode()), computeName(NT_NS,
-				NT_CHILDNODEDEFINITION));
+		jcrCacheMap.put(new Integer(NT_CHILDNODEDEFINITION.hashCode()), computeName(NT_NS, NT_CHILDNODEDEFINITION));
 		jcrCacheMap.put(new Integer(NT_FILE.hashCode()), computeName(NT_NS, NT_FILE));
 		jcrCacheMap.put(new Integer(NT_FOLDER.hashCode()), computeName(NT_NS, NT_FOLDER));
 		jcrCacheMap.put(new Integer(NT_FROZENNODE.hashCode()), computeName(NT_NS, NT_FROZENNODE));

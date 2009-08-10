@@ -33,6 +33,7 @@ public class TxStressTests extends AbstractTransactionalSpringContextTests {
 
 	private JcrTemplate template;
 
+	@Override
 	protected String[] getConfigLocations() {
 		return new String[] { "/org/springmodules/jcr/jackrabbit/stress-context.xml" };
 	}
@@ -43,13 +44,13 @@ public class TxStressTests extends AbstractTransactionalSpringContextTests {
 			startNewTransaction();
 			template.execute(new JcrCallback() {
 
-				public Object doInJcr(Session session) throws IOException, RepositoryException {
-					Node rootNode = session.getRootNode();
-					Node one = rootNode.addNode("bla-bla-bla");
+				public Object doInJcr(final Session session) throws IOException, RepositoryException {
+					final Node rootNode = session.getRootNode();
+					final Node one = rootNode.addNode("bla-bla-bla");
 					one.setProperty("some prop", false);
-					Node two = one.addNode("foo");
+					final Node two = one.addNode("foo");
 					two.setProperty("boo", "hoo");
-					Node three = two.addNode("bar");
+					final Node three = two.addNode("bar");
 					three.setProperty("whitehorse", new String[] { "super", "ultra", "mega" });
 					session.save();
 					return null;
@@ -62,7 +63,7 @@ public class TxStressTests extends AbstractTransactionalSpringContextTests {
 
 	}
 
-	public void setTemplate(JcrTemplate template) {
+	public void setTemplate(final JcrTemplate template) {
 		this.template = template;
 	}
 }

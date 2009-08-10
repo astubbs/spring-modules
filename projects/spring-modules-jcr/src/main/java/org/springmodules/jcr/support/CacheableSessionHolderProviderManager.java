@@ -17,7 +17,7 @@ import org.springmodules.jcr.SessionHolderProvider;
  * Manager which caches providers in order to avoid lookups.
  * 
  * @author Costin Leau
- *
+ * 
  */
 public abstract class CacheableSessionHolderProviderManager extends AbstractSessionHolderProviderManager {
 
@@ -25,7 +25,7 @@ public abstract class CacheableSessionHolderProviderManager extends AbstractSess
 	 * Caching class based on CachingMapDecorator from main Spring distribution.
 	 * 
 	 * @author Costin Leau
-	 *
+	 * 
 	 */
 	protected class ProvidersCache extends CachingMapDecorator {
 		private ProvidersCache() {
@@ -35,7 +35,8 @@ public abstract class CacheableSessionHolderProviderManager extends AbstractSess
 		/**
 		 * @see org.springframework.util.CachingMapDecorator#create(java.lang.Object)
 		 */
-		protected Object create(Object key) {
+		@Override
+		protected Object create(final Object key) {
 			return parentLookup((Repository) key);
 		}
 
@@ -52,7 +53,7 @@ public abstract class CacheableSessionHolderProviderManager extends AbstractSess
 	 * @param sf
 	 * @return
 	 */
-	private SessionHolderProvider parentLookup(Repository repository) {
+	private SessionHolderProvider parentLookup(final Repository repository) {
 		return super.getSessionProvider(repository);
 	}
 
@@ -61,7 +62,8 @@ public abstract class CacheableSessionHolderProviderManager extends AbstractSess
 	 * 
 	 * @see org.springmodules.jcr.support.AbstractSessionHolderProviderManager#getSessionProvider(Repository)
 	 */
-	public SessionHolderProvider getSessionProvider(Repository repository) {
+	@Override
+	public SessionHolderProvider getSessionProvider(final Repository repository) {
 		return (SessionHolderProvider) providersCache.get(repository);
 	}
 

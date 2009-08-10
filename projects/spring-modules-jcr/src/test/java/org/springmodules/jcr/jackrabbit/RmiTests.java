@@ -25,12 +25,13 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
  */
 public class RmiTests extends AbstractTransactionalSpringContextTests {
 
+	@Override
 	protected String[] getConfigLocations() {
 		return new String[] { "/org/springmodules/jcr/jackrabbit/jackrabbit-rmi.xml" };
 	}
 
 	public void testSetup() throws Exception {
-		Repository repository = (Repository) applicationContext.getBean("rmiClient");
+		final Repository repository = (Repository) applicationContext.getBean("rmiClient");
 		assertEquals("Jackrabbit", repository.getDescriptor("jcr.repository.name"));
 	}
 

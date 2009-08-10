@@ -22,7 +22,7 @@ import org.springmodules.jcr.SessionHolderProvider;
 /**
  * 
  * @author Costin Leau
- *
+ * 
  */
 public class AbstractSessionHolderProviderManagerTests extends TestCase {
 
@@ -34,8 +34,8 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 	Session sess;
 	SessionFactory sf;
 	SessionHolderProvider customProvider;
-	
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -46,6 +46,7 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 			/**
 			 * @see org.springmodules.jcr.support.AbstractSessionHolderProviderManager#getProviders()
 			 */
+			@Override
 			public List getProviders() {
 				return providers;
 			}
@@ -58,41 +59,43 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 		repoCtrl = MockControl.createControl(Repository.class);
 		repo = (Repository) repoCtrl.getMock();
 
-		//sfCtrl.expectAndReturn(sf.getSession(), sess);
-		//sessCtrl.expectAndReturn(sess.getRepository(), repo);
+		// sfCtrl.expectAndReturn(sf.getSession(), sess);
+		// sessCtrl.expectAndReturn(sess.getRepository(), repo);
 		repoCtrl.expectAndReturn(repo.getDescriptor(Repository.REP_NAME_DESC), repositoryName);
-		
+
 		customProvider = new SessionHolderProvider() {
 
 			/**
 			 * @see org.springmodules.jcr.SessionHolderProvider#acceptsRepository(java.lang.String)
 			 */
-			public boolean acceptsRepository(String repo) {
+			public boolean acceptsRepository(final String repo) {
 				return repositoryName.equals(repo);
 			}
 
 			/**
 			 * @see org.springmodules.jcr.SessionHolderProvider#createSessionHolder(javax.jcr.Session)
 			 */
-			public SessionHolder createSessionHolder(Session session) {
+			public SessionHolder createSessionHolder(final Session session) {
 				return null;
 			}
 
 		};
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		sfCtrl.verify();
 		sessCtrl.verify();
 		repoCtrl.verify();
-		
+
 		super.tearDown();
 	}
 
 	/*
 	 * Default provider is used even on empty list.
 	 * 
-	 * Test method for 'org.springmodules.jcr.support.AbstractSessionHolderProviderManager.getSessionProvider(SessionFactory)'
+	 * Test method for
+	 * 'org.springmodules.jcr.support.AbstractSessionHolderProviderManager.getSessionProvider(SessionFactory)'
 	 */
 	public void testDefaultSessionProvider() {
 		// sanity check
@@ -102,13 +105,13 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 		sessCtrl.replay();
 		repoCtrl.replay();
 
-		SessionHolderProvider provider = providerManager.getSessionProvider(repo);
+		final SessionHolderProvider provider = providerManager.getSessionProvider(repo);
 		assertSame(GenericSessionHolderProvider.class, provider.getClass());
 	}
 
 	/*
-	 * Make sure that the approapriate provider is selected
-	 * Test method for 'org.springmodules.jcr.support.AbstractSessionHolderProviderManager.getSessionProvider(SessionFactory)'
+	 * Make sure that the approapriate provider is selected Test method for
+	 * 'org.springmodules.jcr.support.AbstractSessionHolderProviderManager.getSessionProvider(SessionFactory)'
 	 */
 	public void testCustomSessionProvider() {
 		// sanity check
@@ -122,11 +125,12 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 
 		assertSame(customProvider, providerManager.getSessionProvider(repo));
 	}
-	
+
 	/*
 	 * Make sure that we fallback to default provider
 	 * 
-	 * Test method for 'org.springmodules.jcr.support.AbstractSessionHolderProviderManager.getSessionProvider(SessionFactory)'
+	 * Test method for
+	 * 'org.springmodules.jcr.support.AbstractSessionHolderProviderManager.getSessionProvider(SessionFactory)'
 	 */
 	public void testDifferentSessionProvider() {
 		// sanity check
@@ -136,14 +140,14 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 			/**
 			 * @see org.springmodules.jcr.SessionHolderProvider#acceptsRepository(java.lang.String)
 			 */
-			public boolean acceptsRepository(String repo) {
+			public boolean acceptsRepository(final String repo) {
 				return false;
 			}
 
 			/**
 			 * @see org.springmodules.jcr.SessionHolderProvider#createSessionHolder(javax.jcr.Session)
 			 */
-			public SessionHolder createSessionHolder(Session session) {
+			public SessionHolder createSessionHolder(final Session session) {
 				return null;
 			}
 
@@ -156,5 +160,5 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 		repoCtrl.replay();
 
 		assertSame(GenericSessionHolderProvider.class, providerManager.getSessionProvider(repo).getClass());
-	}	
+	}
 }

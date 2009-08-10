@@ -36,8 +36,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.util.Assert;
 
 /**
- * FactoryBean for instantiating a Java Content Repository. This abstract class adds
- * custom functionality subclasses handling only the configuration issues.
+ * FactoryBean for instantiating a Java Content Repository. This abstract class adds custom functionality subclasses
+ * handling only the configuration issues.
  * 
  * 
  * @author Costin Leau
@@ -48,27 +48,28 @@ public abstract class SessionFactoryUtils {
 	private static final Log logger = LogFactory.getLog(SessionFactoryUtils.class);
 
 	/**
-	 * Get a JCR Session for the given Repository. Is aware of and will return
-	 * any existing corresponding Session bound to the current thread, for
-	 * example when using JcrTransactionManager. Same as <code>getSession</code>
-	 * but throws the original Repository.
+	 * Get a JCR Session for the given Repository. Is aware of and will return any existing corresponding Session bound
+	 * to the current thread, for example when using JcrTransactionManager. Same as <code>getSession</code> but throws
+	 * the original Repository.
 	 * 
-	 * @param sessionFactory Jcr Repository to create session with
+	 * @param sessionFactory
+	 *            Jcr Repository to create session with
 	 * @param allowCreate
-	 *            if a non-transactional Session should be created when no
-	 *            transactional Session can be found for the current thread
+	 *            if a non-transactional Session should be created when no transactional Session can be found for the
+	 *            current thread
 	 * 
 	 * @throws RepositoryException
 	 * @return
 	 */
-	public static Session doGetSession(SessionFactory sessionFactory, boolean allowCreate)
+	public static Session doGetSession(final SessionFactory sessionFactory, final boolean allowCreate)
 			throws RepositoryException {
 		Assert.notNull(sessionFactory, "No sessionFactory specified");
 
 		// check if there is any transaction going on
 		SessionHolder sessionHolder = (SessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
-		if (sessionHolder != null && sessionHolder.getSession() != null)
+		if (sessionHolder != null && sessionHolder.getSession() != null) {
 			return sessionHolder.getSession();
+		}
 
 		if (!allowCreate && !TransactionSynchronizationManager.isSynchronizationActive()) {
 			throw new IllegalStateException("No session bound to thread, "
@@ -76,7 +77,7 @@ public abstract class SessionFactoryUtils {
 		}
 
 		logger.debug("Opening JCR Session");
-		Session session = sessionFactory.getSession();
+		final Session session = sessionFactory.getSession();
 
 		if (TransactionSynchronizationManager.isSynchronizationActive()) {
 			logger.debug("Registering transaction synchronization for JCR session");
@@ -85,8 +86,8 @@ public abstract class SessionFactoryUtils {
 			// completion.
 			sessionHolder = sessionFactory.getSessionHolder(session);
 			sessionHolder.setSynchronizedWithTransaction(true);
-			TransactionSynchronizationManager.registerSynchronization(new JcrSessionSynchronization(
-					sessionHolder, sessionFactory));
+			TransactionSynchronizationManager.registerSynchronization(new JcrSessionSynchronization(sessionHolder,
+					sessionFactory));
 			TransactionSynchronizationManager.bindResource(sessionFactory, sessionHolder);
 		}
 
@@ -94,66 +95,60 @@ public abstract class SessionFactoryUtils {
 	}
 
 	/**
-	 * Get a JCR Session for the given Repository. Is aware of and will return
-	 * any existing corresponding Session bound to the current thread, for
-	 * example when using JcrTransactionManager. Will create a new Session
-	 * otherwise, if allowCreate is true. This is the getSession method used by
-	 * typical data access code, in combination with releaseSession called when
-	 * done with the Session. Note that JcrTemplate allows to write data access
-	 * code without caring about such resource handling. Supports
-	 * synchronization with both Spring-managed JTA transactions (i.e.
-	 * JtaTransactionManager) and non-Spring JTA transactions (i.e. plain JTA or
-	 * EJB CMT).
+	 * Get a JCR Session for the given Repository. Is aware of and will return any existing corresponding Session bound
+	 * to the current thread, for example when using JcrTransactionManager. Will create a new Session otherwise, if
+	 * allowCreate is true. This is the getSession method used by typical data access code, in combination with
+	 * releaseSession called when done with the Session. Note that JcrTemplate allows to write data access code without
+	 * caring about such resource handling. Supports synchronization with both Spring-managed JTA transactions (i.e.
+	 * JtaTransactionManager) and non-Spring JTA transactions (i.e. plain JTA or EJB CMT).
 	 * 
-	 * @param sessionFactory JCR Repository to create session with
+	 * @param sessionFactory
+	 *            JCR Repository to create session with
 	 * @param allowCreate
-	 *            if a non-transactional Session should be created when no
-	 *            transactional Session can be found for the current thread
+	 *            if a non-transactional Session should be created when no transactional Session can be found for the
+	 *            current thread
 	 * 
-	 * @throws DataAccessException         
+	 * @throws DataAccessException
 	 * @return
 	 */
-	public static Session getSession(SessionFactory sessionFactory, boolean allowCreate)
+	public static Session getSession(final SessionFactory sessionFactory, final boolean allowCreate)
 			throws DataAccessException {
 		try {
 			return doGetSession(sessionFactory, allowCreate);
-		}
-		catch (RepositoryException ex) {
+		} catch (final RepositoryException ex) {
 			throw new DataAccessResourceFailureException("Could not open Jcr Session", ex);
 		}
 	}
 
 	/**
-	 * Return whether the given JCR Session is thread-bound that is, bound to
-	 * the current thread by Spring's transaction facilities (which is used as a thread-bounding
-	 * utility class).
+	 * Return whether the given JCR Session is thread-bound that is, bound to the current thread by Spring's transaction
+	 * facilities (which is used as a thread-bounding utility class).
 	 * 
 	 * @param session
 	 *            the JCR Session to check
 	 * @param sessionFactory
-	 *            the JCR SessionFactory that the Session was created with (can
-	 *            be null)
+	 *            the JCR SessionFactory that the Session was created with (can be null)
 	 * @return whether the Session is transactional
 	 */
-	public static boolean isSessionThreadBound(Session session, SessionFactory sessionFactory) {
+	public static boolean isSessionThreadBound(final Session session, final SessionFactory sessionFactory) {
 		if (sessionFactory == null) {
 			return false;
 		}
-		SessionHolder sessionHolder = (SessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
+		final SessionHolder sessionHolder = (SessionHolder) TransactionSynchronizationManager
+				.getResource(sessionFactory);
 		return (sessionHolder != null && session == sessionHolder.getSession());
 	}
 
 	/**
-	 * Close the given Session, created via the given repository, if it is not
-	 * managed externally (i.e. not bound to the thread).
+	 * Close the given Session, created via the given repository, if it is not managed externally (i.e. not bound to the
+	 * thread).
 	 * 
 	 * @param session
 	 *            the Jcr Session to close
 	 * @param sessionFactory
-	 *            JcrSessionFactory that the Session was created with (can be
-	 *            null)
+	 *            JcrSessionFactory that the Session was created with (can be null)
 	 */
-	public static void releaseSession(Session session, SessionFactory sessionFactory) {
+	public static void releaseSession(final Session session, final SessionFactory sessionFactory) {
 		if (session == null) {
 			return;
 		}
@@ -165,8 +160,7 @@ public abstract class SessionFactoryUtils {
 	}
 
 	/**
-	 * Jcr exception translator - it converts specific JSR-170 checked exceptions into 
-	 * unchecked Spring DA exception.
+	 * Jcr exception translator - it converts specific JSR-170 checked exceptions into unchecked Spring DA exception.
 	 * 
 	 * @author Guillaume Bort <guillaume.bort@zenexity.fr>
 	 * @author Costin Leau
@@ -174,7 +168,7 @@ public abstract class SessionFactoryUtils {
 	 * @param ex
 	 * @return
 	 */
-	public static DataAccessException translateException(RepositoryException ex) {
+	public static DataAccessException translateException(final RepositoryException ex) {
 		if (ex instanceof AccessDeniedException) {
 			return new DataRetrievalFailureException("Access denied to this data", ex);
 		}
@@ -234,19 +228,18 @@ public abstract class SessionFactoryUtils {
 	}
 
 	/**
-	 * Jcr exception translator - it converts specific JSR-170 checked exceptions into 
-	 * unchecked Spring DA exception.
+	 * Jcr exception translator - it converts specific JSR-170 checked exceptions into unchecked Spring DA exception.
 	 * 
 	 * @param ex
 	 * @return
 	 */
-	public static DataAccessException translateException(IOException ex) {
+	public static DataAccessException translateException(final IOException ex) {
 		return new DataAccessResourceFailureException("I/O failure", ex);
 	}
 
 	/**
-	 * Callback for resource cleanup at the end of a non-JCR transaction (e.g.
-	 * when participating in a JtaTransactionManager transaction).
+	 * Callback for resource cleanup at the end of a non-JCR transaction (e.g. when participating in a
+	 * JtaTransactionManager transaction).
 	 * 
 	 * @see org.springframework.transaction.jta.JtaTransactionManager
 	 */
@@ -262,23 +255,26 @@ public abstract class SessionFactoryUtils {
 		 * @param sessionFactory
 		 * @param holder
 		 */
-		public JcrSessionSynchronization(SessionHolder holder, SessionFactory sessionFactory) {
+		public JcrSessionSynchronization(final SessionHolder holder, final SessionFactory sessionFactory) {
 			this.sessionFactory = sessionFactory;
 			sessionHolder = holder;
 		}
 
+		@Override
 		public void suspend() {
 			if (this.holderActive) {
 				TransactionSynchronizationManager.unbindResource(this.sessionFactory);
 			}
 		}
 
+		@Override
 		public void resume() {
 			if (this.holderActive) {
 				TransactionSynchronizationManager.bindResource(this.sessionFactory, this.sessionHolder);
 			}
 		}
 
+		@Override
 		public void beforeCompletion() {
 			TransactionSynchronizationManager.unbindResource(this.sessionFactory);
 			this.holderActive = false;

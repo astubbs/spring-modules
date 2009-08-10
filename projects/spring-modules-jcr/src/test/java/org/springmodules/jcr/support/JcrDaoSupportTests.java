@@ -27,6 +27,7 @@ public class JcrDaoSupportTests extends TestCase {
 	private SessionFactory sf;
 	private Session sess;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		sfCtrl = MockControl.createControl(SessionFactory.class);
@@ -38,6 +39,7 @@ public class JcrDaoSupportTests extends TestCase {
 
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 
@@ -45,8 +47,7 @@ public class JcrDaoSupportTests extends TestCase {
 			sessCtrl.verify();
 			sfCtrl.verify();
 			repositoryCtrl.verify();
-		}
-		catch (IllegalStateException ex) {
+		} catch (final IllegalStateException ex) {
 			// ignore: test method didn't call replay
 		}
 	}
@@ -54,13 +55,13 @@ public class JcrDaoSupportTests extends TestCase {
 	public void testJcrDaoSupportWithSessionFactory() throws Exception {
 
 		// used for ServiceProvider
-/*
-		sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
-		sfCtrl.expectAndReturn(sf.getSession(), sess);
-*/		sfCtrl.replay();
+		/*
+		 * sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
+		 * sfCtrl.expectAndReturn(sf.getSession(), sess);
+		 */sfCtrl.replay();
 		sessCtrl.replay();
 
-		JcrDaoSupport dao = new JcrDaoSupport() {
+		final JcrDaoSupport dao = new JcrDaoSupport() {
 			public void smth() {
 			};
 		};
@@ -68,14 +69,14 @@ public class JcrDaoSupportTests extends TestCase {
 		dao.setSessionFactory(sf);
 		dao.afterPropertiesSet();
 		assertEquals("Correct SessionFactory", sf, dao.getSessionFactory());
-		//assertEquals("Correct JcrTemplate", sf, dao.getJcrTemplate().getSessionFactory());
+		// assertEquals("Correct JcrTemplate", sf, dao.getJcrTemplate().getSessionFactory());
 		sfCtrl.verify();
 	}
 
 	public void testJcrDaoSupportWithJcrTemplate() throws Exception {
 
-		JcrTemplate template = new JcrTemplate();
-		JcrDaoSupport dao = new JcrDaoSupport() {
+		final JcrTemplate template = new JcrTemplate();
+		final JcrDaoSupport dao = new JcrDaoSupport() {
 			public void smth() {
 			};
 		};
@@ -86,34 +87,33 @@ public class JcrDaoSupportTests extends TestCase {
 	}
 
 	public void testAfterPropertiesSet() {
-		JcrDaoSupport dao = new JcrDaoSupport() {
+		final JcrDaoSupport dao = new JcrDaoSupport() {
 		};
 
 		try {
 			dao.afterPropertiesSet();
 			fail("expected exception");
-		}
-		catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			//
 		}
 	}
 
 	public void testSetSessionFactory() throws RepositoryException {
-		//sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
-		//sfCtrl.expectAndReturn(sf.getSession(), sess);
+		// sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
+		// sfCtrl.expectAndReturn(sf.getSession(), sess);
 		sfCtrl.replay();
 		sessCtrl.replay();
 
-		JcrDaoSupport dao = new JcrDaoSupport() {
+		final JcrDaoSupport dao = new JcrDaoSupport() {
 		};
 
 		dao.setSessionFactory(sf);
-		
+
 		assertEquals(dao.getSessionFactory(), sf);
 	}
 
 	public void testGetSession() throws RepositoryException {
-		JcrDaoSupport dao = new JcrDaoSupport() {
+		final JcrDaoSupport dao = new JcrDaoSupport() {
 		};
 		// used for service provider
 
@@ -126,21 +126,20 @@ public class JcrDaoSupportTests extends TestCase {
 		try {
 			dao.getSession();
 			fail("expected exception");
-		}
-		catch (IllegalStateException e) {
-			// it's okay 
+		} catch (final IllegalStateException e) {
+			// it's okay
 		}
 		assertEquals(dao.getSession(true), sess);
 	}
 
-	public void testReleaseSession(){
-		JcrDaoSupport dao = new JcrDaoSupport() {
+	public void testReleaseSession() {
+		final JcrDaoSupport dao = new JcrDaoSupport() {
 		};
 
 		dao.releaseSession(null);
 
 		sess.logout();
-		
+
 		sfCtrl.replay();
 		sessCtrl.replay();
 
@@ -150,12 +149,12 @@ public class JcrDaoSupportTests extends TestCase {
 	}
 
 	public void testConvertException() {
-		JcrDaoSupport dao = new JcrDaoSupport() {
+		final JcrDaoSupport dao = new JcrDaoSupport() {
 		};
-		MockControl tCtrl = MockClassControl.createControl(JcrTemplate.class);
-		JcrTemplate t = (JcrTemplate) tCtrl.getMock();
+		final MockControl tCtrl = MockClassControl.createControl(JcrTemplate.class);
+		final JcrTemplate t = (JcrTemplate) tCtrl.getMock();
 
-		RepositoryException ex = new RepositoryException();
+		final RepositoryException ex = new RepositoryException();
 
 		tCtrl.expectAndReturn(t.convertJcrAccessException(ex), null);
 		dao.setTemplate(t);
