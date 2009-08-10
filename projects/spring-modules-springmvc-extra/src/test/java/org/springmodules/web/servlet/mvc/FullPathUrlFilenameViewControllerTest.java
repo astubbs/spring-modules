@@ -1,6 +1,7 @@
 package org.springmodules.web.servlet.mvc;
 
 import junit.framework.TestCase;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
