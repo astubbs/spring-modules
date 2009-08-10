@@ -21,9 +21,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.providers.TestingAuthenticationToken;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.TestingAuthenticationToken;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 import org.springmodules.jcr.JcrCallback;
 import org.springmodules.jcr.JcrTemplate;
@@ -36,6 +36,7 @@ public class AcegiTests extends AbstractTransactionalSpringContextTests {
 
 	private JcrTemplate template;
 
+	@Override
 	protected String[] getConfigLocations() {
 		return new String[] { "/org/springmodules/jcr/jackrabbit/acegi-context.xml" };
 	}
@@ -45,6 +46,7 @@ public class AcegiTests extends AbstractTransactionalSpringContextTests {
 	 * 
 	 * @see org.springframework.test.AbstractTransactionalSpringContextTests#onSetUpBeforeTransaction()
 	 */
+	@Override
 	protected void onSetUpBeforeTransaction() throws Exception {
 		SecurityContextHolder.getContext().setAuthentication(
 				new TestingAuthenticationToken(new Object(), new Object(), new GrantedAuthority[] {}));
@@ -54,13 +56,13 @@ public class AcegiTests extends AbstractTransactionalSpringContextTests {
 	public void testWriteRights() {
 		template.execute(new JcrCallback() {
 
-			public Object doInJcr(Session session) throws IOException, RepositoryException {
-				Node rootNode = session.getRootNode();
-				Node one = rootNode.addNode("bla-bla-bla");
+			public Object doInJcr(final Session session) throws IOException, RepositoryException {
+				final Node rootNode = session.getRootNode();
+				final Node one = rootNode.addNode("bla-bla-bla");
 				one.setProperty("some prop", false);
-				Node two = one.addNode("foo");
+				final Node two = one.addNode("foo");
 				two.setProperty("boo", "hoo");
-				Node three = two.addNode("bar");
+				final Node three = two.addNode("bar");
 				three.setProperty("whitehorse", new String[] { "super", "ultra", "mega" });
 				session.save();
 				return null;
@@ -68,7 +70,7 @@ public class AcegiTests extends AbstractTransactionalSpringContextTests {
 		});
 	}
 
-	public void setTemplate(JcrTemplate template) {
+	public void setTemplate(final JcrTemplate template) {
 		this.template = template;
 	}
 }

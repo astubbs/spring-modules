@@ -26,8 +26,7 @@ import org.springframework.util.ObjectUtils;
 import org.springmodules.jcr.JcrSessionFactory;
 
 /**
- * Jackrabbit specific {@link JcrSessionFactory} which allows registration of
- * node types in <a
+ * Jackrabbit specific {@link JcrSessionFactory} which allows registration of node types in <a
  * href="http://jackrabbit.apache.org/doc/nodetype/cnd.html">CND</a> format.
  * 
  * @author Costin Leau
@@ -46,46 +45,53 @@ public class JackrabbitSessionFactory extends JcrSessionFactory {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.springmodules.jcr.JcrSessionFactory#registerNodeTypes()
 	 */
+	@Override
 	protected void registerNodeTypes() throws Exception {
 		if (!ObjectUtils.isEmpty(nodeDefinitions)) {
-			Workspace ws = getSession().getWorkspace();
+			final Workspace ws = getSession().getWorkspace();
 
 			// Get the NodeTypeManager from the Workspace.
 			// Note that it must be cast from the generic JCR NodeTypeManager to
 			// the
 			// Jackrabbit-specific implementation.
-			JackrabbitNodeTypeManager nodeTypeManager = (JackrabbitNodeTypeManager) ws.getNodeTypeManager();
+			final JackrabbitNodeTypeManager nodeTypeManager = (JackrabbitNodeTypeManager) ws.getNodeTypeManager();
 
-			boolean debug = log.isDebugEnabled();
-			for (int i = 0; i < nodeDefinitions.length; i++) {
-				Resource resource = nodeDefinitions[i];
-				if (debug)
+			final boolean debug = log.isDebugEnabled();
+			for (final Resource resource : nodeDefinitions) {
+				if (debug) {
 					log.debug("adding node type definitions from " + resource.getDescription());
+				}
 
-				nodeTypeManager.registerNodeTypes(resource.getInputStream(), contentType);
+				try {
+					nodeTypeManager.registerNodeTypes(resource.getInputStream(), contentType);
+				} catch (final Exception e) {
+					// type already registered, ignore
+				}
 			}
 		}
 	}
 
 	/**
-	 * @param nodeDefinitions The nodeDefinitions to set.
+	 * @param nodeDefinitions
+	 *            The nodeDefinitions to set.
 	 */
-	public void setNodeDefinitions(Resource[] nodeDefinitions) {
+	public void setNodeDefinitions(final Resource[] nodeDefinitions) {
 		this.nodeDefinitions = nodeDefinitions;
 	}
 
 	/**
-	 * Indicate the node definition content type (by default,
-	 * JackrabbitNodeTypeManager#TEXT_XML).
+	 * Indicate the node definition content type (by default, JackrabbitNodeTypeManager#TEXT_XML).
 	 * 
 	 * @see JackrabbitNodeTypeManager#TEXT_X_JCR_CND
 	 * @see JackrabbitNodeTypeManager#TEXT_XML
 	 * 
-	 * @param contentType The contentType to set.
+	 * @param contentType
+	 *            The contentType to set.
 	 */
-	public void setContentType(String contentType) {
+	public void setContentType(final String contentType) {
 		Assert.hasText(contentType, "contentType is required");
 		this.contentType = contentType;
 	}
