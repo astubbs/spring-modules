@@ -21,21 +21,19 @@
         <module>spring-modules-hivemind</module>
         <module>spring-modules-jakarta-commons</module>
         <module>spring-modules-javaspaces</module>
-        <module>spring-modules-jbpm30</module>
-        <module>spring-modules-jbpm31</module>
+        <module>spring-modules-jbpm30</module>-->
+        <module>spring-modules-jbpm31</module><!--
         <module>spring-modules-jcr</module>
-        <module>spring-modules-jsr94</module>
-        <module>spring-modules-lucene</module>
+        <module>spring-modules-jsr94</module>-->
+        <module>spring-modules-lucene</module><!--
         <module>spring-modules-ojb</module>
         <module>spring-modules-orbroker</module>
-        <module>spring-modules-osworkflow</module>
+        <module>spring-modules-osworkflow</module>-->
         <module>spring-modules-springmvc-extra</module>
-        <module>spring-modules-tapestry</module>
-        <module>spring-modules-template</module>
-        <module>spring-modules-validation</module>
+<!--        <module>spring-modules-tapestry</module>-->
+        <module>spring-modules-template</module> 
+<!--        <module>spring-modules-validation</module>-->
         <module>spring-modules-xt</module>
-        <module>spring-modules-xt-js</module>
--->
     </modules>
 
     <dependencies>
