@@ -61,6 +61,7 @@
 
 	<dependencyManagement>
 		<dependencies>
+		  <!-- Common -->
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
@@ -87,8 +88,87 @@
 				<version>${version.spring}</version>
 				<scope>test</scope>
 			</dependency>
-		</dependencies>
-	</dependencyManagement>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.6</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${version.easymock}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymockclassextension</artifactId>
+        <version>${version.easymock}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.thoughtworks.xstream</groupId>
+        <artifactId>xstream</artifactId>
+        <version>1.3</version>
+      </dependency>
+      <dependency>
+        <groupId>oro</groupId>
+        <artifactId>oro</artifactId>
+        <version>2.0.8</version>
+      </dependency>
+      <!-- Cache -->
+      <dependency>
+        <groupId>opensymphony</groupId>
+        <artifactId>oscache</artifactId>
+        <version>2.3</version>
+      </dependency>
+      <dependency>
+        <groupId>gigaspaces</groupId>
+        <artifactId>gigaspaces-ce</artifactId>
+        <version>5.2-1706</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>tangosol</groupId>
+        <artifactId>tangosol-coherence</artifactId>
+        <version>3.3-rc1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jcs</groupId>
+        <artifactId>jcs</artifactId>
+        <version>1.3</version>
+      </dependency>
+      <dependency>
+        <groupId>jboss</groupId>
+        <artifactId>jboss-cache</artifactId>
+        <version>1.4.1.GA</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>jboss</groupId>
+        <artifactId>jboss-system</artifactId>
+        <version>4.0.2</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>jboss</groupId>
+        <artifactId>jboss-jmx</artifactId>
+        <version>4.0.2</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>jgroups</groupId>
+        <artifactId>jgroups</artifactId>
+        <version>2.2.5</version>
+        <optional>true</optional>
+      </dependency>			
+    </dependencies>
+  </dependencyManagement>
 
 	<build>
 		<plugins>
