@@ -82,6 +82,11 @@
 				<artifactId>spring-aop</artifactId>
 				<version>${version.spring}</version>
 			</dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+				<version>${version.spring}</version>
+      </dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>
@@ -116,6 +121,11 @@
         <artifactId>oro</artifactId>
         <version>2.0.8</version>
       </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.4</version>
+      </dependency>      
       <!-- Cache -->
       <dependency>
         <groupId>opensymphony</groupId>
@@ -209,6 +219,18 @@
         <artifactId>aspectjweaver</artifactId>
         <version>1.6.5</version>
         <scope>test</scope>
+      </dependency>
+      <!-- Spring MVC extras -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.4</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>rome</groupId>
+        <artifactId>rome</artifactId>
+        <version>0.9</version>
       </dependency>      
     </dependencies>
   </dependencyManagement>
