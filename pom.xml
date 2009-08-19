@@ -125,7 +125,17 @@
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>2.4</version>
-      </dependency>      
+      </dependency>
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.14</version>
+      </dependency>
       <!-- Cache -->
       <dependency>
         <groupId>opensymphony</groupId>
@@ -231,6 +241,29 @@
         <groupId>rome</groupId>
         <artifactId>rome</artifactId>
         <version>0.9</version>
+      </dependency>
+      <!-- XT -->
+      <dependency>
+        <groupId>org.springmodules</groupId>
+        <artifactId>spring-modules-template</artifactId>
+        <version>${version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.json-lib</groupId>
+        <artifactId>json-lib</artifactId>
+        <version>0.9</version>
+      </dependency>
+      <dependency>
+        <groupId>xmlunit</groupId>
+        <artifactId>xmlunit</artifactId>
+        <version>1.2</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jmock</groupId>
+        <artifactId>jmock-junit3</artifactId>
+        <version>2.5.1</version>
+        <scope>test</scope>
       </dependency>      
     </dependencies>
   </dependencyManagement>
