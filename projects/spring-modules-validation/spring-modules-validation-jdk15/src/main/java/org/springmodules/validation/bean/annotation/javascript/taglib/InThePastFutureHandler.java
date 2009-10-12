@@ -1,7 +1,6 @@
 package org.springmodules.validation.bean.annotation.javascript.taglib;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.InTheFuture;
@@ -14,8 +13,7 @@ public class InThePastFutureHandler extends Handler {
     }
 
     @Override
-    public String convertToValang(Field field, Annotation a, MessageSourceAccessor messages) {
-        String name = field.getName();
+    public String convertToValang(String fieldName, Annotation a, MessageSourceAccessor messages) {
         String errMsg = "";
         String pastFutureMethod = "";
         String applyIfValang = null;
@@ -37,11 +35,11 @@ public class InThePastFutureHandler extends Handler {
         sb.append(pastFutureMethod);
         sb.append("( (");
         sb.append("this.parseDate(this.getPropertyValue(");
-        sb.append(wrapAndEscapeJsString(name)); // value of name field
+        sb.append(wrapAndEscapeJsString(fieldName)); // value of name field
         sb.append("), ");
-        sb.append(wrapAndEscapeJsString(name)); // name
+        sb.append(wrapAndEscapeJsString(fieldName)); // name
         sb.append(") ), ( (new Date()).getTime() ) )}");
 
-        return buildBasicRule(name, errMsg, sb.toString(), applyIfValang, a);
+        return buildBasicRule(fieldName, errMsg, sb.toString(), applyIfValang, a);
     }
 }

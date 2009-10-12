@@ -1,7 +1,6 @@
 package org.springmodules.validation.bean.annotation.javascript.taglib;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.Length;
@@ -14,8 +13,7 @@ public class LengthSizeHandler extends Handler {
     }
 
     @Override
-    public String convertToValang(Field field, Annotation a, MessageSourceAccessor messages) {
-        String name = field.getName();
+    public String convertToValang(String field, Annotation a, MessageSourceAccessor messages) {
         String errMsg = "";
         int min = 0;
         int max = 0;
@@ -37,13 +35,13 @@ public class LengthSizeHandler extends Handler {
 
         StringBuffer sb = new StringBuffer();
         sb.append(" function() {return this.between(this.lengthOf(this.getPropertyValue(");
-        sb.append(wrapAndEscapeJsString(name));// field
+        sb.append(wrapAndEscapeJsString(field));// field
         sb.append(")), (new Array(");
         sb.append(min);
         sb.append(',');
         sb.append(max);
         sb.append(") ))}");
 
-        return buildBasicRule(name, errMsg, sb.toString(), applyIfValang, a);
+        return buildBasicRule(field, errMsg, sb.toString(), applyIfValang, a);
     }
 }

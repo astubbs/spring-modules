@@ -1,10 +1,8 @@
 package org.springmodules.validation.bean.annotation.javascript.taglib;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 import org.springframework.context.support.MessageSourceAccessor;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.Expression;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.Expressions;
 
 public class ExpressionsHandler extends Handler {
@@ -14,20 +12,19 @@ public class ExpressionsHandler extends Handler {
     }
 
     @Override
-    public String convertToValang(Field field, Annotation a, MessageSourceAccessor messages) {
+    protected boolean isDelegateAnnotations() {
+        return true;
+    }
+
+    @Override
+    public String convertToValang(String fieldName, Annotation a, MessageSourceAccessor messages) {
+        throw new UnsupportedOperationException("this class only does delegate annotation work");
+    }
+
+    public Annotation[] getDelegateAnnotations(Annotation a, String fieldName) {
         Expressions annotation = (Expressions) a;
-        Expression[] expressionSet = annotation.value();
-        ExpressionHandler eh = new ExpressionHandler();
-        StringBuilder sb = new StringBuilder();
-        String prefix = ""; // first iteration
+        return annotation.value(); // all sub-annotations
 
-        for (Expression expression : expressionSet) {
-            sb.append(prefix);
-            sb.append(eh.convertToValang(field, expression, messages));
-            prefix = ",\n"; // 2+ iterations
-
-        }
-        return sb.toString();
     }
 
 }

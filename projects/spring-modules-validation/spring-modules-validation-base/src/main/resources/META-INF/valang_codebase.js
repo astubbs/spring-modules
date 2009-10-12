@@ -18,43 +18,29 @@
  */
 
 
-if (!Array.prototype.push) {
-    // Based on code from http://prototype.conio.net/
-    Array.prototype.push = function() {
-        var startLength = this.length;
-        for (var i = 0; i < arguments.length; i++) {
-            this[startLength + i] = arguments[i];
-        }
-        return this.length;
-    }
-}
-if (!Function.prototype.apply) {
-    // Based on code from http://prototype.conio.net/
-    Function.prototype.apply = function(object, parameters) {
-        var parameterStrings = new Array();
-        if (!object) {
-            object = window;
-        }
-        if (!parameters) {
-            parameters = new Array();
-        }
-        for (var i = 0; i < parameters.length; i++) {
-            parameterStrings[i] = 'parameters[' + i + ']';
-        }
-        object.__apply__ = this;
-        var result = eval('object.__apply__(' + parameterStrings.join(', ') + ')');
-        object.__apply__ = null;
-        return result;
-    }
-}
-
-/*
- * Core validation object.
- */
+/******************************************************************************
+* 
+* Core validation object.
+* 
+******************************************************************************/
 var ValangValidator = function(name, installSelfWithForm, rules) {
     this.name = name;
     this.rules = rules;
     this.form = this._findForm(name);
+    
+    //create grouped rules by field
+    this.groupedRules = {};
+    for (var i = 0; i < this.rules.length; i++) {
+    	var ruleField = this.rules[i].field;
+    	var fieldArray = this.groupedRules[ruleField];
+    	
+    	if(!fieldArray) {
+    		this.groupedRules[ruleField] = new Array();
+    		fieldArray = this.groupedRules[ruleField];
+    	}
+    	fieldArray.push(this.rules[i]);
+    }
+    
     if (installSelfWithForm) {
         this._installSelfWithForm();
     }
@@ -63,95 +49,92 @@ var ValangValidator = function(name, installSelfWithForm, rules) {
 ValangValidator.prototype = {
 	globalErrorsId: 'global_errors',
 	fieldErrorIdSuffix: '_error',
-    validate: function() {
-        return this._validateAndReturnFailedRules().length > 0;
-    },
-    validateAndShowFeedback: function() {
-        var failedRules = this._validateAndReturnFailedRules();
-        if (failedRules.length > 0) {
-            this.showValidationFeedback(failedRules);
-        }
-        return failedRules.length === 0;
-    },
-    showValidationFeedback: function(failedRules) {
+    classRuleFieldName: "valang-global-rules", // matches CommandObjectToValangConverter.CLASS_RULENAME
 
-        // first putting all the valiation error in field propriatery error place
-        // holders, basically elements with id <filed_name>_error.
-        var globalRules = new Array();
-        for (var i = 0; i < failedRules.length; i++) {
-            var errorBoxId = failedRules[i].field + this.fieldErrorIdSuffix;
-            var errorBox = document.getElementById(errorBoxId);
-            if (errorBox != null) {
-                errorBox.innerHTML = failedRules[i].getErrorMessage();
-            } else {
-                globalRules.push(failedRules[i]);
+    // check all fields and global checks, returns boolean form valid state 
+    validate: function() { 
+    	var isValid = true;
+        for(i in this.groupedRules) {
+        	var rules = this.groupedRules[i];
+        	if(rules && rules.length > 0) {
+        		var thisFields = this.form.getFieldsWithName(rules[0].field);
+        		for (var j = 0; j < thisFields.length; j++) {
+        			isValid = this.validateField(thisFields[j]) && isValid;
+        		}
+        	}
+        }
+        ValangValidator.Logger.log('Is form valid? ' + isValid);
+    	
+        return isValid;
+    },
+
+	
+    //checks all rules on a field, updates error message and fires callback
+    validateField: function(field) {
+        ValangValidator.Logger.push('Evaluating ' + field.name + ' rules');
+
+        this._clearErrorIfExists(field.name);
+        var isValid = true;
+        var fieldRules = this.groupedRules[field.name];
+        var errorRules = new Array();
+        
+        if(!fieldRules || fieldRules.length == 0){
+        	ValangValidator.Logger.pop('No rules');
+        	return isValid;
+        }
+        
+        for (var i = 0; i < fieldRules.length; i++) {
+            var rule = fieldRules[i];
+            rule.form = this.form;
+            var thisValid = false;
+            try {
+            	thisValid =  rule.validate();
+            } catch(err) {
+            	ValangValidator.Logger.log("Rule error: " + err);
             }
+            isValid = isValid && thisValid;
+            if(!thisValid) {
+            	errorRules.push(rule);
+            }
+            ValangValidator.Logger.log(thisValid ? 'Passed' : 'Failed');
         }
 
-        // all those errors that weren't put in a field propriatery error place holders
-        // will be grouped together as global errors, either in a global error place holder
-        // or will be shown in an alert.
-        var globalErrorsBox = document.getElementById(this.globalErrorsId);
-        if (globalErrorsBox != null) {
-            var ul = document.createElement('ul');
-            for (var i = 0; i < globalRules.length; i++) {
-                var li = document.createElement('li');
-                li.innerHTML = globalRules[i].getErrorMessage();
-                ul.appendChild(li);
-            }
-            globalErrorsBox.appendChild(ul);
-        } else {
-            var errors = '';
-            for (var i = 0; i < globalRules.length; i++) {
-                errors = errors + globalRules[i].getErrorMessage() + '\n';
-            }
-            // The following line is sometimes effected by Firefox Bug 236791. Please just ignore
-            // the error or tell me how to fix it?
-            // https://bugzilla.mozilla.org/show_bug.cgi?id=236791
-            alert(errors);
+        var errorBox = document.getElementById(field.name + this.fieldErrorIdSuffix);
+        if( errorRules.length > 0) {
+        	//inject first error only
+        	if( errorBox != null) {
+        		errorBox.innerHTML = errorRules[0].getErrorMessage();
+        	} else {
+	        	alert(field.name + " : " + errorRules[0].getErrorMessage());
+	        	ValangValidator.Logger.log("error node not found.");
+        	}
         }
-
-        // disabled, as it causes onBlur recursion
-        //var fields = this.form.getFieldsWithName(failedRules[0].field);
-        //if (fields.length > 0) {
-        //    fields[0].activate();
-       // }
-    },
-    _findForm: function(name) {
-        var element = document.getElementById(name);
-        if (!element || element.tagName.toLowerCase() != 'form') {
-            console.log("no form");
-            element = document.getElementById(name + 'ValangValidator');
-        }
-        if (!element || element.tagName.toLowerCase() != 'script') {
-        	//throw 'unable to find form with ID \'' + name + '\' or script element with ID \'' + name + 'ValangValidator\''
-        }
-        var foundElement = element;
-        while (element && element.tagName.toLowerCase() != 'form') {
-            element = element.parentNode;
-        }
-        if (!element) {
-            throw 'unable to find FORM element enclosing element with ID \'' + foundElement.id + '\'';
-        }
-        return new ValangValidator.Form(element);
-    },
+        
+		if(this.fieldValidationCallback) {
+        	ValangValidator.Logger.log("Field callback.");
+			this.fieldValidationCallback(field.fieldElement, isValid, fieldRules.length);
+		}
+        
+        ValangValidator.Logger.pop('Finished field rules evaluation');
+        return isValid;
+    },    
+    
     _installSelfWithForm: function() {
+    	var thisValidator = this;
+    	
         var oldOnload = window.onload;
         var oldOnsubmit = this.form.formElement.onsubmit;
-        var thisValidator = this;
-        // delay install until the page is 
-        // fully loaded so that we can be 
-        // (fairly) sure of being the last 
-        // thing that tries to handle the
-        // onload event
+
+        //onload - bind to onblurs
         window.onload = function() {
-            ValangValidator.Logger.log('Installing ValangValidator \'' + thisValidator.name + '\' as onsubmit handler');
+            ValangValidator.Logger.log('Installing ValangValidator \'' 
+            		+ thisValidator.name + '\' as onsubmit handler');
             try {
                 if (oldOnload) {
                     oldOnload();
                 }
             } catch (err) {
-            	ValangValidator.Logger.log('Error: ' + err);
+            	ValangValidator.Logger.log('other onload error: ' + err);
             }
             	
         	// onblur for each field
@@ -170,116 +153,62 @@ ValangValidator.prototype = {
         			}
         			// check this field
         			var vField =  new ValangValidator.Field(this);
-        			var fieldRuleCount = thisValidator._countRules(vField);
-        			var valid = true;
-        			if(fieldRuleCount > 0){
-        				var failedRules = thisValidator._validateField(vField);
-        				valid = (failedRules.length == 0);
-        				if(!valid) thisValidator.showValidationFeedback(failedRules);
-        			}
-
-        			
-        			if(thisValidator.fieldValidationCallback) {
-        				thisValidator.fieldValidationCallback(this, valid, fieldRuleCount);
-        			}
+    				thisValidator.validateField(vField);
         		};
 			}
         	
         	// on submit
-            thisValidator.form.formElement.onsubmit = function() {
-                if (!oldOnsubmit || oldOnsubmit()) {
-                	var valid = thisValidator.validateAndShowFeedback();
-                	var callback = true;
+        	thisValidator.form.formElement.onsubmit = function() {
+
+        		if (!oldOnsubmit || oldOnsubmit()) {
+        			
+                	var isValid = thisValidator.validate();
+                	
+                	var callbackVal = false;
         			if(thisValidator.formValidationCallback) {
-        				callback = thisValidator.formValidationCallback(this, valid);
+        				callbackVal = thisValidator.formValidationCallback(this, isValid);
         			}
-        			return callback && valid;
+
+        			return callbackVal || isValid;
                 }
+        		return false;
             }
         }
     },
-    fieldValidationCallback: function(field, isValid, ruleCount) {
-        ValangValidator.Logger.log('Stub callback: ' + field + " : " + isValid + " : " + ruleCount);
-    },
-    formValidationCallback: function(form, isValid) {
-        ValangValidator.Logger.log('Stub callback: ' + form + " : " + isValid);
-        return isValid;
-    },
-    _countRules: function(field) {
-        var count = 0;
-        for (var i = 0; i < this.rules.length; i++) {
-            var rule = this.rules[i];
-            if(rule.field == field.name) {
-            	count++;
-            }
+    
+    _findForm: function(name) {
+        var element = document.getElementById(name);
+        if (!element || element.tagName.toLowerCase() != 'form') {
+            element = document.getElementById(name + 'ValangValidator');
+	        if (!element || element.tagName.toLowerCase() != 'script') {
+	        	throw 'unable to find form with ID \'' + name + '\' or script element with ID \'' 
+	        		+ name + 'ValangValidator\'';
+	        }
         }
-        return count;
-    },
-    _validateField: function(field) {
-        var failedRules = new Array();
-        ValangValidator.Logger.push('Evaluating ' + this.rules.length + ' rules');
-        for (var i = 0; i < this.rules.length; i++) {
-            var rule = this.rules[i];
-            if(rule.field == field.name) {
-	            ValangValidator.Logger.push('Evaluating rule for field [' + rule.field + ']');
-	            this._clearErrorIfExists(rule.field);
-	            rule.form = this.form;
-	            var valid = false;
-	            try {
-	            	valid=rule.validate();
-	            } catch(err) {
-	            	ValangValidator.Logger.log("error: " + err);
-	            }
-	            if (!valid) {
-	                ValangValidator.Logger.pop('Failed');
-	                failedRules.push(rule);
-	            } else {
-	                ValangValidator.Logger.pop('Passed');
-	            }
-            }
+        var foundElement = element;
+        while (element && element.tagName.toLowerCase() != 'form') {
+            element = element.parentNode;
         }
-        ValangValidator.Logger.pop('Finished rules evaluation');
-        return failedRules;
-    },
-    _validateAndReturnFailedRules: function() {
-        this._clearGlobalErrors();
-        ValangValidator.Logger.push('Starting validation');
-        var failedRules = new Array();
-        for (var i = 0; i < this.rules.length; i++) {
-            var rule = this.rules[i];
-            this._clearErrorIfExists(rule.field);
-
-            ValangValidator.Logger.push('Evaluating rule for field [' + rule.field + ']');
-            rule.form = this.form;
-            var valid = false;
-            try {
-            	valid=rule.validate();
-            } catch(err) {
-            	ValangValidator.Logger.log("error: " + err);
-            }
-            if (!valid) {
-                ValangValidator.Logger.pop('Failed');
-                failedRules.push(rule);
-            } else {
-                ValangValidator.Logger.pop('Passed');
-            }            
+        if (!element) {
+            throw 'unable to find FORM element enclosing element with ID \'' + foundElement.id + '\'';
         }
-
-        ValangValidator.Logger.pop('Finshed - ' + failedRules.length + ' failed rules');
-        return this._giveRulesSameOrderAsFormFields(failedRules);
+        return new ValangValidator.Form(element);
     },
+    
     _clearErrorIfExists: function(field) {
         var errorBox = document.getElementById(field + this.fieldErrorIdSuffix);
         if (errorBox != null) {
             errorBox.innerHTML = '';
         }
     },
+    
     _clearGlobalErrors: function() {
         var errorBox = document.getElementById(this.globalErrorsId);
         if (errorBox != null) {
             errorBox.innerHTML = '';
         }
     },
+    
     _giveRulesSameOrderAsFormFields: function(failedRules) {
         var sortedFailedRules = new Array();
         var fields = this.form.getFields();
@@ -298,92 +227,29 @@ ValangValidator.prototype = {
             }
         }
         return sortedFailedRules;
+    },
+    
+    // stubs
+    fieldValidationCallback: function(field, isValid, ruleCount) {
+        ValangValidator.Logger.log('Stub callback: ' + field + " : " + isValid + " : " + ruleCount);
+    },
+    
+    formValidationCallback: function(form, isValid) {
+        ValangValidator.Logger.log('Stub callback: ' + form + " : " + isValid);
+        return isValid;
     }
 };
 
-/*
- * Simple static logger implementation; by default attempts to log output
- * into a div with ID = 'valangLogDiv'.
- * If you wish to provide an alternative location for the log output you 
- * must overide the ValangValidator.Logger.log function.
- */
-ValangValidator.Logger = {
-	logId: 'valangLogDiv',
-    log: function(msg) {
-		if(! this._logAvailable()) return;
-		var msgLi = document.createElement("li");
-    	msgLi.appendChild(document.createTextNode(msg));
-    	this._logElement.appendChild(msgLi);
-    },
-    push: function(msg) {
-		if(! this._logAvailable()) return;
-        this.log(msg);
-		var logElem = document.createElement("ul");
-		this._logElement.appendChild(logElem);
-		this._logElement = logElem;
-    },
-    pop: function(msg) {
-    	if(! this._logAvailable()) return;
-    	var parent = this._logElement.parentNode;
-    	if (parent && parent.nodeName == "UL"){ //check for over-pop!
-    		this._logElement = parent;
-    	}
-        this.log(msg);
-    },
-    _logElement: null,
-    _logAvailableFlag: null,
-    _logAvailable: function() {
-    	if(this._logAvailableFlag == null) { //first call, setup
-			var logDiv = document.getElementById(this.logId);
-			if(logDiv){
-				var logElem = document.createElement("ul");
-				logDiv.appendChild(logElem);
-				this._logElement = logElem;
-			}
-			this._logAvailableFlag = (logDiv != null);
-    	}
-    	return this._logAvailableFlag;
-    	
-    	
-    },
-    _retrieveLogElement: function() {
-    	var logDiv = document.getElementById('valangLogDiv');
-    	if(!logDiv) return; 
-    	
-    	if(this._logElement == null) {
-    		var logElem = document.createElement("ul");
-    		logDiv.appendChild(logElem);
-    		this._logElement = logElem;
-    	}
-    },
-    logFunctionCalls: function(object) {
-        for (var elementName in object) {
-            var theElement = object[elementName];
-            if (typeof theElement == 'function') {
-                object[elementName] = this._wrapFunctionCallWithLog(elementName, theElement);
-            }
-        }
-    },
-    _wrapFunctionCallWithLog: function(functionName, theFunction) {
-        return function() {
-            ValangValidator.Logger.push('calling ' + functionName + '(' + arguments[0] + ', ' + arguments[1] + ')');
-            try {
-                var result = theFunction.apply(this, arguments);
-            } catch(ex) {
-                ValangValidator.Logger.pop('threw ' + ex);
-                throw ex;
-            }
-            ValangValidator.Logger.pop('result = ' + result);
-            return result;
-        }
-    }
-};
 
-/*
- * Encapsulates a HTML form
+
+/******************************************************************************
+ * 
+ * Encapsulates the HTML form
  *
  * Based on code from http://prototype.conio.net/
- */
+ * 
+ ******************************************************************************/
+
 ValangValidator.Form = function(formElement) {
     this.formElement = formElement;
 };
@@ -418,6 +284,10 @@ ValangValidator.Form.prototype = {
         var fields = new Array();
         var tagElements = this.formElement.elements;
         for (var i = 0; i < tagElements.length; i++) {
+        	
+        	if(tagElements[i].nodeName == "FIELDSET") continue;
+        	if(tagElements[i].nodeName == "BUTTON") continue;
+        	
             fields.push(new ValangValidator.Field(tagElements[i]));
         }
         return fields;
@@ -446,11 +316,14 @@ ValangValidator.Form.prototype = {
     }
 };
 
-/*
+
+/******************************************************************************
+ * 
  * Encapsulates a HTML form field
  *
  * Based on code from http://prototype.conio.net/
- */
+ * 
+ ******************************************************************************/
 ValangValidator.Field = function(fieldElement) {
     this.id = fieldElement.id;
     this.name = fieldElement.name;
@@ -460,6 +333,7 @@ ValangValidator.Field = function(fieldElement) {
     
     if (ValangValidator.Field.ValueGetters[this.tagName]) {
         this.getValue = ValangValidator.Field.ValueGetters[this.tagName];
+        
     } else if (this.tagName == 'input') {
         switch (this.type) {
             case 'submit':
@@ -486,8 +360,7 @@ ValangValidator.Field.prototype = {
         this.fieldElement.value = '';
     },
     focus: function() {
-        // The following line is sometimes effected by Firefox Bug 236791. Please just ignore
-        // the error or tell me how to fix it?
+        // The following line is sometimes effected by Firefox Bug 236791. 
         // https://bugzilla.mozilla.org/show_bug.cgi?id=236791
         this.fieldElement.focus();
     },
@@ -541,27 +414,30 @@ ValangValidator.Field.ValueGetters = {
     }
 };
 
-/*
- * Represents a single valang validation rule and the functions needed
- * to evaluate that rule.
- */
+/******************************************************************************
+ * 
+ * Represents a single valang rule and the functions needed to evaluate that rule.
+ * 
+ ******************************************************************************/
+
 ValangValidator.Rule = function(field, valang, errorMessage, validationFunction) {
     this.field = field;
     this.valang = valang;
     this.errorMessage = errorMessage;
     this.validate = validationFunction;
 }
+
 ValangValidator.Rule.prototype = {
     getErrorMessage: function() {
         return this.errorMessage;
     },
 
-// Property Accessor
+    // 	Property Accessor
     getPropertyValue: function(propertyName, expectedType) {
         return this.form.getValue(propertyName);
     },
 
-// Assertions
+    // 	Assertions
     _assertHasLength: function(value) {
         if (!value.length) {
             throw 'value \'' + value + '\' does not have length';
@@ -577,14 +453,13 @@ ValangValidator.Rule.prototype = {
         throw msg;
     },
 
-// Type safety checks
-
-// This function tries to convert the lhs into a type
-// that are compatible with the rhs for the various
-// JS compare operations. When there is a choice between
-// converting to a string or a number; number is always
-// favoured.
-    _makeCompatible: function(lhs, rhs) {
+	// Type safety checks
+	/* This function tries to convert the lhs into a type
+		that are compatible with the rhs for the various
+		JS compare operations. When there is a choice between
+		converting to a string or a number; number is always
+		favoured. */
+	_makeCompatible: function(lhs, rhs) {
         try {
             this._forceNumber(rhs);
             return this._forceNumber(lhs);
@@ -601,7 +476,10 @@ ValangValidator.Rule.prototype = {
         }
     },
     _forceNumber: function(value) {
-        if (typeof value != 'number') {
+        if (value.constructor.toString().match(/date/i)) { //is a date
+        	return value.getTime();
+        }
+        else if (typeof value != 'number') {
             try {
                 var newValue = eval(value.toString());
             } catch(ex) {
@@ -614,7 +492,7 @@ ValangValidator.Rule.prototype = {
         return value;
     },
 
-// Unary Operators
+    // Unary Operators
     lengthOf: function(value) {
         return (value != null) ? value.length : 0;
     },
@@ -625,7 +503,7 @@ ValangValidator.Rule.prototype = {
         return (value != null) ? value.toUpperCase(): null;
     },
 
-// Binary Operators
+    // Binary Operators
     equals: function(lhs, rhs) {
         if ((lhs == null && rhs != null) || (rhs == null && lhs != null)) {
             return false;
@@ -695,7 +573,7 @@ ValangValidator.Rule.prototype = {
         return lhs && lhs.toLowerCase() == lhs;
     },
 
-// Math operators
+    // Math operators
     add: function(lhs, rhs) {
         return this._forceNumber(lhs) + this._forceNumber(rhs);
     },
@@ -712,7 +590,7 @@ ValangValidator.Rule.prototype = {
         return this._forceNumber(lhs) - this._forceNumber(rhs);
     },
 
-// Custom Function
+    // Custom Function
     RegExFunction: function(pattern, value) {
         if (!value.match) {
             throw 'don\'t know how to apply regexp to value \'' + value + '\'';
@@ -724,6 +602,11 @@ ValangValidator.Rule.prototype = {
         var filter = /^(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6}$/;
         return filter.test(value);
     },
+    /*
+     * This is the default parseDate implementation: you probably want 
+     * to override it with a converter that knows your format, 
+     * the standard JS one is not very smart.
+     */
     parseDate: function(dateString, fieldName) {
     	var theDate = new Date(Date.parse(dateString));
     	ValangValidator.Logger.log("Using internal date parser: " + 
@@ -732,3 +615,81 @@ ValangValidator.Rule.prototype = {
     }
     
 };
+
+/******************************************************************************
+ * 
+ * Simple static logger implementation; logs output to logId as listed below
+ * overide the variable for a new location
+ * 
+ *****************************************************************************/
+
+ValangValidator.Logger = {
+	logId: 'valangLogDiv',
+    log: function(msg) {
+		if(console) console.log(msg);
+		if(! this._logAvailable()) return;
+		var msgLi = document.createElement("li");
+    	msgLi.appendChild(document.createTextNode(msg));
+    	this._logElement.appendChild(msgLi);
+    },
+    push: function(msg) {
+    	this.log(msg);
+		if(! this._logAvailable()) return;
+		var logElem = document.createElement("ul");
+		this._logElement.appendChild(logElem);
+		this._logElement = logElem;
+    },
+    pop: function(msg) {
+    	this.log(msg);
+    	if(! this._logAvailable()) return;
+    	var parent = this._logElement.parentNode;
+    	if (parent && parent.nodeName == "UL"){ //check for over-pop!
+    		this._logElement = parent;
+    	}
+    },
+    _logElement: null,
+    _logAvailableFlag: null,
+    _logAvailable: function() {
+    	if(this._logAvailableFlag == null) { //first call, setup
+			var logDiv = document.getElementById(this.logId);
+			if(logDiv){
+				var logElem = document.createElement("ul");
+				logDiv.appendChild(logElem);
+				this._logElement = logElem;
+			}
+			this._logAvailableFlag = (logDiv != null);
+    	}
+    	return this._logAvailableFlag;
+    	
+    	
+    },
+    _retrieveLogElement: function() {
+    	var logDiv = document.getElementById(this.logId);
+    	if(!logDiv) return; 
+    	
+    	if(this._logElement == null) {
+    		var logElem = document.createElement("ul");
+    		logDiv.appendChild(logElem);
+    		this._logElement = logElem;
+    	}
+    }
+};
+
+/******************************************************************************
+ * 
+ * utility add-ons: push
+ * 
+ ******************************************************************************/
+
+if (!Array.prototype.push) {
+    // Based on code from http://prototype.conio.net/
+    Array.prototype.push = function() {
+        var startLength = this.length;
+        for (var i = 0; i < arguments.length; i++) {
+            this[startLength + i] = arguments[i];
+        }
+        return this.length;
+    }
+}
+
+

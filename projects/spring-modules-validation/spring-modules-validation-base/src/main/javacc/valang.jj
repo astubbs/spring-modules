@@ -75,7 +75,7 @@ public class ValangParser {
 
 	public DefaultVisitor getVisitor() {
 	   if (this.visitor == null) {
-	       throw new IllegalStateException("Visistor is not set on parser");
+	       throw new IllegalStateException("Visitor is not set on parser");
 	   }
 	   return this.visitor;
 	}

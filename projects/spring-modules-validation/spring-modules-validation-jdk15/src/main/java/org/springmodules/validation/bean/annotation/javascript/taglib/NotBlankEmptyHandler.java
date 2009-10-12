@@ -1,7 +1,6 @@
 package org.springmodules.validation.bean.annotation.javascript.taglib;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,8 +17,7 @@ public class NotBlankEmptyHandler extends Handler {
     }
 
     @Override
-    public String convertToValang(Field field, Annotation a, MessageSourceAccessor messages) {
-        String name = field.getName();
+    public String convertToValang(String fieldName, Annotation a, MessageSourceAccessor messages) {
         String errMsg = "";
         String applyIfValang = null;
 
@@ -35,12 +33,12 @@ public class NotBlankEmptyHandler extends Handler {
 
         StringBuffer sb = new StringBuffer();
         sb.append(" function() {return this.moreThan((this.lengthOf(this.getPropertyValue(");
-        sb.append(wrapAndEscapeJsString(name));// field
+        sb.append(wrapAndEscapeJsString(fieldName));// field
         sb.append("))), (");
         sb.append('0');
         sb.append("))}");
 
-        return buildBasicRule(name, errMsg, sb.toString(), applyIfValang, a);
+        return buildBasicRule(fieldName, errMsg, sb.toString(), applyIfValang, a);
     }
 
 }

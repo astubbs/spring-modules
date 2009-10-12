@@ -3,6 +3,7 @@ package org.springmodules.validation.bean.annotation.javascript.taglib;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -15,6 +16,12 @@ import org.springmodules.validation.valang.javascript.AbstractValangJavaScriptTr
 
 public class CommandObjectToValangConverter extends AbstractValangJavaScriptTranslator {
 
+    public enum AnnotationLocation {
+        METHOD, FIELD, CLASS
+    }
+
+    public static final String CLASS_RULENAME = "valang-global-rules";
+
     private static final String FIRST_LINE_PREFIX = "\n";
 
     private static final String LINE_PREFIX = ",\n";
@@ -23,7 +30,7 @@ public class CommandObjectToValangConverter extends AbstractValangJavaScriptTran
 
     private final static Log logger = LogFactory.getLog(CommandObjectToValangConverter.class);
 
-    Collection<Handler> supportedFieldAnnotations = new ArrayList<Handler>();
+    Collection<Handler> supportedFieldMethodAnnotations = new ArrayList<Handler>();
 
     Collection<Handler> supportedClassAnnotations = new ArrayList<Handler>();
 
@@ -33,46 +40,54 @@ public class CommandObjectToValangConverter extends AbstractValangJavaScriptTran
         registerClassAnnotationHandler(new ExpressionHandler());
         registerClassAnnotationHandler(new ExpressionsHandler());
 
-        // fields
-        registerFieldAnnotationHandler(new EmailHandler());
-        registerFieldAnnotationHandler(new ExpressionHandler());
-        registerFieldAnnotationHandler(new ExpressionsHandler());
-        registerFieldAnnotationHandler(new InThePastFutureHandler());
-        registerFieldAnnotationHandler(new LengthSizeHandler());
-        registerFieldAnnotationHandler(new MaxHandler());
-        registerFieldAnnotationHandler(new MaxLengthSizeHandler());
-        registerFieldAnnotationHandler(new MinHandler());
-        registerFieldAnnotationHandler(new MinLengthSizeHandler());
-        registerFieldAnnotationHandler(new NotBlankEmptyHandler());
-        registerFieldAnnotationHandler(new NotNullHandler());
-        registerFieldAnnotationHandler(new RangeHandler());
-        registerFieldAnnotationHandler(new RegExpHandler());
+        // fields / methods
+        registerFieldMethodAnnotationHandler(new EmailHandler());
+        registerFieldMethodAnnotationHandler(new ExpressionHandler());
+        registerFieldMethodAnnotationHandler(new ExpressionsHandler());
+        registerFieldMethodAnnotationHandler(new InThePastFutureHandler());
+        registerFieldMethodAnnotationHandler(new LengthSizeHandler());
+        registerFieldMethodAnnotationHandler(new MaxHandler());
+        registerFieldMethodAnnotationHandler(new MaxLengthSizeHandler());
+        registerFieldMethodAnnotationHandler(new MinHandler());
+        registerFieldMethodAnnotationHandler(new MinLengthSizeHandler());
+        registerFieldMethodAnnotationHandler(new NotBlankEmptyHandler());
+        registerFieldMethodAnnotationHandler(new NotNullHandler());
+        registerFieldMethodAnnotationHandler(new RangeHandler());
+        registerFieldMethodAnnotationHandler(new RegExpHandler());
     }
 
     public void writeJS(String commandName, Object commandObj, JspWriter out, MessageSourceAccessor messages)
             throws IOException {
 
-        setWriter(out);
-        prefix = FIRST_LINE_PREFIX; // No comma for first line
+        try {
+            setWriter(out);
+            prefix = FIRST_LINE_PREFIX; // No comma for first line
 
-        out.write("new ValangValidator(");
-        appendJsString(commandName);
-        append(',');
-        append(Boolean.toString(true)); // install to the form on creation
-        append(", new Array(");
+            out.write("new ValangValidator(");
+            appendJsString(commandName);
+            append(',');
+            append(Boolean.toString(true)); // install to the form on creation
+            append(", new Array(");
 
-        // class level
-        Annotation[] annotations = commandObj.getClass().getAnnotations();
-        extractAnnotations(commandObj, messages, null, annotations);
+            // class level
+            Annotation[] annotations = commandObj.getClass().getAnnotations();
+            extractAnnotations(commandObj, messages, CLASS_RULENAME, annotations, AnnotationLocation.CLASS);
 
-        // field level
-        for (Field field : commandObj.getClass().getDeclaredFields()) {
-            annotations = field.getAnnotations();
-            extractAnnotations(commandObj, messages, field, annotations);
+            // field level
+            for (Field field : commandObj.getClass().getDeclaredFields()) {
+                annotations = field.getAnnotations();
+                extractAnnotations(commandObj, messages, field.getName(), annotations, AnnotationLocation.FIELD);
+            }
+            // method level
+            for (Method m : commandObj.getClass().getMethods()) {
+                annotations = m.getAnnotations();
+                extractAnnotations(commandObj, messages, m.getName(), annotations, AnnotationLocation.METHOD);
+            }
+
+            append("\n) )");
+        } finally {
+            clearWriter();
         }
-
-        append("\n) )");
-        clearWriter();
     }
 
     /**
@@ -80,21 +95,29 @@ public class CommandObjectToValangConverter extends AbstractValangJavaScriptTran
      * 
      * @param commandObj
      * @param messages
-     * @param field
-     *            The field the annotations are from. If null
+     * @param name
+     *            The field/method the annotations are from. If null
      * @param annotations
      * @throws IOException
      */
-    private void extractAnnotations(Object commandObj, MessageSourceAccessor messages, Field field,
-            Annotation[] annotations) throws IOException {
-
-        boolean isClassLevel = (field == null);
+    private void extractAnnotations(Object commandObj, MessageSourceAccessor messages, String name,
+            Annotation[] annotations, AnnotationLocation aLoc) throws IOException {
 
         for (Annotation annotation : annotations) {
-            Handler hndl = (isClassLevel) ? getClassHandler(annotation) : getFieldHandler(annotation);
+
+            Handler hndl = (aLoc == AnnotationLocation.CLASS) ? getClassHandler(annotation)
+                    : getFieldMethodHandler(annotation);
 
             if (hndl != null) {
-                String valangJS = hndl.convertToValang(field, annotation, messages);
+                if (hndl.isDelegateAnnotations()) {
+                    Annotation[] delegateAnnotations = hndl.getDelegateAnnotations(annotation, name);
+                    if (delegateAnnotations != null) {
+                        extractAnnotations(commandObj, messages, name, delegateAnnotations, aLoc);
+                    }
+                    continue;
+                }
+                String propName = (aLoc == AnnotationLocation.METHOD) ? convertMethodNameToProperty(name) : name;
+                String valangJS = hndl.convertToValang(propName, annotation, messages);
                 if (valangJS != null) {
                     append(prefix + valangJS);
                     prefix = LINE_PREFIX;
@@ -116,8 +139,8 @@ public class CommandObjectToValangConverter extends AbstractValangJavaScriptTran
         return getHandler(annotation, supportedClassAnnotations);
     }
 
-    private Handler getFieldHandler(Annotation annotation) {
-        return getHandler(annotation, supportedFieldAnnotations);
+    private Handler getFieldMethodHandler(Annotation annotation) {
+        return getHandler(annotation, supportedFieldMethodAnnotations);
     }
 
     private Handler getHandler(Annotation annotation, Collection<Handler> handlers) {
@@ -132,11 +155,11 @@ public class CommandObjectToValangConverter extends AbstractValangJavaScriptTran
         return null;
     }
 
-    public void registerFieldAnnotationHandler(Handler handler) {
+    public void registerFieldMethodAnnotationHandler(Handler handler) {
         if (handler == null) {
             return;
         }
-        supportedFieldAnnotations.add(handler);
+        supportedFieldMethodAnnotations.add(handler);
     }
 
     public void registerClassAnnotationHandler(Handler handler) {
@@ -146,4 +169,29 @@ public class CommandObjectToValangConverter extends AbstractValangJavaScriptTran
         supportedClassAnnotations.add(handler);
     }
 
+    public void setRegisterFieldMethodHandlers(Collection<Handler> handlers) {
+        for (Handler h : handlers) {
+            registerFieldMethodAnnotationHandler(h);
+        }
+    }
+
+    public void setRegisterClassHandlers(Collection<Handler> handlers) {
+        for (Handler h : handlers) {
+            registerClassAnnotationHandler(h);
+        }
+    }
+
+    public String convertMethodNameToProperty(String in) {
+        if (in == null) {
+            return null;
+        }
+        // TODO find elegant spring way
+        String out = in.replaceFirst("^is", "").replaceFirst("^get", "").replaceFirst("^set", "");
+        if (out.length() == 0) {
+            return null;
+        }
+        out = out.substring(0, 1).toLowerCase() + out.substring(1); // drop first letter case
+
+        return out;
+    }
 }

@@ -26,10 +26,13 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTag;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.BaseCommandController;
 import org.springframework.web.servlet.tags.RequestContextAwareTag;
+import org.springmodules.validation.bean.annotation.javascript.taglib.CommandObjectToValangConverter;
 import org.springmodules.validation.valang.ValangValidator;
 import org.springmodules.validation.valang.javascript.taglib.ValangCodebaseTag;
 import org.springmodules.validation.valang.javascript.taglib.ValangJavaScriptTagUtils;
@@ -51,13 +54,25 @@ import org.springmodules.validation.valang.javascript.taglib.ValangJavaScriptTag
  * @author Tim Taylor
  * @author Oliver Hutchison
  */
+
 public class BeanAnnotationValidateTag extends RequestContextAwareTag implements BodyTag {
+
+    public BeanAnnotationValidateTag() {
+        super();
+
+    }
 
     public static final String DEFAULT_COMMAND_NAME = "command";
 
     private String commandName = DEFAULT_COMMAND_NAME;
 
-    private CommandObjectToValangConverter cotvc = new CommandObjectToValangConverter();
+    private Object commandObj = null;
+
+    private CommandObjectToValangConverter cotvc = null;
+
+    public void setConverter(CommandObjectToValangConverter cotvc) {
+        this.cotvc = cotvc;
+    }
 
     /**
      * Sets the name of the command which will be validated by the generated JavaScript. If this value is specified it
@@ -69,6 +84,10 @@ public class BeanAnnotationValidateTag extends RequestContextAwareTag implements
      */
     public void setCommandName(String commandName) {
         this.commandName = commandName;
+    }
+
+    public void setCommandObj(Object commandObj) {
+        this.commandObj = commandObj;
     }
 
     protected int doStartTagInternal() {
@@ -88,11 +107,16 @@ public class BeanAnnotationValidateTag extends RequestContextAwareTag implements
     }
 
     public int doEndTag() throws JspException {
+        if (cotvc == null) {
+            findConverter();
+        }
         try {
-            Object commandObj = this.pageContext.getAttribute(commandName, PageContext.REQUEST_SCOPE);
-            if (commandName == null || commandObj == null) {
-                logger.error("Command object not found");
-                return EVAL_PAGE;
+            if (commandObj == null) { // favour commandObj over command name
+                commandObj = this.pageContext.getAttribute(commandName, PageContext.REQUEST_SCOPE);
+                if (commandName == null || commandObj == null) {
+                    logger.error("Command object not found");
+                    return EVAL_PAGE;
+                }
             }
             JspWriter out = pageContext.getOut();
             Locale locale = getRequestContext().getLocale();
@@ -113,5 +137,17 @@ public class BeanAnnotationValidateTag extends RequestContextAwareTag implements
     public void doFinally() {
         super.doFinally();
         commandName = null;
+    }
+
+    public void findConverter() throws BeansException {
+
+        Map beansOfType = BeanFactoryUtils.beansOfTypeIncludingAncestors(
+                getRequestContext().getWebApplicationContext(), CommandObjectToValangConverter.class);
+        if (beansOfType.size() >= 1) {
+            cotvc = (CommandObjectToValangConverter) beansOfType.values().iterator().next();
+        } else {
+            cotvc = new CommandObjectToValangConverter();
+        }
+
     }
 }

@@ -1,10 +1,8 @@
 package org.springmodules.validation.bean.annotation.javascript.taglib;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
@@ -34,7 +32,7 @@ public abstract class Handler {
      * @param messages
      * @return
      */
-    public abstract String convertToValang(Field field, Annotation annotation, MessageSourceAccessor messages);
+    public abstract String convertToValang(String fieldName, Annotation annotation, MessageSourceAccessor messages);
 
     /* Helpers */
     protected String buildBasicRule(String fieldName, String errMsg, String function, String applyIf,
@@ -86,13 +84,21 @@ public abstract class Handler {
         return " function() {return ( ((" + applyIf + ").apply(this)) ? ((" + function + ").apply(this)) : true ) }";
     }
 
+    protected boolean isDelegateAnnotations() {
+        return false;
+    }
+
+    protected Annotation[] getDelegateAnnotations(Annotation a, String fieldName) {
+        throw new UnsupportedOperationException("This class does not support delegate annotations");
+    }
+
     protected static String valangToJS(String text) {
         if (text == null || text.trim().length() == 0) {
             logger.debug("No text to parse");
             return null;
         }
 
-        ValangParser parser = new ValangParser(new StringReader(text)); // text -> predicate tree
+        ValangParser parser = new ValangParser(text, null, null); // text -> predicate tree
         ValangJavaScriptTranslator translator = new ValangJavaScriptTranslator(); // pt -> js
 
         StringWriter sw = new StringWriter();
