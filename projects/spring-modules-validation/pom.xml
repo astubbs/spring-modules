@@ -8,15 +8,29 @@
         <version>0.10-SNAPSHOT</version>
     </parent>
     <groupId>org.springmodules</groupId>
-    <artifactId>spring-modules-validation</artifactId>
+    <artifactId>spring-modules-validation-parent</artifactId>
     <version>0.10-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
+        <module>spring-modules-validation</module>
         <module>spring-modules-validation-base</module>
         <module>spring-modules-validation-jdk15</module>
     </modules>
 
-	
+
+<!-- for temporary internal deploys. -->
+	<distributionManagement>
+        <repository>
+            <id>inhouse</id>
+            <name>inhouse</name>
+            <url>http://10.44.211.210:8081/nexus/content/repositories/inhouse</url>
+        </repository>
+        <snapshotRepository>
+            <id>inhouse.snapshot</id>
+            <name>inhouse.snapshot</name>
+            <url>http://10.44.211.210:8081/nexus/content/repositories/inhouse.snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 	
 </project>
