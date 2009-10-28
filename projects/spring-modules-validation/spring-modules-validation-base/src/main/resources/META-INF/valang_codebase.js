@@ -49,7 +49,8 @@ var ValangValidator = function(name, installSelfWithForm, rules) {
 ValangValidator.prototype = {
 	globalErrorsId: 'global_errors',
 	fieldErrorIdSuffix: '_error',
-    classRuleFieldName: "valang-global-rules", // matches CommandObjectToValangConverter.CLASS_RULENAME
+	emptyErrorHTML: '',
+    classRuleFieldName: "valang-global-rules", // to match CommandObjectToValangConverter.CLASS_RULENAME
 
     // check all fields and global checks, returns boolean form valid state 
     validate: function() { 
@@ -77,42 +78,44 @@ ValangValidator.prototype = {
         var isValid = true;
         var fieldRules = this.groupedRules[field.name];
         var errorRules = new Array();
+        var ruleCount = fieldRules ? fieldRules.length : 0;
         
-        if(!fieldRules || fieldRules.length == 0){
-        	ValangValidator.Logger.pop('No rules');
-        	return isValid;
-        }
-        
-        for (var i = 0; i < fieldRules.length; i++) {
-            var rule = fieldRules[i];
-            rule.form = this.form;
-            var thisValid = false;
-            try {
-            	thisValid =  rule.validate();
-            } catch(err) {
-            	ValangValidator.Logger.log("Rule error: " + err);
-            }
-            isValid = isValid && thisValid;
-            if(!thisValid) {
-            	errorRules.push(rule);
-            }
-            ValangValidator.Logger.log(thisValid ? 'Passed' : 'Failed');
-        }
+        if(fieldRules && ruleCount > 0){
 
-        var errorBox = document.getElementById(field.name + this.fieldErrorIdSuffix);
-        if( errorRules.length > 0) {
-        	//inject first error only
-        	if( errorBox != null) {
-        		errorBox.innerHTML = errorRules[0].getErrorMessage();
-        	} else {
-	        	alert(field.name + " : " + errorRules[0].getErrorMessage());
-	        	ValangValidator.Logger.log("error node not found.");
-        	}
+	        for (var i = 0; i < ruleCount; i++) {
+	            var rule = fieldRules[i];
+	            rule.form = this.form;
+	            var thisValid = false;
+	            try {
+	            	thisValid =  rule.validate();
+	            } catch(err) {
+	            	ValangValidator.Logger.log("Rule error: " + err);
+	            }
+	            isValid = isValid && thisValid;
+	            if(!thisValid) {
+	            	errorRules.push(rule);
+	            }
+	            ValangValidator.Logger.log(thisValid ? 'Passed' : 'Failed');
+	        }
+	
+	        var errorBox = document.getElementById(field.name + this.fieldErrorIdSuffix);
+	        if( errorRules.length > 0) {
+	        	//inject first error only
+	        	if( errorBox != null) {
+	        		this._insertText(errorBox, errorRules[0].getErrorMessage());
+	        	} else {
+		        	alert(field.name + " : " + errorRules[0].getErrorMessage());
+		        	ValangValidator.Logger.log("error node not found.");
+	        	}
+	        }
+	        
+        } else {
+        	ValangValidator.Logger.pop('No rules');
         }
         
 		if(this.fieldValidationCallback) {
         	ValangValidator.Logger.log("Field callback.");
-			this.fieldValidationCallback(field.fieldElement, isValid, fieldRules.length);
+			this.fieldValidationCallback(field.fieldElement, isValid, ruleCount);
 		}
         
         ValangValidator.Logger.pop('Finished field rules evaluation');
@@ -198,15 +201,27 @@ ValangValidator.prototype = {
     _clearErrorIfExists: function(field) {
         var errorBox = document.getElementById(field + this.fieldErrorIdSuffix);
         if (errorBox != null) {
-            errorBox.innerHTML = '';
+        	this._insertText(errorBox, this.emptyErrorHTML);
         }
     },
     
     _clearGlobalErrors: function() {
         var errorBox = document.getElementById(this.globalErrorsId);
         if (errorBox != null) {
-            errorBox.innerHTML = '';
+        	this._insertText(errorBox, this.emptyErrorHTML);
         }
+    },
+    _insertText: function(node, text) {
+    	if(node) {
+            while (node.childNodes[0]) {
+                node.removeChild(node.childNodes[0]);
+            }
+    		var textNode = document.createTextNode(text);
+    		node.appendChild(textNode);
+    		/*
+    		 this technique is used, as node.innerHTML has some iE6 effects.
+    		*/
+    	}
     },
     
     _giveRulesSameOrderAsFormFields: function(failedRules) {
@@ -432,9 +447,22 @@ ValangValidator.Rule.prototype = {
         return this.errorMessage;
     },
 
-    // 	Property Accessor
-    getPropertyValue: function(propertyName, expectedType) {
-        return this.form.getValue(propertyName);
+    /* 	Property Accessor
+     *  If you want a custom javascript binding conversion (eg dates!) override this.bindingConversion()
+     */
+    getPropertyValue: function(propertyName) {
+    	
+    	var rawValue = this.form.getValue(propertyName);
+    	try {
+    		var bindValue = this.bindingConversion(rawValue, propertyName);
+    		if(bindValue){
+        		ValangValidator.Logger.log("Value bound for " + propertyName + ": " + rawValue + " -> " + bindValue);
+    			return bindValue;
+    		}
+    	} 
+    	catch(e){}
+		ValangValidator.Logger.log("Using raw value for " + propertyName + ": " + rawValue);
+        return rawValue;
     },
 
     // 	Assertions
@@ -454,43 +482,69 @@ ValangValidator.Rule.prototype = {
     },
 
 	// Type safety checks
-	/* This function tries to convert the lhs into a type
-		that are compatible with the rhs for the various
-		JS compare operations. When there is a choice between
-		converting to a string or a number; number is always
-		favoured. */
+    
+	/* 	This function tries to convert the lhs into a type that is compatible with the rhs for the various
+		JS compare operations.  Supports Date, Number, String 
+	 */    
 	_makeCompatible: function(lhs, rhs) {
-        try {
+        if(this._isSameType(lhs, rhs)) return lhs;
+        // else must be different types
+/*
+		ValangValidator.Logger.log("LHS: " + lhs + " : " + this._realTypeOf(lhs));
+		ValangValidator.Logger.log("RHS: " + rhs + " : " + this._realTypeOf(rhs));
+*/
+        if(typeof lhs == 'date' || typeof lhs == 'date') {
+        	throw "Can\'t make date compatible with non-date: " + lhs + " : " + rhs;
+        }
+        
+        //if RHS is number-able, attempt force of LHS
+    	try {
             this._forceNumber(rhs);
             return this._forceNumber(lhs);
         } catch(ex) {
+        	// lhs not number
         }
-        var lhsType = typeof lhs;
-        var rhsType = typeof rhs;
-        if (lhsType == rhsType) {
-            return lhs;
-        } else if (lhsType == 'number' || rhsType == 'number') {
-            return this._forceNumber(lhs);
+        
+        // else string
+        if (typeof rhs == 'string') {
+            return (new String(lhs)).valueOf(); 
         } else {
             throw 'unable to convert [' + lhs + '] and [' + rhs + '] to compatible types';
         }
     },
     _forceNumber: function(value) {
-        if (value.constructor.toString().match(/date/i)) { //is a date
-        	return value.getTime();
-        }
-        else if (typeof value != 'number') {
-            try {
-                var newValue = eval(value.toString());
-            } catch(ex) {
-            }
-            if (newValue && typeof newValue == 'number') {
-                return newValue;
-            }
+        if (value && typeof value != 'number' && typeof value != 'date') {
+
+        	var maybeNum = new Number(value);
+        	if(!isNaN(maybeNum)) {
+        		ValangValidator.Logger.log("Num forced: " + value + " -> " + maybeNum);
+        		return maybeNum;
+        	}
             throw 'unable to convert value [' + value + '] to number';
         }
+        
         return value;
     },
+    _isSameType: function(lhs, rhs) {
+    	var sameType = false;
+    
+    	if (lhs == null && rhs == null){ sameType = true;}
+    	else if(lhs == null || rhs == null){ sameType = false;}
+    	else if(this._realTypeOf(lhs) == this._realTypeOf(rhs)){ sameType = true;}
+    		
+    	ValangValidator.Logger.log("Same type?: " + sameType + " " + lhs + " : " + rhs);
+    	return sameType;
+    },
+    _realTypeOf: function(v) { //thanks http://joncom.be/code/realtypeof/
+		if (typeof(v) == "object") {
+			if (v === null) return "null";
+			if (v.constructor == (new Array).constructor) return "array";
+			if (v.constructor == (new Date).constructor) return "date";
+			if (v.constructor == (new RegExp).constructor) return "regex";
+			return "object";
+		}
+		return typeof(v);
+	},
 
     // Unary Operators
     lengthOf: function(value) {
@@ -549,6 +603,7 @@ ValangValidator.Rule.prototype = {
         lhs = this._makeCompatible(lhs, rhs[0]);
         rhs[0] = this._makeCompatible(rhs[0], lhs);
         rhs[1] = this._makeCompatible(rhs[1], lhs);
+
         return lhs >= rhs[0] && lhs <= rhs[1];
     },
     nullFunc: function(lhs, rhs) {
@@ -602,17 +657,49 @@ ValangValidator.Rule.prototype = {
         var filter = /^(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6}$/;
         return filter.test(value);
     },
+    
+    // Other functions
+    isDate: function(maybeDate) {
+        if (maybeDate && this._realTypeOf(maybeDate) == 'date') { //is a date
+        	return true;
+        }
+        return false;
+    },
+    
     /*
-     * This is the default parseDate implementation: you probably want 
-     * to override it with a converter that knows your format, 
-     * the standard JS one is not very smart.
+     * This is the default bindingConversion implementation: you probably want 
+     * to override it with a converter that knows your binding conversions., 
+     * 
      */
-    parseDate: function(dateString, fieldName) {
-    	var theDate = new Date(Date.parse(dateString));
-    	ValangValidator.Logger.log("Using internal date parser: " + 
-    			fieldName + ": " + dateString + " -> " + theDate);
-    	return theDate;
-    }
+     bindingConversion: function(rawValue, fieldName) {
+    	
+    	// default blindly attempts to convert  value to a date, 
+    	var maybeDate = this.parseDate(rawValue, fieldName);
+    	if(maybeDate != null) return maybeDate;
+
+    	var maybeNum = this.parseNumber(rawValue, fieldName);
+    	if(maybeNum != null) return maybeNum;
+    	
+    	return null;
+    },
+    parseDate: function(rawValue, fieldName) {
+    	// This implementation favours US dates as per Date.parse - override this for better date support 
+    	var maybeDate = new Date(Date.parse(rawValue));
+    	if(!isNaN(maybeDate)){
+    		ValangValidator.Logger.log("Date parsed: " + fieldName + ": " + rawValue + " -> " + maybeDate);
+    		return maybeDate;
+    	}
+    	return;
+    },
+    parseNumber: function(rawValue, fieldName) {
+    	// strip commas to see if its just a decorated number: 
+    	var maybeNum = new Number(rawValue.replace(/,/g,""));
+    	if(!isNaN(maybeNum)) {
+    		ValangValidator.Logger.log("Num parsed: " + fieldName + ": " + rawValue + " -> " + maybeNum);
+    		return maybeNum;
+    	}
+    	return;
+    }    
     
 };
 
@@ -626,7 +713,10 @@ ValangValidator.Rule.prototype = {
 ValangValidator.Logger = {
 	logId: 'valangLogDiv',
     log: function(msg) {
-		if(console) console.log(msg);
+		if(window.console && console.log) { 
+			// firebug logger
+			console.log(msg);
+		}
 		if(! this._logAvailable()) return;
 		var msgLi = document.createElement("li");
     	msgLi.appendChild(document.createTextNode(msg));
