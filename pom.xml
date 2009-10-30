@@ -26,6 +26,11 @@
 		<url>http://github.com/astubbs/spring-modules/tree/master</url>
 	</scm>
 
+	<ciManagement>
+    		<system>Hudson</system>
+    		<url>sharca.com:8080</url>
+ 	</ciManagement>
+
 	<distributionManagement>
 		<repository>
 			<id>sharca.com.repo</id>
