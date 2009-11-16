@@ -135,6 +135,7 @@ public class ValangCodebaseTag extends RequestContextAwareTag {
         try {
             char[] buffer = new char[1024];
             int bytesRead;
+
             while ((bytesRead = in.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesRead);
             }

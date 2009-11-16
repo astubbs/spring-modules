@@ -1,4 +1,6 @@
 /*
+ * Valang codebase for client side validation
+ * 
  * Copyright 2004-2005 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,26 +25,15 @@
 * Core validation object.
 * 
 ******************************************************************************/
-var ValangValidator = function(name, installSelfWithForm, rules) {
+var ValangValidator = function(name, installSelfWithForm, rules, validateOnSubmit) {
     this.name = name;
-    this.rules = rules;
     this.form = this._findForm(name);
-    
-    //create grouped rules by field
     this.groupedRules = {};
-    for (var i = 0; i < this.rules.length; i++) {
-    	var ruleField = this.rules[i].field;
-    	var fieldArray = this.groupedRules[ruleField];
-    	
-    	if(!fieldArray) {
-    		this.groupedRules[ruleField] = new Array();
-    		fieldArray = this.groupedRules[ruleField];
-    	}
-    	fieldArray.push(this.rules[i]);
-    }
+
+    this.addRules(rules);
     
     if (installSelfWithForm) {
-        this._installSelfWithForm();
+        this._installSelfWithForm(validateOnSubmit);
     }
 };
 
@@ -52,6 +43,21 @@ ValangValidator.prototype = {
 	emptyErrorHTML: '',
     classRuleFieldName: "valang-global-rules", // to match CommandObjectToValangConverter.CLASS_RULENAME
 
+    
+    addRules: function(newRules){ 
+	    //create grouped rules by field
+	    for (var i = 0; i < newRules.length; i++) {
+	    	var ruleField = newRules[i].field;
+	    	var fieldArray = this.groupedRules[ruleField];
+	    	
+	    	if(!fieldArray) {
+	    		this.groupedRules[ruleField] = new Array();
+	    		fieldArray = this.groupedRules[ruleField];
+	    	}
+	    	fieldArray.push(newRules[i]);
+	    }	
+	},
+    
     // check all fields and global checks, returns boolean form valid state 
     validate: function() { 
     	var isValid = true;
@@ -122,22 +128,19 @@ ValangValidator.prototype = {
         return isValid;
     },    
     
-    _installSelfWithForm: function() {
-    	var thisValidator = this;
-    	
+    _installSelfWithForm: function(validateOnSubmit) {
         var oldOnload = window.onload;
         var oldOnsubmit = this.form.formElement.onsubmit;
+        var thisValidator = this;
 
         //onload - bind to onblurs
         window.onload = function() {
-            ValangValidator.Logger.log('Installing ValangValidator \'' 
-            		+ thisValidator.name + '\' as onsubmit handler');
-            try {
-                if (oldOnload) {
-                    oldOnload();
-                }
+        	
+            //fire onload chain first
+        	try {
+                if (oldOnload) oldOnload();
             } catch (err) {
-            	ValangValidator.Logger.log('other onload error: ' + err);
+            	ValangValidator.Logger.log('Chained onload error: ' + err);
             }
             	
         	// onblur for each field
@@ -146,36 +149,64 @@ ValangValidator.prototype = {
 				var thisField = fields[i];
 				if(thisField.type == "submit") continue; //dont add to submit buttons
 				
-				thisField.fieldElement._oldBlur = thisField.fieldElement.blur;
-        		thisField.fieldElement.onblur = function() {
-        			// fire any old onblur
-        			if(this._oldBlur) {
-        	            ValangValidator.Logger.push('Calling OldBlur');
-        				this._oldBlur();
-        	            ValangValidator.Logger.pop('End OldBlur');
-        			}
-        			// check this field
-        			var vField =  new ValangValidator.Field(this);
-    				thisValidator.validateField(vField);
-        		};
+				var events = ["onkeyup","onblur"];
+				var thisElement = thisField.fieldElement; 
+
+				for (evtPtr in events) {
+					var event = events[evtPtr];
+					var oldEvent = "_old" + event;
+					
+					var closure = function(event, oldEvent) {
+						if(thisElement[oldEvent] != thisElement[event]) {
+							thisElement[oldEvent] = thisElement[event];
+						}
+						thisElement[event] = function(e) {
+							ValangValidator.Logger.push('recieved ' + event );
+							if(this[oldEvent]){
+								this[oldEvent]();
+							}
+							if(e && (event == "onkeyup" || event == "onkeydown" )){
+								key = null;
+					    		if (undefined === e.which) {
+					    			key = e.keyCode; 
+					    		} else if (e.which != 0) {
+					    			key = e.keyCode;
+					    		} else { 
+					    			return true; //special key
+					    		}							
+								if(key == 9 ){ //ignore tabkey; onblur will catch
+									return true;
+								}
+							}
+							// check this field
+		        			var vField =  new ValangValidator.Field(this);
+		    				thisValidator.validateField(vField);
+		        		};
+					}(event, oldEvent);
+				}
+        		
 			}
         	
         	// on submit
-        	thisValidator.form.formElement.onsubmit = function() {
-
-        		if (!oldOnsubmit || oldOnsubmit()) {
-        			
-                	var isValid = thisValidator.validate();
-                	
-                	var callbackVal = false;
-        			if(thisValidator.formValidationCallback) {
-        				callbackVal = thisValidator.formValidationCallback(this, isValid);
-        			}
-
-        			return callbackVal || isValid;
-                }
-        		return false;
-            }
+        	if(validateOnSubmit) {
+	        	thisValidator.form.formElement.onsubmit = function() {
+	                ValangValidator.Logger.log('Installing ValangValidator \'' 
+	                		+ thisValidator.name + '\' as onsubmit handler');
+	
+	        		if (!oldOnsubmit || oldOnsubmit()) {
+	        			
+	                	var isValid = thisValidator.validate();
+	                	
+	                	var callbackVal = false;
+	        			if(thisValidator.formValidationCallback) {
+	        				callbackVal = thisValidator.formValidationCallback(this, isValid);
+	        			}
+	
+	        			return callbackVal || isValid;
+	                }
+	        		return false;
+	            }
+        	}
         }
     },
     
@@ -532,7 +563,7 @@ ValangValidator.Rule.prototype = {
     	else if(lhs == null || rhs == null){ sameType = false;}
     	else if(this._realTypeOf(lhs) == this._realTypeOf(rhs)){ sameType = true;}
     		
-    	ValangValidator.Logger.log("Same type?: " + sameType + " " + lhs + " : " + rhs);
+    	ValangValidator.Logger.log("Same type?: " + sameType + " for " + lhs + " : " + rhs);
     	return sameType;
     },
     _realTypeOf: function(v) { //thanks http://joncom.be/code/realtypeof/

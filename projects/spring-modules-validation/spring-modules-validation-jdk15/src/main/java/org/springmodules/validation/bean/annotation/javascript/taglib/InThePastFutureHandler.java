@@ -34,11 +34,9 @@ public class InThePastFutureHandler extends Handler {
         sb.append(" function() {return this.");
         sb.append(pastFutureMethod);
         sb.append("( (");
-        sb.append("this.parseDate(this.getPropertyValue(");
+        sb.append("this.getPropertyValue(");
         sb.append(wrapAndEscapeJsString(fieldName)); // value of name field
-        sb.append("), ");
-        sb.append(wrapAndEscapeJsString(fieldName)); // name
-        sb.append(") ), ( (new Date()).getTime() ) )}");
+        sb.append(") ), new Date() )}");
 
         return buildBasicRule(fieldName, errMsg, sb.toString(), applyIfValang, a);
     }

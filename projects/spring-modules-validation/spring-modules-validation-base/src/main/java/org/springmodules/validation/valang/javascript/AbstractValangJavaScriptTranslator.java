@@ -51,6 +51,8 @@ public class AbstractValangJavaScriptTranslator {
     public static Reader getCodebaseReader() {
         Class clazz = AbstractValangJavaScriptTranslator.class;
         InputStream resourceAsStream = clazz.getResourceAsStream(VALANG_CODEBASE_JS);
+
+        Assert.notNull(resourceAsStream, "Valang Codebase not found!");
         return new InputStreamReader(resourceAsStream);
     }
 
