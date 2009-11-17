@@ -55,6 +55,12 @@ ValangValidator.prototype = {
 	    		fieldArray = this.groupedRules[ruleField];
 	    	}
 	    	fieldArray.push(newRules[i]);
+	    	
+	    	var fields = this.form.getFieldsWithName(ruleField);
+	    	for(field in fields){
+	    		this.addEventHandler(fields[field]);
+	    	}
+
 	    }	
 	},
     
@@ -141,6 +147,34 @@ ValangValidator.prototype = {
     		
     		return isValid; // callback can allow "true" even with invalid items
     	};
+
+        var onloadHandler = function() {
+        
+    		if(validateOnSubmit) {
+        		ValangValidator.Logger.log('Installing ValangValidator \'' 
+        				+ thisValidator.name + '\' as onsubmit handler');
+        		thisValidator.addEvent(thisValidator.form.formElement, "submit", onSubmitHandler);
+    		} else {
+        		ValangValidator.Logger.log('No onSubmit handler'); 
+        	}
+        	
+        	var fields = thisValidator.form.getFields();
+        	for ( var i = 0; i < fields.length; i++) {
+				var thisField = fields[i];
+				if(thisField.type == "submit") continue; //dont add to submit buttons
+				thisValidator.addEventHandler(thisField);
+			}
+        }
+    	
+		//bind event to handler
+        thisValidator.addEvent(window, "load", onloadHandler);
+
+    },
+	
+    validateEvents: ["keyup", "blur"],
+    
+    addEventHandler: function(field) {
+    	var thisValidator = this;
     	
 		var eventHandler = function(e) {
 			//ValangValidator.Logger.push('recieved ' + e.type + " : " + e );
@@ -161,42 +195,18 @@ ValangValidator.prototype = {
 					return true;
 				}
 			}
-
+	
 			// check this field
 			var vField =  new ValangValidator.Field(this);
 			thisValidator.validateField(vField);
-		};
-        
-        var onloadHandler = function() {
-        
-    		if(validateOnSubmit) {
-        		ValangValidator.Logger.log('Installing ValangValidator \'' 
-        				+ thisValidator.name + '\' as onsubmit handler');
-        		//console.log(thisValidator.form.formElement + " submit " + onSubmit);
-        		thisValidator.addEvent(thisValidator.form.formElement, "submit", onSubmitHandler);
-        	} else {
-        		ValangValidator.Logger.log('No onSubmit handler'); 
-        	}
-        	
-        	var events = ["keyup", "blur"];
-        	var fields = thisValidator.form.getFields();
-        	for ( var i = 0; i < fields.length; i++) {
-				var thisField = fields[i];
-				if(thisField.type == "submit") continue; //dont add to submit buttons
-				
-				for (evtPtr in events) {
-					var event = events[evtPtr];
-					thisValidator.addEvent(thisField.fieldElement, event, eventHandler);
-				}
-        		
-			}
-        }
-    	
-		//bind event to handler
+	    }
 		
-        thisValidator.addEvent(window, "load", onloadHandler);
-
-    },
+		for (evtPtr in thisValidator.validateEvents) {
+			var event = this.validateEvents[evtPtr];
+			this.addEvent(field.fieldElement, event, eventHandler);
+		}
+		
+	},    
     
     // add/remove from http://ejohn.org/blog/flexible-javascript-events/ thanks
     addEvent: function( obj, type, fn ) {
