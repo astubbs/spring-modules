@@ -32,7 +32,6 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.BaseCommandController;
 import org.springframework.web.servlet.tags.RequestContextAwareTag;
-import org.springmodules.validation.bean.annotation.javascript.taglib.CommandObjectToValangConverter;
 import org.springmodules.validation.valang.ValangValidator;
 import org.springmodules.validation.valang.javascript.taglib.ValangCodebaseTag;
 import org.springmodules.validation.valang.javascript.taglib.ValangJavaScriptTagUtils;
@@ -66,6 +65,10 @@ public class BeanAnnotationValidateTag extends RequestContextAwareTag implements
 
     private String commandName = DEFAULT_COMMAND_NAME;
 
+    private String globalVar = null;
+
+    private boolean validateOnSubmit = true;
+
     private Object commandObj = null;
 
     private CommandObjectToValangConverter cotvc = null;
@@ -88,6 +91,14 @@ public class BeanAnnotationValidateTag extends RequestContextAwareTag implements
 
     public void setCommandObj(Object commandObj) {
         this.commandObj = commandObj;
+    }
+
+    public void setGlobalVar(String globalVar) {
+        this.globalVar = globalVar;
+    }
+
+    public void setValidateOnSubmit(boolean validateOnSubmit) {
+        this.validateOnSubmit = validateOnSubmit;
     }
 
     protected int doStartTagInternal() {
@@ -124,7 +135,7 @@ public class BeanAnnotationValidateTag extends RequestContextAwareTag implements
             MessageSourceAccessor messages = new MessageSourceAccessor(webApplicationContext, locale);
 
             out.write("<script type=\"text/javascript\" id=\"" + commandName + "ValangValidator\">\n");
-            cotvc.writeJS(commandName, commandObj, out, messages);
+            cotvc.writeJS(commandName, commandObj, globalVar, validateOnSubmit, out, messages);
             out.write("\n</script>");
 
             return EVAL_PAGE;

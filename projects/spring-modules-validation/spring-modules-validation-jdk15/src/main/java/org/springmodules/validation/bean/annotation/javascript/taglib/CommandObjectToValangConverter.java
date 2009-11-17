@@ -56,17 +56,20 @@ public class CommandObjectToValangConverter extends AbstractValangJavaScriptTran
         registerFieldMethodAnnotationHandler(new RegExpHandler());
     }
 
-    public void writeJS(String commandName, Object commandObj, JspWriter out, MessageSourceAccessor messages)
-            throws IOException {
+    public void writeJS(String commandName, Object commandObj, String globalVar, boolean validateOnSubmit,
+            JspWriter out, MessageSourceAccessor messages) throws IOException {
 
         try {
             setWriter(out);
             prefix = FIRST_LINE_PREFIX; // No comma for first line
 
+            if (globalVar != null) {
+                out.write("var " + globalVar + " = ");
+            }
             out.write("new ValangValidator(");
             appendJsString(commandName);
             append(',');
-            append(Boolean.toString(true)); // install to the form on creation
+            append(Boolean.toString(true)); // install to the form
             append(", new Array(");
 
             // class level
@@ -84,7 +87,8 @@ public class CommandObjectToValangConverter extends AbstractValangJavaScriptTran
                 extractAnnotations(commandObj, messages, m.getName(), annotations, AnnotationLocation.METHOD);
             }
 
-            append("\n) )");
+            append("\n),");
+            append(Boolean.toString(validateOnSubmit) + ");");
         } finally {
             clearWriter();
         }

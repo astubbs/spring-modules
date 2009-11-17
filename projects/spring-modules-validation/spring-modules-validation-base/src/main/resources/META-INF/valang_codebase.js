@@ -129,87 +129,93 @@ ValangValidator.prototype = {
     },    
     
     _installSelfWithForm: function(validateOnSubmit) {
-        var oldOnload = window.onload;
-        var oldOnsubmit = this.form.formElement.onsubmit;
         var thisValidator = this;
+    	
+        // event handlers
+        
+    	var onSubmitHandler = function(e) {
+    		var isValid = thisValidator.validate();
+    		if(thisValidator.formValidationCallback) {
+    			isValid = thisValidator.formValidationCallback(this, isValid);
+    		}
+    		
+    		return isValid; // callback can allow "true" even with invalid items
+    	};
+    	
+		var eventHandler = function(e) {
+			//ValangValidator.Logger.push('recieved ' + e.type + " : " + e );
+			
+			//don't fire for some key presses:
+			if(e.type == "keyup" || e.type == "keydown" ){
+				key = null;
+	    		if (undefined === e.which) {
+	    			key = e.keyCode; 
+	    		} else if (e.which != 0) {
+	    			key = e.keyCode;
+	    		} else { 
+	    			ValangValidator.Logger.log('special key' );
+	    			return true; //special key, ignore
+	    		}							
+				if(key == 9 ){ //ignore tabkey; onblur will catch
+					ValangValidator.Logger.push('tab pressed' );
+					return true;
+				}
+			}
 
-        //onload - bind to onblurs
-        window.onload = function() {
+			// check this field
+			var vField =  new ValangValidator.Field(this);
+			thisValidator.validateField(vField);
+		};
+        
+        var onloadHandler = function() {
+        
+    		if(validateOnSubmit) {
+        		ValangValidator.Logger.log('Installing ValangValidator \'' 
+        				+ thisValidator.name + '\' as onsubmit handler');
+        		//console.log(thisValidator.form.formElement + " submit " + onSubmit);
+        		thisValidator.addEvent(thisValidator.form.formElement, "submit", onSubmitHandler);
+        	} else {
+        		ValangValidator.Logger.log('No onSubmit handler'); 
+        	}
         	
-            //fire onload chain first
-        	try {
-                if (oldOnload) oldOnload();
-            } catch (err) {
-            	ValangValidator.Logger.log('Chained onload error: ' + err);
-            }
-            	
-        	// onblur for each field
+        	var events = ["keyup", "blur"];
         	var fields = thisValidator.form.getFields();
         	for ( var i = 0; i < fields.length; i++) {
 				var thisField = fields[i];
 				if(thisField.type == "submit") continue; //dont add to submit buttons
 				
-				var events = ["onkeyup","onblur"];
-				var thisElement = thisField.fieldElement; 
-
 				for (evtPtr in events) {
 					var event = events[evtPtr];
-					var oldEvent = "_old" + event;
-					
-					var closure = function(event, oldEvent) {
-						if(thisElement[oldEvent] != thisElement[event]) {
-							thisElement[oldEvent] = thisElement[event];
-						}
-						thisElement[event] = function(e) {
-							ValangValidator.Logger.push('recieved ' + event );
-							if(this[oldEvent]){
-								this[oldEvent]();
-							}
-							if(e && (event == "onkeyup" || event == "onkeydown" )){
-								key = null;
-					    		if (undefined === e.which) {
-					    			key = e.keyCode; 
-					    		} else if (e.which != 0) {
-					    			key = e.keyCode;
-					    		} else { 
-					    			return true; //special key
-					    		}							
-								if(key == 9 ){ //ignore tabkey; onblur will catch
-									return true;
-								}
-							}
-							// check this field
-		        			var vField =  new ValangValidator.Field(this);
-		    				thisValidator.validateField(vField);
-		        		};
-					}(event, oldEvent);
+					thisValidator.addEvent(thisField.fieldElement, event, eventHandler);
 				}
         		
 			}
-        	
-        	// on submit
-        	if(validateOnSubmit) {
-	        	thisValidator.form.formElement.onsubmit = function() {
-	                ValangValidator.Logger.log('Installing ValangValidator \'' 
-	                		+ thisValidator.name + '\' as onsubmit handler');
-	
-	        		if (!oldOnsubmit || oldOnsubmit()) {
-	        			
-	                	var isValid = thisValidator.validate();
-	                	
-	                	var callbackVal = false;
-	        			if(thisValidator.formValidationCallback) {
-	        				callbackVal = thisValidator.formValidationCallback(this, isValid);
-	        			}
-	
-	        			return callbackVal || isValid;
-	                }
-	        		return false;
-	            }
-        	}
         }
+    	
+		//bind event to handler
+		
+        thisValidator.addEvent(window, "load", onloadHandler);
+
     },
     
+    // add/remove from http://ejohn.org/blog/flexible-javascript-events/ thanks
+    addEvent: function( obj, type, fn ) {
+      if ( obj.attachEvent ) {
+        obj['e'+type+fn] = fn;
+        obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
+        obj.attachEvent( 'on'+type, obj[type+fn] );
+      } else
+        obj.addEventListener( type, fn, false );
+    },
+    
+    removeEvent: function( obj, type, fn ) {
+      if ( obj.detachEvent ) {
+        obj.detachEvent( 'on'+type, obj[type+fn] );
+        obj[type+fn] = null;
+      } else
+        obj.removeEventListener( type, fn, false );
+    },
+
     _findForm: function(name) {
         var element = document.getElementById(name);
         if (!element || element.tagName.toLowerCase() != 'form') {

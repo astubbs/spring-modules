@@ -80,6 +80,14 @@
 				Lower precedence then "commandObj" attribute.
 			</description>
 		</attribute>
+        <attribute>
+            <name>globalVar</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>
+                The (global) javascript variable name to put the valangValidator object on. Useful if you need to dynamically add rules.
+            </description>
+        </attribute>
 		<attribute>
 			<name>commandObj</name>
 			<required>false</required>
