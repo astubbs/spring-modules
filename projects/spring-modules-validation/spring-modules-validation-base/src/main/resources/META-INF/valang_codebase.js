@@ -30,6 +30,44 @@ var ValangValidator = function(name, installSelfWithForm, rules, validateOnSubmi
     this.form = this._findForm(name);
     this.groupedRules = {};
 
+    var thisValidator = this;
+    this.eventHandler = function(e) {
+		ValangValidator.Logger.push('recieved ' + e.type);
+
+		var delay = 0;
+		if(thisValidator.doValidation) clearTimeout(thisValidator.doValidation);
+		
+		//don't fire for some key presses:
+		if(e.type == "keyup" || e.type == "keydown" ){
+			var key = null;
+    		if (undefined === e.which) {
+    			key = e.keyCode; 
+    		} else if (e.which != 0) {
+    			key = e.keyCode;
+    		} else { 
+    			ValangValidator.Logger.log('special key' );
+    			return true; //special key, ignore
+    		}							
+			if(key == 9 ){ //ignore tabkey; onblur will catch
+				ValangValidator.Logger.push('tab pressed' );
+				return true;
+			}
+			delay = 250;
+		}
+
+		var self = this;
+		var doValidate = function() { 
+			// check this field
+			thisValidator.validateField(new ValangValidator.Field(self));
+		}
+		
+		if(delay > 0){
+			thisValidator.doValidation = setTimeout(function(){doValidate();}, delay);
+		} else {
+			doValidate();
+		}
+    };
+    
     this.addRules(rules);
     
     if (installSelfWithForm) {
@@ -42,7 +80,6 @@ ValangValidator.prototype = {
 	fieldErrorIdSuffix: '_error',
 	emptyErrorHTML: '',
     classRuleFieldName: "valang-global-rules", // to match CommandObjectToValangConverter.CLASS_RULENAME
-
     
     addRules: function(newRules){ 
 	    //create grouped rules by field
@@ -171,39 +208,13 @@ ValangValidator.prototype = {
 
     },
 	
-    validateEvents: ["keyup", "blur"],
+    validateEvents: ["keyup", "click", "blur"],
     
     addEventHandler: function(field) {
-    	var thisValidator = this;
-    	
-		var eventHandler = function(e) {
-			//ValangValidator.Logger.push('recieved ' + e.type + " : " + e );
-			
-			//don't fire for some key presses:
-			if(e.type == "keyup" || e.type == "keydown" ){
-				key = null;
-	    		if (undefined === e.which) {
-	    			key = e.keyCode; 
-	    		} else if (e.which != 0) {
-	    			key = e.keyCode;
-	    		} else { 
-	    			ValangValidator.Logger.log('special key' );
-	    			return true; //special key, ignore
-	    		}							
-				if(key == 9 ){ //ignore tabkey; onblur will catch
-					ValangValidator.Logger.push('tab pressed' );
-					return true;
-				}
-			}
-	
-			// check this field
-			var vField =  new ValangValidator.Field(this);
-			thisValidator.validateField(vField);
-	    }
-		
-		for (evtPtr in thisValidator.validateEvents) {
+		for (evtPtr in this.validateEvents) {
 			var event = this.validateEvents[evtPtr];
-			this.addEvent(field.fieldElement, event, eventHandler);
+			this.removeEvent(field.fieldElement, event, this.eventHandler); //ensure only 1 instance mounted
+			this.addEvent(field.fieldElement, event, this.eventHandler);
 		}
 		
 	},    
