@@ -34,7 +34,7 @@ var ValangValidator = function(name, installSelfWithForm, rules, validateOnSubmi
     this.eventHandler = function(e) {
 		ValangValidator.Logger.push('recieved ' + e.type);
 
-		var delay = 0;
+		var delay = 5; //yield time
 		if(thisValidator.doValidation) clearTimeout(thisValidator.doValidation);
 		
 		//don't fire for some key presses:
@@ -61,11 +61,7 @@ var ValangValidator = function(name, installSelfWithForm, rules, validateOnSubmi
 			thisValidator.validateField(new ValangValidator.Field(self));
 		}
 		
-		if(delay > 0){
 			thisValidator.doValidation = setTimeout(function(){doValidate();}, delay);
-		} else {
-			doValidate();
-		}
     };
     
     this.addRules(rules);
@@ -201,11 +197,20 @@ ValangValidator.prototype = {
 
     },
 	
-    validateEvents: ["keyup", "click", "change", "blur"],
+    validateEvents: ["keyup", "change", "blur"],
+    selectValidateEvents: ["change", "blur"],
+    radiocheckValidateEvents: ["keyup", "click", "change", "blur"],
     
     addEventHandler: function(field) {
-		for (evtPtr in this.validateEvents) {
-			var event = this.validateEvents[evtPtr];
+    	
+    	var theseEvents = this.validateEvents; //text based inputs
+    	if(field.tagName == "select") theseEvents = this.selectValidateEvents; 
+    	else if(field.type == "radio") theseEvents = this.radiocheckValidateEvents; 
+    	else if(field.type == "checkbox") theseEvents = this.radiocheckValidateEvents; 
+    	ValangValidator.Logger.log("Field type: " + field.type);
+    	
+		for (evtPtr in theseEvents) {
+			var event = theseEvents[evtPtr];
 			this.removeEvent(field.fieldElement, event, this.eventHandler); //ensure only 1 instance mounted
 			this.addEvent(field.fieldElement, event, this.eventHandler);
 		}
