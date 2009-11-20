@@ -207,7 +207,6 @@ ValangValidator.prototype = {
     	if(field.tagName == "select") theseEvents = this.selectValidateEvents; 
     	else if(field.type == "radio") theseEvents = this.radiocheckValidateEvents; 
     	else if(field.type == "checkbox") theseEvents = this.radiocheckValidateEvents; 
-    	ValangValidator.Logger.log("Field type: " + field.type);
     	
 		for (evtPtr in theseEvents) {
 			var event = theseEvents[evtPtr];
