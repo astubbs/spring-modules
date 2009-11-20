@@ -29,8 +29,8 @@ var ValangValidator = function(name, installSelfWithForm, rules, validateOnSubmi
     this.name = name;
     this.form = this._findForm(name);
     this.groupedRules = {};
-
     var thisValidator = this;
+    
     this.eventHandler = function(e) {
 		ValangValidator.Logger.push('recieved ' + e.type);
 
@@ -173,34 +173,27 @@ ValangValidator.prototype = {
     
     _installSelfWithForm: function(validateOnSubmit) {
         var thisValidator = this;
-    	
-        // event handlers
-        
-    	var onSubmitHandler = function(e) {
-    		var isValid = thisValidator.validate();
-    		if(thisValidator.formValidationCallback) {
-    			isValid = thisValidator.formValidationCallback(this, isValid);
-    		}
-    		
-    		return isValid; // callback can allow "true" even with invalid items
-    	};
 
         var onloadHandler = function() {
         
     		if(validateOnSubmit) {
         		ValangValidator.Logger.log('Installing ValangValidator \'' 
         				+ thisValidator.name + '\' as onsubmit handler');
+
+        		var onSubmitHandler = function(e) {
+        			var isValid = thisValidator.validate();
+        			if(thisValidator.formValidationCallback) {
+        				isValid = thisValidator.formValidationCallback(this, isValid);
+        			}
+        			
+        			return isValid; // callback can allow "true" even with invalid items
+        		};
+        		
         		thisValidator.addEvent(thisValidator.form.formElement, "submit", onSubmitHandler);
+        		
     		} else {
         		ValangValidator.Logger.log('No onSubmit handler'); 
         	}
-        	
-        	var fields = thisValidator.form.getFields();
-        	for ( var i = 0; i < fields.length; i++) {
-				var thisField = fields[i];
-				if(thisField.type == "submit") continue; //dont add to submit buttons
-				thisValidator.addEventHandler(thisField);
-			}
         }
     	
 		//bind event to handler
@@ -208,7 +201,7 @@ ValangValidator.prototype = {
 
     },
 	
-    validateEvents: ["keyup", "click", "blur"],
+    validateEvents: ["keyup", "click", "change", "blur"],
     
     addEventHandler: function(field) {
 		for (evtPtr in this.validateEvents) {
