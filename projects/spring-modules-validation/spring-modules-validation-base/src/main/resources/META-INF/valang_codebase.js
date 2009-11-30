@@ -197,7 +197,8 @@ ValangValidator.prototype = {
 
     },
 	
-    validateEvents: ["keyup", "change", "blur"],
+    //validateEvents: ["keyup", "change", "blur"],
+    validateEvents: ["change", "blur"],
     selectValidateEvents: ["change", "blur"],
     radiocheckValidateEvents: ["keyup", "click", "change", "blur"],
     
