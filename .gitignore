@@ -1,0 +1,5 @@
+#eclipse ignores:
+.settings
+.project
+.classpath
+target
