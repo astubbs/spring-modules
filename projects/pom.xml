@@ -1,73 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springmodules</groupId>
-        <artifactId>spring-modules</artifactId>
-        <version>0.10-SNAPSHOT</version>
-    </parent>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
     <groupId>org.springmodules</groupId>
-    <artifactId>projects</artifactId>
+    <artifactId>spring-modules</artifactId>
     <version>0.10-SNAPSHOT</version>
-    <packaging>pom</packaging>
-
-    <modules>
-        <!-- <module>spring-modules-ant</module>
+  </parent>
+  <groupId>org.springmodules</groupId>
+  <artifactId>projects</artifactId>
+  <version>0.10-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <profiles>
+    <profile>
+      <id>eclipse</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-eclipse-plugin</artifactId>
+            <version>2.7</version>
+            <configuration>
+              <downloadSources>true</downloadSources>
+              <downloadJavadocs>true</downloadJavadocs>
+              <wtpversion>1.5</wtpversion>
+              <ajdtVersion>none</ajdtVersion> <!-- see: http://jira.codehaus.org/browse/MECLIPSE-558 and http://jira.codehaus.org/browse/MECLIPSE-594 -->
+              <additionalProjectnatures>
+                <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+              </additionalProjectnatures>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  <modules>
+    <!-- <module>spring-modules-ant</module>
         <module>spring-modules-aop</module> -->
-        <module>spring-modules-cache</module>
-        <!-- <module>spring-modules-db4o</module>
-        <module>spring-modules-flux</module>
-        <module>spring-modules-hivemind</module>
-        <module>spring-modules-jakarta-commons</module>
-        <module>spring-modules-javaspaces</module>
-        <module>spring-modules-jbpm30</module>
-        <module>spring-modules-jbpm31</module>
-        <module>spring-modules-jcr</module>
-        <module>spring-modules-jsr94</module>
-        <module>spring-modules-lucene</module>
-        <module>spring-modules-ojb</module>
-        <module>spring-modules-orbroker</module>
-        <module>spring-modules-osworkflow</module>
-        <module>spring-modules-springmvc-extra</module>
-        <module>spring-modules-tapestry</module>
-        <module>spring-modules-template</module>
-        <module>spring-modules-validation</module>
-        <module>spring-modules-xt</module>
-        <module>spring-modules-xt-js</module>
--->
-    </modules>
+    <module>spring-modules-cache</module>
+    <!--
+      <module>spring-modules-db4o</module> <module>spring-modules-flux</module> <module>spring-modules-hivemind</module>
+      <module>spring-modules-jakarta-commons</module> <module>spring-modules-javaspaces</module>
+      <module>spring-modules-jbpm30</module> <module>spring-modules-jbpm31</module> <module>spring-modules-jcr</module>
+      <module>spring-modules-jsr94</module> <module>spring-modules-lucene</module> <module>spring-modules-ojb</module>
+      <module>spring-modules-orbroker</module> <module>spring-modules-osworkflow</module>
+      <module>spring-modules-springmvc-extra</module> <module>spring-modules-tapestry</module>
+      <module>spring-modules-template</module> <module>spring-modules-validation</module>
+      <module>spring-modules-xt</module> <module>spring-modules-xt-js</module>
+    -->
+  </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-            <version>${version.spring}</version>
-        </dependency>
-        <dependency>
-        	<groupId>junit</groupId>
-        	<artifactId>junit</artifactId>
-        	<version>4.6</version>
-        </dependency>
-        <dependency>
-        	<groupId>org.easymock</groupId>
-        	<artifactId>easymock</artifactId>
-        	<version>${version.easymock}</version>
-        	<scope>test</scope>
-        </dependency>
-		<dependency>
-		    <groupId>org.easymock</groupId>
-		    <artifactId>easymockclassextension</artifactId>
-        	<version>${version.easymock}</version>
-        	<scope>test</scope>
-        </dependency>        
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+      <version>${version.spring}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>${version.easymock}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <version>${version.easymock}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-	<!-- use only on a per module project that needs it -->
-    <!-- <repositories>
-        <repository>
-            <id>repository.jboss.com</id>
-            <url>http://repository.jboss.com/maven2</url>
-        </repository>
-    </repositories> -->
+  <!-- use only on a per module project that needs it -->
+  <!--
+    <repositories> <repository> <id>repository.jboss.com</id> <url>http://repository.jboss.com/maven2</url>
+    </repository> </repositories>
+  -->
 </project>
