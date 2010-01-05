@@ -18,6 +18,7 @@
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
       <version>3.2.1</version>
+      <optional>true</optional> <!-- as long as not default impl. -->
     </dependency>
     <dependency>
       <groupId>opensymphony</groupId>
