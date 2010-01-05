@@ -40,8 +40,12 @@ public class MultiKeyCodeGenerator
      */
     public MultiKey generateKey( MethodInvocation methodInvocation )
     {
+        Integer hashCode = System.identityHashCode( methodInvocation.getMethod() );
         Object[] arguments = methodInvocation.getArguments();
-        MultiKey multiKey = new MultiKey( arguments, cloneKeys );
+        Object[] keys = new Object[ arguments.length + 1 ];
+        keys[0] = hashCode;
+        System.arraycopy( arguments, 0, keys, 1, arguments.length );
+        MultiKey multiKey = new MultiKey( keys, cloneKeys );
         
         return multiKey;
     }
