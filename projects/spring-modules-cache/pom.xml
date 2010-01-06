@@ -85,9 +85,9 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>jta</groupId>
+      <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
-      <version>1.0.1b</version>
+      <version>1.1</version>
       <scope>runtime</scope> <!-- for jboss cache - try to use official jboss cache jars later to get them transitively -->
       <optional>true</optional>
     </dependency>
