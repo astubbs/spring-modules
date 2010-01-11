@@ -72,17 +72,24 @@ public class CommandObjectToValangConverter extends AbstractValangJavaScriptTran
             append(Boolean.toString(true)); // install to the form
             append(", new Array(");
 
+            Class<? extends Object> commandObjClass = commandObj.getClass();
+
             // class level
-            Annotation[] annotations = commandObj.getClass().getAnnotations();
+            Annotation[] annotations = commandObjClass.getAnnotations();
             extractAnnotations(commandObj, messages, CLASS_RULENAME, annotations, AnnotationLocation.CLASS);
 
-            // field level
-            for (Field field : commandObj.getClass().getDeclaredFields()) {
-                annotations = field.getAnnotations();
-                extractAnnotations(commandObj, messages, field.getName(), annotations, AnnotationLocation.FIELD);
-            }
+            // field level: traverse superclasses, as getDeclaredFields() doesn't, and getFields() excludes private fields
+            Class<? extends Object> commandOrSuper = commandObjClass;
+            do {
+                for (Field field : commandOrSuper.getDeclaredFields()) {
+                    annotations = field.getAnnotations();
+                    extractAnnotations(commandObj, messages, field.getName(), annotations, AnnotationLocation.FIELD);
+                }
+                commandOrSuper = commandOrSuper.getSuperclass();
+            } while (commandOrSuper != null);
+
             // method level
-            for (Method m : commandObj.getClass().getMethods()) {
+            for (Method m : commandObjClass.getMethods()) {
                 annotations = m.getAnnotations();
                 extractAnnotations(commandObj, messages, m.getName(), annotations, AnnotationLocation.METHOD);
             }
