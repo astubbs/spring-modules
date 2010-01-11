@@ -88,6 +88,14 @@
                 The (global) javascript variable name to put the valangValidator object on. Useful if you need to dynamically add rules.
             </description>
         </attribute>
+        <attribute>
+            <name>validateOnSubmit</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>
+                fire all validation on submit?
+            </description>
+        </attribute>
 		<attribute>
 			<name>commandObj</name>
 			<required>false</required>
