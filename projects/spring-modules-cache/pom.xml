@@ -10,8 +10,19 @@
   <groupId>org.springmodules</groupId>
   <artifactId>spring-modules-cache</artifactId>
   <version>0.10-SNAPSHOT</version>
-  <packaging>jar</packaging>
-
+  <!-- TODO: Rather use a repo. manager like nexus -->
+  <repositories>
+    <repository>
+      <id>jboss.com</id>
+      <url>http://repository.jboss.com/maven2/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>opensymphony</groupId>
