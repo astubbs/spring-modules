@@ -49,269 +49,288 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  */
-public class CacheSetupStrategyParserTests extends
-    AbstractSchemaBasedConfigurationTestCase {
+public class CacheSetupStrategyParserTests
+    extends AbstractSchemaBasedConfigurationTestCase
+{
 
-  public class CacheSetupStrategyPropertySourceMatcher extends AbstractMatcher {
-    /**
-     * @see AbstractMatcher#argumentMatches(Object, Object)
-     */
-    protected boolean argumentMatches(Object expected, Object actual) {
-      if (!(expected instanceof CacheSetupStrategyPropertySource)) {
-        return expected.equals(actual);
-      }
-      if (!(actual instanceof CacheSetupStrategyPropertySource)) {
-        return false;
-      }
-      return equals((CacheSetupStrategyPropertySource) expected,
-          (CacheSetupStrategyPropertySource) actual);
+    public class CacheSetupStrategyPropertySourceMatcher
+        extends AbstractMatcher
+    {
+        /**
+         * @see AbstractMatcher#argumentMatches(Object, Object)
+         */
+        protected boolean argumentMatches( Object expected, Object actual )
+        {
+            if ( !( expected instanceof CacheSetupStrategyPropertySource ) )
+            {
+                return expected.equals( actual );
+            }
+            if ( !( actual instanceof CacheSetupStrategyPropertySource ) )
+            {
+                return false;
+            }
+            return equals( (CacheSetupStrategyPropertySource) expected, (CacheSetupStrategyPropertySource) actual );
+        }
+
+        private boolean equals( CacheSetupStrategyPropertySource expected, CacheSetupStrategyPropertySource actual )
+        {
+            if ( expected == actual )
+            {
+                return true;
+            }
+            if ( !equals( (RuntimeBeanReference) expected.cacheKeyGenerator,
+                          (RuntimeBeanReference) actual.cacheKeyGenerator ) )
+            {
+                return false;
+            }
+            if ( !equals( expected.cacheProviderFacadeReference, actual.cacheProviderFacadeReference ) )
+            {
+                return false;
+            }
+            if ( !equals( expected.cachingListeners, actual.cachingListeners ) )
+            {
+                return false;
+            }
+            if ( !ObjectUtils.nullSafeEquals( expected.cachingModelMap, actual.cachingModelMap ) )
+            {
+                return false;
+            }
+            if ( !ObjectUtils.nullSafeEquals( expected.flushingModelMap, actual.flushingModelMap ) )
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * Verifies that the given lists of <code>{@link RuntimeBeanReference}</code> are equal.
+         * 
+         * @param expected the expected list of <code>RuntimeBeanReference</code>
+         * @param actual the actual list of <code>RuntimeBeanReference</code>
+         * @return <code>true</code> if the given lists are equal
+         */
+        private boolean equals( List expected, List actual )
+        {
+            if ( !CollectionUtils.isEmpty( expected ) )
+            {
+                int count = expected.size();
+                if ( actual.size() != count )
+                {
+                    return false;
+                }
+                for ( int i = 0; i < count; i++ )
+                {
+                    if ( !equals( (RuntimeBeanReference) expected.get( i ), (RuntimeBeanReference) actual.get( i ) ) )
+                    {
+                        return false;
+                    }
+                }
+            }
+            else if ( !CollectionUtils.isEmpty( actual ) )
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private boolean equals( RuntimeBeanReference expected, RuntimeBeanReference actual )
+        {
+            if ( expected == actual )
+            {
+                return true;
+            }
+            if ( !ObjectUtils.nullSafeEquals( expected.getBeanName(), actual.getBeanName() ) )
+            {
+                return false;
+            }
+            return true;
+        }
     }
 
-    private boolean equals(CacheSetupStrategyPropertySource expected,
-        CacheSetupStrategyPropertySource actual) {
-      if (expected == actual) {
-        return true;
-      }
-      if (!equals((RuntimeBeanReference) expected.cacheKeyGenerator,
-          (RuntimeBeanReference) actual.cacheKeyGenerator)) {
-        return false;
-      }
-      if (!equals(expected.cacheProviderFacadeReference,
-          actual.cacheProviderFacadeReference)) {
-        return false;
-      }
-      if (!equals(expected.cachingListeners, actual.cachingListeners)) {
-        return false;
-      }
-      if (!ObjectUtils.nullSafeEquals(expected.cachingModelMap,
-          actual.cachingModelMap)) {
-        return false;
-      }
-      if (!ObjectUtils.nullSafeEquals(expected.flushingModelMap,
-          actual.flushingModelMap)) {
-        return false;
-      }
-      return true;
-    }
+    protected BeanReferenceParser beanReferenceParser;
+
+    protected MockControl beanReferenceParserControl;
+
+    private CacheSetupStrategyElementBuilder elementBuilder;
+
+    private CacheModelParser modelParser;
+
+    private MockControl modelParserControl;
+
+    private AbstractCacheSetupStrategyParser strategyParser;
+
+    private MockClassControl strategyParserControl;
+
+    private CachingListenerValidator validator;
+
+    private MockControl validatorControl;
 
     /**
-     * Verifies that the given lists of
-     * <code>{@link RuntimeBeanReference}</code> are equal.
+     * Constructor.
      * 
-     * @param expected
-     *          the expected list of <code>RuntimeBeanReference</code>
-     * @param actual
-     *          the actual list of <code>RuntimeBeanReference</code>
-     * @return <code>true</code> if the given lists are equal
+     * @param name the name of the test case
      */
-    private boolean equals(List expected, List actual) {
-      if (!CollectionUtils.isEmpty(expected)) {
-        int count = expected.size();
-        if (actual.size() != count) {
-          return false;
+    public CacheSetupStrategyParserTests( String name )
+    {
+        super( name );
+    }
+
+    public void testParse()
+    {
+        int listenerCount = 5;
+        int modelCount = 2;
+
+        elementBuilder.setDefaultCachingListenerElementBuilders( listenerCount );
+
+        // expectations for cache key generator.
+        RuntimeBeanReference cacheKeyGenerator = expectCacheKeyGeneratorParsing();
+
+        // expectations for parsing caching listeners.
+        List cachingListeners = new ArrayList();
+        for ( int i = 0; i < listenerCount; i++ )
+        {
+            String refId = elementBuilder.cachingListenerElementBuilders[i].refId;
+            registry.registerBeanDefinition( refId, new RootBeanDefinition( CachingListener.class ) );
+
+            Element cachingListenerElement = elementBuilder.cachingListenerElementBuilders[i].toXml();
+
+            // parse caching listener element
+            beanReferenceParser.parse( cachingListenerElement, parserContext, true );
+            RuntimeBeanReference cachingListenerReference = new RuntimeBeanReference( refId );
+            beanReferenceParserControl.setReturnValue( cachingListenerReference );
+
+            // validate the caching listener
+            validator.validate( cachingListenerReference, i, parserContext );
+
+            cachingListeners.add( cachingListenerReference );
         }
-        for (int i = 0; i < count; i++) {
-          if (!equals((RuntimeBeanReference) expected.get(i),
-              (RuntimeBeanReference) actual.get(i))) {
-            return false;
-          }
+
+        registerCacheProviderFacadeDefinition();
+
+        // expectations for parsing cache models.
+        elementBuilder.setDefaultCachingModelElementBuilders( modelCount );
+        elementBuilder.setDefaultFlushingModelElementBuilders( modelCount );
+        Map cachingModelMap = expectCachingModelParsing();
+        Map flushingModelMap = expectFlushingModelParsing();
+
+        Element element = elementBuilder.toXml();
+        CacheSetupStrategyPropertySource propertySource =
+            new CacheSetupStrategyPropertySource( cacheKeyGenerator,
+                                                  new RuntimeBeanReference( elementBuilder.cacheProviderId ),
+                                                  cachingListeners, cachingModelMap, flushingModelMap );
+
+        strategyParser.parseCacheSetupStrategy( element, parserContext, propertySource );
+        strategyParserControl.setMatcher( new CacheSetupStrategyPropertySourceMatcher() );
+
+        replay();
+
+        // method to test
+        strategyParser.parse( element, parserContext );
+
+        verify();
+    }
+
+    /**
+     * Verifies that the method
+     * <code>{@link AbstractCacheSetupStrategyParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
+     * does not create a list of caching models if the XML element to parse does not include any "cachingListener"
+     * subelement.
+     */
+    public void testParseWithoutCachingListeners()
+    {
+        int modelCount = 2;
+
+        registerCacheProviderFacadeDefinition();
+
+        elementBuilder.setDefaultCachingModelElementBuilders( modelCount );
+        elementBuilder.setDefaultFlushingModelElementBuilders( modelCount );
+
+        Map cachingModelMap = expectCachingModelParsing();
+        Map flushingModelMap = expectFlushingModelParsing();
+
+        Element element = elementBuilder.toXml();
+        CacheSetupStrategyPropertySource propertySource =
+            new CacheSetupStrategyPropertySource( null, new RuntimeBeanReference( elementBuilder.cacheProviderId ),
+                                                  null, cachingModelMap, flushingModelMap );
+
+        strategyParser.parseCacheSetupStrategy( element, parserContext, propertySource );
+        strategyParserControl.setMatcher( new CacheSetupStrategyPropertySourceMatcher() );
+
+        replay();
+
+        // method to test
+        strategyParser.parse( element, parserContext );
+
+        verify();
+    }
+
+    public void testParseWithoutCachingModels()
+    {
+        int modelCount = 2;
+
+        registerCacheProviderFacadeDefinition();
+
+        elementBuilder.setDefaultFlushingModelElementBuilders( modelCount );
+
+        Map flushingModelMap = expectFlushingModelParsing();
+
+        Element element = elementBuilder.toXml();
+        CacheSetupStrategyPropertySource propertySource =
+            new CacheSetupStrategyPropertySource( null, new RuntimeBeanReference( elementBuilder.cacheProviderId ),
+                                                  null, null, flushingModelMap );
+
+        strategyParser.parseCacheSetupStrategy( element, parserContext, propertySource );
+        strategyParserControl.setMatcher( new CacheSetupStrategyPropertySourceMatcher() );
+
+        replay();
+
+        // method to test
+        strategyParser.parse( element, parserContext );
+
+        verify();
+    }
+
+    public void testParseWithoutFlushingModels()
+    {
+        int modelCount = 2;
+
+        registerCacheProviderFacadeDefinition();
+
+        elementBuilder.setDefaultCachingModelElementBuilders( modelCount );
+
+        Map cachingModelMap = expectCachingModelParsing();
+
+        Element element = elementBuilder.toXml();
+        CacheSetupStrategyPropertySource propertySource =
+            new CacheSetupStrategyPropertySource( null, new RuntimeBeanReference( elementBuilder.cacheProviderId ),
+                                                  null, cachingModelMap, null );
+
+        strategyParser.parseCacheSetupStrategy( element, parserContext, propertySource );
+        strategyParserControl.setMatcher( new CacheSetupStrategyPropertySourceMatcher() );
+
+        replay();
+
+        // method to test
+        strategyParser.parse( element, parserContext );
+
+        verify();
+    }
+
+    public void testParseWithRegistryNotHavingCacheProviderFacade()
+    {
+        replay();
+
+        try
+        {
+            DomElementStub domElementStub = new DomElementStub( "someElement" );
+            domElementStub.setAttribute( "providerId", "someId" );
+            strategyParser.parse( domElementStub, parserContext );
+            fail();
         }
-      } else if (!CollectionUtils.isEmpty(actual)) {
-        return false;
-      }
-      return true;
-    }
-
-    private boolean equals(RuntimeBeanReference expected,
-        RuntimeBeanReference actual) {
-      if (expected == actual) {
-        return true;
-      }
-      if (!ObjectUtils.nullSafeEquals(expected.getBeanName(), actual
-          .getBeanName())) {
-        return false;
-      }
-      return true;
-    }
-  }
-
-  protected BeanReferenceParser beanReferenceParser;
-
-  protected MockControl beanReferenceParserControl;
-
-  private CacheSetupStrategyElementBuilder elementBuilder;
-
-  private CacheModelParser modelParser;
-
-  private MockControl modelParserControl;
-
-  private AbstractCacheSetupStrategyParser strategyParser;
-
-  private MockClassControl strategyParserControl;
-
-  private CachingListenerValidator validator;
-
-  private MockControl validatorControl;
-
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case
-   */
-  public CacheSetupStrategyParserTests(String name) {
-    super(name);
-  }
-
-  public void testParse() {
-    int listenerCount = 5;
-    int modelCount = 2;
-
-    elementBuilder.setDefaultCachingListenerElementBuilders(listenerCount);
-
-    // expectations for cache key generator.
-    RuntimeBeanReference cacheKeyGenerator = expectCacheKeyGeneratorParsing();
-
-    // expectations for parsing caching listeners.
-    List cachingListeners = new ArrayList();
-    for (int i = 0; i < listenerCount; i++) {
-      String refId = elementBuilder.cachingListenerElementBuilders[i].refId;
-      registry.registerBeanDefinition(refId, new RootBeanDefinition(
-          CachingListener.class));
-
-      Element cachingListenerElement = elementBuilder.cachingListenerElementBuilders[i]
-          .toXml();
-
-      // parse caching listener element
-      beanReferenceParser.parse(cachingListenerElement, parserContext, true);
-      RuntimeBeanReference cachingListenerReference = new RuntimeBeanReference(
-          refId);
-      beanReferenceParserControl.setReturnValue(cachingListenerReference);
-
-      // validate the caching listener
-      validator.validate(cachingListenerReference, i, parserContext);
-
-      cachingListeners.add(cachingListenerReference);
-    }
-
-    registerCacheProviderFacadeDefinition();
-
-    // expectations for parsing cache models.
-    elementBuilder.setDefaultCachingModelElementBuilders(modelCount);
-    elementBuilder.setDefaultFlushingModelElementBuilders(modelCount);
-    Map cachingModelMap = expectCachingModelParsing();
-    Map flushingModelMap = expectFlushingModelParsing();
-
-    Element element = elementBuilder.toXml();
-    CacheSetupStrategyPropertySource propertySource = new CacheSetupStrategyPropertySource(
-        cacheKeyGenerator, new RuntimeBeanReference(
-            elementBuilder.cacheProviderId), cachingListeners, cachingModelMap,
-        flushingModelMap);
-
-    strategyParser.parseCacheSetupStrategy(element, parserContext,
-        propertySource);
-    strategyParserControl
-        .setMatcher(new CacheSetupStrategyPropertySourceMatcher());
-
-    replay();
-
-    // method to test
-    strategyParser.parse(element, parserContext);
-
-    verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCacheSetupStrategyParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
-   * does not create a list of caching models if the XML element to parse does
-   * not include any "cachingListener" subelement.
-   */
-  public void testParseWithoutCachingListeners() {
-    int modelCount = 2;
-
-    registerCacheProviderFacadeDefinition();
-
-    elementBuilder.setDefaultCachingModelElementBuilders(modelCount);
-    elementBuilder.setDefaultFlushingModelElementBuilders(modelCount);
-
-    Map cachingModelMap = expectCachingModelParsing();
-    Map flushingModelMap = expectFlushingModelParsing();
-
-    Element element = elementBuilder.toXml();
-    CacheSetupStrategyPropertySource propertySource = new CacheSetupStrategyPropertySource(
-        null, new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
-        cachingModelMap, flushingModelMap);
-
-    strategyParser.parseCacheSetupStrategy(element, parserContext,
-        propertySource);
-    strategyParserControl
-        .setMatcher(new CacheSetupStrategyPropertySourceMatcher());
-
-    replay();
-
-    // method to test
-    strategyParser.parse(element, parserContext);
-
-    verify();
-  }
-
-  public void testParseWithoutCachingModels() {
-    int modelCount = 2;
-
-    registerCacheProviderFacadeDefinition();
-
-    elementBuilder.setDefaultFlushingModelElementBuilders(modelCount);
-
-    Map flushingModelMap = expectFlushingModelParsing();
-
-    Element element = elementBuilder.toXml();
-    CacheSetupStrategyPropertySource propertySource = new CacheSetupStrategyPropertySource(
-        null, new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
-        null, flushingModelMap);
-
-    strategyParser.parseCacheSetupStrategy(element, parserContext,
-        propertySource);
-    strategyParserControl
-        .setMatcher(new CacheSetupStrategyPropertySourceMatcher());
-
-    replay();
-
-    // method to test
-    strategyParser.parse(element, parserContext);
-
-    verify();
-  }
-
-  public void testParseWithoutFlushingModels() {
-    int modelCount = 2;
-
-    registerCacheProviderFacadeDefinition();
-
-    elementBuilder.setDefaultCachingModelElementBuilders(modelCount);
-
-    Map cachingModelMap = expectCachingModelParsing();
-
-    Element element = elementBuilder.toXml();
-    CacheSetupStrategyPropertySource propertySource = new CacheSetupStrategyPropertySource(
-        null, new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
-        cachingModelMap, null);
-
-    strategyParser.parseCacheSetupStrategy(element, parserContext,
-        propertySource);
-    strategyParserControl
-        .setMatcher(new CacheSetupStrategyPropertySourceMatcher());
-
-    replay();
-
-    // method to test
-    strategyParser.parse(element, parserContext);
-
-    verify();
-  }
-
-  public void testParseWithRegistryNotHavingCacheProviderFacade() {
-    replay();
+        catch ( IllegalStateException exception )
+        {
+            // expecting exception
+        }
 
     try {
         DomElementStub domElementStub = new DomElementStub("someElement");
@@ -322,129 +341,132 @@ public class CacheSetupStrategyParserTests extends
       // expecting exception
     }
 
-    verify();
-  }
+    protected void onSetUp()
+        throws Exception
+    {
+        beanReferenceParserControl = MockControl.createControl( BeanReferenceParser.class );
+        beanReferenceParser = (BeanReferenceParser) beanReferenceParserControl.getMock();
 
-  protected void onSetUp() throws Exception {
-    beanReferenceParserControl = MockControl
-        .createControl(BeanReferenceParser.class);
-    beanReferenceParser = (BeanReferenceParser) beanReferenceParserControl
-        .getMock();
+        setUpModelParser();
+        setUpValidator();
+        setUpStrategyParser();
 
-    setUpModelParser();
-    setUpValidator();
-    setUpStrategyParser();
-
-    elementBuilder = new CacheSetupStrategyElementBuilder();
-    elementBuilder.cacheProviderId = "cacheProvider";
-  }
-
-  private RuntimeBeanReference expectCacheKeyGeneratorParsing() {
-    CacheKeyGeneratorElementBuilder builder = new CacheKeyGeneratorElementBuilder();
-    elementBuilder.cacheKeyGeneratorElementBuilder = builder;
-
-    RuntimeBeanReference cacheKeyGenerator = new RuntimeBeanReference(
-        "cacheKeyGenerator");
-
-    beanReferenceParser.parse(builder.toXml(), parserContext);
-    beanReferenceParserControl.setReturnValue(cacheKeyGenerator);
-
-    return cacheKeyGenerator;
-  }
-
-  private Map expectCachingModelParsing() {
-    Map cachingModelMap = new HashMap();
-    int cachingModelCount = elementBuilder.cachingModelElementBuilders.length;
-
-    expectGetCacheModelKey();
-
-    for (int i = 0; i < cachingModelCount; i++) {
-      MockCachingModel model = new MockCachingModel();
-      CachingModelElementBuilder builder = elementBuilder.cachingModelElementBuilders[i];
-
-      modelParser.parseCachingModel(builder.toXml());
-      modelParserControl.setReturnValue(model);
-
-      cachingModelMap.put(builder.target, model);
+        elementBuilder = new CacheSetupStrategyElementBuilder();
+        elementBuilder.cacheProviderId = "cacheProvider";
     }
-    return cachingModelMap;
-  }
 
-  private Map expectFlushingModelParsing() {
-    Map flushingModelMap = new HashMap();
-    int flushingModelCount = elementBuilder.flushingModelElementBuilders.length;
+    private RuntimeBeanReference expectCacheKeyGeneratorParsing()
+    {
+        CacheKeyGeneratorElementBuilder builder = new CacheKeyGeneratorElementBuilder();
+        elementBuilder.cacheKeyGeneratorElementBuilder = builder;
 
-    expectGetCacheModelKey();
+        RuntimeBeanReference cacheKeyGenerator = new RuntimeBeanReference( "cacheKeyGenerator" );
 
-    for (int i = 0; i < flushingModelCount; i++) {
-      FlushingModelElementBuilder builder = elementBuilder.flushingModelElementBuilders[i];
-      MockFlushingModel model = new MockFlushingModel();
+        beanReferenceParser.parse( builder.toXml(), parserContext );
+        beanReferenceParserControl.setReturnValue( cacheKeyGenerator );
 
-      modelParser.parseFlushingModel(builder.toXml());
-      modelParserControl.setReturnValue(model);
-
-      flushingModelMap.put(builder.target, model);
+        return cacheKeyGenerator;
     }
-    return flushingModelMap;
-  }
 
-  private void expectGetCacheModelKey() {
-    strategyParser.getCacheModelKey();
-    strategyParserControl.setReturnValue("target");
-  }
+    private Map expectCachingModelParsing()
+    {
+        Map cachingModelMap = new HashMap();
+        int cachingModelCount = elementBuilder.cachingModelElementBuilders.length;
 
-  private void registerCacheProviderFacadeDefinition() {
-    RootBeanDefinition cacheProviderFacade = new RootBeanDefinition(
-        CacheProviderFacade.class);
-    registry.registerBeanDefinition(elementBuilder.cacheProviderId,
-        cacheProviderFacade);
-  }
+        expectGetCacheModelKey();
 
-  private void replay() {
-    beanReferenceParserControl.replay();
-    modelParserControl.replay();
-    strategyParserControl.replay();
-    validatorControl.replay();
-  }
+        for ( int i = 0; i < cachingModelCount; i++ )
+        {
+            MockCachingModel model = new MockCachingModel();
+            CachingModelElementBuilder builder = elementBuilder.cachingModelElementBuilders[i];
 
-  private void setUpModelParser() {
-    modelParserControl = MockControl.createControl(CacheModelParser.class);
-    modelParser = (CacheModelParser) modelParserControl.getMock();
-  }
+            modelParser.parseCachingModel( builder.toXml() );
+            modelParserControl.setReturnValue( model );
 
-  private void setUpStrategyParser() throws Exception {
-    Class targetClass = AbstractCacheSetupStrategyParser.class;
+            cachingModelMap.put( builder.target, model );
+        }
+        return cachingModelMap;
+    }
 
-    Method getCacheModelKeyMethod = targetClass.getDeclaredMethod(
-        "getCacheModelKey", new Class[0]);
+    private Map expectFlushingModelParsing()
+    {
+        Map flushingModelMap = new HashMap();
+        int flushingModelCount = elementBuilder.flushingModelElementBuilders.length;
 
-    Method parseCacheSetupStrategyMethod = targetClass.getDeclaredMethod(
-        "parseCacheSetupStrategy", new Class[] { Element.class,
-            ParserContext.class, CacheSetupStrategyPropertySource.class });
+        expectGetCacheModelKey();
 
-    Method[] methodsToMock = { getCacheModelKeyMethod,
-        parseCacheSetupStrategyMethod };
+        for ( int i = 0; i < flushingModelCount; i++ )
+        {
+            FlushingModelElementBuilder builder = elementBuilder.flushingModelElementBuilders[i];
+            MockFlushingModel model = new MockFlushingModel();
 
-    strategyParserControl = MockClassControl.createControl(targetClass, null,
-        null, methodsToMock);
+            modelParser.parseFlushingModel( builder.toXml() );
+            modelParserControl.setReturnValue( model );
 
-    strategyParser = (AbstractCacheSetupStrategyParser) strategyParserControl
-        .getMock();
-    strategyParser.setBeanReferenceParser(beanReferenceParser);
-    strategyParser.setCacheModelParser(modelParser);
-    strategyParser.setCachingListenerValidator(validator);
-  }
+            flushingModelMap.put( builder.target, model );
+        }
+        return flushingModelMap;
+    }
 
-  private void setUpValidator() {
-    Class targetClass = CachingListenerValidator.class;
-    validatorControl = MockControl.createControl(targetClass);
-    validator = (CachingListenerValidator) validatorControl.getMock();
-  }
+    private void expectGetCacheModelKey()
+    {
+        strategyParser.getCacheModelKey();
+        strategyParserControl.setReturnValue( "target" );
+    }
 
-  private void verify() {
-    beanReferenceParserControl.verify();
-    modelParserControl.verify();
-    strategyParserControl.verify();
-    validatorControl.verify();
-  }
+    private void registerCacheProviderFacadeDefinition()
+    {
+        RootBeanDefinition cacheProviderFacade = new RootBeanDefinition( CacheProviderFacade.class );
+        registry.registerBeanDefinition( elementBuilder.cacheProviderId, cacheProviderFacade );
+    }
+
+    private void replay()
+    {
+        beanReferenceParserControl.replay();
+        modelParserControl.replay();
+        strategyParserControl.replay();
+        validatorControl.replay();
+    }
+
+    private void setUpModelParser()
+    {
+        modelParserControl = MockControl.createControl( CacheModelParser.class );
+        modelParser = (CacheModelParser) modelParserControl.getMock();
+    }
+
+    private void setUpStrategyParser()
+        throws Exception
+    {
+        Class targetClass = AbstractCacheSetupStrategyParser.class;
+
+        Method getCacheModelKeyMethod = targetClass.getDeclaredMethod( "getCacheModelKey", new Class[0] );
+
+        Method parseCacheSetupStrategyMethod =
+            targetClass.getDeclaredMethod( "parseCacheSetupStrategy", new Class[] { Element.class, ParserContext.class,
+                CacheSetupStrategyPropertySource.class } );
+
+        Method[] methodsToMock = { getCacheModelKeyMethod, parseCacheSetupStrategyMethod };
+
+        strategyParserControl = MockClassControl.createControl( targetClass, null, null, methodsToMock );
+
+        strategyParser = (AbstractCacheSetupStrategyParser) strategyParserControl.getMock();
+        strategyParser.setBeanReferenceParser( beanReferenceParser );
+        strategyParser.setCacheModelParser( modelParser );
+        strategyParser.setCachingListenerValidator( validator );
+    }
+
+    private void setUpValidator()
+    {
+        Class targetClass = CachingListenerValidator.class;
+        validatorControl = MockControl.createControl( targetClass );
+        validator = (CachingListenerValidator) validatorControl.getMock();
+    }
+
+    private void verify()
+    {
+        beanReferenceParserControl.verify();
+        modelParserControl.verify();
+        strategyParserControl.verify();
+        validatorControl.verify();
+    }
 }
