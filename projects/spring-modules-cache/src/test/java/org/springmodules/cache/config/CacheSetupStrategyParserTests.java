@@ -314,7 +314,9 @@ public class CacheSetupStrategyParserTests extends
     replay();
 
     try {
-      strategyParser.parse(new DomElementStub("someElement"), parserContext);
+        DomElementStub domElementStub = new DomElementStub("someElement");
+        domElementStub.setAttribute( "providerId", "someId" );
+      strategyParser.parse( domElementStub, parserContext);
       fail();
     } catch (IllegalStateException exception) {
       // expecting exception
