@@ -4,3 +4,4 @@
 .classpath
 target
 /projects/spring-modules-cache/logs/gigaspaces0_0.log
+bin
