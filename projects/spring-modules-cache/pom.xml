@@ -23,7 +23,35 @@
       </snapshots>
     </repository>
   </repositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>commons-attributes-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-compile</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>org/springmodules/cache/integration/CacheableServiceImpl.java</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
+    <!-- TODO: upgrade -->
+    <dependency>
+      <groupId>easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <version>1.1</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>opensymphony</groupId>
       <artifactId>oscache</artifactId>
