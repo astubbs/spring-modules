@@ -331,14 +331,6 @@ public class CacheSetupStrategyParserTests
         {
             // expecting exception
         }
-
-    try {
-        DomElementStub domElementStub = new DomElementStub("someElement");
-        domElementStub.setAttribute( "providerId", "someId" );
-      strategyParser.parse( domElementStub, parserContext);
-      fail();
-    } catch (IllegalStateException exception) {
-      // expecting exception
     }
 
     protected void onSetUp()
