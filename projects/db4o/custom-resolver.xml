@@ -1,6 +1,0 @@
-<ivyconf>
-	<resolvers>
-		<chain name="custom">
-		</chain>
-	</resolvers>
-</ivyconf>
