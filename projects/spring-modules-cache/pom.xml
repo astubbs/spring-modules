@@ -10,6 +10,9 @@
   <groupId>org.springmodules</groupId>
   <artifactId>spring-modules-cache</artifactId>
   <version>0.10-SNAPSHOT</version>
+  <properties>
+    <gs.version>7.0.2-ga</gs.version>
+  </properties>
   <!-- TODO: Rather use a repo. manager like nexus -->
   <repositories>
     <repository>
@@ -70,31 +73,16 @@
       <version>2.3</version>
     </dependency>
     <dependency>
-      <groupId>gigaspaces</groupId>
-      <artifactId>gigaspaces-ce</artifactId>
-      <version>5.2-1706</version>
+      <groupId>com.gigaspaces</groupId>
+      <artifactId>gs-runtime</artifactId>
+      <version>${gs.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>net.jini</groupId>
-      <artifactId>jini-core</artifactId>
-      <version>2.1</version>
-      <scope>runtime</scope>
-      <optional>true</optional> <!-- for gigaspaces -->
-    </dependency>
-    <dependency>
-      <groupId>net.jini</groupId>
-      <artifactId>jsk-lib</artifactId>
-      <version>2.1</version>
-      <optional>true</optional> <!-- for gigaspaces -->
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.jini</groupId>
-      <artifactId>jini-ext</artifactId>
-      <version>2.1</version>
+      <groupId>com.gigaspaces</groupId>
+      <artifactId>gs-openspaces</artifactId>
+      <version>${gs.version}</version>
       <optional>true</optional>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>

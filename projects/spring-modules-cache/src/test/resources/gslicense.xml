@@ -1,0 +1,8 @@
+<com>
+  <j_spaces>
+        <kernel>
+        	<!-- can also be set via system property using -Dcom.gs.licensekey -->
+            <licensekey>Mar 17, 2010~GigaSpaces-eval@NONJpM1LVNNXRAJcUOLV#COMMUNITY^7.0XAPCommunity%UNBOUND+UNLIMITED</licensekey>
+       </kernel>
+  </j_spaces>
+</com>
