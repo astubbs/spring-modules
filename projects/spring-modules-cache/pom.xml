@@ -48,6 +48,11 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.1</version>
+    </dependency>
     <!-- TODO: upgrade -->
     <dependency>
       <groupId>cglib</groupId>
