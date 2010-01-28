@@ -91,7 +91,7 @@
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
-        <artifactId>spring-core</artifactId>
+        <artifactId>spring-aop</artifactId>
         <version>${version.spring}</version>
       </dependency>
       <dependency>
@@ -106,7 +106,12 @@
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
-        <artifactId>spring-aop</artifactId>
+        <artifactId>spring-core</artifactId>
+        <version>${version.spring}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
         <version>${version.spring}</version>
       </dependency>
       <dependency>
