@@ -14,7 +14,29 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
-
+  <profiles>
+    <profile>
+      <id>eclipse</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-eclipse-plugin</artifactId>
+            <version>2.7</version>
+            <configuration>
+              <downloadSources>true</downloadSources>
+              <downloadJavadocs>true</downloadJavadocs>
+              <wtpversion>1.5</wtpversion>
+              <ajdtVersion>none</ajdtVersion> <!-- see: http://jira.codehaus.org/browse/MECLIPSE-558 and http://jira.codehaus.org/browse/MECLIPSE-594 -->
+              <additionalProjectnatures>
+                <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+              </additionalProjectnatures>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   <modules>
     <module>projects</module>
     <!--

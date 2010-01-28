@@ -11,29 +11,6 @@
   <artifactId>projects</artifactId>
   <version>0.10-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <profiles>
-    <profile>
-      <id>eclipse</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-eclipse-plugin</artifactId>
-            <version>2.7</version>
-            <configuration>
-              <downloadSources>true</downloadSources>
-              <downloadJavadocs>true</downloadJavadocs>
-              <wtpversion>1.5</wtpversion>
-              <ajdtVersion>none</ajdtVersion> <!-- see: http://jira.codehaus.org/browse/MECLIPSE-558 and http://jira.codehaus.org/browse/MECLIPSE-594 -->
-              <additionalProjectnatures>
-                <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
-              </additionalProjectnatures>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
   <modules>
     <!-- <module>spring-modules-ant</module>
         <module>spring-modules-aop</module> -->
@@ -49,36 +26,4 @@
       <module>spring-modules-xt</module> <module>spring-modules-xt-js</module>
     -->
   </modules>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring</artifactId>
-        <version>${version.spring}</version>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.6</version>
-      </dependency>
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <version>${version.easymock}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymockclassextension</artifactId>
-        <version>${version.easymock}</version>
-        <scope>test</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  <!-- use only on a per module project that needs it -->
-  <!--
-    <repositories> <repository> <id>repository.jboss.com</id> <url>http://repository.jboss.com/maven2</url>
-    </repository> </repositories>
-  -->
 </project>
