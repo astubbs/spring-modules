@@ -19,6 +19,7 @@ package org.springmodules.cache.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Date;
@@ -135,7 +136,10 @@ public class ReflectionsTest extends TestCase {
     int expected = 31 * 7 + h1;
     expected = 31 * expected + h2;
 
-    Map map = new HashMap();
+    /* Has to be a LinkedHashMap (at least on IBM JDKs) so that iteration order is the same - 
+     * or else different hashcode is computed. This is really a warning that the implementation is faulty/weak.
+     */
+    Map map = new LinkedHashMap(); 
     map.put("Jedi", "Luke Skywalker");
     map.put("Sith", "Darth Vader");
     int actual = Reflections.reflectionHashCode(map);

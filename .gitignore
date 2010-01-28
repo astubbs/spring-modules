@@ -2,5 +2,5 @@ target
 .settings
 .classpath
 .project
-
-
+/projects/spring-modules-cache/logs/gigaspaces0_0.log
+bin
