@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springmodules</groupId>
-    <artifactId>spring-modules-jbpm31</artifactId>
+    <artifactId>spring-modules-springmvc-extra</artifactId>
     <packaging>jar</packaging>
 
     <parent>
@@ -14,16 +14,24 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
+            <groupId>rome</groupId>
+            <artifactId>rome</artifactId>
         </dependency>
         <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jbpm</artifactId>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-webmvc</artifactId>
         </dependency>
         <dependency>
         	<groupId>org.springframework</groupId>
         	<artifactId>spring-test</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>javax.servlet</groupId>
+        	<artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>commons-lang</groupId>
+        	<artifactId>commons-lang</artifactId>
         </dependency>
     </dependencies>
 </project>

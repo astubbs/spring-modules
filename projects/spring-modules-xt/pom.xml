@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springmodules</groupId>
-    <artifactId>spring-modules-lucene</artifactId>
+    <artifactId>spring-modules-xt</artifactId>
     <packaging>jar</packaging>
 
     <parent>
@@ -11,7 +11,7 @@
         <artifactId>spring-modules</artifactId>
         <version>0.10-SNAPSHOT</version>
     </parent>
-    
+
     <build>
     	<plugins>
     		<plugin>
@@ -29,36 +29,44 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
+            <groupId>org.springmodules</groupId>
+            <artifactId>spring-modules-template</artifactId>
         </dependency>
         <dependency>
-            <groupId>backport-util-concurrent</groupId>
-            <artifactId>backport-util-concurrent</artifactId>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
         </dependency>
         <dependency>
-            <groupId>pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-scratchpad</artifactId>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
         </dependency>
         <dependency>
-            <groupId>jexcelapi</groupId>
-            <artifactId>jxl</artifactId>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
         </dependency>
         <dependency>
-        	<groupId>hsqldb</groupId>
-        	<artifactId>hsqldb</artifactId>
+        	<groupId>xmlunit</groupId>
+        	<artifactId>xmlunit</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.aspectj</groupId>
-        	<artifactId>aspectjweaver</artifactId>
+        	<groupId>org.jmock</groupId>
+        	<artifactId>jmock-junit3</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>javax.servlet</groupId>
+        	<artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>log4j</groupId>
+        	<artifactId>log4j</artifactId>
         </dependency>
     </dependencies>
 </project>
