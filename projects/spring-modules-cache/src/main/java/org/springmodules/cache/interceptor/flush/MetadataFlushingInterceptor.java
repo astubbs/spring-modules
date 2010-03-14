@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.aopalliance.intercept.MethodInvocation;
 
-import org.springframework.metadata.Attributes;
 import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.FlushingModel;
@@ -56,11 +55,12 @@ public class MetadataFlushingInterceptor extends AbstractFlushingInterceptor {
    * @param attributes
    *          the new implementation of attributes to use.
    */
-  public final void setAttributes(Attributes attributes) {
-    MetadataFlushingAttributeSource source = new MetadataFlushingAttributeSource();
-    source.setAttributes(attributes);
-    setFlushingAttributeSource(source);
-  }
+  // public final void setAttributes(Attributes attributes) {
+  // MetadataFlushingAttributeSource source = new
+  // MetadataFlushingAttributeSource();
+  // source.setAttributes(attributes);
+  // setFlushingAttributeSource(source);
+  // }
 
   /**
    * Sets the source of flushing metadata attributes for class methods.

@@ -26,7 +26,6 @@ import org.springmodules.cache.CacheAttribute;
 import org.springmodules.cache.interceptor.MetadataCacheAttributeSource;
 import org.springmodules.cache.interceptor.MetadataCacheAttributeSource.MetadataFinder;
 
-import org.springframework.metadata.Attributes;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -39,11 +38,11 @@ import org.springframework.util.CollectionUtils;
 public final class MetadataFlushingAttributeSource implements
     FlushingAttributeSource {
 
-  Attributes attributes;
+  // Attributes attributes;
 
   private final MetadataFinder finder = new MetadataFinder() {
     public CacheAttribute find(Method m) {
-      return find(attributes.getAttributes(m));
+      return null;// find(attributes.getAttributes(m));
     }
 
     private CacheAttribute find(Collection methodAttributes) {
@@ -66,7 +65,7 @@ public final class MetadataFlushingAttributeSource implements
     return (FlushCache)source.attribute(m, t);
   }
 
-  public void setAttributes(Attributes a) {
-    attributes = a;
-  }
+  // public void setAttributes(Attributes a) {
+  // attributes = a;
+  // }
 }

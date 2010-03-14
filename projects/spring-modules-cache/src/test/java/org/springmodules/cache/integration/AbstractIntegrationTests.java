@@ -109,13 +109,13 @@ public abstract class AbstractIntegrationTests extends TestCase {
     performCachingAndFlushingWithCacheProxyFactoryBean(SCHEMA_FOLDER);
   }
 
-  public final void testCommonsAttributesWithDtd() throws Exception {
-    performCachingAndFlushingWithCommonsAttributes(DTD_FOLDER);
-  }
+  // public final void testCommonsAttributesWithDtd() throws Exception {
+  // performCachingAndFlushingWithCommonsAttributes(DTD_FOLDER);
+  // }
 
-  public final void testCommonsAttributesWithSchema() throws Exception {
-    performCachingAndFlushingWithCommonsAttributes(SCHEMA_FOLDER);
-  }
+  // public final void testCommonsAttributesWithSchema() throws Exception {
+  // performCachingAndFlushingWithCommonsAttributes(SCHEMA_FOLDER);
+  // }
 
   protected final void assertCacheEntryFromCacheIsNull(Object cacheEntry,
       Serializable key) {

@@ -24,8 +24,8 @@ import org.aopalliance.intercept.MethodInvocation;
 
 import org.springmodules.cache.CachingModel;
 
-import org.springframework.metadata.Attributes;
 import org.springframework.util.StringUtils;
+import org.springmodules.cache.CachingModel;
 
 /**
  * <p>
@@ -58,11 +58,12 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
    * @param attributes
    *          the new implementation of attributes to use.
    */
-  public final void setAttributes(Attributes attributes) {
-    MetadataCachingAttributeSource source = new MetadataCachingAttributeSource();
-    source.setAttributes(attributes);
-    setCachingAttributeSource(source);
-  }
+  // public final void setAttributes(Attributes attributes) {
+  // MetadataCachingAttributeSource source = new
+  // MetadataCachingAttributeSource();
+  // source.setAttributes(attributes);
+  // setCachingAttributeSource(source);
+  // }
 
   public final void setCachingAttributeSource(CachingAttributeSource s) {
     cachingAttributeSource = s;

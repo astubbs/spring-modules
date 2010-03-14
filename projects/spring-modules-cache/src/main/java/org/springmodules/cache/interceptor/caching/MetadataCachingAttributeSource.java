@@ -22,12 +22,10 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.springframework.util.CollectionUtils;
 import org.springmodules.cache.CacheAttribute;
 import org.springmodules.cache.interceptor.MetadataCacheAttributeSource;
 import org.springmodules.cache.interceptor.MetadataCacheAttributeSource.MetadataFinder;
-
-import org.springframework.metadata.Attributes;
-import org.springframework.util.CollectionUtils;
 
 /**
  * <p>
@@ -39,11 +37,9 @@ import org.springframework.util.CollectionUtils;
 public final class MetadataCachingAttributeSource implements
     CachingAttributeSource {
 
-  Attributes attributes;
-
   private final MetadataFinder finder = new MetadataFinder() {
     public CacheAttribute find(Method m) {
-      return find(attributes.getAttributes(m));
+      return null;
     }
 
     private CacheAttribute find(Collection methodAttributes) {
@@ -67,7 +63,4 @@ public final class MetadataCachingAttributeSource implements
     return (Cached)source.attribute(m, t);
   }
 
-  public void setAttributes(Attributes a) {
-    attributes = a;
-  }
 }

@@ -18,11 +18,7 @@
 package org.springmodules.cache.config;
 
 import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.PropertyValue;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.metadata.commons.CommonsAttributes;
 
 /**
  * <p>
@@ -41,7 +37,7 @@ public final class CommonsAttributesParser extends
    */
   private static class BeanName {
 
-    static final String ATTRIBUTES = CommonsAttributes.class.getName();
+    // static final String ATTRIBUTES = CommonsAttributes.class.getName();
   }
 
   /**
@@ -58,7 +54,7 @@ public final class CommonsAttributesParser extends
    */
   protected void configureCachingInterceptor(
       MutablePropertyValues propertyValues, BeanDefinitionRegistry registry) {
-    propertyValues.addPropertyValue(getAttributesProperty());
+    // propertyValues.addPropertyValue(getAttributesProperty());
   }
 
   /**
@@ -75,7 +71,7 @@ public final class CommonsAttributesParser extends
    */
   protected void configureFlushingInterceptor(
       MutablePropertyValues propertyValues, BeanDefinitionRegistry registry) {
-    propertyValues.addPropertyValue(getAttributesProperty());
+    // propertyValues.addPropertyValue(getAttributesProperty());
   }
 
   /**
@@ -88,13 +84,13 @@ public final class CommonsAttributesParser extends
    * @see AbstractMetadataAttributesParser#registerCustomBeans(BeanDefinitionRegistry)
    */
   protected void registerCustomBeans(BeanDefinitionRegistry registry) {
-    RootBeanDefinition attributes = new RootBeanDefinition(
-        CommonsAttributes.class);
-    registry.registerBeanDefinition(BeanName.ATTRIBUTES, attributes);
+    // RootBeanDefinition attributes = new RootBeanDefinition(
+    // CommonsAttributes.class);
+    // registry.registerBeanDefinition(BeanName.ATTRIBUTES, attributes);
   }
 
-  private PropertyValue getAttributesProperty() {
-    return new PropertyValue("attributes", new RuntimeBeanReference(
-        BeanName.ATTRIBUTES));
-  }
+  // private PropertyValue getAttributesProperty() {
+  // return new PropertyValue("attributes", new RuntimeBeanReference(
+  // BeanName.ATTRIBUTES));
+  // }
 }
