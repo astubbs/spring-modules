@@ -35,7 +35,6 @@ var ValangValidator = function(name, installSelfWithForm, rules, validateOnSubmi
 		ValangValidator.Logger.push('recieved ' + e.type);
 
 		var delay = 5; //yield time
-		if(thisValidator.doValidation) clearTimeout(thisValidator.doValidation);
 		
 		//don't fire for some key presses:
 		if(e.type == "keyup" || e.type == "keydown" ){
@@ -54,6 +53,7 @@ var ValangValidator = function(name, installSelfWithForm, rules, validateOnSubmi
 			}
 			delay = 250;
 		}
+		if(thisValidator.doValidation) clearTimeout(thisValidator.doValidation);
 
 		var self = this;
 		var doValidate = function() { 
@@ -64,7 +64,7 @@ var ValangValidator = function(name, installSelfWithForm, rules, validateOnSubmi
 			thisValidator.doValidation = setTimeout(function(){doValidate();}, delay);
     };
     
-    this.addRules(rules);
+    this.addRules(rules, false);
     
     if (installSelfWithForm) {
         this._installSelfWithForm(validateOnSubmit);
@@ -77,7 +77,7 @@ ValangValidator.prototype = {
 	emptyErrorHTML: '',
     classRuleFieldName: "valang-global-rules", // to match CommandObjectToValangConverter.CLASS_RULENAME
     
-    addRules: function(newRules){ 
+    addRules: function(newRules, addFirst){ 
 	    //create grouped rules by field
 	    for (var i = 0; i < newRules.length; i++) {
 	    	var ruleField = newRules[i].field;
@@ -87,8 +87,9 @@ ValangValidator.prototype = {
 	    		this.groupedRules[ruleField] = new Array();
 	    		fieldArray = this.groupedRules[ruleField];
 	    	}
-	    	fieldArray.push(newRules[i]);
-	    	
+
+    		fieldArray[addFirst ? "unshift":"push"](newRules[i]);
+    		
 	    	var fields = this.form.getFieldsWithName(ruleField);
 	    	for(field in fields){
 	    		this.addEventHandler(fields[field]);
@@ -603,8 +604,10 @@ ValangValidator.Rule.prototype = {
 	},
 
     // Unary Operators
+    
     lengthOf: function(value) {
-        return (value != null) ? value.length : 0;
+		// only count a CRLF as 1 char: makes LF/CRLF/CR count consistant across OS and browsers. 
+        return (value != null) ? value.replace(/\r\n/g,"\n").length : 0; 
     },
     lowerCase: function(value) {
         return (value != null) ? value.toLowerCase(): null;
