@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springmodules</groupId>
 	<artifactId>spring-modules-validation-base</artifactId>
-	<version>0.10-SNAPSHOT</version>
+	<version>0.9.1</version>
 	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>org.springmodules</groupId>
 		<artifactId>spring-modules-validation-parent</artifactId>
-		<version>0.10-SNAPSHOT</version>
+		<version>0.9.1</version>
 	</parent>
 
 	<dependencies>
