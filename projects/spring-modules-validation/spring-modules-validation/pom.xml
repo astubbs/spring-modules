@@ -5,11 +5,11 @@
     <parent>
         <groupId>org.springmodules</groupId>
         <artifactId>spring-modules-validation-parent</artifactId>
-        <version>0.9.1</version>
+        <version>0.9.2-SNAPSHOT</version>
     </parent>
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-validation</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>
         This pseudo project is just a stub jar with dependencies on both of the other modules.
@@ -21,12 +21,12 @@
     <dependency>
       <groupId>org.springmodules</groupId>
       <artifactId>spring-modules-validation-base</artifactId>
-      <version>0.9.1</version>
+      <version>0.9.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.springmodules</groupId>
       <artifactId>spring-modules-validation-jdk15</artifactId>
-      <version>0.9.1</version>
+      <version>0.9.2-SNAPSHOT</version>
     </dependency>
   </dependencies>
 	
