@@ -25,7 +25,7 @@
 	<scm>
 		<url>http://github.com/astubbs/spring-modules/tree/master</url>
 	</scm>
-
+<!-- 
 	<distributionManagement>
 		<repository>
 			<id>sharca.com.repo</id>
@@ -33,6 +33,21 @@
 			<url>scp://sharca.com/var/repository</url>
 		</repository>
 	</distributionManagement>
+ -->
+<!-- for temporary internal deploys. -->
+	<distributionManagement>
+        <repository>
+            <id>inhouse</id>
+            <name>inhouse</name>
+            <url>http://10.44.211.210:8081/nexus/content/repositories/inhouse</url>
+        </repository>
+        <snapshotRepository>
+            <id>inhouse.snapshot</id>
+            <name>inhouse.snapshot</name>
+            <url>http://10.44.211.210:8081/nexus/content/repositories/inhouse.snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 
 	<dependencies>
 		<dependency>
