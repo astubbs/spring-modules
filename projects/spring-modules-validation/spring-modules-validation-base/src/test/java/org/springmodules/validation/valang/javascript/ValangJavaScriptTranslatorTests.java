@@ -23,8 +23,8 @@ import java.io.StringWriter;
 import java.util.Collection;
 
 import junit.framework.TestCase;
+
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -36,7 +36,7 @@ import org.springmodules.validation.valang.parser.ValangParser;
 
 /**
  * Tests for {@link ValangJavaScriptTranslator}
- *
+ * 
  * @author Oliver Hutchison
  */
 public class ValangJavaScriptTranslatorTests extends TestCase {
@@ -51,9 +51,8 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
         cx.setLanguageVersion(Context.VERSION_1_2);
         scope = cx.initStandardObjects();
         cx.evaluateReader(scope, ValangJavaScriptTranslator.getCodebaseReader(), "valang_codebase.js", 1, null);
-        cx.evaluateReader(scope, new InputStreamReader(
-            ValangJavaScriptTranslatorTests.class.getResourceAsStream("test_codebase_overides.js")),
-            "test_codebase_overides.js", 1, null);
+        cx.evaluateReader(scope, new InputStreamReader(ValangJavaScriptTranslatorTests.class
+                .getResourceAsStream("test_codebase_overides.js")), "test_codebase_overides.js", 1, null);
     }
 
     protected void tearDown() throws Exception {
@@ -67,8 +66,7 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
     protected Collection parseRules(String text) {
         try {
             return getParser(text).parseValidation();
-        }
-        catch (ParseException e) {
+        } catch (ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -82,19 +80,16 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
             Collection rules = parseRules(text);
             StringWriter code = new StringWriter();
             new ValangJavaScriptTranslator().writeJavaScriptValangValidator(code, "someName", false, rules,
-                messageSource);
-            code.write("._validateAndReturnFailedRules()");
+                    messageSource);
+            code.write(".validate()");
             ScriptableObject.putProperty(scope, "formObject", Context.javaToJS(target, scope));
-            NativeArray result = (NativeArray) cx.evaluateString(scope, code.toString(), "code", 1, null);
-            return result.getLength() == 0;
-        }
-        catch (IOException e) {
+            System.out.println(code.toString());
+            Object evaluateString = cx.evaluateString(scope, code.toString(), "code", 1, null);
+            Boolean result = (Boolean) cx.jsToJava(evaluateString, Boolean.class);
+            return result.booleanValue();
+        } catch (IOException e) {
             throw new IllegalStateException(e.getMessage());
         }
-//        finally {
-//            System.out.println(Context.toString(ScriptableObject.getProperty(scope, "logMessages")));
-//        }
-
     }
 
     public void testTranslator1SimpleRule() {
@@ -104,7 +99,7 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
 
     public void testTranslator2TwoSimpleRules() {
         String text = "{age : age >= 18 : 'Our customers must be 18 years or older.'}\n"
-            + "{age : age <= 120 : 'We do not do business with the undead.'}";
+                + "{age : age <= 120 : 'We do not do business with the undead.'}";
         assertTrue(validate(new Person(30, "Steven"), text));
         assertFalse(validate(new Person(150, "Steven"), text));
     }
@@ -221,6 +216,7 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
 
     public void testTranslatorErrorKey() {
         MessageSourceAccessor mockAccessor = new MessageSourceAccessor(null) {
+
             public String getMessage(String code, String defaultMessage) {
                 assertEquals("18_years_or_older", code);
                 assertEquals("Customers must be 18 years or older.", defaultMessage);
@@ -234,6 +230,7 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
 
     public void testTranslatorErrorArgs() {
         MessageSourceAccessor mockAccessor = new MessageSourceAccessor(null) {
+
             public String getMessage(String code, String defaultMessage) {
                 assertEquals("not_old_enough", code);
                 assertEquals("Customers must be older than {0}.", defaultMessage);

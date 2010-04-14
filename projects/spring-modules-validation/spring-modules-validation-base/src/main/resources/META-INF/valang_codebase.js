@@ -106,12 +106,11 @@ ValangValidator.prototype = {
         	if(rules && rules.length > 0) {
         		var thisFields = this.form.getFieldsWithName(rules[0].field);
         		for (var j = 0; j < thisFields.length; j++) {
-        			isValid = this.validateField(thisFields[j]) && isValid;
+        			isValid = isValid && this.validateField(thisFields[j]);
         		}
         	}
         }
         ValangValidator.Logger.log('Is form valid? ' + isValid);
-    	
         return isValid;
     },
 
@@ -133,7 +132,7 @@ ValangValidator.prototype = {
 	            rule.form = this.form;
 	            var thisValid = false;
 	            try {
-	            	thisValid =  rule.validate();
+	            	thisValid =  !!rule.validate();
 	            } catch(err) {
 	            	ValangValidator.Logger.log("Rule error: " + err);
 	            }
@@ -280,26 +279,7 @@ ValangValidator.prototype = {
     		*/
     	}
     },
-    
-    _giveRulesSameOrderAsFormFields: function(failedRules) {
-        var sortedFailedRules = new Array();
-        var fields = this.form.getFields();
-        for (var i = 0; i < fields.length; i++) {
-            var fieldName = fields[i].name;
-            for (var j = 0; j < failedRules.length; j++) {
-                if (failedRules[j] && failedRules[j].field == fieldName) {
-                    sortedFailedRules.push(failedRules[j]);
-                    failedRules[j] = null;
-                }
-            }
-        }
-        for (var i = 0; i < failedRules.length; i++) {
-            if (failedRules[i]) {
-                sortedFailedRules.push(failedRules[i]);
-            }
-        }
-        return sortedFailedRules;
-    },
+
     
     // stubs
     fieldValidationCallback: function(field, isValid, ruleCount) {
@@ -629,25 +609,39 @@ ValangValidator.Rule.prototype = {
         return lhs === rhs;
     },
     lessThan: function(lhs, rhs) {
+    	if(typeof lhs == 'string' ) lhs = this._forceNumber(lhs);
         lhs = this._makeCompatible(lhs, rhs);
         rhs = this._makeCompatible(rhs, lhs);
         return lhs < rhs;
     },
     lessThanOrEquals: function(lhs, rhs) {
+    	if(typeof lhs == 'string' ) lhs = this._forceNumber(lhs);
         lhs = this._makeCompatible(lhs, rhs);
         rhs = this._makeCompatible(rhs, lhs);
         return lhs <= rhs;
     },
     moreThan: function(lhs, rhs) {
+    	if(typeof lhs == 'string' ) lhs = this._forceNumber(lhs);
         lhs = this._makeCompatible(lhs, rhs);
         rhs = this._makeCompatible(rhs, lhs);
         return lhs > rhs;
     },
     moreThanOrEquals: function(lhs, rhs) {
+    	if(typeof lhs == 'string' ) lhs = this._forceNumber(lhs);
         lhs = this._makeCompatible(lhs, rhs);
         rhs = this._makeCompatible(rhs, lhs);
         return lhs >= rhs;
     },
+    between: function(lhs, rhs) {
+    	this._assertLength(rhs, 2);
+    	if(typeof lhs == 'string' ) lhs = this._forceNumber(lhs);
+    	lhs = this._makeCompatible(lhs, rhs[0]);
+    	rhs[0] = this._makeCompatible(rhs[0], lhs);
+    	rhs[1] = this._makeCompatible(rhs[1], lhs);
+    	
+    	return lhs >= rhs[0] && lhs <= rhs[1];
+    },
+    
     inFunc: function(lhs, rhs) {
         for (var i = 0; i < rhs.length; i++) {
             var value = rhs[i];
@@ -656,14 +650,6 @@ ValangValidator.Rule.prototype = {
             }
         }
         return false;
-    },
-    between: function(lhs, rhs) {
-        this._assertLength(rhs, 2);
-        lhs = this._makeCompatible(lhs, rhs[0]);
-        rhs[0] = this._makeCompatible(rhs[0], lhs);
-        rhs[1] = this._makeCompatible(rhs[1], lhs);
-
-        return lhs >= rhs[0] && lhs <= rhs[1];
     },
     nullFunc: function(lhs, rhs) {
         return lhs === null || typeof lhs == 'undefined';
@@ -821,6 +807,27 @@ ValangValidator.Logger = {
     		logDiv.appendChild(logElem);
     		this._logElement = logElem;
     	}
+    },
+    logFunctionCalls: function(object) {
+        for (var elementName in object) {
+            var theElement = object[elementName]
+            if (typeof theElement == 'function') {
+                object[elementName] = this._wrapFunctionCallWithLog(elementName, theElement)
+            }
+        }
+    },
+    _wrapFunctionCallWithLog: function(functionName, theFunction) {
+        return function() {
+            ValangValidator.Logger.push('calling ' + functionName + '(' + arguments[0] + ', ' + arguments[1] + ')')
+            try {
+                var result = theFunction.apply(this, arguments)
+            } catch(ex) {
+                ValangValidator.Logger.pop('threw ' + ex)
+                throw ex
+            }
+            ValangValidator.Logger.pop('result = ' + result)
+            return result
+        }
     }
 };
 
