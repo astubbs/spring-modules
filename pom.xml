@@ -171,11 +171,13 @@
   </build>
 
   <repositories>
+  <!-- 
     <repository>
       <id>sharca.com.repo</id>
       <name>SharcaConsulting Repository</name>
       <url>http://sharca.com/repository</url>
     </repository>
+   -->
   </repositories>
 
 </project>
