@@ -41,11 +41,12 @@ import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.CacheProviderFacade;
 
 /**
- * Template for advices that store in a cache the return value of intercepted
+ * Template for advises that store in a cache the return value of intercepted
  * methods.
  *
  * @author Omar Irbouh
  * @author Alex Ruiz
+ * @author Antony Stubbs
  */
 public abstract class AbstractCachingInterceptor implements MethodInterceptor,
 		InitializingBean {
@@ -116,6 +117,16 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
 		// no implementation.
 	}
 
+    /**
+     * Takes care of looking up the caches value from the proxied method, and
+     * putting the return value into the cache.
+     * 
+     * @param mi the proxied method to invoke
+     * @param key the key for the cache
+     * @param m the backing {@link CachingModel}
+     * @return the looked up value
+     * @throws Throwable
+     */
 	protected Object cachedValueFromSource(MethodInvocation mi, Serializable key,
 										 CachingModel m) throws Throwable {
 		boolean successful = true;
