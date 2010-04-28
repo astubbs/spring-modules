@@ -1,0 +1,88 @@
+# Welcome to SpringModules Fork!
+
+This is a resurrection of the extremely valuable and abandoned Spring-Modules project.
+
+The plan is to fully embrace Maven as the build tool and eventually throw out all the old build code.
+
+At this point, all the old jar libraries and _generated_ documentation have been pruned from the repository history.
+This pruning has reduced the size of the repository from 95m to 7m. Nice.
+
+The idea will be to slowly add one by one, as the are compile ready, to the parent module section, so they can be included.
+
+Remember, you can add issues to git-hub, and you can link them to the Jira issues. Ideally we need admin access to the SpringModules Jira, but that's a long shot. So, if there's a patch in Jira you want us to apply, create a git-hub issue for it.
+
+Msg/email me on antony.stubbs@gmail.com to discuss!
+
+# Mailing List
+
+Here are the essentials:
+
+* Group name: spring-modules-fork
+* Group home page: http://groups.google.com/group/spring-modules-fork
+* Group email address spring-modules-fork@googlegroups.com
+
+# Questions
+
+* Shall we change the name, or at least the Maven groupId?
+
+# Release
+
+Finally! After over a year of waiting, we are starting to release SNAPSHOT versions of 0.10. ATM, only the cache module has a 0.10-SNAPSHOT version. However, as we receive patches for other modules, those will get releases too.
+
+## Repository
+
+The releases are being hosted on my own server - so please, be nice and use a proxy like Nexus!
+
+Add this to your pom.xml:
+
+    <repositories>
+    	<repository>
+    		<id>sharca.com.repo</id>
+    		<name>SharcaConsulting Repository</name>
+    		<url>http://www.sharca.com/repository</url>
+    	</repository>
+    </repositories>
+
+And use this as a dependency:
+
+    <dependency>
+    	<groupId>org.springmodules</groupId>
+    	<artifactId>spring-modules-cache</artifactId>
+    	<version>0.10-SNAPSHOT</version>
+    </dependency>
+
+# Goals
+
+* Any module in this release will be built completely in with Maven
+* Apply the most annoying patches from Jira
+
+## So Far
+
+* anounced: http://stubbisms.wordpress.com/2009/07/08/spring-modules-fork/
+* uploaded
+* cache module migrated to Maven
+* all pom's applied from the patch under MOD-463 with some fixes
+* jar's and generated documentation removed
+* upgraded to Spring 2.5
+
+# Submitting Patches
+
+You have several options. 
+
+The best option is to use git like it's intended, and commit to your local repo, push up to yoru github account and send a pull request, or talk about your feature branch on the mailing list.
+
+Otherwise, you can still generate patches using:
+
+* git format-patch origin
+
+And again, email the files to the mailing list or an issue on git-hub.
+
+But, if you don't want to get too involved with git pushing etc, then:
+
+    install git (If you're on windows, I suggest using git through cygwin. Mac I suggest installing git with MacPorts)
+    run git clone git://github.com/astubbs/spring-modules.git
+
+Make your changes - i.e. edit the code, apply a patch off of jira site etc...
+
+    git diff > my.patch
+    email the patch to the mailing list, or attach to an issue on git-hub

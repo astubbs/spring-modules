@@ -11,6 +11,7 @@
   <artifactId>projects</artifactId>
   <version>0.10-SNAPSHOT</version>
   <packaging>pom</packaging>
+
   <modules>
     <!-- <module>spring-modules-ant</module>
         <module>spring-modules-aop</module> -->
@@ -31,7 +32,7 @@
         <module>spring-modules-springmvc-extra</module>
 <!--        <module>spring-modules-tapestry</module>-->
         <!-- <module>spring-modules-template</module> --> 
-<!--        <module>spring-modules-validation</module>-->
+        <module>spring-modules-validation</module>
         <!-- <module>spring-modules-xt</module> -->
     </modules>
 
