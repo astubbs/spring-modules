@@ -32,7 +32,17 @@ public class JbpmHandlerProxyTests extends TestCase {
 		proxy = new JbpmHandlerProxy();
 		locator = new JbpmFactoryLocator();
 		bf = new DefaultListableBeanFactory();
-		locator.setBeanFactory(bf);
+		try {
+			locator.setBeanFactory(bf);
+		} catch (Exception e) {
+			// When we inherit the static fields from an old test, clear them out. Stupid statics - they are harmful!
+			locator.beanFactories.clear();
+			locator.beanFactoriesNames.clear();
+			locator.referenceCounter.clear();
+			locator.defaultFactory = null;
+			locator.canUseDefaultBeanFactory = true;
+			locator.setBeanFactory(bf);
+		}
 		// get one reference (to be destroyed during tearDown)
 		locator.useBeanFactory(null).getFactory();
 	}
