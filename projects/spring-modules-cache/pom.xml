@@ -45,6 +45,16 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>org/springmodules/cache/integration/gigaspaces/GigaSpacesIntegrationTests.java</exclude>
+            <exclude>org/springmodules/cache/provider/gigaspaces/GigaSpacesFacadeTests.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
