@@ -12,6 +12,20 @@
         <version>0.10-SNAPSHOT</version>
     </parent>
 
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>org/springmodules/workflow/jbpm31/SpringContextWiringTests.java</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.hibernate</groupId>
