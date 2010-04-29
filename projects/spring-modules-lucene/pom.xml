@@ -11,20 +11,20 @@
         <artifactId>spring-modules</artifactId>
         <version>0.10-SNAPSHOT</version>
     </parent>
-    
+
     <build>
-    	<plugins>
-    		<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>**/*Test.java,**/*Tests.java</include>
-					</includes>
-				</configuration>
-    		</plugin>
-    	</plugins>
-    
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <!-- Poorly choosen name for Junit 3 ;) -->
+              <exclude>org/springmodules/lucene/index/document/handler/object/TestBean.java</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
     </build>
 
     <dependencies>
@@ -59,6 +59,33 @@
         <dependency>
         	<groupId>org.aspectj</groupId>
         	<artifactId>aspectjweaver</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring</artifactId>
+          <version>${version.spring}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+          <version>${version.spring}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.easymock</groupId>
+          <artifactId>easymock</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.easymock</groupId>
+          <artifactId>easymockclassextension</artifactId>
+          <version>${version.easymock}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
