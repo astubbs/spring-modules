@@ -4,30 +4,21 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-jcr</artifactId>
-    <version>0.9</version>
+    <version>${parent.version}</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springmodules</groupId>
         <artifactId>spring-modules</artifactId>
-        <version>0.9</version>
+        <version>0.10-SNAPSHOT</version>
     </parent>
 
-	<!-- Tests weren't being picked up for some reason -->
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<includes>
-						<!-- defaults: -->
-						<include>**/Test*.java</include>
-						<include>**/*Test.java</include>
-						<include>**/*TestCase.java</include>
-						<!-- added: -->
-						<include>**/*Tests.java</include>
-					</includes>
 					<excludes>
 					  <exclude>org/springmodules/jcr/jackrabbit/JackrabbitNamespaceHandlerTests.java</exclude>
 					  <exclude>org/springmodules/jcr/config/JcrNamespaceHandlerTests.java</exclude>
@@ -107,6 +98,14 @@
         	<artifactId>hsqldb</artifactId>
         	<version>1.8.0.10</version>
         	<scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.easymock</groupId>
+        	<artifactId>easymock</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.easymock</groupId>
+        	<artifactId>easymockclassextension</artifactId>
         </dependency>
     </dependencies>
 </project>
