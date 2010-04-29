@@ -25,15 +25,15 @@
         <module>spring-modules-jbpm31</module><!--
         <module>spring-modules-jcr</module>
         <module>spring-modules-jsr94</module>-->
-        <!--<module>spring-modules-lucene</module>--><!--
+        <module>spring-modules-lucene</module><!--
         <module>spring-modules-ojb</module>
         <module>spring-modules-orbroker</module>
         <module>spring-modules-osworkflow</module>-->
         <module>spring-modules-springmvc-extra</module>
 <!--        <module>spring-modules-tapestry</module>-->
-        <!-- <module>spring-modules-template</module> --> 
+        <module>spring-modules-template</module>
         <module>spring-modules-validation</module>
-        <!-- <module>spring-modules-xt</module> -->
+        <module>spring-modules-xt</module>
     </modules>
 
     <dependencies>
