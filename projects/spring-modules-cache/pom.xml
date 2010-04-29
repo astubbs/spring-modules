@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.springmodules</groupId>
   <artifactId>spring-modules-cache</artifactId>
-  <version>0.10-SNAPSHOT</version>
+  <name>SpringModules - Cache</name>
   <properties>
     <gs.version>7.0.2-ga</gs.version>
   </properties>

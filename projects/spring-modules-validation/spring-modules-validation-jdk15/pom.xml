@@ -5,6 +5,7 @@
 	<groupId>org.springmodules</groupId>
 	<artifactId>spring-modules-validation-jdk15</artifactId>
 	<packaging>jar</packaging>
+  <name>SpringModules - Validation - JDK15</name>
 
 	<parent>
 		<groupId>org.springmodules</groupId>

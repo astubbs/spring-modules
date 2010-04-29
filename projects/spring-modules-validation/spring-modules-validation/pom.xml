@@ -9,6 +9,7 @@
     </parent>
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-validation</artifactId>
+    <name>SpringModules - Validation</name>
     <packaging>jar</packaging>
     <description>
         This pseudo project is just a stub jar with dependencies on both of the other modules.

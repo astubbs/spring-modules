@@ -5,6 +5,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-template</artifactId>
     <packaging>jar</packaging>
+    <name>SpringModules - Template</name>
 
     <parent>
         <groupId>org.springmodules</groupId>

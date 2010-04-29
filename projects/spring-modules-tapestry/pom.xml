@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-tapestry</artifactId>
-    <version>${parent.version}</version>
     <packaging>jar</packaging>
+    <name>SpringModules - Tapestry</name>
 
     <parent>
         <groupId>org.springmodules</groupId>

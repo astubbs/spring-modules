@@ -5,6 +5,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-xt</artifactId>
     <packaging>jar</packaging>
+    <name>SpringModules - Validation - XT</name>
 
     <parent>
         <groupId>org.springmodules</groupId>

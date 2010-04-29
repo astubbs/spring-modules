@@ -6,6 +6,7 @@
 	<artifactId>spring-modules</artifactId>
 	<version>0.10-SNAPSHOT</version>
 	<packaging>pom</packaging>
+  <name>SpringModules - Parent</name>
 
 	<properties>
 		<version.spring>2.5.6</version.spring>

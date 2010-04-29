@@ -10,6 +10,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-validation-parent</artifactId>
     <packaging>pom</packaging>
+    <name>SpringModules - Validation - Parent</name>
 
     <modules>
         <module>spring-modules-validation</module>

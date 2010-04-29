@@ -9,8 +9,8 @@
   </parent>
   <groupId>org.springmodules</groupId>
   <artifactId>projects</artifactId>
-  <version>0.10-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <name>SpringModules - Projects Parent</name>
 
   <modules>
     <!-- <module>spring-modules-ant</module>

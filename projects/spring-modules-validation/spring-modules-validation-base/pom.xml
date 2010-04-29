@@ -5,6 +5,7 @@
 	<groupId>org.springmodules</groupId>
 	<artifactId>spring-modules-validation-base</artifactId>
 	<packaging>jar</packaging>
+  <name>SpringModules - Validation - Base</name>
 
 	<parent>
 		<groupId>org.springmodules</groupId>

@@ -5,6 +5,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-lucene</artifactId>
     <packaging>jar</packaging>
+    <name>SpringModules - Lucene</name>
 
     <parent>
         <groupId>org.springmodules</groupId>

@@ -5,6 +5,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-springmvc-extra</artifactId>
     <packaging>jar</packaging>
+    <name>SpringModules - SpringMVC Extras</name>
 
     <parent>
         <groupId>org.springmodules</groupId>

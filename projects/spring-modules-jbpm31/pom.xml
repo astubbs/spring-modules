@@ -5,6 +5,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-jbpm31</artifactId>
     <packaging>jar</packaging>
+    <name>SpringModules - JBPM31</name>
 
     <parent>
         <groupId>org.springmodules</groupId>
