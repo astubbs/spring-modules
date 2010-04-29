@@ -4,14 +4,28 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-tapestry</artifactId>
-    <version>0.9</version>
+    <version>${parent.version}</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springmodules</groupId>
         <artifactId>spring-modules</artifactId>
-        <version>0.9</version>
+        <version>0.10-SNAPSHOT</version>
     </parent>
+
+  	<build>
+  		<plugins>
+  			<plugin>
+  				<groupId>org.apache.maven.plugins</groupId>
+  				<artifactId>maven-surefire-plugin</artifactId>
+  				<configuration>
+  					<excludes>
+  					  <exclude>org/springmodules/web/tapestry/SpringTapestryIntegrationTests.java</exclude>
+  					</excludes>
+  				</configuration>
+  			</plugin>
+  		</plugins>
+  	</build>
 
     <dependencies>
         <dependency>
@@ -34,6 +48,17 @@
             <artifactId>servlet-api</artifactId>
             <version>2.4</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-mock</artifactId>
+        	<version>2.0.3</version>
+        	<scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-web</artifactId>
+        	<version>2.0.3</version>
         </dependency>
     </dependencies>
 </project>
