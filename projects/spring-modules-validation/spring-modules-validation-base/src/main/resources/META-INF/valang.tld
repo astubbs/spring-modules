@@ -10,7 +10,7 @@
 	<tag>
 		<name>codebase</name>
 		<tag-class>org.springmodules.validation.valang.javascript.taglib.ValangCodebaseTag</tag-class>
-		<body-content>None</body-content>
+		<body-content>empty</body-content>
 		<description>
 			Generates the JavaScript code that is necessary for the
 			translated JavaScript validation rules to execute. This code needs to
