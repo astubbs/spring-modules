@@ -319,7 +319,7 @@
 			<dependency>
 				<groupId>org.acegisecurity</groupId>
 				<artifactId>acegi-security</artifactId>
-				<version>1.0.5</version>
+				<version>1.0.7</version>
 				<!-- TODO: Exclude spring 1.x transitive dependencies -->
 			</dependency>
 			<dependency>
